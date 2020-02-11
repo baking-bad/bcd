@@ -1,12 +1,16 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import VueRouter from 'vue-router'
-
 import HomeToolbar from '@/components/HomeToolbar.vue';
-import Toolbar from '@/components/Toolbar.vue';
 
 import Home from '@/views/Home.vue'
-import Project from '@/views/Project.vue'
+import ExtendedSearch from '@/views/ExtendedSearch.vue'
+
+import Project from '@/views/project/Project.vue'
+import OperationsTab from '@/views/project/OperationsTab.vue'
+import CodeTab from '@/views/project/CodeTab.vue'
+import EntrypointsTab from '@/views/project/EntrypointsTab.vue'
+import StorageTab from '@/views/project/StorageTab.vue'
 
 Vue.use(VueRouter)
 
@@ -24,11 +28,44 @@ export default new Router({
             name: 'home'
         },
         {
-            path: '/:address([0-9A-z]{36})',
+            path: '/search',
             components: {
-                default: Project,
-                toolbar: Toolbar
+                default: ExtendedSearch
             },
+            name: 'search'
+        },
+        {
+            path: '/:network(mainnet|babylonnet|zeronet|carthagenet)/:address([0-9A-z]{36})',
+            components: {
+                default: Project
+            },
+            children: [
+                {
+                    path: '',
+                    name: 'project',
+                    redirect: 'operations'
+                },
+                {
+                    path: 'operations',
+                    name: 'operations',
+                    component: OperationsTab
+                },
+                {
+                    path: 'code',
+                    name: 'code',
+                    component: CodeTab
+                },
+                {
+                    path: 'entrypoints',
+                    name: 'entrypoints',
+                    component: EntrypointsTab
+                },
+                {
+                    path: 'storage',
+                    name: 'storage',
+                    component: StorageTab
+                }
+            ]
         }
     ]
 });

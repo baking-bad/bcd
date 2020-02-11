@@ -2,7 +2,9 @@
   <v-list-item selectable>
     <v-list-item-content>
       <v-list-item-subtitle class="overline">{{ title }}</v-list-item-subtitle>
-      <v-list-item-title class="info-item-subtitle">{{ subtitle }}</v-list-item-title>
+      <v-list-item-title class="info-item-subtitle hash">
+        <span :class="[selected ? 'selected' : '']">{{ subtitle }}</span>
+      </v-list-item-title>
     </v-list-item-content>
   </v-list-item>
 </template>
@@ -12,13 +14,17 @@ export default {
   name: "InfoItem",
   props: {
     title: String,
-    subtitle: String
+    subtitle: String,
+    selected: Boolean
   }
 };
 </script>
 
-<style>
-.info-item-subtitle{
-    font-size: 15px;
+<style scoped>
+.info-item-subtitle {
+  font-size: 13px;
+}
+.selected {
+  color: #e83e8c;
 }
 </style>

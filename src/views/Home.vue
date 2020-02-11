@@ -13,8 +13,8 @@
             <SearchBox />
           </v-col>
           <v-col cols="12" align="center">
-            <v-btn large depressed tile color="primary" class="mr-5">Search</v-btn>
-            <v-btn large outlined tile color="primary">Pick Random</v-btn>
+            <v-btn large depressed tile color="primary" class="mr-5" to="/search">Advanced Search</v-btn>
+            <v-btn large outlined tile color="primary" @click="pickRandom">Pick Random</v-btn>
           </v-col>
         </v-row>
       </v-col>
@@ -25,9 +25,20 @@
 <script>
 import SearchBox from "@/components/SearchBox.vue";
 
+import { getRandomContract } from '@/api/index.js'
+
 export default {
   components: {
     SearchBox
+  },
+  methods: {
+    pickRandom() {
+      getRandomContract()
+      .then(res => {
+         this.$router.push({ path: `/${res.network}/${res.address}` });
+      })
+      .catch(err => console.log(err))
+    }
   }
 };
 </script>
@@ -36,5 +47,9 @@ export default {
 #home {
   height: 100%;
   background-color: white;
+}
+
+.hash {
+  font-family: 'Roboto Mono', monospace;
 }
 </style>

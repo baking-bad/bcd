@@ -1,8 +1,8 @@
 <template>
-  <v-list-item :key="item.address">
+  <v-list-item :key="item.address" :to="to" replace>
     <template v-slot:default="{ active, toggle }">
       <v-list-item-content>
-        <v-list-item-title class="contract-item-address" v-text="item.address"></v-list-item-title>
+        <v-list-item-title class="contract-item-address hash" v-text="item.address"></v-list-item-title>
         <v-list-item-subtitle v-text="item.language" class="overline"></v-list-item-subtitle>
       </v-list-item-content>
 
@@ -17,7 +17,8 @@
 <script>
 export default {
   props: {
-    item: Object
+    item: Object,
+    to: Object
   },
   name: "ContractItem"
 };
@@ -26,6 +27,6 @@ export default {
 
 <style>
 .contract-item-address {
-  font-size: 13px;
+  font-size: 12px;
 }
 </style>

@@ -10,7 +10,6 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 
-
 Vue.config.productionTip = false
 
 dayjs.extend(relativeTime);
@@ -30,10 +29,9 @@ Vue.filter('fromNow', function (value) {
 })
 
 Vue.filter('uxtz', function (value) {
-  let xtz = (+value / 1000000).toLocaleString(undefined, { maximumFractionDigits: 6 });
+  let xtz = (value / 1000000).toLocaleString(undefined, { maximumFractionDigits: 6 });
   return `${xtz} \uA729`;
 })
-
 
 new Vue({
   router,
