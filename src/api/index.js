@@ -103,3 +103,13 @@ export function getContractStorage(network, address) {
             return res.data
         })
 }
+
+export function getDiff(sn, sa, dn, da) {
+    return api.get(`/diff?sn=${sn}&sa=${sa}&dn=${dn}&da=${da}`)
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}

@@ -78,7 +78,7 @@ export default {
       theme: "neo",
       lineWrapping: true,
       lineNumbers: true,
-      viewportMargin: 3
+      viewportMargin: Infinity
     },
     loading: true
   }),

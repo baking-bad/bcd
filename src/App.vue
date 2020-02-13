@@ -1,6 +1,7 @@
 <template>
   <v-app>
       <router-view name="toolbar" v-intersect="onIntersect"></router-view>
+      <router-view name="nav"></router-view>
       <v-content>
           <ErrorSnackbar v-if="!!$store.state.error" />
           <router-view></router-view>

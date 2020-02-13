@@ -4,78 +4,6 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <div v-if="contracts != null">
-      <v-navigation-drawer app fixed mini-variant permanent class="elevation-1">
-        <router-link
-          :to="{name: 'home'}"
-          class="d-flex justify-center align-center"
-          style="height: 63px"
-        >
-          <v-avatar color="primary" size="38">
-            <span class="white--text">BCD</span>
-          </v-avatar>
-        </router-link>
-
-        <v-list nav>
-          <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <v-list-item link :to="{name: 'search'}" v-on="on">
-                <v-list-item-icon>
-                  <v-icon color="grey">mdi-layers-search-outline</v-icon>
-                </v-list-item-icon>
-
-                <v-list-item-content>
-                  <v-list-item-title>Search</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-            <span>Advanced search</span>
-          </v-tooltip>
-        </v-list>
-        <v-divider></v-divider>
-
-        <router-link
-          :to="{name: 'home'}"
-          class="d-flex justify-center align-center"
-          style="height: 63px"
-        >
-          <v-avatar color="secondary" size="38">
-            <span class="grey--text">UN</span>
-          </v-avatar>
-        </router-link>
-
-        <v-list nav>
-          <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <v-list-item link :to="{name: 'search'}" v-on="on">
-                <v-list-item-icon>
-                  <v-icon color="grey">mdi-file-document-box-multiple-outline</v-icon>
-                </v-list-item-icon>
-
-                <v-list-item-content>
-                  <v-list-item-title>Contracts</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-            <span>Contracts</span>
-          </v-tooltip>
-          <v-tooltip right>
-            <template v-slot:activator="{ on }">
-              <v-list-item link :to="{name: 'search'}" v-on="on">
-                <v-list-item-icon>
-                  <v-icon color="grey">mdi-poll</v-icon>
-                </v-list-item-icon>
-
-                <v-list-item-content>
-                  <v-list-item-title>Statistics</v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
-            <span>Statistics</span>
-          </v-tooltip>
-        </v-list>
-        <v-divider></v-divider>
-      </v-navigation-drawer>
-
       <v-navigation-drawer app fixed right width="400" class="elevation-1" v-if="contract">
         <v-list class="py-1">
           <v-list-item two-line>
@@ -150,12 +78,42 @@
             <v-list two-line class="pa-0" v-if="contracts.similar && contracts.similar.length > 0">
               <v-list-item-group active-class="light-green--text text--darken-2">
                 <template v-for="(item) in contracts.similar">
-                  <ContractItem
-                    class="py-2"
-                    :item="item"
+                  <v-list-item
                     :key="item.address"
                     :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
-                  />
+                    class="py-2"
+                  >
+                    <v-list-item-avatar size="25">
+                      <v-tooltip left>
+                        <template v-slot:activator="{ on }">
+                          <v-btn
+                            v-on="on"
+                            text
+                            icon
+                            :to="{ name: 'diff', params: { address: $route.params.address, network: $route.params.network, address2: item.address, network2: item.network}}"
+                          >
+                            <v-icon small>mdi-vector-difference</v-icon>
+                          </v-btn>
+                        </template>
+                         <span>Show diff</span>
+                      </v-tooltip>
+                    </v-list-item-avatar>
+                    <v-list-item-content>
+                      <v-list-item-title class="contract-item-address hash" v-text="item.address"></v-list-item-title>
+                      <v-list-item-subtitle v-text="item.language" class="overline"></v-list-item-subtitle>
+                    </v-list-item-content>
+
+                    <v-list-item-action>
+                      <v-chip
+                        x-small
+                        label
+                        v-text="item.network"
+                        color="secondary"
+                        class="grey--text text--darken-3"
+                      ></v-chip>
+                      <v-list-item-action-text>{{ item.timestamp | fromNow }}</v-list-item-action-text>
+                    </v-list-item-action>
+                  </v-list-item>
                 </template>
               </v-list-item-group>
             </v-list>
