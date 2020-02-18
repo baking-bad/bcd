@@ -18,13 +18,16 @@ dayjs.extend(utc);
 
 Vue.filter('formatDate', function (value) {
   if (value) {
-      return dayjs(value).format('D MMMM YYYY');
+    let d = dayjs(value)
+    if (d.isBefore(dayjs('2018-06-29')))
+      return "-"
+    return d.format('D MMMM YYYY');
   }
 })
 
 Vue.filter('fromNow', function (value) {
   if (value) {
-      return dayjs(value).fromNow();
+    return dayjs(value).fromNow();
   }
 })
 

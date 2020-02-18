@@ -15,6 +15,7 @@ import EntrypointsTab from '@/views/project/EntrypointsTab.vue'
 import StorageTab from '@/views/project/StorageTab.vue'
 
 import Diff from '@/views/Diff.vue'
+import Projects from '@/views/Projects.vue'
 
 Vue.use(VueRouter)
 
@@ -34,7 +35,8 @@ export default new Router({
         {
             path: '/search',
             components: {
-                default: ExtendedSearch
+                default: ExtendedSearch,
+                nav: Nav
             },
             name: 'search'
         },
@@ -45,6 +47,14 @@ export default new Router({
                 nav: Nav
             },
             name: 'diff'
+        },
+        {
+            path: '/projects',
+            components: {
+                default: Projects,
+                nav: Nav
+            },
+            name: 'projects'
         },
         {
             path: '/:network(mainnet|babylonnet|zeronet|carthagenet)/:address([0-9A-z]{36})',

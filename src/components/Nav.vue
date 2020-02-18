@@ -25,6 +25,21 @@
         </template>
         <span>Advanced search</span>
       </v-tooltip>
+
+      <v-tooltip right>
+        <template v-slot:activator="{ on }">
+          <v-list-item link :to="{name: 'projects'}" v-on="on">
+            <v-list-item-icon>
+              <v-icon color="grey">mdi-rhombus-split</v-icon>
+            </v-list-item-icon>
+
+            <v-list-item-content>
+              <v-list-item-title>Projects</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </template>
+        <span>Projects</span>
+      </v-tooltip>
     </v-list>
     <v-divider></v-divider>
 

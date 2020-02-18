@@ -1,9 +1,6 @@
 <template>
   <div>
     <v-app-bar extended fixed app elevation="1">
-      <v-toolbar-title class="headline pl-2 primary--text">
-        <router-link to="/" class="font-weight-light toolbar-title">BCD</router-link>
-      </v-toolbar-title>
       <v-combobox
         dense
         class="ml-6"
@@ -147,16 +144,15 @@
         <template v-for="(item, idx) in suggests">
           <div class="item" :key="idx">
             <v-hover v-slot:default="{ hover }">
-              <v-card
-                class="my-3 transparent"
-                :elevation="hover ? 2 : 0"
-                @click="onSearch(item)"
-              >
+              <v-card class="my-3 transparent" :elevation="hover ? 2 : 0" @click="onSearch(item)">
                 <v-list-item three-line>
                   <v-list-item-content>
                     <span class="overline" v-if="item.found_by">Found by {{ item.found_by }}</span>
                     <v-list-item-title class="subtitle-1">{{ item.address }}</v-list-item-title>
-                    <v-list-item-subtitle class="subtitle-2">Created by {{ item.manager }}</v-list-item-subtitle>
+                    <v-list-item-subtitle
+                      class="subtitle-2"
+                      v-if="item.manager"
+                    >Created by {{ item.manager }}</v-list-item-subtitle>
                     <v-list-item-subtitle
                       class="caption"
                     >Deployed {{ formatDate(item.timestamp)}} - {{ item.language }}</v-list-item-subtitle>
@@ -173,9 +169,34 @@
                         pill
                       >{{ tag.replace('_', ' ') }}</v-chip>
                     </div>
+
+                    <div v-if="item.group" class="mt-3 mx-2">
+                      <span class="overline">Same contracts</span>
+                      <template v-for="(top) in item.group.top">
+                        <div :key="top.address" class="d-flex flex-horizontal my-2 align-center">
+                          <router-link
+                            class="hash same-link mr-3"
+                            :to="{'name': 'project', params:{'address': top.address, 'network': top.network}}"
+                          >{{ top.address }}</router-link>
+                          <span class="same-network">{{ top.network }}</span>
+                        </div>
+                      </template>
+                      <p
+                        class="time-info"
+                        v-if="item.group.count > 5"
+                      >and {{ item.group.count - 5 }} others</p>
+                    </div>
                   </v-list-item-content>
                   <v-list-item-action>
                     <v-list-item-action-text class="overline primary--text" v-text="item.network"></v-list-item-action-text>
+                    <v-list-item-action-text
+                      v-if="item.tx_count"
+                      class="caption"
+                    >{{ item.tx_count }} operations</v-list-item-action-text>
+                    <v-list-item-action-text
+                      v-if="item.last_action"
+                      class="caption"
+                    >the last one was {{ formatDate(item.last_action) }}</v-list-item-action-text>
                   </v-list-item-action>
                 </v-list-item>
               </v-card>
@@ -224,6 +245,7 @@ export default {
     total: 0,
     elasticTime: 0,
     loading: false,
+    completed: false,
     tab: 0,
     selectedTime: 0,
     showTools: false,
@@ -362,19 +384,24 @@ export default {
       }
     },
     search(text, fields = [], push = false, networks = [], time = {}) {
-      if (!this.loading) {
+      let hasText = text != null && text.length >= 2;
+      if (!this.loading && hasText && !this.completed) {
         this.loading = true;
         let offset = push ? this.suggests.length : 0;
         api
-          .search(text, fields, offset, networks, time)
+          .search(text, fields, offset, networks, time, 1)
           .then(res => {
-            if (push) {
-              this.suggests.push(...res.contracts);
-            } else {
-              this.suggests = res.contracts;
+            console.log(res.contracts.length);
+            this.completed = res.contracts.length == 0;
+            if (!this.completed) {
+              if (push) {
+                this.suggests.push(...res.contracts);
+              } else {
+                this.suggests = res.contracts;
+              }
+              this.total = res.count;
+              this.elasticTime = res.time;
             }
-            this.total = res.count;
-            this.elasticTime = res.time;
           })
           .catch(err => console.log(err))
           .finally(() => {
@@ -397,15 +424,19 @@ export default {
   },
   watch: {
     searchText(val) {
+      this.completed = false;
       this.search(val, this.fields, false, this.networks, this.queryTime);
     },
     fields(val) {
+      this.completed = false;
       this.search(this.searchText, val, false, this.networks, this.queryTime);
     },
     networks(val) {
+      this.completed = false;
       this.search(this.searchText, this.fields, false, val, this.queryTime);
     },
     queryTime(val) {
+      this.completed = false;
       this.search(this.searchText, this.fields, false, this.networks, val);
     }
   }
@@ -436,5 +467,19 @@ export default {
 
 .tab-btn {
   color: rgba(0, 0, 0, 0.54);
+}
+
+.same-link {
+  font-size: 12px;
+  color: grey;
+}
+
+.same-network {
+  font-size: 12px;
+  color: #70757a;
+}
+
+.same-link:hover {
+  color: #5b942a;
 }
 </style>
