@@ -146,8 +146,8 @@
                 <template v-for="(item) in contracts.similar">
                   <v-list-item
                     three-line
-                    :key="item.last.address"
-                    :to="{name: 'project', params: {'address': item.last.address, 'network': item.last.network}}"
+                    :key="item.address"
+                    :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
                     class="py-2"
                   >
                     <v-list-item-avatar size="25">
@@ -157,7 +157,7 @@
                             v-on="on"
                             text
                             icon
-                            :to="{ name: 'diff', params: { address: $route.params.address, network: $route.params.network, address2: item.last.address, network2: item.last.network}}"
+                            :to="{ name: 'diff', params: { address: $route.params.address, network: $route.params.network, address2: item.address, network2: item.network}}"
                           >
                             <v-icon small>mdi-vector-difference</v-icon>
                           </v-btn>
@@ -168,9 +168,9 @@
                     <v-list-item-content>
                       <v-list-item-title
                         class="contract-item-address hash"
-                        v-text="item.last.address"
+                        v-text="item.address"
                       ></v-list-item-title>
-                      <v-list-item-subtitle class="overline">{{item.last.language}}</v-list-item-subtitle>
+                      <v-list-item-subtitle class="overline">{{item.language}}</v-list-item-subtitle>
                       <v-list-item-subtitle
                         class="caption grey--text text-lighten-5"
                         v-if="item.count > 1"
@@ -181,11 +181,15 @@
                       <v-chip
                         x-small
                         label
-                        v-text="item.last.network"
+                        v-text="item.network"
                         color="secondary"
                         class="grey--text text--darken-3"
                       ></v-chip>
-                      <v-list-item-action-text>{{ item.last.timestamp | fromNow }}</v-list-item-action-text>
+                      <v-list-item-action-text>{{ item.timestamp | fromNow }}</v-list-item-action-text>
+                      <v-list-item-action-text>
+                        <span v-if="item.added" class="primary--text">+&nbsp;{{item.added }}&#9;</span>
+                        <span v-if="item.removed" class="red--text">-&nbsp;{{item.removed }}</span>
+                      </v-list-item-action-text>
                     </v-list-item-action>
                   </v-list-item>
                 </template>
@@ -268,33 +272,29 @@ export default {
       )
         return [];
       return this.contract.tags;
+    },
+    loading() {
+      return this.successRequests < 2;
     }
   },
   data: () => ({
     contracts: null,
-    loading: true,
     projectTab: 0,
-    contract: null
+    contract: null,
+    successRequests: 0
   }),
   created() {
     this.requestData(this.$route.params.network, this.$route.params.address);
   },
   methods: {
     requestData(network, address) {
-      this.loading = true;
-
-      let count = 0;
       api
         .getContract(network, address)
         .then(res => {
           this.contract = res;
         })
         .catch(err => console.log(err))
-        .finally(() => {
-          if (count++ > 0) {
-            this.loading = false;
-          }
-        });
+        .finally(() => this.successRequests++);
 
       api
         .getProject(address)
@@ -302,17 +302,12 @@ export default {
           this.contracts = res;
         })
         .catch(err => console.log(err))
-        .finally(() => {
-          if (count++ > 0) {
-            this.loading = false;
-          }
-        });
+        .finally(() => this.successRequests++);
     },
     formatDate(value) {
       if (value) {
-        let val = dayjs(value)
-        if (val.unix() > 0)
-          return val.format("MMM D, YYYY");
+        let val = dayjs(value);
+        if (val.unix() > 0) return val.format("MMM D, YYYY");
       }
     }
   },

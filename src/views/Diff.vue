@@ -50,7 +50,7 @@ export default {
         this.$route.params.address2
       )
         .then(res => {
-          this.diffs = res;
+          this.diffs = res.full;
         })
         .catch(err => console.log(err))
         .finally(() => {
