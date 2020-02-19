@@ -117,56 +117,6 @@
             </v-row>
           </v-col>
           <v-col cols="12">
-            <v-subheader>Last deploy</v-subheader>
-            <v-row no-gutters class="mx-4">
-              <v-col cols="5">
-                <v-menu
-                  v-model="menu.last_deploy.from"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field
-                      v-model="filters.last_deploy.from"
-                      label="From"
-                      readonly
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    min="2018-06-30"
-                    :max="maxDate()"
-                    v-model="filters.last_deploy.from"
-                    @input="menu.first_deploy.from = false"
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="5" offset="2">
-                <v-menu
-                  v-model="menu.last_deploy.to"
-                  :close-on-content-click="false"
-                  :nudge-right="40"
-                  transition="scale-transition"
-                  offset-y
-                  min-width="290px"
-                >
-                  <template v-slot:activator="{ on }">
-                    <v-text-field v-model="filters.last_deploy.to" label="To" readonly v-on="on"></v-text-field>
-                  </template>
-                  <v-date-picker
-                    min="2018-06-30"
-                    :max="maxDate()"
-                    v-model="filters.last_deploy.to"
-                    @input="menu.last_deploy.to = false"
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-            </v-row>
-          </v-col>
-          <v-col cols="12">
             <v-subheader>Tx count</v-subheader>
             <v-range-slider
               v-model="filters.txCount"
@@ -178,26 +128,15 @@
           </v-col>
           <v-col cols="12">
             <v-subheader>Languages</v-subheader>
-            <v-select
-              v-model="filters.languages"
-              :items="languages"
-              class="mx-4"
-              hide-details
-              dense
-              attach
-              chips
+            <v-chip-group
+              column
               multiple
+              active-class="primary--text"
+              class="mx-4"
+              v-model="filters.languages"
             >
-              <template v-slot:selection="{ item, index }">
-                <v-chip v-if="index < 2">
-                  <span>{{ item }}</span>
-                </v-chip>
-                <span
-                  v-if="index === 2"
-                  class="grey--text caption"
-                >(+{{ filters.languages.length - 2 }} others)</span>
-              </template>
-            </v-select>
+              <v-chip filter v-for="lang in languages" :key="lang">{{ lang }}</v-chip>
+            </v-chip-group>
           </v-col>
         </v-row>
       </div>
@@ -220,14 +159,32 @@
           </v-btn>
         </v-toolbar>
       </template>
+      <template v-slot:item.name="{ item }">
+        <v-list-item-content>
+          <v-list-item-title class="overline">{{ item.name }}</v-list-item-title>
+          <v-list-item-subtitle
+            class="caption grey--text text--darken-2"
+          >Contains {{ item.contracts_count }} contracts</v-list-item-subtitle>
+        </v-list-item-content>
+      </template>
       <template v-slot:item.last_action="{ item }">
-        <span>{{ item.last_action | formatDate}}</span>
+        <span>{{ checkDate(item.last_action) | fromNow}}</span>
       </template>
       <template v-slot:item.first_deploy="{ item }">
-        <span>{{ item.first_deploy | formatDate}}</span>
+        <span>{{ checkDate(item.first_deploy) | fromNow}}</span>
       </template>
-      <template v-slot:item.last_deploy="{ item }">
-        <span>{{ item.last_deploy | formatDate }}</span>
+      <template v-slot:item.last="{ item }">
+        <router-link
+          :to="{name: 'project', params: {address: item.last.address, network: item.last.network}}"
+        >
+          <v-list-item-content>
+            <v-list-item-title class="hash" style="font-size: 12px;">{{ item.last.address }}</v-list-item-title>
+            <v-list-item-subtitle class="overline grey--text text--darken-2">{{ item.last.network }}</v-list-item-subtitle>
+            <span
+              class="caption grey--text"
+            >Deployed {{ checkDate(item.last.deploy_time) | fromNow }}</span>
+          </v-list-item-content>
+        </router-link>
       </template>
     </v-data-table>
   </div>
@@ -268,11 +225,6 @@ export default {
       return [
         { text: "Name", value: "name" },
         {
-          text: "Versions count",
-          value: "versions_count",
-          filter: this.versionsFilter
-        },
-        {
           text: "Last action",
           value: "last_action",
           filter: this.lastActionFilter
@@ -283,12 +235,19 @@ export default {
           filter: this.firstDeployFilter
         },
         {
-          text: "Last deploy",
-          value: "last_deploy",
-          filter: this.lastDeployFilter
+          text: "Versions count",
+          value: "versions_count",
+          filter: this.versionsFilter,
+          width: "150px"
         },
         { text: "Tx count", value: "tx_count", filter: this.txCountFilter },
-        { text: "Language", value: "language", filter: this.languageFilter }
+        { text: "Language", value: "language", filter: this.languageFilter },
+        {
+          text: "Last contract",
+          value: "last",
+          width: "300px",
+          sortable: false
+        }
       ];
     }
   },
@@ -303,10 +262,6 @@ export default {
         from: "2018-06-30",
         to: dayjs().format("YYYY-MM-DD")
       },
-      last_deploy: {
-        from: "2018-06-30",
-        to: dayjs().format("YYYY-MM-DD")
-      },
       first_deploy: {
         from: "2018-06-30",
         to: dayjs().format("YYYY-MM-DD")
@@ -315,10 +270,6 @@ export default {
     },
     menu: {
       last_action: {
-        from: false,
-        to: false
-      },
-      last_deploy: {
         from: false,
         to: false
       },
@@ -339,20 +290,13 @@ export default {
       let cur = dayjs(value);
       let from = dayjs(this.filters.last_action.from);
       let to = dayjs(this.filters.last_action.to);
-
-      return cur.isBetween(from, to, "days");
-    },
-    lastDeployFilter(value) {
-      let cur = dayjs(value);
-      let from = dayjs(this.filters.last_deploy.from);
-      let to = dayjs(this.filters.last_deploy.to);
-      return cur.isBetween(from, to, "days");
+      return cur.isBetween(from, to, "days") || cur.unix() == 0;
     },
     firstDeployFilter(value) {
       let cur = dayjs(value);
       let from = dayjs(this.filters.first_deploy.from);
       let to = dayjs(this.filters.first_deploy.to);
-      return cur.isBetween(from, to, "days");
+      return cur.isBetween(from, to, "days") || cur.unix() == 0;
     },
     txCountFilter(value) {
       return (
@@ -360,10 +304,21 @@ export default {
       );
     },
     languageFilter(value) {
-      return this.filters.languages.includes(value);
+      for (let i = 0; i < this.filters.languages.length; i++) {
+        let x = this.filters.languages[i];
+        if (this.languages[x] == value) return true;
+      }
+      return false;
     },
     maxDate() {
       return dayjs().format("YYYY-MM-DD");
+    },
+    checkDate(value) {
+      let d = dayjs(value);
+      if (d.isBefore("2018-06-29")) {
+        return undefined;
+      }
+      return d;
     }
   },
   mounted() {
@@ -376,7 +331,9 @@ export default {
   },
   watch: {
     languages(newValue) {
-      this.filters.languages = newValue;
+      this.filters.languages = Object.keys(
+        Array.apply(0, Array(newValue.length))
+      ).map(Number);
     },
     maxVersionsCount(newValue) {
       this.filters.versionsCount[1] = newValue;
@@ -387,3 +344,17 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.v-application a {
+  color: black;
+}
+
+.v-application a:hover {
+  color: #5b942a;
+}
+
+a:-webkit-any-link {
+  text-decoration: none;
+}
+</style>
