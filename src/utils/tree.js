@@ -7,7 +7,18 @@ export function getTree(data, kind) {
         kind = parseKind(data.kind);
         delete data.kind;
     }
-    
+    if (data.type !== undefined) {
+        res.push({
+            name: data.type,
+            children: [],
+            value: data.value || 'null',
+            value_type: data.type,
+            type: "value",
+            kind: kind
+        });
+        return res;
+    }
+
     for (const x in data) {
         let item = {
             name: x,
@@ -25,6 +36,7 @@ export function getTree(data, kind) {
 
                 if (data[x].value !== undefined && data[x].type !== undefined) {
                     item.value = getValue(data[x]);
+                    item.value_type = data[x].type;
                 } else {
                     item.value = `${Object.keys(data[x]).length} items`;
                     item.type = "object";
@@ -45,8 +57,8 @@ function getValue(item) {
     }
 
     if (item.from !== undefined) {
-        let start = parseType(item.from, item.type)
-        let end = parseType(item.value, item.type)
+        let start = parseType(item.from, item.type);
+        let end = parseType(item.value, item.type);
         return `${start} -> ${end}`;
     }
     return parseType(item.value, item.type)

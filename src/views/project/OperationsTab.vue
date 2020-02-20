@@ -5,7 +5,7 @@
     <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
     <div v-else-if="operations.length > 0">
       <template v-for="(item, idx) in operations">
-        <Operation :data="item" :key="idx" class="my-3" :address="contract.address" />
+        <Operation :data="item" :key="idx" class="my-3" :address="$route.params.address" />
       </template>
       <span v-intersect="onDownloadPage"></span>
     </div>
@@ -38,14 +38,17 @@ export default {
     operations: [],
     offset: 0
   }),
-  mounted() {
-    this.getOperations(this.contract);
+  created() {
+    this.fetchOperations();
   },
   methods: {
-    getOperations(contract) {
-      if (contract == null || contract === undefined) return;
+    getOperations() {
       if (!this.downloaded) {
-        getContractOperations(contract.network, contract.address, this.offset)
+        getContractOperations(
+          this.$route.params.network,
+          this.$route.params.address,
+          this.offset
+        )
           .then(res => {
             this.prepareOperations(res);
             this.downloaded = res.length == 0;
@@ -58,7 +61,9 @@ export default {
     prepareOperations(data) {
       data.forEach(element => {
         if (element.internal) {
-          this.operations[this.operations.length - 1].internal_operations.push(element);
+          this.operations[this.operations.length - 1].internal_operations.push(
+            element
+          );
         } else {
           element.internal_operations = [];
           this.operations.push(element);
@@ -69,15 +74,17 @@ export default {
       if (entries[0].isIntersecting) {
         this.getOperations(this.contract);
       }
+    },
+    fetchOperations() {
+      this.operations = [];
+      this.offset = 0;
+      this.loading = true;
+      this.downloaded = false;
+      this.getOperations();
     }
   },
   watch: {
-    contract: function(value, old) {
-      if (old != null && value.address == old.address) return;
-      this.operations = [];
-      this.offset = 0;
-      this.getOperations(value);
-    }
+    "$route.params": "fetchOperations"
   }
 };
 </script>

@@ -64,16 +64,36 @@
                   <span>{{ item.name }}:</span>&nbsp;
                   <span :class="item.type">{{ item.value }}</span>
                 </template>
+                <template v-slot:prepend="{ item, open }">
+                  <v-tooltip v-if="item.type === 'value'" left>
+                    <template v-slot:activator="{ on }">
+                      <v-icon small v-on="on">{{ getTreeNodeIcon(item.value_type) }}</v-icon>
+                    </template>
+                    <span>{{item.value_type}}</span>
+                  </v-tooltip>
+                  <v-icon small v-else-if="open">mdi-folder-open</v-icon>
+                  <v-icon small v-else>mdi-folder</v-icon>
+                </template>
               </v-treeview>
             </v-col>
             <v-col cols="6" v-if="hasStorageDiff">
               <span class="overline ml-3">Storage</span>
               <v-treeview :items="storage" hoverable open-all transition>
                 <template v-slot:label="{ item }">
-                  <div :class="`${item.kind} pl-1`">
+                  <div :class="`${item.kind} pl-1`" @click="onClickTreeNode(item)">
                     <span>{{ item.name }}:</span>&nbsp;
                     <span :class="item.type">{{ item.value }}</span>
                   </div>
+                </template>
+                <template v-slot:prepend="{ item, open }">
+                  <v-tooltip v-if="item.type === 'value'" left>
+                    <template v-slot:activator="{ on }">
+                      <v-icon small v-on="on">{{ getTreeNodeIcon(item.value_type) }}</v-icon>
+                    </template>
+                    <span>{{item.value_type}}</span>
+                  </v-tooltip>
+                  <v-icon small v-else-if="open">mdi-folder-open</v-icon>
+                  <v-icon small v-else>mdi-folder</v-icon>
                 </template>
               </v-treeview>
             </v-col>
@@ -81,6 +101,19 @@
         </v-col>
       </v-expand-transition>
     </v-row>
+
+    <v-dialog v-model="showTreeNodeDetails" max-width="400">
+      <v-card v-if="selectedNode">
+        <v-card-title class="overline" style="font-size:15px;">Key: {{ selectedNode.name }}</v-card-title>
+
+        <v-card-text class="caption">Value: {{ selectedNode.value}}</v-card-text>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="green darken-1" text @click="showTreeNodeDetails = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -154,15 +187,47 @@ export default {
       );
     },
     statusColor() {
-      if (this.data.result.status === 'applied') return 'green';
-      if (this.data.result.status === 'backtracked') return 'orange';
-      if (this.data.result.status === 'failed') return 'red';
-      return 'light-grey';
+      if (this.data.result.status === "applied") return "green";
+      if (this.data.result.status === "backtracked") return "orange";
+      if (this.data.result.status === "failed") return "red";
+      return "light-grey";
     }
   },
   data: () => ({
-    showParams: false
-  })
+    showParams: false,
+    showTreeNodeDetails: false,
+    selectedNode: null
+  }),
+  methods: {
+    onClickTreeNode(item) {
+      if (item.type === "value") {
+        this.selectedNode = item;
+        this.showTreeNodeDetails = true;
+      }
+    },
+    getTreeNodeIcon(valueType) {
+      if (valueType === "address") {
+        return "mdi-alphabetical-variant";
+      } else if (valueType === "nat" || valueType == "int") {
+        return "mdi-numeric";
+      } else if (valueType === "bool") {
+        return "mdi-format-bold";
+      } else if (valueType === "bytes") {
+        return "mdi-hexadecimal";
+      } else if (valueType === "timestamp") {
+        return "mdi-clock-outline";
+      } else if (valueType === "mutez") {
+        return "mdi-cash-100";
+      } else if (valueType === "contract") {
+        return "mdi-file-document-outline";
+      } else if (valueType === "key") {
+        return "mdi-key";
+      } else if (valueType === "lambda") {
+        return "mdi-lambda";
+      }
+      return "mdi-alphabetical";
+    }
+  }
 };
 </script>
 
@@ -209,4 +274,4 @@ export default {
 .v-treeview-node__root {
   min-height: 20px !important;
 }
-</style>
+</style>showTreeNodeDetails

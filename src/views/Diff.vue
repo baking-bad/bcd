@@ -11,7 +11,7 @@
         </v-btn>
       </v-col>
       <v-col cols="12">
-        <div v-html="result"></div>
+        <DiffViewer :diffs="diffs"/>
         <v-snackbar v-model="snackbar">
           {{ snacktext }}
           <v-btn color="pink" text @click="snackbar = false">Close</v-btn>
@@ -22,12 +22,15 @@
 </template>
 
 <script>
-import * as Diff2Html from "diff2html";
-import "diff2html/bundles/css/diff2html.min.css";
 import { getDiff, vote } from "@/api/index.js";
+
+import DiffViewer from '@/components/DiffViewer.vue'
 
 export default {
   name: "Diff",
+  components: {
+    DiffViewer
+  },
   data: () => ({
     diffs: null,
     result: null,
@@ -35,11 +38,8 @@ export default {
     snackbar: false,
     snacktext: ""
   }),
-  mounted() {
+  created() {
     this.getCode();
-  },
-  updated() {
-    this.init();
   },
   methods: {
     getCode() {
@@ -50,20 +50,12 @@ export default {
         this.$route.params.address2
       )
         .then(res => {
-          this.diffs = res.full;
+          this.diffs = res;
         })
         .catch(err => console.log(err))
         .finally(() => {
           this.loading = false;
         });
-    },
-    init() {
-      this.result = Diff2Html.html(this.diffs, {
-        drawFileList: false,
-        matching: "words",
-        outputFormat: "side-by-side",
-        fileListToggle: false
-      });
     },
     upVote() {
       vote(
@@ -99,6 +91,9 @@ export default {
         })
         .finally(() => (this.snackbar = true));
     }
+  },
+  watch: {
+    "$route": 'getCode'
   }
 };
 </script>
@@ -111,7 +106,4 @@ export default {
   font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-.merge {
-  height: 100%;
-}
 </style>

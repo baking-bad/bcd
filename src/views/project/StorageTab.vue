@@ -7,6 +7,16 @@
           <span>{{ item.name }}:</span>&nbsp;
           <span :class="item.type">{{ item.value }}</span>
         </template>
+        <template v-slot:prepend="{ item, open }">
+          <v-tooltip v-if="item.type === 'value'" left>
+            <template v-slot:activator="{ on }">
+              <v-icon small v-on="on">{{ getTreeNodeIcon(item.value_type) }}</v-icon>
+            </template>
+            <span>{{item.value_type}}</span>
+          </v-tooltip>
+          <v-icon small v-else-if="open">mdi-folder-open</v-icon>
+          <v-icon small v-else>mdi-folder</v-icon>
+        </template>
       </v-treeview>
     </v-card>
   </v-container>
@@ -14,6 +24,8 @@
 
 <script>
 import { getContractStorage } from "@/api/index.js";
+import { getTree } from "@/utils/tree.js";
+
 import dayjs from "dayjs";
 
 export default {
@@ -23,7 +35,7 @@ export default {
   },
   computed: {
     items() {
-      return this.getTreeObject(this.storage);
+      return getTree(this.storage);
     }
   },
   data: () => ({
@@ -50,33 +62,6 @@ export default {
       }
       return item.value;
     },
-    getTreeObject(data) {
-      let res = [];
-      for (const x in data) {
-        let item = {
-          name: x,
-          children: [],
-          value: "null",
-          type: "value"
-        };
-        if (typeof data[x] === "object") {
-          if (data[x] != null) {
-            if (data[x].type !== undefined) {
-              item.value = this.getValue(data[x]);
-            } else {
-              if (Array.isArray(data[x])) item.value = `list`;
-              else item.value = `${Object.keys(data[x]).length} items`;
-              item.type = "object";
-              item.children = this.getTreeObject(data[x]);
-            }
-          }
-        } else {
-          item.value = data[x];
-        }
-        res.push(item);
-      }
-      return res;
-    },
     getStorage(contract) {
       if (contract == null) return;
       getContractStorage(contract.network, contract.address)
@@ -85,6 +70,28 @@ export default {
         })
         .catch(err => console.log(err))
         .finally(() => (this.loading = false));
+    },
+    getTreeNodeIcon(valueType) {
+      if (valueType === "address") {
+        return "mdi-alphabetical-variant";
+      } else if (valueType === "nat" || valueType == "int") {
+        return "mdi-numeric";
+      } else if (valueType === "bool") {
+        return "mdi-format-bold";
+      } else if (valueType === "bytes") {
+        return "mdi-hexadecimal";
+      } else if (valueType === "timestamp") {
+        return "mdi-clock-outline";
+      } else if (valueType === "mutez") {
+        return "mdi-cash-100";
+      } else if (valueType === "contract") {
+        return "mdi-file-document-outline";
+      } else if (valueType === "key") {
+        return "mdi-key";
+      } else if (valueType === "lambda") {
+        return "mdi-lambda";
+      }
+      return "mdi-alphabetical";
     }
   }
 };

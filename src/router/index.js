@@ -13,6 +13,7 @@ import OperationsTab from '@/views/project/OperationsTab.vue'
 import CodeTab from '@/views/project/CodeTab.vue'
 import EntrypointsTab from '@/views/project/EntrypointsTab.vue'
 import StorageTab from '@/views/project/StorageTab.vue'
+import MigrationTab from '@/views/project/MigrationTab.vue'
 
 import Diff from '@/views/Diff.vue'
 import Projects from '@/views/Projects.vue'
@@ -87,6 +88,11 @@ export default new Router({
                     path: 'storage',
                     name: 'storage',
                     component: StorageTab
+                },
+                {
+                    path: 'migration',
+                    name: 'migration',
+                    component: MigrationTab
                 }
             ]
         }

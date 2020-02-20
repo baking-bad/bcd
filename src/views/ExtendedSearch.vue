@@ -25,7 +25,7 @@
       </v-btn>
 
       <template v-slot:extension>
-        <v-tabs v-model="tab" style="margin-left: 85px;">
+        <v-tabs v-model="tab" class="ml-7">
           <v-tabs-slider color="primary"></v-tabs-slider>
 
           <v-tab>

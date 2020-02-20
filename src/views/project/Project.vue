@@ -114,10 +114,12 @@
 
         <v-tabs grow background-color="transparent" slider-color="primary" v-model="projectTab">
           <v-tab class="overline">
-            <v-icon left small>mdi-content-copy</v-icon>Same
+            <v-icon left small>mdi-content-copy</v-icon>
+            Same ({{ contracts.same.length }})
           </v-tab>
           <v-tab class="overline">
-            <v-icon left small>mdi-approximately-equal</v-icon>Similar
+            <v-icon left small>mdi-approximately-equal</v-icon>
+            Similar ({{ contracts.similar.length }})
           </v-tab>
         </v-tabs>
 
@@ -145,7 +147,8 @@
               <v-list-item-group active-class="light-green--text text--darken-2">
                 <template v-for="(item) in contracts.similar">
                   <v-list-item
-                    three-line
+                    :three-line="item.count > 1"
+                    :two-line="item.count <= 1"
                     :key="item.address"
                     :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
                     class="py-2"
@@ -153,12 +156,7 @@
                     <v-list-item-avatar size="25">
                       <v-tooltip left>
                         <template v-slot:activator="{ on }">
-                          <v-btn
-                            v-on="on"
-                            text
-                            icon
-                            :to="{ name: 'diff', params: { address: $route.params.address, network: $route.params.network, address2: item.address, network2: item.network}}"
-                          >
+                          <v-btn v-on="on" text icon @click.prevent="onDiffClick(item)">
                             <v-icon small>mdi-vector-difference</v-icon>
                           </v-btn>
                         </template>
@@ -166,10 +164,7 @@
                       </v-tooltip>
                     </v-list-item-avatar>
                     <v-list-item-content>
-                      <v-list-item-title
-                        class="contract-item-address hash"
-                        v-text="item.address"
-                      ></v-list-item-title>
+                      <v-list-item-title class="contract-item-address hash" v-text="item.address"></v-list-item-title>
                       <v-list-item-subtitle class="overline">{{item.language}}</v-list-item-subtitle>
                       <v-list-item-subtitle
                         class="caption grey--text text-lighten-5"
@@ -309,6 +304,18 @@ export default {
         let val = dayjs(value);
         if (val.unix() > 0) return val.format("MMM D, YYYY");
       }
+    },
+    onDiffClick(item) {
+      let routeData = this.$router.resolve({
+        name: "diff",
+        params: {
+          address: this.$route.params.address,
+          network: this.$route.params.network,
+          address2: item.address,
+          network2: item.network
+        }
+      });
+      window.open(routeData.href, "_blank");
     }
   },
   watch: {

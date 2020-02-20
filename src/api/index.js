@@ -2,7 +2,7 @@ const axios = require('axios').default;
 
 const api = axios.create({
     baseURL: 'http://localhost:14000/v1/',
-    timeout: 10000,
+    timeout: 30000,
     responseType: 'json'
 });
 
@@ -67,8 +67,19 @@ export function getContractOperations(network, address, offset = 0) {
         })
 }
 
-export function getContractCode(network, address) {
-    return api.get(`/contract/${network}/${address}/code`)
+export function getContractCode(network, address, level=0) {
+    return api.get(`/contract/${network}/${address}/code?level=${level}`)
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+
+export function getContractMigration(network, address) {
+    return api.get(`/contract/${network}/${address}/migration`)
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
