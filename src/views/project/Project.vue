@@ -214,6 +214,9 @@
               <v-tab :to="{name: 'storage'}" replace class="overline">
                 <v-icon small left>mdi-alphabetical</v-icon>Storage
               </v-tab>
+              <v-tab :to="{name: 'migration'}" replace class="overline" v-if="hasMigration">
+                <v-icon small left>mdi-alphabetical</v-icon>Migration
+              </v-tab>
             </v-tabs>
           </v-col>
           <v-col cols="5" class="d-flex align-end">
@@ -270,6 +273,14 @@ export default {
     },
     loading() {
       return this.successRequests < 2;
+    },
+    hasMigration() {
+      return (
+        this.contract != null &&
+        this.contract !== undefined &&
+        this.contract.network === 'mainnet' &&
+        this.contract.level < 655360
+      );
     }
   },
   data: () => ({
@@ -319,8 +330,8 @@ export default {
     }
   },
   watch: {
-    "$route.params.address": function(address) {
-      this.requestData(this.$route.params.network, address);
+    $route: function() {
+      this.requestData(this.$route.params.network, this.$route.params.address);
     }
   }
 };
