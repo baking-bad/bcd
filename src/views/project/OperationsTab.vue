@@ -58,7 +58,7 @@ export default {
       if (this.loading) return [];
       if (!this.showMempool) {
         let res = this.operations.slice();
-        if (!this.sortAsc) return res.reverse();
+        if (this.sortAsc) return res.reverse();
         return res;
       }
 
@@ -77,7 +77,7 @@ export default {
     downloaded: false,
     operations: [],
     mempool: [],
-    showMempool: true,
+    showMempool: false,
     sortAsc: false,
     offset: 0
   }),

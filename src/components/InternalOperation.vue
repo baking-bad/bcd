@@ -1,6 +1,6 @@
 <template>
   <div class="my-3">
-    <v-row no-gutters>
+    <v-row no-gutters v-if="!data.internal">
       <v-col cols="2" v-if="data.fee">
         <InfoItem title="Fee" :subtitle="data.fee | uxtz" />
       </v-col>
@@ -9,6 +9,12 @@
       </v-col>
       <v-col cols="2" v-if="data.storage_limit">
         <InfoItem title="Storage limit" :subtitle="data.storage_limit | bytes" />
+      </v-col>
+      <v-spacer></v-spacer>
+      <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
+        <v-btn small text color="grey" class="d-flex align-center" @click="getRawJSON">
+          <span class="overline">Raw JSON</span>
+        </v-btn>
       </v-col>
     </v-row>
     <v-row no-gutters>
@@ -83,7 +89,7 @@
           </v-col>
           <v-col cols="6" v-if="hasStorageDiff">
             <span class="overline ml-3">Storage</span>&nbsp;
-            <span class="grey--text caption">{{ data.result.storage_size }} bytes</span>
+            <span class="grey--text caption">{{ data.result.storage_size | bytes}}</span>
             <v-treeview :items="storage" hoverable open-all transition>
               <template v-slot:label="{ item }">
                 <div :class="`${item.kind} pl-1`">
@@ -96,12 +102,31 @@
         </v-row>
       </div>
     </v-expand-transition>
+
+    <v-dialog v-model="showRaw" width="700">
+      <v-card>
+        <v-card-title class="headline secondary" primary-title>
+          <span>Raw JSON</span>
+          <v-spacer></v-spacer>
+          <v-btn icon text @click="showRaw = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+
+        <v-progress-linear v-if="loadingRaw" indeterminate color="primary"></v-progress-linear>
+        <v-card-text class="mt-5">
+          <vue-json-pretty v-if="!loadingRaw" :data="rawJson" :highlightMouseoverNode="true"></vue-json-pretty>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script>
 import InfoItem from "@/components/InfoItem.vue";
 import { getTree } from "@/utils/tree.js";
+import { getOperation } from "@/api/node.js";
+import VueJsonPretty from "vue-json-pretty";
 
 export default {
   props: {
@@ -109,7 +134,8 @@ export default {
     address: String
   },
   components: {
-    InfoItem
+    InfoItem,
+    VueJsonPretty
   },
   computed: {
     source() {
@@ -245,7 +271,10 @@ export default {
   data: () => ({
     showParams: false,
     showTreeNodeDetails: false,
-    selectedNode: null
+    selectedNode: null,
+    showRaw: false,
+    rawJson: null,
+    loadingRaw: false
   }),
   methods: {
     getLinkObject(address) {
@@ -268,6 +297,20 @@ export default {
         else if (this.data.network === "carthagenet")
           return `https://carthage.tzkt.io/${address}`;
       }
+    },
+    getRawJSON() {
+      if (this.rawJson != null) {
+        this.showRaw = true;
+        return;
+      }
+      this.showRaw = true;
+      this.loadingRaw = true;
+      getOperation(this.data.network, this.data.level, this.data.hash)
+        .then(res => {
+          this.rawJson = res;
+        })
+        .catch(err => console.log(err))
+        .finally(() => (this.loadingRaw = false));
     }
   }
 };
@@ -336,5 +379,8 @@ export default {
 }
 .v-treeview-node__root {
   min-height: 20px !important;
+}
+.vjs-tree .vjs-value__string {
+  color: green;
 }
 </style>

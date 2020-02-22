@@ -1,26 +1,20 @@
 <template>
   <v-expansion-panel>
-    <v-expansion-panel-header ripple>
+    <v-expansion-panel-header ripple :class="statusHeaderClass">
       <v-row no-gutters>
-        <v-col cols="1" style="max-width: 50px;" class="d-flex align-center">
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-icon :color="color" v-on="on">{{ statusIcon }}</v-icon>
-            </template>
-            {{ value.result.status }}
-          </v-tooltip>
-        </v-col>
         <v-col cols="2" class="d-flex align-center">
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title class="overline">{{ formatDate(value.timestamp) }}</v-list-item-title>
-              <v-list-item-subtitle class="overline grey--text">{{ value.mempool ? 'mempool' : value.level  }}</v-list-item-subtitle>
+              <v-list-item-subtitle
+                class="overline grey--text"
+              >{{ value.mempool ? 'mempool' : value.level }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
         <v-col class="d-flex align-center overline" v-html="text"></v-col>
         <v-col cols="5" class="d-flex align-center hash line">{{ value.hash }}</v-col>
-        <v-col cols="1" class="d-flex align-center justify-center">
+        <v-col cols="1" class="d-flex align-center justify-start">
           <v-icon small class="mr-1">mdi-counter</v-icon>
           <span class="overline">{{ value.counter }}</span>
         </v-col>
@@ -100,10 +94,11 @@ export default {
       if (this.value.result.status === "refused") return "red";
       return "grey";
     },
-    statusColor(){
-      if (this.value.result.status != 'applied') return '#ffedeb';
-      if (this.value.mempool) return 'grey';
-      return '';
+    statusHeaderClass() {
+      if (this.value.result.status === "backtracked") return "backtracked";
+      if (this.value.result.status !== "applied") return "failed";
+      if (this.value.mempool) return "mempool";
+      return "applied";
     },
     statusIcon() {
       if (this.value == null) return "";
@@ -148,11 +143,38 @@ export default {
   font-weight: 400;
 }
 
-.v-expansion-panel-header--active {
+.v-expansion-panel-header--active.applied {
   background-color: #eaf4de;
+}
+
+.v-expansion-panel-header--active.failed {
+  background-color: rgb(255, 238, 238);
+}
+
+.v-expansion-panel-header--active.mempool {
+  background-color: rgb(231, 231, 231);
+}
+.v-expansion-panel-header--active.backtracked {
+  background-color: rgb(253, 244, 228);
 }
 
 .v-expansion-panel-header {
   padding: 8px 24px;
+}
+
+.applied {
+  border-left: 5px solid #6ac21f;
+}
+
+.backtracked {
+  border-left: 5px solid orange;
+}
+
+.failed {
+  border-left: 5px solid red;
+}
+
+.mempool {
+  border-left: 5px solid grey;
 }
 </style>
