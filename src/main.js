@@ -33,6 +33,16 @@ Vue.filter('uxtz', function (value) {
   return `${xtz} \uA729`;
 })
 
+Vue.filter('mutez', function (value) {
+  let xtz = (value / 1000000).toLocaleString(undefined, { maximumFractionDigits: 6 });
+  return `${xtz}`;
+})
+
+
+Vue.filter('bytes', function (value) {
+  return `${value} bytes`;
+})
+
 new Vue({
   router,
   store,

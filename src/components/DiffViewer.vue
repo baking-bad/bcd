@@ -119,6 +119,7 @@ export default {
 
 .number {
   color: rgba(27, 31, 35, 0.3);
+  background-color: rgba(0, 0, 0, 0.02);
   text-align: end;
   min-width: 45px;
 }
@@ -135,18 +136,20 @@ export default {
   white-space: pre-wrap;
   font-weight: normal;
   color: #24292e;
-  font-size: 13px;
+  font-size: 12px;
   background-color: transparent;
-  font-family: 'Roboto Mono', monospace;
+  font-family: "Roboto Mono", monospace;
   vertical-align: text-top;
   display: -webkit-inline-box;
+  margin-top: -3px;
 }
 
 td {
-    padding: 0 10px;
+  padding: 0 10px;
 }
 
 table {
   border-spacing: 0;
+  border: 0;
 }
 </style>

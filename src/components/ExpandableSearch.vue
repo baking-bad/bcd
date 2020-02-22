@@ -6,7 +6,7 @@
           v-show="expanded"
           v-model="model"
           class="hash"
-          style="max-width: 400px; font-size:14px;"
+          style="max-width: 450px; font-size:14px;"
           :search-input.sync="searchText"
           :items="suggests"
           item-text="address"

@@ -37,8 +37,8 @@ export function search(text, fields=[], offset=0, networks=[], time={}, group=0)
 }
 
 
-export function getProject(address) {
-    return api.get(`/project/${address}`)
+export function getContractProject(network, address) {
+    return api.get(`/contract/${network}/${address}/project`)
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
@@ -110,6 +110,16 @@ export function getContractEntrypoints(network, address) {
 
 export function getContractStorage(network, address) {
     return api.get(`/contract/${network}/${address}/storage`)
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+export function getContractMempool(network, address) {
+    return api.get(`/contract/${network}/${address}/mempool`)
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);

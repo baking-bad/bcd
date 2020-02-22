@@ -1,8 +1,19 @@
 <template>
-  <div class="mb-5">
-    <v-row>
-      <v-col cols="12" class="py-0">
-        <span class="operation-title">{{ header }}</span>
+  <div class="my-3">
+    <v-row no-gutters>
+      <v-col cols="2" v-if="data.fee">
+        <InfoItem title="Fee" :subtitle="data.fee | uxtz" />
+      </v-col>
+      <v-col cols="2" v-if="data.gas_limit">
+        <InfoItem title="Gas limit" :subtitle="data.gas_limit | mutez" />
+      </v-col>
+      <v-col cols="2" v-if="data.storage_limit">
+        <InfoItem title="Storage limit" :subtitle="data.storage_limit | bytes" />
+      </v-col>
+    </v-row>
+    <v-row no-gutters>
+      <v-col cols="12" class="title">
+        <span :class="headerClass">{{ header }}</span>
         <v-chip
           class="ml-3"
           :color="statusColor"
@@ -14,21 +25,29 @@
         >{{ data.result.status }}</v-chip>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="4" v-if="data.source" class="py-0">
-        <InfoItem title="Source" :subtitle="data.source" :selected="address == data.source" />
-      </v-col>
-      <v-col cols="4" v-if="data.destination" class="py-0">
+    <v-row no-gutters class="mt-2">
+      <v-col cols="4">
         <InfoItem
-          title="Destination"
-          :subtitle="data.destination"
-          :selected="address == data.destination"
+          :title="sourceHeader"
+          :subtitle="source"
+          :selected="source == this.address"
+          :to="getLinkObject(source)"
+          :href="getTzKTLink(source)"
         />
       </v-col>
-      <v-col cols="3" class="py-0 d-flex flex-horizontal">
-        <InfoItem title="Amount" :subtitle="data.amount | uxtz" v-if="data.amount" />
-        <InfoItem title="Counter" :subtitle="String(data.counter)" v-if="data.counter" />
+      <v-col cols="4">
+        <InfoItem
+          :title="destinationHeader"
+          :subtitle="destination"
+          :selected="destination == this.address"
+          :to="getLinkObject(destination)"
+          :href="getTzKTLink(destination)"
+        />
       </v-col>
+      <v-col cols="2">
+        <InfoItem title="Amount" :subtitle="amount | uxtz" />
+      </v-col>
+      <v-spacer></v-spacer>
       <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="hasDetails">
         <v-btn
           text
@@ -40,80 +59,43 @@
           <span class="overline">{{btnText}} details</span>
         </v-btn>
       </v-col>
-      <v-expand-transition>
-        <v-col cols="12" v-show="showParams">
-          <v-row>
-            <v-col cols="2" v-if="data.gas_limit">
-              <InfoItem title="Gas limit" :subtitle="data.gas_limit| uxtz" />
-            </v-col>
-            <v-col cols="2" v-if="data.result.consumed_gas">
-              <InfoItem title="Consumed Gas" :subtitle="data.result.consumed_gas | uxtz" />
-            </v-col>
-            <v-col cols="2" v-if="data.result.storage_size">
-              <InfoItem title="Storage Size" :subtitle="String(data.result.storage_size)" />
-            </v-col>
-            <v-col cols="2" v-if="data.fee">
-              <InfoItem title="Fee" :subtitle="data.fee | uxtz" />
-            </v-col>
-          </v-row>
-          <v-row class="parameters mx-1">
-            <v-col cols="6" v-if="hasParameters">
-              <span class="overline ml-3">Parameter</span>
-              <v-treeview :items="parameters" hoverable open-all transition>
-                <template v-slot:label="{ item }">
-                  <span>{{ item.name }}:</span>&nbsp;
-                  <span :class="item.type">{{ item.value }}</span>
-                </template>
-                <template v-slot:prepend="{ item, open }">
-                  <v-tooltip v-if="item.type === 'value'" left>
-                    <template v-slot:activator="{ on }">
-                      <v-icon small v-on="on">{{ getTreeNodeIcon(item.value_type) }}</v-icon>
-                    </template>
-                    <span>{{item.value_type}}</span>
-                  </v-tooltip>
-                  <v-icon small v-else-if="open">mdi-folder-open</v-icon>
-                  <v-icon small v-else>mdi-folder</v-icon>
-                </template>
-              </v-treeview>
-            </v-col>
-            <v-col cols="6" v-if="hasStorageDiff">
-              <span class="overline ml-3">Storage</span>
-              <v-treeview :items="storage" hoverable open-all transition>
-                <template v-slot:label="{ item }">
-                  <div :class="`${item.kind} pl-1`" @click="onClickTreeNode(item)">
-                    <span>{{ item.name }}:</span>&nbsp;
-                    <span :class="item.type">{{ item.value }}</span>
-                  </div>
-                </template>
-                <template v-slot:prepend="{ item, open }">
-                  <v-tooltip v-if="item.type === 'value'" left>
-                    <template v-slot:activator="{ on }">
-                      <v-icon small v-on="on">{{ getTreeNodeIcon(item.value_type) }}</v-icon>
-                    </template>
-                    <span>{{item.value_type}}</span>
-                  </v-tooltip>
-                  <v-icon small v-else-if="open">mdi-folder-open</v-icon>
-                  <v-icon small v-else>mdi-folder</v-icon>
-                </template>
-              </v-treeview>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-expand-transition>
     </v-row>
 
-    <v-dialog v-model="showTreeNodeDetails" max-width="400">
-      <v-card v-if="selectedNode">
-        <v-card-title class="overline" style="font-size:15px;">Key: {{ selectedNode.name }}</v-card-title>
-
-        <v-card-text class="caption">Value: {{ selectedNode.value}}</v-card-text>
-
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="green darken-1" text @click="showTreeNodeDetails = false">Close</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <v-expand-transition>
+      <div v-show="showParams">
+        <v-row>
+          <v-col cols="2" v-if="data.result.consumed_gas">
+            <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
+          </v-col>
+          <v-col cols="2" v-if="data.result.paid_storage_size_diff">
+            <InfoItem title="Paid storage diff" :subtitle="paidStorageDiff" />
+          </v-col>
+        </v-row>
+        <v-row class="parameters mx-1">
+          <v-col cols="6" v-if="hasParameters">
+            <span class="overline ml-3">Parameter</span>
+            <v-treeview :items="parameters" hoverable open-all transition>
+              <template v-slot:label="{ item }">
+                <span>{{ item.name }}:</span>&nbsp;
+                <span :class="item.type">{{ item.value }}</span>
+              </template>
+            </v-treeview>
+          </v-col>
+          <v-col cols="6" v-if="hasStorageDiff">
+            <span class="overline ml-3">Storage</span>&nbsp;
+            <span class="grey--text caption">{{ data.result.storage_size }} bytes</span>
+            <v-treeview :items="storage" hoverable open-all transition>
+              <template v-slot:label="{ item }">
+                <div :class="`${item.kind} pl-1`">
+                  <span>{{ item.name }}:</span>&nbsp;
+                  <span :class="item.type">{{ item.value }}</span>
+                </div>
+              </template>
+            </v-treeview>
+          </v-col>
+        </v-row>
+      </div>
+    </v-expand-transition>
   </div>
 </template>
 
@@ -130,6 +112,66 @@ export default {
     InfoItem
   },
   computed: {
+    source() {
+      if (this.data.source) {
+        return this.data.source;
+      }
+      return "unset";
+    },
+    destination() {
+      if (this.data.destination) {
+        return this.data.destination;
+      }
+      return "unset";
+    },
+    sourceHeader() {
+      if (!this.data.internal) return "Source";
+      return "Sender";
+    },
+    destinationHeader() {
+      if (this.data.kind === "transaction") {
+        return "Destination";
+      } else if (this.data.kind === "delegation") {
+        return "Delegate";
+      } else if (this.data.kind === "origination") {
+        return "Originated Contract";
+      } else if (this.data.kind === "reveal") {
+        return "Public Key";
+      }
+      return "Destination";
+    },
+    consumedGas() {
+      if (this.data.result.consumed_gas) {
+        let s = this.$options.filters.mutez(this.data.result.consumed_gas);
+        if (this.data.gas_limit > 0) {
+          s += ` (${(
+            (this.data.result.consumed_gas * 100) /
+            this.data.gas_limit
+          ).toFixed(0)}%)`;
+        }
+        return s;
+      }
+      return "0";
+    },
+    paidStorageDiff() {
+      if (this.data.result.paid_storage_size_diff) {
+        let s = this.$options.filters.bytes(
+          this.data.result.paid_storage_size_diff
+        );
+        if (this.data.storage_limit > 0) {
+          s += ` (${(
+            (this.data.result.paid_storage_size_diff * 100) /
+            this.data.storage_limit
+          ).toFixed(0)}%)`;
+        }
+        return s;
+      }
+      return "0";
+    },
+    amount() {
+      if (isNaN(this.data.amount)) return 0;
+      return this.data.amount;
+    },
     entryName() {
       if (this.address == this.data.destination) {
         if (
@@ -190,7 +232,14 @@ export default {
       if (this.data.result.status === "applied") return "green";
       if (this.data.result.status === "backtracked") return "orange";
       if (this.data.result.status === "failed") return "red";
+      if (this.data.result.status === "lost") return "red";
+      if (this.data.result.status === "branch_refused") return "red";
+      if (this.data.result.status === "refused") return "red";
       return "light-grey";
+    },
+    headerClass() {
+      if (this.entryName != null) return "overline call";
+      return `overline ${this.data.kind}`;
     }
   },
   data: () => ({
@@ -199,33 +248,26 @@ export default {
     selectedNode: null
   }),
   methods: {
-    onClickTreeNode(item) {
-      if (item.type === "value") {
-        this.selectedNode = item;
-        this.showTreeNodeDetails = true;
+    getLinkObject(address) {
+      if (address.startsWith("KT") && address != this.address) {
+        return {
+          name: "project",
+          params: {
+            address: address,
+            network: this.data.network
+          }
+        };
       }
     },
-    getTreeNodeIcon(valueType) {
-      if (valueType === "address") {
-        return "mdi-alphabetical-variant";
-      } else if (valueType === "nat" || valueType == "int") {
-        return "mdi-numeric";
-      } else if (valueType === "bool") {
-        return "mdi-format-bold";
-      } else if (valueType === "bytes") {
-        return "mdi-hexadecimal";
-      } else if (valueType === "timestamp") {
-        return "mdi-clock-outline";
-      } else if (valueType === "mutez") {
-        return "mdi-cash-100";
-      } else if (valueType === "contract") {
-        return "mdi-file-document-outline";
-      } else if (valueType === "key") {
-        return "mdi-key";
-      } else if (valueType === "lambda") {
-        return "mdi-lambda";
+    getTzKTLink(address) {
+      if (address.startsWith("tz")) {
+        if (this.data.network === "mainnet")
+          return `https://tzkt.io/${address}`;
+        else if (this.data.network === "babylonnet")
+          return `https://babylon.tzkt.io/${address}`;
+        else if (this.data.network === "carthagenet")
+          return `https://carthage.tzkt.io/${address}`;
       }
-      return "mdi-alphabetical";
     }
   }
 };
@@ -233,6 +275,13 @@ export default {
 
 
 <style lang="scss" scoped>
+.address {
+  font-size: 13px;
+}
+
+.internal {
+  border-left: 1px solid lightgrey;
+}
 .operation-body {
   .operation-title {
     font-size: 13px;
@@ -268,10 +317,24 @@ export default {
     color: black;
   }
 }
+
+.title {
+  .call {
+    color: #8b008b;
+  }
+  .delegation,
+  .origination {
+    color: navy;
+  }
+  color: #76a34e;
+}
 </style>
 
 <style>
+.v-treeview-node__label {
+  white-space: unset;
+}
 .v-treeview-node__root {
   min-height: 20px !important;
 }
-</style>showTreeNodeDetails
+</style>

@@ -70,9 +70,13 @@ function parseType(val, typ) {
         return `${xtz} \uA729`;
     } else if (typ === "timestamp") {
         if (isNaN(parseInt(val, 10))) {
-            return dayjs(val).format("D MMMM YYYY");
+            let d = dayjs(val);
+            if (d.isValid())
+                return d.format("D MMMM YYYY");
         } else {
-            return dayjs(val * 1000).format("D MMMM YYYY HH:mm");
+            let d = dayjs(val * 1000);
+            if (d.isValid())
+                return d.format("D MMMM YYYY HH:mm");
         }
     }
     return val;

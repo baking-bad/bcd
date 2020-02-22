@@ -221,12 +221,6 @@
           </v-col>
           <v-col cols="5" class="d-flex align-end">
             <ExpandableSearch></ExpandableSearch>
-            <v-btn icon style="margin-bottom: 2px;" class="mx-1">
-              <v-icon>mdi-plus</v-icon>
-            </v-btn>
-            <v-btn icon style="margin-bottom: 2px;">
-              <v-icon>mdi-eye-outline</v-icon>
-            </v-btn>
           </v-col>
           <v-col cols="12">
             <v-slide-x-reverse-transition mode="out-in">
@@ -303,7 +297,7 @@ export default {
         .finally(() => this.successRequests++);
 
       api
-        .getProject(address)
+        .getContractProject(network, address)
         .then(res => {
           this.contracts = res;
         })
