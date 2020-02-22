@@ -5,11 +5,19 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
-        error: null
+        error: null,
+        isAuthorized: false,
+        profile: null
     },
     mutations: {
         setError(state, value) {
             state.error = value
+        },
+        setIsAuthorized(state, value) {
+            state.isAuthorized = value
+        },
+        setProfile(state, value) {
+            state.profile = value
         }
     },
     actions: {
@@ -18,9 +26,18 @@ export default new Vuex.Store({
                 text: text
             })
         },
-
         hideError({ commit }) {
             commit('setError', null)
-        }
+        },
+        setIsAuthorized({ commit }, value) {
+            commit('setIsAuthorized', value)
+        },
+        setProfile({ commit }, value) {
+            commit('setProfile', value)
+        },
+        logout({ commit }) {
+            commit('setProfile', null);
+            commit('setIsAuthorized', false);
+        },
     }
 });

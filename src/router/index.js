@@ -6,6 +6,7 @@ import HomeToolbar from '@/components/HomeToolbar.vue';
 import Nav from '@/components/Nav.vue';
 
 import Home from '@/views/Home.vue'
+import Welcome from '@/views/Welcome.vue'
 import ExtendedSearch from '@/views/ExtendedSearch.vue'
 
 import Project from '@/views/project/Project.vue'
@@ -15,12 +16,14 @@ import EntrypointsTab from '@/views/project/EntrypointsTab.vue'
 import StorageTab from '@/views/project/StorageTab.vue'
 import MigrationTab from '@/views/project/MigrationTab.vue'
 
+import Dashboard from '@/views/dashboard/Dashboard.vue'
+
 import Diff from '@/views/Diff.vue'
 import Projects from '@/views/Projects.vue'
 
 Vue.use(VueRouter)
 
-export default new Router({
+const router = new Router({
     linkActiveClass: '',
     linkExactActiveClass: '',
     mode: 'history',
@@ -32,6 +35,14 @@ export default new Router({
                 toolbar: HomeToolbar
             },
             name: 'home'
+        },
+        {
+            path: '/welcome',
+            components: {
+                default: Home,
+                toolbar: Welcome
+            },
+            name: 'welcome'
         },
         {
             path: '/search',
@@ -95,6 +106,23 @@ export default new Router({
                     component: MigrationTab
                 }
             ]
-        }
+        },
+        {
+            path: '/dashboard',
+            components: {
+                default: Dashboard,
+                nav: Nav
+            },
+            children: [
+                {
+                    path: '',
+                    name: 'dashboard'
+                }
+            ]
+        },
+
+        { path: '*', redirect: '/' }
     ]
 });
+
+export default router;

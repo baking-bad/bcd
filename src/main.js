@@ -4,6 +4,9 @@ import App from './App.vue'
 import store from './store'
 import router from './router'
 
+import { getProfile } from "@/api/index.js";
+import { getJwt } from "@/utils/auth.js";
+
 import vuetify from './plugins/vuetify';
 
 import dayjs from 'dayjs';
@@ -41,6 +44,27 @@ Vue.filter('mutez', function (value) {
 
 Vue.filter('bytes', function (value) {
   return `${value} bytes`;
+})
+
+router.beforeEach((to, from, next) => {
+  const privatePages = ['/test'];
+  const authRequired = privatePages.includes(to.path);
+  const loggedIn = getJwt() !== null;
+
+  store.dispatch('setIsAuthorized', loggedIn)
+  if (authRequired && !loggedIn) {
+    return next('/');
+  }
+
+  if (loggedIn) {
+    getProfile()
+      .then(res => {
+        store.dispatch('setProfile', res);
+      })
+      .catch(err => console.log(err));
+  }
+
+  next();
 })
 
 new Vue({

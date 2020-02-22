@@ -1,5 +1,7 @@
 const axios = require('axios').default;
 
+import { getJwt } from "@/utils/auth.js";
+
 const api = axios.create({
     baseURL: 'http://localhost:14000/v1/',
     timeout: 30000,
@@ -8,7 +10,7 @@ const api = axios.create({
 
 export class RequestFailedError extends Error { }
 
-export function search(text, fields=[], offset=0, networks=[], time={}, group=0) {
+export function search(text, fields = [], offset = 0, networks = [], time = {}, group = 0) {
     let params = {
         q: text
     }
@@ -67,7 +69,7 @@ export function getContractOperations(network, address, offset = 0) {
         })
 }
 
-export function getContractCode(network, address, level=0) {
+export function getContractCode(network, address, level = 0) {
     return api.get(`/contract/${network}/${address}/code?level=${level}`)
         .then((res) => {
             if (res.status != 200) {
@@ -139,7 +141,7 @@ export function getDiff(sn, sa, dn, da) {
 }
 
 export function vote(sn, sa, dn, da, vote) {
-    return api.post(`/vote`,{
+    return api.post(`/vote`, {
         src: sa,
         src_network: sn,
         dest: da,
@@ -156,6 +158,21 @@ export function vote(sn, sa, dn, da, vote) {
 
 export function getProjects() {
     return api.get(`/projects`)
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+export function getProfile() {
+    return api.get(`/profile`,
+        {
+            headers: {
+                'Authorization': getJwt()
+            }
+        })
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
