@@ -32,27 +32,24 @@
           </v-tooltip>
         </template>
       </v-list-item-group>
-    </v-list>
-    <v-divider v-if="isAuthorized"></v-divider>
+      <v-divider v-if="isAuthorized"></v-divider>
 
-    <router-link
-      :to="{name: 'dashboard'}"
-      class="d-flex justify-center align-center"
-      style="height: 63px"
-      v-if="isAuthorized && profile != null"
-    >
-      <v-tooltip right>
-        <template v-slot:activator="{ on }">
-          <v-avatar size="38" v-on="on">
-            <img :src="profile.avatarURL" :alt="profile.login" />
-          </v-avatar>
-        </template>
-        {{ profile.login }}
-      </v-tooltip>
-    </router-link>
-
-    <v-list nav v-if="isAuthorized && profile != null">
-      <v-list-item-group>
+      <router-link
+        :to="{name: 'dashboard'}"
+        class="d-flex justify-center align-center"
+        style="height: 63px"
+        v-if="isAuthorized && profile != null"
+      >
+        <v-tooltip right>
+          <template v-slot:activator="{ on }">
+            <v-avatar size="38" v-on="on">
+              <img :src="profile.avatarURL" :alt="profile.login" />
+            </v-avatar>
+          </template>
+          {{ profile.login }}
+        </v-tooltip>
+      </router-link>
+      <v-list-item-group v-if="isAuthorized && profile != null">
         <template v-for="(item, idx) in privateItems">
           <v-tooltip :key="idx" right>
             <template v-slot:activator="{ on }">

@@ -37,7 +37,7 @@
 <script>
 import * as api from "@/api/index.js";
 
-import { checkAddress } from "@/utils/tz.js";
+import { checkAddress, checkOperation } from "@/utils/tz.js";
 
 export default {
   props: {
@@ -62,6 +62,9 @@ export default {
       if (!this.model) return;
       let value = this.model.address || this.model;
       let network = this.model.network;
+      if (checkOperation(value)) {
+        this.$router.push({ path: `/opg/${value}` });
+      }
       if (checkAddress(value)) {
         this.$router.push({ path: `/${network}/${value}` });
       }

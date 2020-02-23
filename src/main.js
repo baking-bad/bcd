@@ -56,7 +56,7 @@ router.beforeEach((to, from, next) => {
     return next('/');
   }
 
-  if (loggedIn) {
+  if (loggedIn && store.state.profile === null) {
     getProfile()
       .then(res => {
         store.dispatch('setProfile', res);

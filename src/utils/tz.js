@@ -7,3 +7,11 @@ export function checkAddress(address) {
     if (bs58check.decode(address) === undefined) return false;
     return true;
 }
+
+export function checkOperation(operation) {
+    if (operation === undefined && operation == null) return false;
+    if (typeof operation !== "string") return false;
+    if (operation.length != 51 && !operation.startsWith("o")) return false;
+    if (bs58check.decode(operation) === undefined) return false;
+    return true;
+}

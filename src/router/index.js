@@ -21,6 +21,7 @@ import SubscriptionsTab from '@/views/dashboard/SubscriptionsTab.vue'
 
 import Diff from '@/views/Diff.vue'
 import Projects from '@/views/Projects.vue'
+import OPG from '@/views/OPG.vue'
 
 Vue.use(VueRouter)
 
@@ -52,6 +53,14 @@ const router = new Router({
                 nav: Nav
             },
             name: 'search'
+        },
+        {
+            path: '/opg/:hash([0-9A-z]{51})',
+            components: {
+                default: OPG,
+                nav: Nav
+            },
+            name: 'opg'
         },
         {
             path: '/diff/:network(mainnet|babylonnet|zeronet|carthagenet)/:address([0-9A-z]{36})/:network2(mainnet|babylonnet|zeronet|carthagenet)/:address2([0-9A-z]{36})',

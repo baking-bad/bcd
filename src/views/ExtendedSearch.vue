@@ -233,7 +233,7 @@
 
 <script>
 import * as api from "@/api/index.js";
-import { checkAddress } from "@/utils/tz.js";
+import { checkAddress, checkOperation } from "@/utils/tz.js";
 
 import dayjs from "dayjs";
 
@@ -368,6 +368,9 @@ export default {
     },
 
     onSearch(value) {
+      if (checkOperation(value)) {
+        this.$router.push({ path: `/opg/${value}` });
+      }
       if (checkAddress(value.address)) {
         this.$router.push({ path: `/${value.network}/${value.address}` });
       }
@@ -385,6 +388,9 @@ export default {
     },
     search(text, fields = [], push = false, networks = [], time = {}) {
       let hasText = text != null && text.length >= 2;
+      if (checkOperation(text)) {
+        return
+      }
       if (!this.loading && hasText && !this.completed) {
         this.loading = true;
         let offset = push ? this.suggests.length : 0;

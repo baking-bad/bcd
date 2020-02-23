@@ -12,7 +12,7 @@
             <v-icon>mdi-bell-outline</v-icon>
           </v-btn>
           <v-btn text icon @click="unsubscribe" v-else>
-            <v-icon>mdi-bell-off</v-icon>
+            <v-icon color="primary">mdi-bell</v-icon>
           </v-btn>
         </v-list-item-action>
       </v-list-item>

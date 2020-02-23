@@ -69,6 +69,24 @@
 
     <v-expand-transition>
       <div v-show="showParams">
+        <v-row v-if="errors">
+          <v-col>
+            <v-alert
+              border="left"
+              color="red lighten-2"
+              dense
+              prominent
+              text
+              outlined
+              type="error"
+              v-for="(err, idx) in errors"
+              :key="idx"
+            >
+              <div class="red--text subtitle-1">{{ getError(err).title }}</div>
+              <div class="caption">{{ getError(err).descr }}</div>
+            </v-alert>
+          </v-col>
+        </v-row>
         <v-row>
           <v-col cols="2" v-if="data.result.consumed_gas">
             <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
@@ -77,7 +95,7 @@
             <InfoItem title="Paid storage diff" :subtitle="paidStorageDiff" />
           </v-col>
         </v-row>
-        <v-row class="parameters mx-1">
+        <v-row class="parameters mx-1" v-if="hasParameters || hasStorageDiff">
           <v-col cols="6" v-if="hasParameters">
             <span class="overline ml-3">Parameter</span>
             <v-treeview :items="parameters" hoverable open-all transition>
@@ -126,6 +144,7 @@
 import InfoItem from "@/components/InfoItem.vue";
 import { getTree } from "@/utils/tree.js";
 import { getTzKTLink } from "@/utils/tzkt.js";
+import { getError } from "@/utils/errors.js";
 import { getOperation } from "@/api/node.js";
 import VueJsonPretty from "vue-json-pretty";
 
@@ -139,6 +158,10 @@ export default {
     VueJsonPretty
   },
   computed: {
+    errors() {
+      if (!this.data.result.errors) return null;
+      return JSON.parse(this.data.result.errors);
+    },
     source() {
       if (this.data.source) {
         return this.data.source;
@@ -237,7 +260,9 @@ export default {
       return getTree(this.data.storage_diff);
     },
     hasDetails() {
-      return this.hasParameters || this.hasStorageDiff;
+      return (
+        this.hasParameters || this.hasStorageDiff || this.data.result.errors
+      );
     },
     hasParameters() {
       return (
@@ -305,6 +330,9 @@ export default {
         })
         .catch(err => console.log(err))
         .finally(() => (this.loadingRaw = false));
+    },
+    getError(err) {
+      return getError(err.id);
     }
   }
 };

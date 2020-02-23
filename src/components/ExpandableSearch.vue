@@ -49,7 +49,7 @@
 <script>
 import * as api from "@/api/index.js";
 
-import { checkAddress } from "@/utils/tz.js";
+import { checkAddress, checkOperation } from "@/utils/tz.js";
 
 export default {
   name: "ExpandableSearch",
@@ -74,6 +74,9 @@ export default {
   methods: {
     onSearch() {
       if (!this.model) return;
+      if (checkOperation(this.model)) {
+        this.$router.push({ path: `/opg/${this.model}` });
+      }
       if (checkAddress(this.model.address)) {
         this.$router.push({ path: `/${this.model.network}/${this.model.address}` });
       }

@@ -163,3 +163,13 @@ export function getProjects() {
             return res.data
         })
 }
+
+export function getOPG(hash) {
+    return api.get(`/opg/${hash}`)
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
