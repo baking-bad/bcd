@@ -4,7 +4,7 @@ import App from './App.vue'
 import store from './store'
 import router from './router'
 
-import { getProfile } from "@/api/index.js";
+import { getProfile } from "@/api/profile.js";
 import { getJwt } from "@/utils/auth.js";
 
 import vuetify from './plugins/vuetify';
@@ -47,7 +47,7 @@ Vue.filter('bytes', function (value) {
 })
 
 router.beforeEach((to, from, next) => {
-  const privatePages = ['/test'];
+  const privatePages = ['/dashboard', '/dashboard/'];
   const authRequired = privatePages.includes(to.path);
   const loggedIn = getJwt() !== null;
 

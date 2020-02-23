@@ -12,17 +12,23 @@
             </v-list-item-content>
           </v-list-item>
         </v-col>
-        <v-col class="d-flex align-center overline" v-html="text"></v-col>
+        <v-col class="d-flex align-center">
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title class="overline">{{ text }}</v-list-item-title>
+              <v-list-item-subtitle>
+                <span
+                  class="caption grey--text"
+                  v-if="value && !value.mempool && value.internal_operations.length"
+                >{{ value.internal_operations.length }} internal</span>
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-col>
         <v-col cols="5" class="d-flex align-center hash line">{{ value.hash }}</v-col>
-        <v-col cols="1" class="d-flex align-center justify-start">
+        <v-col cols="1" class="d-flex align-center justify-start offset-1">
           <v-icon small class="mr-1">mdi-counter</v-icon>
           <span class="overline">{{ value.counter }}</span>
-        </v-col>
-        <v-col cols="1" class="d-flex align-center justify-end mr-5">
-          <span
-            class="caption grey--text"
-            v-if="value && !value.mempool && value.internal_operations.length"
-          >{{ value.internal_operations.length }} internal</span>
         </v-col>
       </v-row>
     </v-expansion-panel-header>

@@ -1,7 +1,5 @@
 const axios = require('axios').default;
 
-import { getJwt } from "@/utils/auth.js";
-
 const api = axios.create({
     baseURL: 'http://localhost:14000/v1/',
     timeout: 30000,
@@ -158,21 +156,6 @@ export function vote(sn, sa, dn, da, vote) {
 
 export function getProjects() {
     return api.get(`/projects`)
-        .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
-            return res.data
-        })
-}
-
-export function getProfile() {
-    return api.get(`/profile`,
-        {
-            headers: {
-                'Authorization': getJwt()
-            }
-        })
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);

@@ -3,15 +3,15 @@
     <v-overlay :value="loading" absolute>
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <v-container class="py-0 my-0">
+    <v-container fluid class="py-0 my-0">
       <v-row no-gutters>
         <v-col cols="12" style="height: 64px;" class="d-flex align-end">
           <v-tabs background-color="transparent" slider-color="primary">
-            <v-tab replace class="overline">
-              <v-icon left small>mdi-content-duplicate</v-icon>My contracts
+            <v-tab :to="{ name: 'subscriptions' }" replace class="overline">
+              <v-icon left small>mdi-content-duplicate</v-icon>Subscriptions
             </v-tab>
             <v-tab replace class="overline">
-              <v-icon left small>mdi-poll</v-icon>My statistics
+              <v-icon left small>mdi-poll</v-icon>Statistics
             </v-tab>
           </v-tabs>
         </v-col>

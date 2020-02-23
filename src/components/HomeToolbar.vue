@@ -33,7 +33,7 @@
           </v-list-item>
         </v-list>
       </v-menu>
-      <router-link v-else :to="{name: 'dashboard'}" class="font-weight-light toolbar-title">
+      <router-link v-else-if="profile != null" :to="{name: 'dashboard'}" class="font-weight-light toolbar-title">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-avatar size="24" v-on="on" class="mr-4">

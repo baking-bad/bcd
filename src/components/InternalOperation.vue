@@ -125,6 +125,7 @@
 <script>
 import InfoItem from "@/components/InfoItem.vue";
 import { getTree } from "@/utils/tree.js";
+import { getTzKTLink } from "@/utils/tzkt.js";
 import { getOperation } from "@/api/node.js";
 import VueJsonPretty from "vue-json-pretty";
 
@@ -289,14 +290,7 @@ export default {
       }
     },
     getTzKTLink(address) {
-      if (address.startsWith("tz")) {
-        if (this.data.network === "mainnet")
-          return `https://tzkt.io/${address}`;
-        else if (this.data.network === "babylonnet")
-          return `https://babylon.tzkt.io/${address}`;
-        else if (this.data.network === "carthagenet")
-          return `https://carthage.tzkt.io/${address}`;
-      }
+      return getTzKTLink(this.data.network, address);
     },
     getRawJSON() {
       if (this.rawJson != null) {

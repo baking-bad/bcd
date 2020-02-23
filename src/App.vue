@@ -12,11 +12,10 @@
           </v-fab-transition>
       </v-content>
 
-      <v-footer v-if="$vuetify.breakpoint.xsOnly && $route.name !== 'home'" padless absolute style="z-index:0;" app>
-          <v-card flat tile class="grey lighten-4 text-center" width="100%">
-              <v-divider />
+      <v-footer v-if="$route.name === 'home'" padless absolute app>
+          <v-card flat tile class="text-center" width="100%">
               <v-card-text class="py-1">
-                  Copyright © 2019 <a href="https://baking-bad.org/docs" target="_blank">Baking Bad</a><span class="hide-nano">. All rights reserved.</span>
+                 Pictures by <a href="https://www.behance.net/gallery/23957341/href" target="_blank">Guillermo Prestegui</a>
               </v-card-text>
           </v-card>
       </v-footer>

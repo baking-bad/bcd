@@ -17,6 +17,7 @@ import StorageTab from '@/views/project/StorageTab.vue'
 import MigrationTab from '@/views/project/MigrationTab.vue'
 
 import Dashboard from '@/views/dashboard/Dashboard.vue'
+import SubscriptionsTab from '@/views/dashboard/SubscriptionsTab.vue'
 
 import Diff from '@/views/Diff.vue'
 import Projects from '@/views/Projects.vue'
@@ -116,7 +117,13 @@ const router = new Router({
             children: [
                 {
                     path: '',
-                    name: 'dashboard'
+                    name: 'dashboard',
+                    redirect: 'subscriptions'
+                },
+                {
+                    path: 'subscriptions',
+                    name: 'subscriptions',
+                    component: SubscriptionsTab
                 }
             ]
         },

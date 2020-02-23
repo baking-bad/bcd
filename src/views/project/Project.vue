@@ -3,202 +3,10 @@
     <v-overlay :value="loading" absolute>
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <div v-if="contracts != null">
-      <v-navigation-drawer app fixed right width="400" class="elevation-1" v-if="contract">
-        <v-list class="py-1">
-          <v-list-item two-line>
-            <v-list-item-content>
-              <v-list-item-title class="hash">{{ contract.address }}</v-list-item-title>
-              <v-list-item-subtitle class="overline">Deployed {{ formatDate(contract.timestamp) }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
+    <div v-if="contract">
+      <ProjectNav :contract="contract"/>
 
-          <v-list-item v-if="contract.manager">
-            <v-list-item-avatar size="28" class="mr-3">
-              <v-tooltip left>
-                <template v-slot:activator="{ on }">
-                  <v-icon small v-on="on">mdi-doctor</v-icon>
-                </template>
-                <span>Deployed by</span>
-              </v-tooltip>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="overline">Deployed by</v-list-item-title>
-              <v-list-item-subtitle>{{ contract.manager }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="contract.delegate">
-            <v-list-item-avatar size="28" class="mr-3">
-              <v-tooltip left>
-                <template v-slot:activator="{ on }">
-                  <v-icon small v-on="on">mdi-account-check-outline</v-icon>
-                </template>
-                <span>Delegated to</span>
-              </v-tooltip>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="overline">Delegated to</v-list-item-title>
-              <v-list-item-subtitle>{{ contract.delegate }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="contract.last_action">
-            <v-list-item-avatar size="28" class="mr-3">
-              <v-tooltip left>
-                <template v-slot:activator="{ on }">
-                  <v-icon small v-on="on">mdi-calendar-clock</v-icon>
-                </template>
-                <span>Last call</span>
-              </v-tooltip>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-subtitle>Last call {{ formatDate(contract.last_action) }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="contract.tx_count">
-            <v-list-item-avatar size="28" class="mr-3">
-              <v-tooltip left>
-                <template v-slot:activator="{ on }">
-                  <v-icon small v-on="on">mdi-swap-horizontal</v-icon>
-                </template>
-                <span>Operations count</span>
-              </v-tooltip>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-subtitle>{{ contract.tx_count }} operations</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="contract.sum_tx_amount">
-            <v-list-item-avatar size="28" class="mr-3">
-              <v-tooltip left>
-                <template v-slot:activator="{ on }">
-                  <v-icon small v-on="on">mdi-sigma</v-icon>
-                </template>
-                <span>Summary amount</span>
-              </v-tooltip>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-subtitle>{{ contract.sum_tx_amount| uxtz }}</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
-
-        <div class="px-4 pb-4">
-          <v-chip
-            color="secondary"
-            text-color="grey darken-1"
-            class="mr-1 caption"
-            small
-            label
-            pill
-          >{{ contract.network }}</v-chip>
-          <v-chip
-            color="secondary"
-            text-color="grey darken-1"
-            class="mr-1 caption"
-            small
-            label
-            pill
-          >{{ contract.language }}</v-chip>
-          <template v-for="tag in tags">
-            <v-chip
-              :key="tag"
-              color="secondary"
-              text-color="grey darken-1"
-              class="mr-1 caption"
-              small
-              label
-              pill
-            >{{ tag.replace('_', ' ') }}</v-chip>
-          </template>
-        </div>
-
-        <v-tabs grow background-color="transparent" slider-color="primary" v-model="projectTab">
-          <v-tab class="overline">
-            <v-icon left small>mdi-content-copy</v-icon>
-            Same ({{ contracts.same.length }})
-          </v-tab>
-          <v-tab class="overline">
-            <v-icon left small>mdi-approximately-equal</v-icon>
-            Similar ({{ contracts.similar.length }})
-          </v-tab>
-        </v-tabs>
-
-        <v-tabs-items v-model="projectTab">
-          <v-tab-item>
-            <v-list two-line class="pa-0" v-if="contracts.same && contracts.same.length > 0">
-              <v-list-item-group active-class="light-green--text text--darken-2">
-                <template v-for="(item) in contracts.same">
-                  <ContractItem
-                    class="py-2"
-                    :item="item"
-                    :key="item.address"
-                    :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
-                  />
-                </template>
-              </v-list-item-group>
-            </v-list>
-            <div v-else class="d-flex flex-column align-center justify-center mt-10">
-              <v-icon size="75">mdi-blur</v-icon>
-              <span class="overline mt-3">No same contracts</span>
-            </div>
-          </v-tab-item>
-          <v-tab-item>
-            <v-list two-line class="pa-0" v-if="contracts.similar && contracts.similar.length > 0">
-              <v-list-item-group active-class="light-green--text text--darken-2">
-                <template v-for="(item) in contracts.similar">
-                  <v-list-item
-                    :three-line="item.count > 1"
-                    :two-line="item.count <= 1"
-                    :key="item.address"
-                    :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
-                    class="py-2"
-                  >
-                    <v-list-item-avatar size="25">
-                      <v-tooltip left>
-                        <template v-slot:activator="{ on }">
-                          <v-btn v-on="on" text icon @click.prevent="onDiffClick(item)">
-                            <v-icon small>mdi-vector-difference</v-icon>
-                          </v-btn>
-                        </template>
-                        <span>Show diff</span>
-                      </v-tooltip>
-                    </v-list-item-avatar>
-                    <v-list-item-content>
-                      <v-list-item-title class="contract-item-address hash" v-text="item.address"></v-list-item-title>
-                      <v-list-item-subtitle class="overline">{{item.language}}</v-list-item-subtitle>
-                      <v-list-item-subtitle
-                        class="caption grey--text text-lighten-5"
-                        v-if="item.count > 1"
-                      >{{item.count - 1}} same contracts</v-list-item-subtitle>
-                    </v-list-item-content>
-
-                    <v-list-item-action>
-                      <v-chip
-                        x-small
-                        label
-                        v-text="item.network"
-                        color="secondary"
-                        class="grey--text text--darken-3"
-                      ></v-chip>
-                      <v-list-item-action-text>{{ item.timestamp | fromNow }}</v-list-item-action-text>
-                      <v-list-item-action-text>
-                        <span v-if="item.added" class="primary--text">+&nbsp;{{item.added }}&#9;</span>
-                        <span v-if="item.removed" class="red--text">-&nbsp;{{item.removed }}</span>
-                      </v-list-item-action-text>
-                    </v-list-item-action>
-                  </v-list-item>
-                </template>
-              </v-list-item-group>
-            </v-list>
-            <div v-else class="d-flex flex-column align-center justify-center mt-10">
-              <v-icon size="75">mdi-blur</v-icon>
-              <span class="overline mt-3">No similar contracts</span>
-            </div>
-          </v-tab-item>
-        </v-tabs-items>
-      </v-navigation-drawer>
-
-      <v-container class="py-0 my-0">
+      <v-container fluid class="py-0 my-0">
         <v-row no-gutters>
           <v-col cols="7" style="height: 64px;" class="d-flex align-end">
             <v-tabs background-color="transparent" slider-color="primary" v-if="contract">
@@ -235,53 +43,32 @@
 
 <script>
 import * as api from "@/api/index.js";
-import ContractItem from "@/components/ContractItem.vue";
 import ExpandableSearch from "@/components/ExpandableSearch.vue";
-
-import dayjs from "dayjs";
+import ProjectNav from "@/views/project/Nav.vue";
 
 export default {
   name: "Project",
   components: {
-    ContractItem,
+    ProjectNav,
     ExpandableSearch
   },
   computed: {
     hasEntrypoints() {
       return (
-        this.contract != null &&
-        this.contract !== undefined &&
         this.contract.entrypoints !== undefined &&
         this.contract.entrypoints.length > 0
       );
     },
-    tags() {
-      if (
-        this.contract != null &&
-        this.contract !== undefined &&
-        this.contract.tags !== undefined &&
-        this.contract.tags.length > 0
-      )
-        return [];
-      return this.contract.tags;
-    },
-    loading() {
-      return this.successRequests < 2;
-    },
     hasMigration() {
       return (
-        this.contract != null &&
-        this.contract !== undefined &&
         this.contract.network === 'mainnet' &&
         this.contract.level < 655360
       );
     }
   },
   data: () => ({
-    contracts: null,
-    projectTab: 0,
     contract: null,
-    successRequests: 0
+    loading: true
   }),
   created() {
     this.requestData(this.$route.params.network, this.$route.params.address);
@@ -294,33 +81,7 @@ export default {
           this.contract = res;
         })
         .catch(err => console.log(err))
-        .finally(() => this.successRequests++);
-
-      api
-        .getContractProject(network, address)
-        .then(res => {
-          this.contracts = res;
-        })
-        .catch(err => console.log(err))
-        .finally(() => this.successRequests++);
-    },
-    formatDate(value) {
-      if (value) {
-        let val = dayjs(value);
-        if (val.unix() > 0) return val.format("MMM D, YYYY");
-      }
-    },
-    onDiffClick(item) {
-      let routeData = this.$router.resolve({
-        name: "diff",
-        params: {
-          address: this.$route.params.address,
-          network: this.$route.params.network,
-          address2: item.address,
-          network2: item.network
-        }
-      });
-      window.open(routeData.href, "_blank");
+        .finally(() => this.loading = false);
     }
   },
   watch: {

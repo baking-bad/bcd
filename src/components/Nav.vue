@@ -51,6 +51,30 @@
       </v-tooltip>
     </router-link>
 
+    <v-list nav v-if="isAuthorized && profile != null">
+      <v-list-item-group>
+        <template v-for="(item, idx) in privateItems">
+          <v-tooltip :key="idx" right>
+            <template v-slot:activator="{ on }">
+              <v-list-item :to="{name: item.to}" v-on="on" active-class="primary--text">
+                <template v-slot:default="{ active }">
+                  <v-list-item-icon>
+                    <v-icon v-if="active" color="primary">{{ item.icon }}</v-icon>
+                    <v-icon v-else color="grey">{{ item.icon }}</v-icon>
+                  </v-list-item-icon>
+
+                  <v-list-item-content>
+                    <v-list-item-title>{{ item.text }}</v-list-item-title>
+                  </v-list-item-content>
+                </template>
+              </v-list-item>
+            </template>
+            <span>{{ item.text }}</span>
+          </v-tooltip>
+        </template>
+      </v-list-item-group>
+    </v-list>
+
     <template v-slot:append>
       <div class="d-flex align-center justify-center pa-5" v-if="isAuthorized">
         <v-tooltip right>
@@ -95,9 +119,9 @@ export default {
     ],
     privateItems: [
       {
-        icon: "mdi-file-document-box-multiple-outline",
-        text: "Contracts",
-        to: "search"
+        icon: "mdi-content-duplicate",
+        text: "Subscriptions",
+        to: "subscriptions"
       },
       {
         icon: "mdi-poll",
