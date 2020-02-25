@@ -18,8 +18,8 @@
         </v-btn>
       </v-toolbar>
       <v-expansion-panels multiple popout tile>
-        <template v-for="(item) in allOperations">
-          <Operation :data="item" :key="item.hash" :address="$route.params.address" />
+        <template v-for="(item, idx) in allOperations">
+          <Operation :data="item" :key="idx" :address="$route.params.address" />
         </template>
       </v-expansion-panels>
       <span v-intersect="onDownloadPage"></span>
@@ -79,7 +79,7 @@ export default {
     mempool: [],
     showMempool: false,
     sortAsc: false,
-    offset: 0
+    last_id: null
   }),
   created() {
     this.fetchOperations();
@@ -101,12 +101,12 @@ export default {
         getContractOperations(
           this.$route.params.network,
           this.$route.params.address,
-          this.offset
+          this.last_id
         )
           .then(res => {
-            this.prepareOperations(res);
-            this.downloaded = res.length == 0;
-            this.offset += res.length;
+            this.prepareOperations(res.operations);
+            this.downloaded = res.operations.length == 0;
+            this.last_id = res.last_id;
           })
           .catch(err => console.log(err))
           .finally(() => (this.operationsLoading = false));

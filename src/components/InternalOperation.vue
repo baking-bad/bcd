@@ -10,6 +10,9 @@
       <v-col cols="2" v-if="data.storage_limit">
         <InfoItem title="Storage limit" :subtitle="data.storage_limit | bytes" />
       </v-col>
+      <v-col cols="2" v-if="burned">
+        <InfoItem title="Burned" :subtitle="burned | uxtz" />
+      </v-col>
       <v-spacer></v-spacer>
       <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
         <v-btn small text color="grey" class="d-flex align-center" @click="getRawJSON">
@@ -91,7 +94,10 @@
           <v-col cols="2" v-if="data.result.consumed_gas">
             <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
           </v-col>
-          <v-col cols="2" v-if="data.result.paid_storage_size_diff">
+          <v-col cols="2" v-if="data.result.allocated_destination_contract">
+            <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
+          </v-col>
+          <v-col cols="3" v-if="data.result.paid_storage_size_diff">
             <InfoItem title="Paid storage diff" :subtitle="paidStorageDiff" />
           </v-col>
         </v-row>
@@ -203,6 +209,12 @@ export default {
       }
       return "0";
     },
+    allocationFee() {
+      if (this.data.result.allocated_destination_contract) {
+        return 257000;
+      }
+      return 0;
+    },
     paidStorageDiff() {
       if (this.data.result.paid_storage_size_diff) {
         let s = this.$options.filters.bytes(
@@ -261,7 +273,12 @@ export default {
     },
     hasDetails() {
       return (
-        this.hasParameters || this.hasStorageDiff || this.data.result.errors
+        this.hasParameters ||
+        this.hasStorageDiff ||
+        this.data.result.errors ||
+        this.data.result.consumed_gas ||
+        this.data.result.paid_storage_size_diff ||
+        this.data.result.allocated_destination_contract
       );
     },
     hasParameters() {
@@ -292,6 +309,16 @@ export default {
     headerClass() {
       if (this.entryName != null) return "overline call";
       return `overline ${this.data.kind}`;
+    },
+    burned() {
+      let val = this.allocationFee + this.data.result.paid_storage_size_diff * 1000;
+      if (!this.data.internal) {
+        for (let i = 0; i < this.data.internal_operations.length; i++) {
+          val += this.getBurned(this.data.internal_operations[i]);
+        }
+      }
+
+      return val;
     }
   },
   data: () => ({
@@ -333,6 +360,15 @@ export default {
     },
     getError(err) {
       return getError(err.id);
+    },
+    getBurned(data) {
+      let val = 0;
+      if (data.result.paid_storage_size_diff)
+        val += data.result.paid_storage_size_diff * 1000;
+
+      if (data.result.allocated_destination_contract) val += 257000;
+
+      return val;
     }
   }
 };

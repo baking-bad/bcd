@@ -5,7 +5,7 @@
       class="d-flex justify-center align-center"
       style="height: 63px"
     >
-      <v-avatar color="primary" size="38">
+      <v-avatar color="primary" size="38"  class="elevation-2">
         <span class="white--text">BCD</span>
       </v-avatar>
     </router-link>
@@ -42,7 +42,7 @@
       >
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-avatar size="38" v-on="on">
+            <v-avatar size="38" v-on="on" class="elevation-2">
               <img :src="profile.avatarURL" :alt="profile.login" />
             </v-avatar>
           </template>

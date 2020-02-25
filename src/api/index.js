@@ -37,8 +37,22 @@ export function search(text, fields = [], offset = 0, networks = [], time = {}, 
 }
 
 
-export function getContractProject(network, address) {
-    return api.get(`/contract/${network}/${address}/project`)
+export function getSameContracts(network, address, offset = 0) {
+    let params = {}
+    if (offset > 0) params.offset = offset;
+    return api.get(`/contract/${network}/${address}/same`, {
+        params: params
+    })
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+export function getSimilarContracts(network, address) {
+    return api.get(`/contract/${network}/${address}/similar`)
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
@@ -57,8 +71,14 @@ export function getContract(network, address) {
         })
 }
 
-export function getContractOperations(network, address, offset = 0) {
-    return api.get(`/contract/${network}/${address}/operations?offset=${offset}`)
+export function getContractOperations(network, address, last_id = null) {
+    let params = {}
+    if (last_id !== null) {
+        params.last_id = last_id
+    }
+    return api.get(`/contract/${network}/${address}/operations`, {
+        params: params
+    })
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
@@ -120,6 +140,16 @@ export function getContractStorage(network, address) {
 
 export function getContractMempool(network, address) {
     return api.get(`/contract/${network}/${address}/mempool`)
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+export function getContractRating(network, address) {
+    return api.get(`/contract/${network}/${address}/rating`)
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);

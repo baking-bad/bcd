@@ -69,14 +69,14 @@ function parseType(val, typ) {
         let xtz = (val / 1000000).toLocaleString(undefined, { maximumFractionDigits: 6 });
         return `${xtz} \uA729`;
     } else if (typ === "timestamp") {
-        if (isNaN(parseInt(val, 10))) {
+        if (typeof val === 'string') {
             let d = dayjs(val);
             if (d.isValid())
-                return d.format("D MMMM YYYY");
+                return d.format("DD MMMM YYYY HH:mm");
         } else {
             let d = dayjs(val * 1000);
             if (d.isValid())
-                return d.format("D MMMM YYYY HH:mm");
+                return d.format("DD MMMM YYYY HH:mm");
         }
     }
     return val;

@@ -61,7 +61,7 @@
                 <v-icon left small>mdi-tag-multiple-outline</v-icon>Tags
               </v-list-item>
               <v-list-item @click="tab=8">
-                <v-icon left small>mdi-language-cpp</v-icon>Language
+                <v-icon left small>mdi-code-tags</v-icon>Language
               </v-list-item>
             </v-list>
           </v-menu>

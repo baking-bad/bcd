@@ -76,3 +76,18 @@ export function removeProfileSubscription(id, typ) {
             return res.data
         })
 }
+
+export function getRecommendedSubscriptions() {
+    return api.get(`/subscriptions/recommended`,
+        {
+            headers: {
+                'Authorization': getJwt()
+            }
+        })
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
