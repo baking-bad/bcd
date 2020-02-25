@@ -20,7 +20,11 @@
               :to="{ name: 'project', params: {address: item.address, network: item.network}}"
             >
               <v-list-item-content>
-                <v-list-item-title class="hash card-title">{{ item.address }}</v-list-item-title>
+                <v-list-item-title v-if="!item.alias" class="hash card-title">{{ item.address }}</v-list-item-title>
+                <v-list-item-title v-else class="card-title">
+                  {{ item.alias }}&nbsp;
+                  <span class="body-2 grey--text text--darken-1 hash">{{ item.address}}</span>
+                </v-list-item-title>
                 <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
                 <v-list-item-subtitle class="d-flex flex-horizontal">
                   <div class="d-flex flex-horizontal">
@@ -62,7 +66,7 @@
                 <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
                 <v-list-item-subtitle class="d-flex flex-horizontal">
                   <div class="d-flex flex-horizontal">
-                    <v-icon small color="primary">mdi-calendar-clock</v-icon>
+                    <v-icon small color="primary" v-if="item.last_action">mdi-calendar-clock</v-icon>
                     <span class="ml-2">Last call {{ formatDate(item.last_action) }}</span>
                   </div>
                   <div class="d-flex flex-horizontal ml-5">

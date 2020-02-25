@@ -4,14 +4,15 @@
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
     <div v-if="contract">
-      <ProjectNav :contract="contract"/>
+      <ProjectNav :contract="contract" />
 
       <v-container fluid class="py-0 my-0">
         <v-row no-gutters>
           <v-col cols="7" style="height: 64px;" class="d-flex align-end">
             <v-tabs background-color="transparent" slider-color="primary" v-if="contract">
-              <v-tab :to="{name: 'operations'}" replace class="overline">
-                <v-icon left small>mdi-swap-horizontal</v-icon>Operations
+              <v-tab :to="{name: 'operations'}" replace class="overline" v-if="contract.tx_count">
+                <v-icon left small>mdi-swap-horizontal</v-icon>
+                Operations ({{ contract.tx_count }})
               </v-tab>
               <v-tab :to="{name: 'code'}" replace class="overline">
                 <v-icon left small>mdi-code-braces</v-icon>Code
@@ -61,8 +62,7 @@ export default {
     },
     hasMigration() {
       return (
-        this.contract.network === 'mainnet' &&
-        this.contract.level < 655360
+        this.contract.network === "mainnet" && this.contract.level < 655360
       );
     }
   },
@@ -81,7 +81,7 @@ export default {
           this.contract = res;
         })
         .catch(err => console.log(err))
-        .finally(() => this.loading = false);
+        .finally(() => (this.loading = false));
     }
   },
   watch: {

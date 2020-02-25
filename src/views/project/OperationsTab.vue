@@ -79,7 +79,7 @@ export default {
     mempool: [],
     showMempool: false,
     sortAsc: false,
-    last_id: null
+    last_id: ""
   }),
   created() {
     this.fetchOperations();

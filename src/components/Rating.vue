@@ -8,26 +8,10 @@
 </template>
 
 <script>
-import { getContractRating } from "@/api/index.js";
-
 export default {
   name: "Rating",
   props: {
-    address: String,
-    network: String
-  },
-  created() {
-    this.getData();
-  },
-  data: () => ({
     rating: null
-  }),
-  methods: {
-    getData() {
-      getContractRating(this.network, this.address).then(res => {
-        this.rating = res;
-      });
-    }
   }
 };
 </script>

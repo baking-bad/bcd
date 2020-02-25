@@ -71,9 +71,9 @@ export function getContract(network, address) {
         })
 }
 
-export function getContractOperations(network, address, last_id = null) {
+export function getContractOperations(network, address, last_id = "") {
     let params = {}
-    if (last_id !== null) {
+    if (last_id != "") {
         params.last_id = last_id
     }
     return api.get(`/contract/${network}/${address}/operations`, {

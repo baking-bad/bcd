@@ -1,9 +1,16 @@
 <template>
   <v-navigation-drawer app fixed right width="400" class="elevation-1" v-if="contract">
     <v-list class="py-1">
-      <v-list-item two-line class="mb-0">
+      <v-list-item two-line class="mb-0" v-if="!contract.alias">
         <v-list-item-content>
           <v-list-item-title class="hash">{{ contract.address }}</v-list-item-title>
+          <v-list-item-subtitle class="overline">Deployed {{ formatDate(contract.timestamp) }}</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item three-line class="mb-0" v-else>
+        <v-list-item-content>
+          <v-list-item-title class="headline">{{ contract.alias }}</v-list-item-title>
+          <v-list-item-subtitle class="hash">{{ contract.address }}</v-list-item-subtitle>
           <v-list-item-subtitle class="overline">Deployed {{ formatDate(contract.timestamp) }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -17,7 +24,7 @@
             <v-icon color="primary elevation-1">mdi-bell</v-icon>
           </v-btn>
         </div>
-        <Rating :address="contract.address" :network="contract.network" />
+        <Rating :rating="rating" />
       </div>
 
       <v-divider></v-divider>
@@ -61,19 +68,6 @@
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-subtitle>Last call {{ formatDate(contract.last_action) }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item v-if="contract.tx_count">
-        <v-list-item-avatar size="28" class="mr-3">
-          <v-tooltip left>
-            <template v-slot:activator="{ on }">
-              <v-icon small v-on="on">mdi-swap-horizontal</v-icon>
-            </template>
-            <span>Operations count</span>
-          </v-tooltip>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-subtitle>{{ contract.tx_count }} operations</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item v-if="contract.sum_tx_amount">
@@ -140,18 +134,13 @@
 
     <v-tabs-items v-model="projectTab">
       <v-tab-item>
-        <v-list two-line subheader class="pa-0">
-          <v-list-item-group active-class="light-green--text text--darken-2">
-            <template v-for="(item) in same">
-              <ContractItem
-                class="py-2"
-                :item="item"
-                :key="item.address"
-                :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
-              />
-            </template>
-          </v-list-item-group>
-        </v-list>
+        <ContractItem
+          v-for="(item, key) in same"
+          class="py-2"
+          :item="item"
+          :key="key"
+          :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
+        />
         <v-btn
           class="mb-3"
           block
@@ -162,53 +151,13 @@
         >Load more</v-btn>
       </v-tab-item>
       <v-tab-item>
-        <v-list two-line class="pa-0">
-          <v-list-item-group active-class="light-green--text text--darken-2">
-            <template v-for="(item) in similar">
-              <v-list-item
-                :three-line="item.count > 1"
-                :two-line="item.count <= 1"
-                :key="item.address"
-                :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
-                class="py-2"
-              >
-                <v-list-item-avatar size="25">
-                  <v-tooltip left>
-                    <template v-slot:activator="{ on }">
-                      <v-btn v-on="on" text icon @click.prevent="onDiffClick(item)">
-                        <v-icon small>mdi-vector-difference</v-icon>
-                      </v-btn>
-                    </template>
-                    <span>Show diff</span>
-                  </v-tooltip>
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title class="contract-item-address hash" v-text="item.address"></v-list-item-title>
-                  <v-list-item-subtitle class="overline">{{item.language}}</v-list-item-subtitle>
-                  <v-list-item-subtitle
-                    class="caption grey--text text-lighten-5"
-                    v-if="item.count > 1"
-                  >{{item.count - 1}} same contracts</v-list-item-subtitle>
-                </v-list-item-content>
-
-                <v-list-item-action>
-                  <v-chip
-                    x-small
-                    label
-                    v-text="item.network"
-                    color="secondary"
-                    class="grey--text text--darken-3"
-                  ></v-chip>
-                  <v-list-item-action-text>{{ item.timestamp | fromNow }}</v-list-item-action-text>
-                  <v-list-item-action-text>
-                    <span v-if="item.added" class="primary--text">+&nbsp;{{item.added }}&#9;</span>
-                    <span v-if="item.removed" class="red--text">-&nbsp;{{item.removed }}</span>
-                  </v-list-item-action-text>
-                </v-list-item-action>
-              </v-list-item>
-            </template>
-          </v-list-item-group>
-        </v-list>
+        <SimilarItem
+          :item="item"
+          :address="$route.params.address"
+          :network="$route.params.network"
+          v-for="(item, key) in similar"
+          :key="key"
+        />
       </v-tab-item>
     </v-tabs-items>
   </v-navigation-drawer>
@@ -216,7 +165,11 @@
 
 <script>
 import dayjs from "dayjs";
-import { getSameContracts, getSimilarContracts } from "@/api/index.js";
+import {
+  getSameContracts,
+  getSimilarContracts,
+  getContractRating
+} from "@/api/index.js";
 import {
   addProfileSubscription,
   removeProfileSubscription
@@ -224,12 +177,14 @@ import {
 import { getTzKTLink } from "@/utils/tzkt.js";
 
 import ContractItem from "@/components/ContractItem.vue";
+import SimilarItem from "@/components/SimilarItem.vue";
 import Rating from "@/components/Rating.vue";
 
 export default {
   name: "ProjectNav",
   components: {
     ContractItem,
+    SimilarItem,
     Rating
   },
   props: {
@@ -241,7 +196,8 @@ export default {
     same: [],
     sameCount: 0,
     similar: [],
-    similarCount: 0
+    similarCount: 0,
+    rating: null
   }),
   computed: {
     isAuthorized() {
@@ -267,23 +223,17 @@ export default {
         if (val.unix() > 0) return val.format("MMM D, YYYY");
       }
     },
-    onDiffClick(item) {
-      let routeData = this.$router.resolve({
-        name: "diff",
-        params: {
-          address: this.$route.params.address,
-          network: this.$route.params.network,
-          address2: item.address,
-          network2: item.network
-        }
-      });
-      window.open(routeData.href, "_blank");
-    },
-    requestData(offset = 0) {
+    requestData() {
+      this.same = [];
+      this.similar = [];
+      this.similarCount = 0;
+      this.sameCount = 0;
+      this.rating = null;
+
       getSameContracts(
         this.$route.params.network,
         this.$route.params.address,
-        offset
+        this.same.length
       )
         .then(res => {
           this.same.push(...res.contracts);
@@ -303,6 +253,13 @@ export default {
           if (!this.hasSame && this.similarCount > 0) this.projectTab = 1;
         })
         .catch(err => console.log(err));
+
+      getContractRating(
+        this.$route.params.network,
+        this.$route.params.address
+      ).then(res => {
+        this.rating = res;
+      });
     },
     getTzKTLink(address) {
       return getTzKTLink(this.contract.network, address);
@@ -311,6 +268,10 @@ export default {
       addProfileSubscription(this.contract.id, "contract")
         .then(() => {
           this.contract.profile.subscribed = true;
+          this.rating.count += 1;
+          if (this.rating.users.length < 5) {
+            this.rating.users.push(this.profile);
+          }
         })
         .catch(err => console.log(err));
     },
@@ -318,11 +279,18 @@ export default {
       removeProfileSubscription(this.contract.id, "contract")
         .then(() => {
           this.contract.profile.subscribed = false;
+          this.rating.count -= 1;
+          for (let i = 0; i < this.rating.users.length; i++) {
+            if (this.rating.users[i].login === this.profile.login) {
+              this.rating.users.splice(i, 1);
+              break;
+            }
+          }
         })
         .catch(err => console.log(err));
     },
     getProjectUpdate() {
-      this.requestData(this.same.length);
+      this.requestData();
     }
   },
   watch: {
