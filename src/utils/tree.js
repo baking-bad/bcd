@@ -3,19 +3,42 @@ import dayjs from "dayjs";
 export function getTree(data, kind) {
     let res = [];
 
+    if (Object.keys(data).length == 0) {
+        res.push({
+            name: 'map',
+            children: [],
+            value: '0 items',
+            value_type: 'map',
+            type: "object",
+            kind: ''
+        });
+        return res;
+    }
+
     if (data.kind !== undefined) {
         kind = parseKind(data.kind);
         delete data.kind;
     }
+
     if (data.type !== undefined) {
         res.push({
             name: data.type,
             children: [],
-            value: data.value || 'null',
+            value: getValue(data.value) || 'null',
             value_type: data.type,
             type: "value",
             kind: kind
         });
+        return res;
+    }
+
+    if (data.value) {
+        res.push(...getTree(data.value, kind))
+        return res;
+    }
+
+    if (data.from) {
+        res.push(...getTree(data.from, kind))
         return res;
     }
 
@@ -35,12 +58,13 @@ export function getTree(data, kind) {
                 }
 
                 if (data[x].value !== undefined && data[x].type !== undefined) {
-                    item.value = getValue(data[x]);
+                    if (data[x].value != null)
+                        item.value = getValue(data[x]);
                     item.value_type = data[x].type;
                 } else {
-                    item.value = `${Object.keys(data[x]).length} items`;
                     item.type = "object";
                     item.children = getTree(data[x], item.kind);
+                    item.value = `${item.children.length} items`;
                 }
             }
         } else {
@@ -52,11 +76,7 @@ export function getTree(data, kind) {
 }
 
 function getValue(item) {
-    if (item.type === undefined || item.value === undefined) {
-        return item;
-    }
-
-    if (item.from !== undefined) {
+    if (item.from !== undefined && item.value !== undefined) {
         let start = parseType(item.from, item.type);
         let end = parseType(item.value, item.type);
         return `${start} -> ${end}`;

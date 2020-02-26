@@ -11,16 +11,25 @@
           <v-icon v-else>mdi-sort-descending</v-icon>&nbsp;
           <span>Sorting</span>
         </v-btn>
-        <v-btn small text @click="showMempool = !showMempool" class="toolbar-btn">
+        <v-btn
+          small
+          text
+          @click="showMempool = !showMempool"
+          class="toolbar-btn"
+          :disabled="mempool.length == 0"
+        >
           <v-icon v-if="showMempool">mdi-minus-network-outline</v-icon>
           <v-icon v-else>mdi-plus-network-outline</v-icon>&nbsp;
           <span>Mempool</span>
         </v-btn>
       </v-toolbar>
       <v-expansion-panels multiple popout tile>
-        <template v-for="(item, idx) in allOperations">
-          <Operation :data="item" :key="idx" :address="$route.params.address" />
-        </template>
+        <Operation
+          :data="item"
+          :key="idx"
+          :address="$route.params.address"
+          v-for="(item, idx) in allOperations"
+        />
       </v-expansion-panels>
       <span v-intersect="onDownloadPage"></span>
     </div>
@@ -56,9 +65,10 @@ export default {
     },
     allOperations() {
       if (this.loading) return [];
+
       if (!this.showMempool) {
         let res = this.operations.slice();
-        if (this.sortAsc) return res.reverse();
+        if (this.sortAsc) res = res.reverse();
         return res;
       }
 

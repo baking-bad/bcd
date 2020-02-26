@@ -15,19 +15,19 @@
         </v-list-item-content>
       </v-list-item>
 
-      <div class="d-flex flex-horizontal px-5 align-center justify-space-between pb-2">
+      <div class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between pb-2">
         <div v-if="isAuthorized">
-          <v-btn small text icon @click="subscribe" v-if="!contract.profile.subscribed">
-            <v-icon>mdi-bell-outline</v-icon>
-          </v-btn>
-          <v-btn small text icon @click="unsubscribe" v-else>
-            <v-icon color="primary elevation-1">mdi-bell</v-icon>
-          </v-btn>
+          <v-btn
+            small
+            text
+            @click="subscribe"
+            v-if="!contract.profile.subscribed"
+            color="primary"
+          >Subscribe</v-btn>
+          <v-btn small text @click="unsubscribe" color="grey" v-else>Unsubscribe</v-btn>
         </div>
         <Rating :rating="rating" />
       </div>
-
-      <v-divider></v-divider>
 
       <v-list-item v-if="contract.manager" :href="getTzKTLink(contract.manager)" target="_blank">
         <v-list-item-avatar size="28" class="mr-3">
@@ -290,7 +290,16 @@ export default {
         .catch(err => console.log(err));
     },
     getProjectUpdate() {
-      this.requestData();
+      getSameContracts(
+        this.$route.params.network,
+        this.$route.params.address,
+        this.same.length
+      )
+        .then(res => {
+          this.same.push(...res.contracts);
+        })
+        .catch(err => console.log(err))
+        .finally(() => (this.loading = false));
     }
   },
   watch: {

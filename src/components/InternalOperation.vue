@@ -5,7 +5,7 @@
         <InfoItem title="Fee" :subtitle="data.fee | uxtz" />
       </v-col>
       <v-col cols="2" v-if="data.gas_limit">
-        <InfoItem title="Gas limit" :subtitle="data.gas_limit | mutez" />
+        <InfoItem title="Gas limit" :subtitle="String(data.gas_limit)" />
       </v-col>
       <v-col cols="2" v-if="data.storage_limit">
         <InfoItem title="Storage limit" :subtitle="data.storage_limit | bytes" />
@@ -198,7 +198,7 @@ export default {
     },
     consumedGas() {
       if (this.data.result.consumed_gas) {
-        let s = this.$options.filters.mutez(this.data.result.consumed_gas);
+        let s = `${this.data.result.consumed_gas}`;
         if (this.data.gas_limit > 0) {
           s += ` (${(
             (this.data.result.consumed_gas * 100) /
@@ -329,6 +329,9 @@ export default {
     rawJson: null,
     loadingRaw: false
   }),
+  created() {
+    this.showParams = (this.data.result.errors !== undefined) || (this.data.destination === this.address && this.data.result.status == 'applied');
+  },
   methods: {
     getLinkObject(address) {
       if (address.startsWith("KT") && address != this.address) {
@@ -407,7 +410,7 @@ export default {
   background-color: #dcedc8;
 }
 .removed-tree-item {
-  background-color: #f8d7da;
+  background-color: #ffedef;
   color: #721c24;
 }
 .edited-tree-item {
