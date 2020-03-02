@@ -14,6 +14,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import { getContractMigration } from "@/api/index.js";
 
 import DiffViewer from "@/components/DiffViewer.vue";
@@ -33,6 +34,7 @@ export default {
     loading: true
   }),
   methods: {
+    ...mapActions(["showError"]),
     getMigration() {
       if (this.contract == null) return;
       if (this.contract.migration !== undefined) {
@@ -47,7 +49,10 @@ export default {
         .then(res => {
           this.contract.migration = res;
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
         .finally(() => (this.loading = false));
     }
   },

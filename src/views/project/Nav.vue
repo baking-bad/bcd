@@ -156,6 +156,8 @@
 
 <script>
 import dayjs from "dayjs";
+import { mapActions } from "vuex";
+
 import {
   getSameContracts,
   getSimilarContracts,
@@ -208,6 +210,7 @@ export default {
     this.requestData();
   },
   methods: {
+    ...mapActions(["showError"]),
     formatDate(value) {
       if (value) {
         let val = dayjs(value);
@@ -231,7 +234,10 @@ export default {
           this.same = this.contract.same;
           this.sameCount = this.contract.sameCount;
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        })
         .finally(() => (this.loading = false));
 
       getSimilarContracts(this.contract.network, this.contract.address)
@@ -244,7 +250,10 @@ export default {
           this.similar = this.contract.similar;
           this.similarCount = this.contract.similarCount;
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        });
 
       getContractRating(this.contract.network, this.contract.address).then(
         res => {
@@ -264,7 +273,10 @@ export default {
             this.rating.users.push(this.profile);
           }
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        });
     },
     unsubscribe() {
       removeProfileSubscription(this.contract.id, "contract")
@@ -278,7 +290,10 @@ export default {
             }
           }
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        });
     },
     getProjectUpdate() {
       getSameContracts(
@@ -290,7 +305,10 @@ export default {
           this.contract.same.push(...res.contracts);
           this.same = this.contract.same;
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        })
         .finally(() => (this.loading = false));
     }
   },

@@ -23,7 +23,9 @@
                 <v-list-item-title v-if="!item.alias" class="hash card-title">{{ item.address }}</v-list-item-title>
                 <v-list-item-title v-else class="card-title">
                   {{ item.alias }}&nbsp;
-                  <span class="body-2 grey--text text--darken-1 hash">{{ item.address}}</span>
+                  <span
+                    class="body-2 grey--text text--darken-1 hash"
+                  >{{ item.address}}</span>
                 </v-list-item-title>
                 <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
                 <v-list-item-subtitle class="d-flex flex-horizontal">
@@ -94,7 +96,9 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import dayjs from "dayjs";
+
 import {
   getProfileSubscriptions,
   addProfileSubscription,
@@ -115,19 +119,26 @@ export default {
     this.getData();
   },
   methods: {
+    ...mapActions(["showError"]),
     getData() {
       getProfileSubscriptions()
         .then(res => {
           this.subscriptions = res;
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        })
         .finally(() => (this.loading = false));
 
       getRecommendedSubscriptions()
         .then(res => {
           this.recommended = res;
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        })
         .finally(() => (this.recommendedLoading = false));
     },
     getTzKTLink(item) {
@@ -149,12 +160,18 @@ export default {
             }
           }
         })
-        .catch(err => console.log(err));
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        });
     },
     subscribe(item) {
       addProfileSubscription(item.id, "contract")
         .then(() => {})
-        .catch(err => console.log(err));
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        });
     }
   },
   $route: "getData"

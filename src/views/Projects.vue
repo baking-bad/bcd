@@ -191,6 +191,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import dayjs from "dayjs";
 var isBetween = require("dayjs/plugin/isBetween");
 dayjs.extend(isBetween);
@@ -280,6 +281,7 @@ export default {
     }
   }),
   methods: {
+    ...mapActions(["showError"]),
     versionsFilter(value) {
       return (
         value <= this.filters.versionsCount[1] &&
@@ -326,7 +328,10 @@ export default {
       .then(res => {
         this.projects = res;
       })
-      .catch(err => console.log(err))
+      .catch(err => {
+        console.log(err);
+        this.showError(err);
+      })
       .finally(() => (this.loading = false));
   },
   watch: {

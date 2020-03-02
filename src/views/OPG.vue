@@ -9,8 +9,9 @@
 </template>
 
 <script>
-import { getOPG } from "@/api/index.js";
+import { mapActions } from "vuex";
 
+import { getOPG } from "@/api/index.js";
 import Operation from "@/components/Operation.vue";
 
 export default {
@@ -27,6 +28,7 @@ export default {
     panels: []
   }),
   methods: {
+    ...mapActions(["showError"]),
     getOPG() {
       getOPG(this.$route.params.hash)
         .then(res => {
@@ -36,7 +38,10 @@ export default {
             this.panels.push(i);
           }
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
         .finally(() => (this.loading = false));
     },
     prepareOperations(data) {

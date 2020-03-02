@@ -29,6 +29,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 import { getDiff, vote } from "@/api/index.js";
 
 import DiffViewer from "@/components/DiffViewer.vue";
@@ -44,16 +46,26 @@ export default {
     snackbar: false,
     snacktext: ""
   }),
-  async created() {
-    this.diffs = await getDiff(
-      this.$route.params.network,
-      this.$route.params.address,
-      this.$route.params.network2,
-      this.$route.params.address2
-    );
-    this.loading = false;
+  created() {
+    this.getDiff();
   },
   methods: {
+    ...mapActions(["showError"]),
+    getDiff() {
+      this.loading = true;
+      getDiff(
+        this.$route.params.network,
+        this.$route.params.address,
+        this.$route.params.network2,
+        this.$route.params.address2
+      )
+        .then(res => (this.diffs = res))
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
+        .finally(() => (this.loading = false));
+    },
     upVote() {
       vote(
         this.$route.params.network,
@@ -64,12 +76,12 @@ export default {
       )
         .then(() => {
           this.snacktext = "Success";
+          this.snackbar = true;
         })
         .catch(err => {
           console.log(err);
-          this.snacktext = err;
-        })
-        .finally(() => (this.snackbar = true));
+          this.showError(err);
+        });
     },
     downVote() {
       vote(
@@ -81,25 +93,16 @@ export default {
       )
         .then(() => {
           this.snacktext = "Success";
+          this.snackbar = true;
         })
         .catch(err => {
           console.log(err);
-          this.snacktext = err;
-        })
-        .finally(() => (this.snackbar = true));
+          this.showError(err);
+        });
     }
   },
   watch: {
-    $route: async function() {
-      this.loading = true;
-      this.diffs = await getDiff(
-        this.$route.params.network,
-        this.$route.params.address,
-        this.$route.params.network2,
-        this.$route.params.address2
-      );
-      this.loading = false;
-    }
+    $route: "getDiff"
   }
 };
 </script>

@@ -23,21 +23,26 @@
 </template>
 
 <script>
-import SearchBox from "@/components/SearchBox.vue";
+import { mapActions } from "vuex";
 
-import { getRandomContract } from '@/api/index.js'
+import SearchBox from "@/components/SearchBox.vue";
+import { getRandomContract } from "@/api/index.js";
 
 export default {
   components: {
     SearchBox
   },
   methods: {
+    ...mapActions(["showError"]),
     pickRandom() {
       getRandomContract()
-      .then(res => {
-         this.$router.push({ path: `/${res.network}/${res.address}` });
-      })
-      .catch(err => console.log(err))
+        .then(res => {
+          this.$router.push({ path: `/${res.network}/${res.address}` });
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        });
     }
   }
 };
@@ -50,6 +55,6 @@ export default {
 }
 
 .hash {
-  font-family: 'Roboto Mono', monospace;
+  font-family: "Roboto Mono", monospace;
 }
 </style>

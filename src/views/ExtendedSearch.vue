@@ -232,10 +232,11 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+import dayjs from "dayjs";
+
 import * as api from "@/api/index.js";
 import { checkAddress, checkOperation } from "@/utils/tz.js";
-
-import dayjs from "dayjs";
 
 export default {
   name: "ExtendedSearchToolbar",
@@ -361,6 +362,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['showError']),
     formatDate(value) {
       if (value) {
         return dayjs(value).format("MMM D, YYYY");
@@ -389,7 +391,7 @@ export default {
     search(text, fields = [], push = false, networks = [], time = {}) {
       let hasText = text != null && text.length >= 2;
       if (checkOperation(text)) {
-        return
+        return;
       }
       if (!this.loading && hasText && !this.completed) {
         this.loading = true;
@@ -409,7 +411,10 @@ export default {
               this.elasticTime = res.time;
             }
           })
-          .catch(err => console.log(err))
+          .catch(err => {
+            console.log(err);
+            this.showError(err);
+          })
           .finally(() => {
             this.loading = false;
           });

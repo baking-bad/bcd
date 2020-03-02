@@ -77,6 +77,46 @@ export function getTree(data, kind) {
     return res;
 }
 
+
+export function getEntrypointTree(data) {
+    let res = [];
+    if (data.type !== undefined) {
+        res.push({
+            name: data.type,
+            children: [],
+            value: "",
+            type: "value",
+            id: getId()
+        });
+        return res;
+    }
+
+    for (const x in data) {
+        let item = {
+            name: x,
+            children: [],
+            value: "",
+            type: "value",
+            id: getId()
+        };
+        if (typeof data[x] === "object" && data[x] != null) {
+            if (data[x].type !== undefined) {
+                item.value = data[x].type
+            } else {
+                item.type = "object";
+                if (Object.keys(data[x]).length == 0) {
+                    item.value = `0 items`;
+                } else {
+                    item.children = getEntrypointTree(data[x]);
+                    item.value = `${item.children.length} items`;
+                }
+            }
+        }
+        res.push(item);
+    }
+    return res;
+}
+
 function getId() {
     return Math.floor(Math.random() * (+100000000 - +1)) + +1;
 }

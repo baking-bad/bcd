@@ -5,15 +5,21 @@
     <v-skeleton-loader v-if="loading" height="123" type="image" class="ma-3"></v-skeleton-loader>
     <v-card class="ma-3 transparent" v-else-if=" contract.full_entrypoints.length > 0">
       <v-expansion-panels focusable tile hover accordion v-model="panel">
-        <v-expansion-panel v-for="(item,i) in contract.full_entrypoints" :key="i">
+        <v-expansion-panel v-for="(item) in contract.full_entrypoints" :key="item.name">
           <v-expansion-panel-header ripple class="hash">{{ item.name }}</v-expansion-panel-header>
           <v-expansion-panel-content color="white">
             <div class="d-flex flex-column py-5 parameters">
               <span class="overline ml-3">Parameter</span>
-              <v-treeview :items="getTreeObject(item.parameters)" hoverable open-all transition>
+              <v-treeview
+                :items="tree(item.parameters)"
+                hoverable
+                open-all
+                transition
+                open-on-click
+              >
                 <template v-slot:label="{ item }">
-                  <span>{{ item.name }}:</span>&nbsp;
-                  <span :class="item.type">{{ item.value }}</span>
+                  <span>{{ item.name }}</span>&nbsp;
+                  <span class="primary--text">{{ item.value }}</span>
                 </template>
               </v-treeview>
             </div>
@@ -33,7 +39,10 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 import { getContractEntrypoints } from "@/api/index.js";
+import { getEntrypointTree } from "@/utils/tree.js";
 
 export default {
   name: "EntrypointsTab",
@@ -48,32 +57,9 @@ export default {
     this.getEntrypoints();
   },
   methods: {
-    getTreeObject(data) {
-      let res = [];
-      for (const x in data) {
-        let item = {
-          name: x,
-          children: [],
-          value: "null",
-          type: "value"
-        };
-        if (typeof data[x] === "object") {
-          if (data[x] != null) {
-            if (data[x].type !== undefined) {
-              item.value = data[x].type;
-            } else {
-              if (Array.isArray(data[x])) item.value = `list`;
-              else item.value = `${Object.keys(data[x]).length} items`;
-              item.type = "object";
-              item.children = this.getTreeObject(data[x]);
-            }
-          }
-        } else {
-          item.value = data[x];
-        }
-        res.push(item);
-      }
-      return res;
+    ...mapActions(["showError"]),
+    tree(data) {
+      return getEntrypointTree(data);
     },
     getEntrypoints() {
       if (this.contract == null) return;
@@ -85,12 +71,15 @@ export default {
         .then(res => {
           this.contract.full_entrypoints = res;
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
         .finally(() => (this.loading = false));
     }
   },
   watch: {
-    contract: 'getEntrypoints'
+    contract: "getEntrypoints"
   }
 };
 </script>

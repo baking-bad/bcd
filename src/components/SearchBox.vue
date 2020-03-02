@@ -35,8 +35,9 @@
 </template>
 
 <script>
-import * as api from "@/api/index.js";
+import { mapActions } from "vuex";
 
+import * as api from "@/api/index.js";
 import { checkAddress, checkOperation } from "@/utils/tz.js";
 
 export default {
@@ -58,6 +59,7 @@ export default {
     searchText: null
   }),
   methods: {
+    ...mapActions(["showError"]),
     onSearch() {
       if (!this.model) return;
       let value = this.model.address || this.model;
@@ -78,7 +80,10 @@ export default {
           .then(res => {
             this.suggests = res.contracts;
           })
-          .catch(err => console.log(err));
+          .catch(err => {
+            console.log(err);
+            this.showError(err);
+          });
       }
     }
   }

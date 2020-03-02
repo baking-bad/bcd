@@ -47,8 +47,9 @@
 </template>
 
 <script>
-import * as api from "@/api/index.js";
+import { mapActions } from "vuex";
 
+import * as api from "@/api/index.js";
 import { checkAddress, checkOperation } from "@/utils/tz.js";
 
 export default {
@@ -72,13 +73,16 @@ export default {
     expanded: false
   }),
   methods: {
+    ...mapActions(["showError"]),
     onSearch() {
       if (!this.model) return;
       if (checkOperation(this.model)) {
         this.$router.push({ path: `/opg/${this.model}` });
       }
       if (checkAddress(this.model.address)) {
-        this.$router.push({ path: `/${this.model.network}/${this.model.address}` });
+        this.$router.push({
+          path: `/${this.model.network}/${this.model.address}`
+        });
       }
     }
   },
@@ -90,7 +94,10 @@ export default {
           .then(res => {
             this.suggests = res.contracts;
           })
-          .catch(err => console.log(err));
+          .catch(err => {
+            console.log(err);
+            this.showError(err);
+          });
       }
     }
   }

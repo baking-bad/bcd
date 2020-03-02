@@ -2,7 +2,17 @@
   <v-container fluid>
     <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
     <v-card tile class="ma-3 pa-3" v-else-if="contract.storage">
-      <v-treeview :items="items" hoverable open-all transition class="storage">
+      <v-treeview
+        :items="items"
+        hoverable
+        open-all
+        transition
+        activatable
+        open-on-click
+        return-object
+        class="storage"
+        :active.sync="activeField"
+      >
         <template v-slot:label="{ item }">
           <span>{{ item.name }}:</span>&nbsp;
           <span :class="item.type">{{ item.value }}</span>
@@ -19,10 +29,27 @@
         </template>
       </v-treeview>
     </v-card>
+
+    <v-dialog persistent v-model="showTreeNodeDetails" v-if="active" width="700">
+      <v-card>
+        <v-card-title class="headline secondary" primary-title>
+          <span>{{ active.name }}</span>
+          <v-spacer></v-spacer>
+          <v-btn icon text @click="activeField = []">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="mt-5">
+          <span>{{ active.value }}</span>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 import { getContractStorage } from "@/api/index.js";
 import { getTree } from "@/utils/tree.js";
 
@@ -36,16 +63,25 @@ export default {
   computed: {
     items() {
       return getTree(this.contract.storage);
+    },
+    active() {
+      if (this.activeField.length > 0) {
+        return this.activeField[0];
+      }
+      return null;
     }
   },
   data: () => ({
     panel: 0,
-    loading: true
+    loading: true,
+    showTreeNodeDetails: false,
+    activeField: []
   }),
   created() {
     this.getStorage();
   },
   methods: {
+    ...mapActions(["showError"]),
     getValue(item) {
       if (item.type === undefined || item.value === undefined) {
         return item;
@@ -63,7 +99,7 @@ export default {
     },
     getStorage() {
       if (this.contract == null) return;
-      if(this.contract.storage !== undefined) {
+      if (this.contract.storage !== undefined) {
         this.loading = false;
         return;
       }
@@ -71,7 +107,10 @@ export default {
         .then(res => {
           this.contract.storage = res;
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
         .finally(() => (this.loading = false));
     },
     getTreeNodeIcon(valueType) {
@@ -98,7 +137,10 @@ export default {
     }
   },
   watch: {
-    contract: 'getStorage'
+    contract: "getStorage",
+    active() {
+      this.showTreeNodeDetails = !this.showTreeNodeDetails;
+    }
   }
 };
 </script>

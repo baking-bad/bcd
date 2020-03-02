@@ -21,6 +21,8 @@ import { codemirror } from "vue-codemirror-lite";
 require("codemirror/addon/mode/simple.js");
 require("codemirror/theme/neo.css");
 
+import { mapActions } from "vuex";
+
 import { create } from "@/utils/codemirror.js";
 import { getContractCode } from "@/api/index.js";
 
@@ -46,6 +48,7 @@ export default {
     this.getCode();
   },
   methods: {
+    ...mapActions(["showError"]),
     getCode() {
       if (this.contract == null) return;
       if (this.contract.code !== undefined) {
@@ -56,7 +59,10 @@ export default {
         .then(res => {
           this.contract.code = res;
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
         .finally(() => {
           this.loading = false;
         });
@@ -67,7 +73,7 @@ export default {
         "href",
         "data:text/plain;charset=utf-8," + encodeURIComponent(this.code)
       );
-      element.setAttribute("download", this.contract.address + '.tz');
+      element.setAttribute("download", this.contract.address + ".tz");
 
       element.style.display = "none";
       document.body.appendChild(element);
@@ -78,7 +84,7 @@ export default {
     }
   },
   watch: {
-    contract: 'getCode'
+    contract: "getCode"
   }
 };
 </script>
