@@ -104,7 +104,16 @@
         <v-row class="parameters mx-1" v-if="hasParameters || hasStorageDiff">
           <v-col cols="6" v-if="hasParameters">
             <span class="overline ml-3">Parameter</span>
-            <v-treeview :items="parameters" hoverable open-all transition>
+            <v-treeview
+              :items="parameters"
+              :active.sync="activeParameter"
+              hoverable
+              open-all
+              transition
+              activatable
+              open-on-click
+              return-object
+            >
               <template v-slot:label="{ item }">
                 <span>{{ item.name }}:</span>&nbsp;
                 <span :class="item.type">{{ item.value }}</span>
@@ -114,7 +123,16 @@
           <v-col cols="6" v-if="hasStorageDiff">
             <span class="overline ml-3">Storage</span>&nbsp;
             <span class="grey--text caption">{{ data.result.storage_size | bytes}}</span>
-            <v-treeview :items="storage" hoverable open-all transition>
+            <v-treeview
+              :items="storage"
+              :active.sync="activeStorage"
+              hoverable
+              open-all
+              transition
+              activatable
+              open-on-click
+              return-object
+            >
               <template v-slot:label="{ item }">
                 <div :class="`${item.kind} pl-1`">
                   <span>{{ item.name }}:</span>&nbsp;
@@ -143,6 +161,21 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <v-dialog persistent v-model="showTreeNodeDetails" v-if="active" width="700">
+      <v-card>
+        <v-card-title class="headline secondary" primary-title>
+          <span>{{ active.name }}</span>
+          <v-spacer></v-spacer>
+          <v-btn icon text @click="closeTreeNodeDetails()">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="mt-5">
+          <span>{{ active.value }}</span>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -164,6 +197,15 @@ export default {
     VueJsonPretty
   },
   computed: {
+    active() {
+      if (this.activeStorage.length > 0) {
+        return this.activeStorage[0];
+      }
+      if (this.activeParameter.length > 0) {
+        return this.activeParameter[0];
+      }
+      return null;
+    },
     errors() {
       if (!this.data.result.errors) return null;
       return JSON.parse(this.data.result.errors);
@@ -235,18 +277,13 @@ export default {
       return this.data.amount;
     },
     entryName() {
-      if (this.address == this.data.destination) {
-        if (
-          this.data.parameters != null &&
-          this.data.parameters !== undefined
-        ) {
-          let keys = Object.keys(this.data.parameters);
-          if (keys.length == 1) {
-            let name = keys[0];
-            if (this.data.parameters[name] !== undefined) return name;
-          }
-          return "__entry__0";
+      if (this.data.parameters != null && this.data.parameters !== undefined) {
+        let keys = Object.keys(this.data.parameters);
+        if (keys.length == 1) {
+          let name = keys[0];
+          if (this.data.parameters[name] !== undefined) return name;
         }
+        return "default";
       }
       return null;
     },
@@ -311,8 +348,9 @@ export default {
       return `overline ${this.data.kind}`;
     },
     burned() {
-      let val = this.allocationFee + this.data.result.paid_storage_size_diff * 1000;
-      if (!this.data.internal) {
+      let val =
+        this.allocationFee + this.data.result.paid_storage_size_diff * 1000;
+      if (!this.data.internal && !this.data.mempool) {
         for (let i = 0; i < this.data.internal_operations.length; i++) {
           val += this.getBurned(this.data.internal_operations[i]);
         }
@@ -322,15 +360,19 @@ export default {
     }
   },
   data: () => ({
+    activeStorage: [],
+    activeParameter: [],
     showParams: false,
     showTreeNodeDetails: false,
-    selectedNode: null,
     showRaw: false,
     rawJson: null,
     loadingRaw: false
   }),
   created() {
-    this.showParams = (this.data.result.errors !== undefined) || (this.data.destination === this.address && this.data.result.status == 'applied');
+    this.showParams =
+      this.data.result.errors !== undefined ||
+      (this.data.destination === this.address &&
+        this.data.result.status == "applied");
   },
   methods: {
     getLinkObject(address) {
@@ -372,6 +414,15 @@ export default {
       if (data.result.allocated_destination_contract) val += 257000;
 
       return val;
+    },
+    closeTreeNodeDetails() {
+      this.activeParameter = [];
+      this.activeStorage = [];
+    }
+  },
+  watch: {
+    active() {
+      this.showTreeNodeDetails = !this.showTreeNodeDetails;
     }
   }
 };

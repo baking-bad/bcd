@@ -31,12 +31,7 @@
 
       <v-list-item v-if="contract.manager" :href="getTzKTLink(contract.manager)" target="_blank">
         <v-list-item-avatar size="28" class="mr-3">
-          <v-tooltip left>
-            <template v-slot:activator="{ on }">
-              <v-icon small v-on="on">mdi-doctor</v-icon>
-            </template>
-            <span>Deployed by</span>
-          </v-tooltip>
+          <v-icon small>mdi-doctor</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title class="overline">Deployed by</v-list-item-title>
@@ -45,12 +40,7 @@
       </v-list-item>
       <v-list-item v-if="contract.delegate" :href="getTzKTLink(contract.delegate)" target="_blank">
         <v-list-item-avatar size="28" class="mr-3">
-          <v-tooltip left>
-            <template v-slot:activator="{ on }">
-              <v-icon small v-on="on">mdi-account-check-outline</v-icon>
-            </template>
-            <span>Delegated to</span>
-          </v-tooltip>
+          <v-icon small>mdi-account-check-outline</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title class="overline">Delegated to</v-list-item-title>
@@ -59,27 +49,28 @@
       </v-list-item>
       <v-list-item v-if="contract.last_action">
         <v-list-item-avatar size="28" class="mr-3">
-          <v-tooltip left>
-            <template v-slot:activator="{ on }">
-              <v-icon small v-on="on">mdi-calendar-clock</v-icon>
-            </template>
-            <span>Last call</span>
-          </v-tooltip>
+          <v-icon small>mdi-calendar-clock</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
-          <v-list-item-subtitle>Last call {{ formatDate(contract.last_action) }}</v-list-item-subtitle>
+          <v-list-item-title class="overline">Last call</v-list-item-title>
+          <v-list-item-subtitle>{{ formatDate(contract.last_action) }}</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item v-if="contract.median_consumed_gas">
+        <v-list-item-avatar size="28" class="mr-3">
+          <v-icon small>mdi-fire</v-icon>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title class="overline">Median consumed gas</v-list-item-title>
+          <v-list-item-subtitle>{{ contract.median_consumed_gas }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item v-if="contract.sum_tx_amount">
         <v-list-item-avatar size="28" class="mr-3">
-          <v-tooltip left>
-            <template v-slot:activator="{ on }">
-              <v-icon small v-on="on">mdi-sigma</v-icon>
-            </template>
-            <span>Summary amount</span>
-          </v-tooltip>
+          <v-icon small>mdi-sigma</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
+          <v-list-item-title class="overline">Summary tx amount</v-list-item-title>
           <v-list-item-subtitle>{{ contract.sum_tx_amount| uxtz }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>

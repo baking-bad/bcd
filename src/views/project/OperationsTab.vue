@@ -6,7 +6,7 @@
     <div v-else-if="allOperations.length > 0">
       <v-toolbar flat class="mb-5 transparent">
         <v-spacer></v-spacer>
-        <v-btn small text @click="sortAsc = ! sortAsc" class="toolbar-btn">
+        <v-btn small text @click="sortAsc = !sortAsc" class="toolbar-btn">
           <v-icon v-if="!sortAsc">mdi-sort-ascending</v-icon>
           <v-icon v-else>mdi-sort-descending</v-icon>&nbsp;
           <span>Sorting</span>
@@ -24,12 +24,9 @@
         </v-btn>
       </v-toolbar>
       <v-expansion-panels multiple popout tile>
-        <Operation
-          :data="item"
-          :key="idx"
-          :address="$route.params.address"
-          v-for="(item, idx) in allOperations"
-        />
+        <template v-for="(item) in allOperations">
+          <Operation :data="item" :key="item.hash + String(item.counter)" :address="$route.params.address" />
+        </template>
       </v-expansion-panels>
       <span v-intersect="onDownloadPage"></span>
     </div>
@@ -68,7 +65,7 @@ export default {
 
       if (!this.showMempool) {
         let res = this.operations.slice();
-        if (this.sortAsc) res = res.reverse();
+        if (this.sortAsc) return res.reverse();
         return res;
       }
 

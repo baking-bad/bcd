@@ -67,19 +67,18 @@ export default {
   },
   computed: {
     entryName() {
-      if (this.address == this.value.destination) {
-        if (
-          this.value.parameters != null &&
-          this.value.parameters !== undefined
-        ) {
-          let keys = Object.keys(this.value.parameters);
-          if (keys.length == 1) {
-            let name = keys[0];
-            if (this.value.parameters[name] !== undefined) return name;
-          }
-          return "__entry__0";
+      if (
+        this.value.parameters != null &&
+        this.value.parameters !== undefined
+      ) {
+        let keys = Object.keys(this.value.parameters);
+        if (keys.length == 1) {
+          let name = keys[0];
+          if (this.value.parameters[name] !== undefined) return name;
         }
+        return "default";
       }
+
       return null;
     },
     text() {

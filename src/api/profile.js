@@ -8,7 +8,12 @@ const api = axios.create({
     responseType: 'json'
 });
 
-export class RequestFailedError extends Error { }
+export class UnauthorizedError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "UnauthorizedError";
+    }
+}
 
 export function getProfile() {
     return api.get(``,
@@ -18,10 +23,13 @@ export function getProfile() {
             }
         })
         .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
             return res.data
+        })
+        .catch((err) => {
+            if (err.response.status == 401) {
+                throw new UnauthorizedError(err);
+            }
+            throw err;
         })
 }
 
@@ -33,28 +41,34 @@ export function getProfileSubscriptions() {
             }
         })
         .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
             return res.data
+        })
+        .catch((err) => {
+            if (err.response.status == 401) {
+                throw new UnauthorizedError(err);
+            }
+            throw err;
         })
 }
 
 export function addProfileSubscription(id, typ) {
     return api.post(`/subscriptions`, {
-            id: id,
-            type: typ
-        },
+        id: id,
+        type: typ
+    },
         {
             headers: {
                 'Authorization': getJwt()
             }
         })
         .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
             return res.data
+        })
+        .catch((err) => {
+            if (err.response.status == 401) {
+                throw new UnauthorizedError(err);
+            }
+            throw err;
         })
 }
 
@@ -70,10 +84,13 @@ export function removeProfileSubscription(id, typ) {
             }
         })
         .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
             return res.data
+        })
+        .catch((err) => {
+            if (err.response.status == 401) {
+                throw new UnauthorizedError(err);
+            }
+            throw err;
         })
 }
 
@@ -85,9 +102,12 @@ export function getRecommendedSubscriptions() {
             }
         })
         .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
             return res.data
+        })
+        .catch((err) => {
+            if (err.response.status == 401) {
+                throw new UnauthorizedError(err);
+            }
+            throw err;
         })
 }

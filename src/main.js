@@ -4,8 +4,8 @@ import App from './App.vue'
 import store from './store'
 import router from './router'
 
-import { getProfile } from "@/api/profile.js";
-import { getJwt } from "@/utils/auth.js";
+import { UnauthorizedError, getProfile } from "@/api/profile.js";
+import { getJwt, logout } from "@/utils/auth.js";
 
 import vuetify from './plugins/vuetify';
 
@@ -61,7 +61,17 @@ router.beforeEach((to, from, next) => {
       .then(res => {
         store.dispatch('setProfile', res);
       })
-      .catch(err => console.log(err));
+      .catch(err => {
+        console.log(typeof err)
+        if (err instanceof UnauthorizedError) {
+          console.log(err.name)
+          store.dispatch('setIsAuthorized', false);
+          store.dispatch('setProfile', null);
+          logout();
+        } else {
+          console.log(err)
+        }
+      });
   }
 
   next();

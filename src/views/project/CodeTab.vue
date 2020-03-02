@@ -1,16 +1,25 @@
 <template>
   <v-container fluid>
     <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
-    <v-card class="ma-3" tile v-else>
-      <codemirror v-model="code" :options="cmOptions"></codemirror>
-    </v-card>
+    <div v-else>
+      <v-toolbar flat class="mb-2 transparent">
+        <v-spacer></v-spacer>
+        <v-btn small text class="toolbar-btn" @click="downloadFile">
+          <v-icon>mdi-download-outline</v-icon>
+          <span>Download</span>
+        </v-btn>
+      </v-toolbar>
+      <v-card tile>
+        <codemirror v-model="code" :options="cmOptions"></codemirror>
+      </v-card>
+    </div>
   </v-container>
 </template>
 
 <script>
 import { codemirror } from "vue-codemirror-lite";
-require('codemirror/addon/mode/simple.js')
-require('codemirror/theme/neo.css')
+require("codemirror/addon/mode/simple.js");
+require("codemirror/theme/neo.css");
 
 import { create } from "@/utils/codemirror.js";
 import { getContractCode } from "@/api/index.js";
@@ -47,6 +56,21 @@ export default {
         .finally(() => {
           this.loading = false;
         });
+    },
+    downloadFile() {
+      var element = document.createElement("a");
+      element.setAttribute(
+        "href",
+        "data:text/plain;charset=utf-8," + encodeURIComponent(this.code)
+      );
+      element.setAttribute("download", this.contract.address + '.tz');
+
+      element.style.display = "none";
+      document.body.appendChild(element);
+
+      element.click();
+
+      document.body.removeChild(element);
     }
   }
 };
@@ -57,5 +81,11 @@ export default {
   background-color: #fbfbfb;
   height: auto;
   margin-top: 2px;
+}
+</style>
+
+<style scoped>
+.toolbar-btn {
+  color: rgba(0, 0, 0, 0.54);
 }
 </style>

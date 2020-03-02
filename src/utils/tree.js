@@ -10,7 +10,8 @@ export function getTree(data, kind) {
             value: '0 items',
             value_type: 'map',
             type: "object",
-            kind: ''
+            kind: kind,
+            id: getId()
         });
         return res;
     }
@@ -24,16 +25,12 @@ export function getTree(data, kind) {
         res.push({
             name: data.type,
             children: [],
-            value: getValue(data.value) || 'null',
+            value: getValue(data) || null,
             value_type: data.type,
             type: "value",
-            kind: kind
+            kind: kind,
+            id: getId()
         });
-        return res;
-    }
-
-    if (data.value) {
-        res.push(...getTree(data.value, kind))
         return res;
     }
 
@@ -48,7 +45,8 @@ export function getTree(data, kind) {
             children: [],
             value: "null",
             type: "value",
-            kind: kind
+            kind: kind,
+            id: getId()
         };
         if (typeof data[x] === "object") {
             if (data[x] != null) {
@@ -63,8 +61,12 @@ export function getTree(data, kind) {
                     item.value_type = data[x].type;
                 } else {
                     item.type = "object";
-                    item.children = getTree(data[x], item.kind);
-                    item.value = `${item.children.length} items`;
+                    if (Object.keys(data[x]).length == 0) {
+                        item.value = `0 items`;
+                    } else {
+                        item.children = getTree(data[x], item.kind);
+                        item.value = `${item.children.length} items`;
+                    }
                 }
             }
         } else {
@@ -75,13 +77,22 @@ export function getTree(data, kind) {
     return res;
 }
 
+function getId() {
+    return Math.floor(Math.random() * (+100000000 - +1)) + +1;
+}
+
 function getValue(item) {
     if (item.from !== undefined && item.value !== undefined) {
         let start = parseType(item.from, item.type);
         let end = parseType(item.value, item.type);
         return `${start} -> ${end}`;
     }
-    return parseType(item.value, item.type)
+    if (item.value !== undefined && item.type !== undefined)
+        return parseType(item.value, item.type)
+    if (item.type === 'unit') {
+        return 'null';
+    }
+    return item;
 }
 
 function parseType(val, typ) {
