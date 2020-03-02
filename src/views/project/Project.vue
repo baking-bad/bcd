@@ -43,6 +43,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 import * as api from "@/api/index.js";
 import ExpandableSearch from "@/components/ExpandableSearch.vue";
 import ProjectNav from "@/views/project/Nav.vue";
@@ -71,23 +73,31 @@ export default {
     loading: true
   }),
   created() {
-    this.requestData(this.$route.params.network, this.$route.params.address);
+    this.requestData();
   },
   methods: {
-    requestData(network, address) {
+    ...mapActions(["showError"]),
+    requestData() {
+      if (
+        this.contract != null &&
+        this.contract.network === this.$route.params.network &&
+        this.contract.address === this.$route.params.address
+      )
+        return;
       api
-        .getContract(network, address)
+        .getContract(this.$route.params.network, this.$route.params.address)
         .then(res => {
           this.contract = res;
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
         .finally(() => (this.loading = false));
     }
   },
   watch: {
-    $route: function() {
-      this.requestData(this.$route.params.network, this.$route.params.address);
-    }
+    $route: "requestData"
   }
 };
 </script>

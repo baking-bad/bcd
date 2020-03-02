@@ -30,7 +30,7 @@
             <div v-on="on">
               <v-icon x-small :color="consumed_gas_diff > 0 ? 'red' : 'green'">mdi-fire</v-icon>
               <span
-                :class="consumed_gas_diff < 0 ? 'primary--text' : 'red--text'"
+                :class="consumed_gas_diff <= 0 ? 'primary--text' : 'red--text'"
                 style="line-height:12px; font-size: 10px;"
               >
                 <span v-if="consumed_gas_diff > 0">+</span>{{ consumed_gas_diff }}%

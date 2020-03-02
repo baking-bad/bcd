@@ -62,15 +62,15 @@ router.beforeEach((to, from, next) => {
         store.dispatch('setProfile', res);
       })
       .catch(err => {
-        console.log(typeof err)
         if (err instanceof UnauthorizedError) {
-          console.log(err.name)
           store.dispatch('setIsAuthorized', false);
           store.dispatch('setProfile', null);
+          store.dispatch('showError', 'Unauthorized access. Please login');
           logout();
         } else {
-          console.log(err)
+          store.dispatch('showError', err);
         }
+        console.log(err)
       });
   }
 

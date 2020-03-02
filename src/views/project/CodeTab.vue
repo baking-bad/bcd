@@ -10,7 +10,7 @@
         </v-btn>
       </v-toolbar>
       <v-card tile>
-        <codemirror v-model="code" :options="cmOptions"></codemirror>
+        <codemirror v-model="contract.code" :options="cmOptions"></codemirror>
       </v-card>
     </div>
   </v-container>
@@ -32,7 +32,6 @@ export default {
     codemirror
   },
   data: () => ({
-    code: null,
     cmOptions: {
       mode: "michelson",
       theme: "neo",
@@ -48,9 +47,14 @@ export default {
   },
   methods: {
     getCode() {
+      if (this.contract == null) return;
+      if (this.contract.code !== undefined) {
+        this.loading = false;
+        return;
+      }
       getContractCode(this.contract.network, this.contract.address)
         .then(res => {
-          this.code = res;
+          this.contract.code = res;
         })
         .catch(err => console.log(err))
         .finally(() => {
@@ -72,6 +76,9 @@ export default {
 
       document.body.removeChild(element);
     }
+  },
+  watch: {
+    contract: 'getCode'
   }
 };
 </script>

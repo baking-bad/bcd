@@ -3,9 +3,9 @@
     <v-skeleton-loader v-if="loading" height="123" type="image" class="ma-3"></v-skeleton-loader>
     <v-skeleton-loader v-if="loading" height="123" type="image" class="ma-3"></v-skeleton-loader>
     <v-skeleton-loader v-if="loading" height="123" type="image" class="ma-3"></v-skeleton-loader>
-    <v-card class="ma-3 transparent" v-else-if="entrypoints.length > 0">
+    <v-card class="ma-3 transparent" v-else-if=" contract.full_entrypoints.length > 0">
       <v-expansion-panels focusable tile hover accordion v-model="panel">
-        <v-expansion-panel v-for="(item,i) in entrypoints" :key="i">
+        <v-expansion-panel v-for="(item,i) in contract.full_entrypoints" :key="i">
           <v-expansion-panel-header ripple class="hash">{{ item.name }}</v-expansion-panel-header>
           <v-expansion-panel-content color="white">
             <div class="d-flex flex-column py-5 parameters">
@@ -41,12 +41,11 @@ export default {
     contract: Object
   },
   data: () => ({
-    entrypoints: [],
     panel: 0,
     loading: true
   }),
   created() {
-    this.getEntrypoints(this.contract);
+    this.getEntrypoints();
   },
   methods: {
     getTreeObject(data) {
@@ -76,15 +75,22 @@ export default {
       }
       return res;
     },
-    getEntrypoints(contract) {
-      if (contract == null) return;
-      getContractEntrypoints(contract.network, contract.address)
+    getEntrypoints() {
+      if (this.contract == null) return;
+      if (this.contract.full_entrypoints !== undefined) {
+        this.loading = false;
+        return;
+      }
+      getContractEntrypoints(this.contract.network, this.contract.address)
         .then(res => {
-          this.entrypoints = res;
+          this.contract.full_entrypoints = res;
         })
         .catch(err => console.log(err))
         .finally(() => (this.loading = false));
     }
+  },
+  watch: {
+    contract: 'getEntrypoints'
   }
 };
 </script>

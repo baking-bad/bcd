@@ -26,7 +26,7 @@ export function getProfile() {
             return res.data
         })
         .catch((err) => {
-            if (err.response.status == 401) {
+            if (err.response !== undefined && err.response.status == 401) {
                 throw new UnauthorizedError(err);
             }
             throw err;
@@ -44,7 +44,7 @@ export function getProfileSubscriptions() {
             return res.data
         })
         .catch((err) => {
-            if (err.response.status == 401) {
+            if (err.response !== undefined && err.response.status == 401) {
                 throw new UnauthorizedError(err);
             }
             throw err;
@@ -65,7 +65,7 @@ export function addProfileSubscription(id, typ) {
             return res.data
         })
         .catch((err) => {
-            if (err.response.status == 401) {
+            if (err.response !== undefined && err.response.status == 401) {
                 throw new UnauthorizedError(err);
             }
             throw err;
@@ -87,7 +87,7 @@ export function removeProfileSubscription(id, typ) {
             return res.data
         })
         .catch((err) => {
-            if (err.response.status == 401) {
+            if (err.response !== undefined && err.response.status == 401) {
                 throw new UnauthorizedError(err);
             }
             throw err;
@@ -105,7 +105,7 @@ export function getRecommendedSubscriptions() {
             return res.data
         })
         .catch((err) => {
-            if (err.response.status == 401) {
+            if (err.response !== undefined && err.response.status == 401) {
                 throw new UnauthorizedError(err);
             }
             throw err;

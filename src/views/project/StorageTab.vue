@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
-    <v-card tile class="ma-3 pa-3" v-else-if="storage">
+    <v-card tile class="ma-3 pa-3" v-else-if="contract.storage">
       <v-treeview :items="items" hoverable open-all transition class="storage">
         <template v-slot:label="{ item }">
           <span>{{ item.name }}:</span>&nbsp;
@@ -35,16 +35,15 @@ export default {
   },
   computed: {
     items() {
-      return getTree(this.storage);
+      return getTree(this.contract.storage);
     }
   },
   data: () => ({
-    storage: null,
     panel: 0,
     loading: true
   }),
   created() {
-    this.getStorage(this.contract);
+    this.getStorage();
   },
   methods: {
     getValue(item) {
@@ -62,11 +61,15 @@ export default {
       }
       return item.value;
     },
-    getStorage(contract) {
-      if (contract == null) return;
-      getContractStorage(contract.network, contract.address)
+    getStorage() {
+      if (this.contract == null) return;
+      if(this.contract.storage !== undefined) {
+        this.loading = false;
+        return;
+      }
+      getContractStorage(this.contract.network, this.contract.address)
         .then(res => {
-          this.storage = res;
+          this.contract.storage = res;
         })
         .catch(err => console.log(err))
         .finally(() => (this.loading = false));
@@ -93,6 +96,9 @@ export default {
       }
       return "mdi-alphabetical";
     }
+  },
+  watch: {
+    contract: 'getStorage'
   }
 };
 </script>

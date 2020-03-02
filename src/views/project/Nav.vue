@@ -129,7 +129,7 @@
           v-for="(item, key) in same"
           class="py-2"
           :item="item"
-          :key="key"
+          :key="key + '_' + item.address + '_' + item.network"
           :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
         />
         <v-btn
@@ -144,10 +144,10 @@
       <v-tab-item>
         <SimilarItem
           :item="item"
-          :address="$route.params.address"
-          :network="$route.params.network"
+          :address="contract.address"
+          :network="contract.network"
           v-for="(item, key) in similar"
-          :key="key"
+          :key="key + '_' + item.address + '_' + item.network"
         />
       </v-tab-item>
     </v-tabs-items>
@@ -215,42 +215,42 @@ export default {
       }
     },
     requestData() {
-      this.same = [];
-      this.similar = [];
-      this.similarCount = 0;
-      this.sameCount = 0;
+      this.contract.same = [];
+      this.contract.similar = [];
+      this.contract.similarCount = 0;
+      this.contract.sameCount = 0;
       this.rating = null;
 
-      getSameContracts(
-        this.$route.params.network,
-        this.$route.params.address,
-        this.same.length
-      )
+      getSameContracts(this.contract.network, this.contract.address, 0)
         .then(res => {
-          this.same.push(...res.contracts);
-          this.sameCount = res.count;
-          if (this.sameCount > 0) this.projectTab = 0;
+          this.contract.same = res.contracts;
+          this.contract.sameCount = res.count;
+          if (this.contract.sameCount > 0) {
+            this.projectTab = 0;
+          }
+          this.same = this.contract.same;
+          this.sameCount = this.contract.sameCount;
         })
         .catch(err => console.log(err))
         .finally(() => (this.loading = false));
 
-      getSimilarContracts(
-        this.$route.params.network,
-        this.$route.params.address
-      )
+      getSimilarContracts(this.contract.network, this.contract.address)
         .then(res => {
-          this.similar.push(...res);
-          this.similarCount = res.length;
-          if (!this.hasSame && this.similarCount > 0) this.projectTab = 1;
+          this.contract.similar = res;
+          this.contract.similarCount = res.length;
+          if (this.contract.similarCount > 0) {
+            if (!this.hasSame) this.projectTab = 1;
+          }
+          this.similar = this.contract.similar;
+          this.similarCount = this.contract.similarCount;
         })
         .catch(err => console.log(err));
 
-      getContractRating(
-        this.$route.params.network,
-        this.$route.params.address
-      ).then(res => {
-        this.rating = res;
-      });
+      getContractRating(this.contract.network, this.contract.address).then(
+        res => {
+          this.rating = res;
+        }
+      );
     },
     getTzKTLink(address) {
       return getTzKTLink(this.contract.network, address);
@@ -282,19 +282,20 @@ export default {
     },
     getProjectUpdate() {
       getSameContracts(
-        this.$route.params.network,
-        this.$route.params.address,
-        this.same.length
+        this.contract.network,
+        this.contract.address,
+        this.contract.same.length
       )
         .then(res => {
-          this.same.push(...res.contracts);
+          this.contract.same.push(...res.contracts);
+          this.same = this.contract.same;
         })
         .catch(err => console.log(err))
         .finally(() => (this.loading = false));
     }
   },
   watch: {
-    $route: "requestData"
+    contract: "requestData"
   }
 };
 </script>

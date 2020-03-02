@@ -3,20 +3,15 @@
     <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
     <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
     <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
-    <div v-else-if="allOperations.length > 0">
+    <div v-else-if="operations !== undefined && operations.length > 0">
       <v-toolbar flat class="mb-5 transparent">
         <v-spacer></v-spacer>
-        <v-btn small text @click="sortAsc = !sortAsc" class="toolbar-btn">
-          <v-icon v-if="!sortAsc">mdi-sort-ascending</v-icon>
-          <v-icon v-else>mdi-sort-descending</v-icon>&nbsp;
-          <span>Sorting</span>
-        </v-btn>
         <v-btn
           small
           text
           @click="showMempool = !showMempool"
           class="toolbar-btn"
-          :disabled="mempool.length == 0"
+          :disabled="contract.mempool === undefined || contract.mempool.length == 0"
         >
           <v-icon v-if="showMempool">mdi-minus-network-outline</v-icon>
           <v-icon v-else>mdi-plus-network-outline</v-icon>&nbsp;
@@ -24,11 +19,14 @@
         </v-btn>
       </v-toolbar>
       <v-expansion-panels multiple popout tile>
-        <template v-for="(item) in allOperations">
-          <Operation :data="item" :key="item.hash + String(item.counter)" :address="$route.params.address" />
-        </template>
+        <Operation
+          :data="item"
+          :key="item.hash + '_' + item.counter + '_' + key"
+          :address="contract.address"
+          v-for="(item, key) in operations"
+        />
       </v-expansion-panels>
-      <span v-intersect="onDownloadPage"></span>
+      <span v-intersect="onDownloadPage" v-if="!contract.downloadedOperations"></span>
     </div>
     <v-card
       v-else
@@ -42,11 +40,10 @@
 </template>
 
 <script>
-import Operation from "@/components/Operation.vue";
-import { getContractOperations } from "@/api/index.js";
-import { getContractMempool } from "@/api/index.js";
+import { mapActions } from "vuex";
 
-import dayjs from "dayjs";
+import Operation from "@/components/Operation.vue";
+import { getContractOperations, getContractMempool } from "@/api/index.js";
 
 export default {
   name: "OperationsTab",
@@ -60,104 +57,110 @@ export default {
     loading() {
       return this.operationsLoading && this.mempoolLoading;
     },
-    allOperations() {
-      if (this.loading) return [];
-
-      if (!this.showMempool) {
-        let res = this.operations.slice();
-        if (this.sortAsc) return res.reverse();
-        return res;
+    operations() {
+      if (this.last_id === null) return [];
+      if (this.showMempool) {
+        return this.contract.operations
+          .concat(this.contract.mempool)
+          .sort(this.compareOperations);
       }
 
-      if (!this.sortAsc)
-        return this.operations
-          .concat(this.mempool)
-          .sort(this.compareOperations)
-          .reverse();
-
-      return this.operations.concat(this.mempool).sort(this.compareOperations);
+      return this.contract.operations;
     }
   },
   data: () => ({
     operationsLoading: true,
     mempoolLoading: true,
-    downloaded: false,
-    operations: [],
-    mempool: [],
     showMempool: false,
-    sortAsc: false,
     last_id: ""
   }),
   created() {
     this.fetchOperations();
   },
   methods: {
+    ...mapActions(["showError"]),
     compareOperations(a, b) {
-      let d1 = dayjs(a.timestamp);
-      let d2 = dayjs(b.timestamp);
-      if (d1.isBefore(d2)) {
+      if (a.level < b.level) {
         return -1;
       }
-      if (d1.isAfter(d2)) {
+      if (a.level > b.level) {
         return 1;
       }
       return 0;
     },
     getOperations() {
-      if (!this.downloaded) {
-        getContractOperations(
-          this.$route.params.network,
-          this.$route.params.address,
-          this.last_id
-        )
-          .then(res => {
-            this.prepareOperations(res.operations);
-            this.downloaded = res.operations.length == 0;
-            this.last_id = res.last_id;
-          })
-          .catch(err => console.log(err))
-          .finally(() => (this.operationsLoading = false));
-      }
+      if (this.contract == null || this.contract.downloadedOperations) return;
+
+      getContractOperations(
+        this.contract.network,
+        this.contract.address,
+        this.last_id
+      )
+        .then(res => {
+          this.prepareOperations(res.operations);
+          this.contract.downloadedOperations = res.operations.length == 0;
+          this.last_id = res.last_id;
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
+        .finally(() => (this.operationsLoading = false));
     },
     getMempool() {
+      if (this.contract == null) return;
+      if (this.contract.mempool !== undefined) {
+        this.mempoolLoading = false;
+        return;
+      }
       this.mempoolLoading = true;
-      getContractMempool(this.$route.params.network, this.$route.params.address)
+      getContractMempool(this.contract.network, this.contract.address)
         .then(res => {
-          this.mempool = res;
+          this.contract.mempool = res;
         })
-        .catch(err => console.log(err))
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
         .finally(() => (this.mempoolLoading = false));
     },
     prepareOperations(data) {
       data.forEach(element => {
         if (element.internal) {
-          this.operations[this.operations.length - 1].internal_operations.push(
-            element
-          );
+          this.contract.operations[
+            this.contract.operations.length - 1
+          ].internal_operations.push(element);
         } else {
           element.internal_operations = [];
-          this.operations.push(element);
+          this.contract.operations.push(element);
         }
       });
     },
-    onDownloadPage(entries) {
-      if (entries[0].isIntersecting) {
-        this.getOperations(this.contract);
+    onDownloadPage(entries, observer, isIntersecting) {
+      if (isIntersecting) {
+        this.getOperations();
       }
     },
     fetchOperations() {
-      this.operations = [];
-      this.mempool = [];
-      this.offset = 0;
-      this.operationsLoading = true;
-      this.mempoolLoading = true;
-      this.downloaded = false;
-      this.getOperations();
-      this.getMempool();
+      if (this.contract.operations === undefined) {
+        this.contract.downloadedOperations = false;
+        this.contract.operations = [];
+        this.operationsLoading = true;
+        this.getOperations();
+      } else {
+        this.operationsLoading = false;
+      }
+      if (this.contract.mempool === undefined) {
+        this.contract.mempool = [];
+        this.mempoolLoading = true;
+        this.getMempool();
+      } else {
+        this.mempoolLoading = false;
+      }
     }
   },
   watch: {
-    $route: "fetchOperations"
+    contract: "fetchOperations"
   }
 };
 </script>

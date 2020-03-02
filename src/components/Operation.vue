@@ -68,8 +68,10 @@ export default {
   computed: {
     entryName() {
       if (
+        this.value.kind === "transaction" &&
         this.value.parameters != null &&
-        this.value.parameters !== undefined
+        this.value.parameters !== undefined &&
+        this.value.destination === this.address
       ) {
         let keys = Object.keys(this.value.parameters);
         if (keys.length == 1) {
@@ -77,6 +79,27 @@ export default {
           if (this.value.parameters[name] !== undefined) return name;
         }
         return "default";
+      } else {
+        for (let i = 0; i < this.value.internal_operations.length; i++) {
+          if (
+            this.value.internal_operations[i].kind === "transaction" &&
+            this.value.internal_operations[i].parameters != null &&
+            this.value.internal_operations[i].parameters !== undefined &&
+            this.value.internal_operations[i].destination === this.address
+          ) {
+            let keys = Object.keys(
+              this.value.internal_operations[i].parameters
+            );
+            if (keys.length == 1) {
+              let name = keys[0];
+              if (
+                this.value.internal_operations[i].parameters[name] !== undefined
+              )
+                return name;
+            }
+            return "default";
+          }
+        }
       }
 
       return null;

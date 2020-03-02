@@ -2,12 +2,12 @@
   <v-container fluid>
     <DiffViewer
       v-if="!loading"
-      :left="diffs.left"
-      :right="diffs.right"
-      :nameRight="diffs.name_right"
-      :nameLeft="diffs.name_left"
-      :added="diffs.added"
-      :removed="diffs.removed"
+      :left="contract.migration.left"
+      :right="contract.migration.right"
+      :nameRight="contract.migration.name_right"
+      :nameLeft="contract.migration.name_left"
+      :added="contract.migration.added"
+      :removed="contract.migration.removed"
     />
     <v-skeleton-loader v-else height="400" type="image" class="ma-3"></v-skeleton-loader>
   </v-container>
@@ -26,26 +26,33 @@ export default {
   components: {
     DiffViewer
   },
-  async created() {
-    this.diffs = await getContractMigration(
-      this.$route.params.network,
-      this.$route.params.address
-    );
-    this.loading = false;
+  created() {
+    this.getMigration();
   },
   data: () => ({
-    diffs: null,
     loading: true
   }),
-  watch: {
-    $route: async function() {
+  methods: {
+    getMigration() {
+      if (this.contract == null) return;
+      if (this.contract.migration !== undefined) {
+        this.loading = false;
+        return;
+      }
       this.loading = true;
-      this.diffs = await getContractMigration(
+      getContractMigration(
         this.$route.params.network,
         this.$route.params.address
-      );
-      this.loading = false;
+      )
+        .then(res => {
+          this.contract.migration = res;
+        })
+        .catch(err => console.log(err))
+        .finally(() => (this.loading = false));
     }
+  },
+  watch: {
+    contract: "getMigration"
   }
 };
 </script>
