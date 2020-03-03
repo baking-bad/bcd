@@ -16,11 +16,10 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title class="overline">{{ text }}</v-list-item-title>
-              <v-list-item-subtitle>
-                <span
-                  class="caption grey--text"
+              <v-list-item-subtitle 
+                  class="overline grey--text"
                   v-if="value && !value.mempool && value.internal_operations.length"
-                >{{ value.internal_operations.length }} internal</span>
+                >{{ value.internal_operations.length }} internal
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -32,7 +31,7 @@
         </v-col>
       </v-row>
     </v-expansion-panel-header>
-    <v-expansion-panel-content>
+    <v-expansion-panel-content class="pl-1">
       <InternalOperation :data="value" :address="address" />
 
       <InternalOperation
@@ -191,18 +190,18 @@ export default {
 }
 
 .applied {
-  border-left: 5px solid #6ac21f;
+  border-left: 4px solid #6ac21f;
 }
 
 .backtracked {
-  border-left: 5px solid orange;
+  border-left: 4px solid orange;
 }
 
 .failed {
-  border-left: 5px solid red;
+  border-left: 4px solid red;
 }
 
 .mempool {
-  border-left: 5px solid grey;
+  border-left: 4px solid grey;
 }
 </style>

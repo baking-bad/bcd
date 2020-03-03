@@ -115,7 +115,7 @@
               return-object
             >
               <template v-slot:label="{ item }">
-                <span>{{ item.name }}:</span>&nbsp;
+                <span :class="item.name.startsWith('@') ? 'purple--text' : ''">{{ item.name }}:</span>&nbsp;
                 <span :class="item.type">{{ item.value }}</span>
               </template>
             </v-treeview>
@@ -162,25 +162,13 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog persistent v-model="showTreeNodeDetails" v-if="active" width="700">
-      <v-card>
-        <v-card-title class="headline secondary" primary-title>
-          <span>{{ active.name }}</span>
-          <v-spacer></v-spacer>
-          <v-btn icon text @click="closeTreeNodeDetails()">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text class="mt-5">
-          <span>{{ active.value }}</span>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active"/>
   </div>
 </template>
 
 <script>
 import InfoItem from "@/components/InfoItem.vue";
+import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import { getTree } from "@/utils/tree.js";
 import { getTzKTLink } from "@/utils/tzkt.js";
 import { getError } from "@/utils/errors.js";
@@ -194,6 +182,7 @@ export default {
   },
   components: {
     InfoItem,
+    TreeNodeDetails,
     VueJsonPretty
   },
   computed: {

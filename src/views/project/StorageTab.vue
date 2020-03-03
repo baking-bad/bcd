@@ -30,25 +30,14 @@
       </v-treeview>
     </v-card>
 
-    <v-dialog persistent v-model="showTreeNodeDetails" v-if="active" width="700">
-      <v-card>
-        <v-card-title class="headline secondary" primary-title>
-          <span>{{ active.name }}</span>
-          <v-spacer></v-spacer>
-          <v-btn icon text @click="activeField = []">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text class="mt-5">
-          <span>{{ active.value }}</span>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" />
   </v-container>
 </template>
 
 <script>
 import { mapActions } from "vuex";
+
+import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 
 import { getContractStorage } from "@/api/index.js";
 import { getTree } from "@/utils/tree.js";
@@ -57,6 +46,9 @@ import dayjs from "dayjs";
 
 export default {
   name: "StorageTab",
+  components: {
+    TreeNodeDetails
+  },
   props: {
     contract: Object
   },

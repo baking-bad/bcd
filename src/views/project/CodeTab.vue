@@ -71,7 +71,7 @@ export default {
       var element = document.createElement("a");
       element.setAttribute(
         "href",
-        "data:text/plain;charset=utf-8," + encodeURIComponent(this.code)
+        "data:text/plain;charset=utf-8," + encodeURIComponent(this.contract.code)
       );
       element.setAttribute("download", this.contract.address + ".tz");
 

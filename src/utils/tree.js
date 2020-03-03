@@ -81,13 +81,20 @@ export function getTree(data, kind) {
 export function getEntrypointTree(data) {
     let res = [];
     if (data.type !== undefined) {
-        res.push({
-            name: data.type,
+        let item = {
+            name: '',
             children: [],
-            value: "",
+            value: data.type,
             type: "value",
             id: getId()
-        });
+        }
+        if (data.type === 'contract' || data.type === 'lambda') {
+            item.value = `${data.type} (${data.params})`
+        }
+        if (data.type === 'list' || data.type === 'set') {
+            item.value = getListType(data);
+        }
+        res.push(item);
         return res;
     }
 
@@ -101,20 +108,46 @@ export function getEntrypointTree(data) {
         };
         if (typeof data[x] === "object" && data[x] != null) {
             if (data[x].type !== undefined) {
-                item.value = data[x].type
+                if (data[x].type === 'contract' || data[x].type === 'lambda') {
+                    item.value = `${data[x].type} (${data[x].params})`
+                } else if (data[x].type === 'list' || data[x].type === 'set') {
+                    item.value = getListType(data[x]);
+                } else {
+                    item.value = data[x].type
+                }
             } else {
                 item.type = "object";
                 if (Object.keys(data[x]).length == 0) {
                     item.value = `0 items`;
                 } else {
                     item.children = getEntrypointTree(data[x]);
-                    item.value = `${item.children.length} items`;
                 }
             }
         }
         res.push(item);
     }
     return res;
+}
+
+function getListType(item) {
+    if (item.params === undefined) {
+        return item.type;
+    }
+
+    let s = '';
+    if (item.type !== undefined) {
+        s += item.type;
+    }
+
+    s += ' (';
+    for (let i = 0; i < item.params.length; i++) {
+        s += getListType(item.params[i])
+        if (i != item.params.length - 1) {
+            s += ', '
+        }
+    }
+    s += ')'
+    return s;
 }
 
 function getId() {
