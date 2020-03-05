@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-overlay :value="loading" absolute>
+    <v-overlay :value="loading" v-if="loading" absolute>
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
-    <div v-if="contract">
+    <div v-else-if="contract">
       <ProjectNav :contract="contract" />
 
       <v-container fluid class="py-0 my-0">
@@ -30,6 +30,7 @@
           </v-col>
           <v-col cols="5" class="d-flex align-end">
             <ExpandableSearch></ExpandableSearch>
+            <v-btn text small class="toolbar-btn mb-1 mr-5" @click="random">Pick random</v-btn>
           </v-col>
           <v-col cols="12">
             <v-slide-x-reverse-transition mode="out-in">
@@ -39,6 +40,7 @@
         </v-row>
       </v-container>
     </div>
+    <ErrorState v-else></ErrorState>
   </div>
 </template>
 
@@ -48,12 +50,14 @@ import { mapActions } from "vuex";
 import * as api from "@/api/index.js";
 import ExpandableSearch from "@/components/ExpandableSearch.vue";
 import ProjectNav from "@/views/project/Nav.vue";
+import ErrorState from "@/components/ErrorState.vue";
 
 export default {
   name: "Project",
   components: {
     ProjectNav,
-    ExpandableSearch
+    ExpandableSearch,
+    ErrorState
   },
   computed: {
     hasEntrypoints() {
@@ -94,6 +98,17 @@ export default {
           this.showError(err);
         })
         .finally(() => (this.loading = false));
+    },
+    random() {
+      api
+        .getRandomContract()
+        .then(res => {
+          this.$router.push({ path: `/${res.network}/${res.address}` });
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        });
     }
   },
   watch: {
@@ -110,5 +125,8 @@ export default {
 
 .info-data {
   font-size: 12px;
+}
+.toolbar-btn {
+  color: rgba(0, 0, 0, 0.54);
 }
 </style>

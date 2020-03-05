@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
-    <div v-else>
+    <div v-else-if="contract.code">
       <v-toolbar flat class="mb-2 transparent">
         <v-spacer></v-spacer>
         <v-btn small text class="toolbar-btn" @click="downloadFile">
@@ -13,6 +13,7 @@
         <codemirror v-model="contract.code" :options="cmOptions"></codemirror>
       </v-card>
     </div>
+    <ErrorState v-else />
   </v-container>
 </template>
 
@@ -25,13 +26,15 @@ import { mapActions } from "vuex";
 
 import { create } from "@/utils/codemirror.js";
 import { getContractCode } from "@/api/index.js";
+import ErrorState from "@/components/ErrorState.vue";
 
 export default {
   props: {
     contract: Object
   },
   components: {
-    codemirror
+    codemirror,
+    ErrorState
   },
   data: () => ({
     cmOptions: {

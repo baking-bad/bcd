@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
-    <v-row v-else>
+    <v-row v-else-if="diffs">
       <v-col cols="12" class="d-flex justify-center align-center">
         <v-btn text icon color="primary" @click="upVote">
           <v-icon>mdi-thumb-up-outline</v-icon>
@@ -25,6 +25,7 @@
         </v-snackbar>
       </v-col>
     </v-row>
+    <ErrorState v-else />
   </v-container>
 </template>
 
@@ -34,11 +35,13 @@ import { mapActions } from "vuex";
 import { getDiff, vote } from "@/api/index.js";
 
 import DiffViewer from "@/components/DiffViewer.vue";
+import ErrorState from "@/components/ErrorState.vue";
 
 export default {
   name: "Diff",
   components: {
-    DiffViewer
+    DiffViewer,
+    ErrorState
   },
   data: () => ({
     diffs: null,

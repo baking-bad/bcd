@@ -55,7 +55,7 @@ export default {
   },
   computed: {
     loading() {
-      return this.operationsLoading && this.mempoolLoading;
+      return this.operationsLoading || this.mempoolLoading;
     },
     operations() {
       if (this.last_id === null) return [];

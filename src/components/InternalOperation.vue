@@ -162,7 +162,7 @@
       </v-card>
     </v-dialog>
 
-    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active"/>
+    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" />
   </div>
 </template>
 
@@ -277,11 +277,14 @@ export default {
       return null;
     },
     header() {
+      if (this.data.internal) {
+        if (this.entryName != null) {
+          return `Internal call ${this.entryName}`;
+        }
+        return `Internal ${this.data.kind}`;
+      }
       if (this.entryName != null) {
         return `Call ${this.entryName}`;
-      }
-      if (this.data.internal) {
-        return `Internal ${this.data.kind}`;
       }
       return this.data.kind;
     },

@@ -21,7 +21,7 @@
             small
             text
             @click="subscribe"
-            v-if="!contract.profile.subscribed"
+            v-if="contract.profile == undefined || !contract.profile.subscribed"
             color="primary"
           >Subscribe</v-btn>
           <v-btn small text @click="unsubscribe" color="grey" v-else>Unsubscribe</v-btn>

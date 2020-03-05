@@ -28,9 +28,9 @@
           <v-icon small v-else>mdi-folder</v-icon>
         </template>
       </v-treeview>
+      <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" />
     </v-card>
-
-    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" />
+    <ErrorState v-else />
   </v-container>
 </template>
 
@@ -38,6 +38,7 @@
 import { mapActions } from "vuex";
 
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
+import ErrorState from "@/components/ErrorState.vue";
 
 import { getContractStorage } from "@/api/index.js";
 import { getTree } from "@/utils/tree.js";
@@ -47,7 +48,8 @@ import dayjs from "dayjs";
 export default {
   name: "StorageTab",
   components: {
-    TreeNodeDetails
+    TreeNodeDetails,
+    ErrorState
   },
   props: {
     contract: Object
