@@ -9,7 +9,7 @@
           style="max-width: 450px; font-size:14px;"
           :search-input.sync="searchText"
           :items="suggests"
-          item-text="address"
+          item-text="value"
           return-object
           placeholder="Search anything"
           background-color="transparent"
@@ -25,14 +25,15 @@
         >
           <template v-slot:item="{ item }">
             <v-list-item-avatar>
-              <v-icon>mdi-magnify</v-icon>
+              <v-icon v-if="item.type == 'contract'">mdi-code-tags</v-icon>
+              <v-icon v-else-if="item.type == 'operation'">mdi-swap-horizontal</v-icon>
             </v-list-item-avatar>
             <v-list-item-content>
-              <v-list-item-title class="hash" v-text="item.address"></v-list-item-title>
-              <v-list-item-subtitle>Found in {{item.found_by}}</v-list-item-subtitle>
+              <v-list-item-title class="hash" v-text="item.value"></v-list-item-title>
+              <v-list-item-subtitle>Found in {{item.body.found_by}}</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-list-item-action-text class="overline primary--text" v-text="item.network"></v-list-item-action-text>
+              <v-list-item-action-text class="overline primary--text" v-text="item.body.network"></v-list-item-action-text>
             </v-list-item-action>
           </template>
         </v-combobox>
@@ -76,12 +77,19 @@ export default {
     ...mapActions(["showError"]),
     onSearch() {
       if (!this.model) return;
-      if (checkOperation(this.model)) {
-        this.$router.push({ path: `/opg/${this.model}` });
+      let value = this.model.value || this.model;
+
+      if (this.model.type === 'operation' && checkOperation(value)) {
+        this.expanded = false;
+        this.model = null;
+        this.$router.push({ path: `/opg/${value}` });
       }
-      if (checkAddress(this.model.address)) {
+      if (this.model.type === 'contract' && checkAddress(value)) {
+        this.expanded = false;
+        let network = this.model.body.network;
+        this.model = null;
         this.$router.push({
-          path: `/${this.model.network}/${this.model.address}`
+          path: `/${network}/${value}`
         });
       }
     }
@@ -92,7 +100,7 @@ export default {
         api
           .search(val)
           .then(res => {
-            this.suggests = res.contracts;
+            this.suggests = res.items;
           })
           .catch(err => {
             console.log(err);

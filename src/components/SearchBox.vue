@@ -3,7 +3,7 @@
     v-model="model"
     :search-input.sync="searchText"
     :items="suggests"
-    item-text="address"
+    item-text="value"
     return-object
     prepend-inner-icon="mdi-magnify"
     placeholder="Search anything"
@@ -21,14 +21,15 @@
   >
     <template v-slot:item="{ item }">
       <v-list-item-avatar>
-        <v-icon>mdi-magnify</v-icon>
+        <v-icon v-if="item.type == 'contract'">mdi-code-tags</v-icon>
+        <v-icon v-else-if="item.type == 'operation'">mdi-swap-horizontal</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
-        <v-list-item-title v-text="item.address"></v-list-item-title>
-        <v-list-item-subtitle>Found in {{item.found_by}}</v-list-item-subtitle>
+        <v-list-item-title class="hash" v-text="item.body.address || item.body.hash"></v-list-item-title>
+        <v-list-item-subtitle>Found in {{item.body.found_by}}</v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action>
-        <v-list-item-action-text class="overline primary--text" v-text="item.network"></v-list-item-action-text>
+        <v-list-item-action-text class="overline primary--text" v-text="item.body.network"></v-list-item-action-text>
       </v-list-item-action>
     </template>
   </v-combobox>
@@ -62,12 +63,12 @@ export default {
     ...mapActions(["showError"]),
     onSearch() {
       if (!this.model) return;
-      let value = this.model.address || this.model;
-      let network = this.model.network;
-      if (checkOperation(value)) {
+      let value = this.model.value || this.model;
+      if (this.model.type == "operation" && checkOperation(value)) {
         this.$router.push({ path: `/opg/${value}` });
       }
-      if (checkAddress(value)) {
+      if (this.model.type == "contract" && checkAddress(value)) {
+        let network = this.model.body.network;
         this.$router.push({ path: `/${network}/${value}` });
       }
     }
@@ -78,7 +79,7 @@ export default {
         api
           .search(val)
           .then(res => {
-            this.suggests = res.contracts;
+            this.suggests = res.items;
           })
           .catch(err => {
             console.log(err);

@@ -7,7 +7,8 @@ import Nav from '@/components/Nav.vue';
 
 import Home from '@/views/Home.vue'
 import Welcome from '@/views/Welcome.vue'
-import ExtendedSearch from '@/views/ExtendedSearch.vue'
+
+import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
 import Project from '@/views/project/Project.vue'
 import OperationsTab from '@/views/project/OperationsTab.vue'

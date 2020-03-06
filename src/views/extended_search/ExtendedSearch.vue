@@ -139,69 +139,12 @@
           </v-row>
         </v-card>
       </v-expand-transition>
+
       <div v-if="total > 0">
-        <span class="time-info">Found {{ total }} contracts ({{ elasticTime }} ms)</span>
+        <span class="time-info">Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
         <template v-for="(item, idx) in suggests">
-          <div class="item" :key="idx">
-            <v-hover v-slot:default="{ hover }">
-              <v-card class="my-3 transparent" :elevation="hover ? 2 : 0" @click="onSearch(item)">
-                <v-list-item three-line>
-                  <v-list-item-content>
-                    <span class="overline" v-if="item.found_by">Found by {{ item.found_by }}</span>
-                    <v-list-item-title class="subtitle-1">{{ item.address }}</v-list-item-title>
-                    <v-list-item-subtitle
-                      class="subtitle-2"
-                      v-if="item.manager"
-                    >Created by {{ item.manager }}</v-list-item-subtitle>
-                    <v-list-item-subtitle
-                      class="caption"
-                    >Deployed {{ formatDate(item.timestamp)}} - {{ item.language }}</v-list-item-subtitle>
-
-                    <div class="d-flex flex-horizontal mt-1">
-                      <v-chip
-                        v-for="tag in item.tags"
-                        :key="tag"
-                        color="secondary"
-                        text-color="grey darken-1"
-                        class="mr-1 caption"
-                        small
-                        label
-                        pill
-                      >{{ tag.replace('_', ' ') }}</v-chip>
-                    </div>
-
-                    <div v-if="item.group" class="mt-3 mx-2">
-                      <span class="overline">Same contracts</span>
-                      <template v-for="(top) in item.group.top">
-                        <div :key="top.address" class="d-flex flex-horizontal my-2 align-center">
-                          <router-link
-                            class="hash same-link mr-3"
-                            :to="{'name': 'project', params:{'address': top.address, 'network': top.network}}"
-                          >{{ top.address }}</router-link>
-                          <span class="same-network">{{ top.network }}</span>
-                        </div>
-                      </template>
-                      <p
-                        class="time-info"
-                        v-if="item.group.count > 5"
-                      >and {{ item.group.count - 5 }} others</p>
-                    </div>
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-list-item-action-text class="overline primary--text" v-text="item.network"></v-list-item-action-text>
-                    <v-list-item-action-text
-                      v-if="item.tx_count"
-                      class="caption"
-                    >{{ item.tx_count }} operations</v-list-item-action-text>
-                    <v-list-item-action-text
-                      v-if="item.last_action"
-                      class="caption"
-                    >the last one was {{ formatDate(item.last_action) }}</v-list-item-action-text>
-                  </v-list-item-action>
-                </v-list-item>
-              </v-card>
-            </v-hover>
-          </div>
+          <ContractItem :key="idx" :item="item" v-if="item.type === 'contract'" />
+          <OperationItem :key="idx" :item="item" v-else-if="item.type === 'operation'" />
         </template>
         <span v-intersect="onDownloadPage"></span>
       </div>
@@ -238,8 +181,15 @@ import dayjs from "dayjs";
 import * as api from "@/api/index.js";
 import { checkAddress, checkOperation } from "@/utils/tz.js";
 
+import ContractItem from "@/views/extended_search/ContractItem.vue";
+import OperationItem from "@/views/extended_search/OperationItem.vue";
+
 export default {
-  name: "ExtendedSearchToolbar",
+  name: "ExtendedSearch",
+  components: {
+    ContractItem,
+    OperationItem
+  },
   data: () => ({
     suggests: [],
     searchText: "",
@@ -362,13 +312,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['showError']),
-    formatDate(value) {
-      if (value) {
-        return dayjs(value).format("MMM D, YYYY");
-      }
-    },
-
+    ...mapActions(["showError"]),
     onSearch(value) {
       if (checkOperation(value)) {
         this.$router.push({ path: `/opg/${value}` });
@@ -390,26 +334,22 @@ export default {
     },
     search(text, fields = [], push = false, networks = [], time = {}) {
       let hasText = text != null && text.length >= 2;
-      if (checkOperation(text)) {
-        return;
-      }
       if (!this.loading && hasText && !this.completed) {
         this.loading = true;
         let offset = push ? this.suggests.length : 0;
         api
           .search(text, fields, offset, networks, time, 1)
           .then(res => {
-            console.log(res.contracts.length);
-            this.completed = res.contracts.length == 0;
+            this.completed = res.items.length == 0;
             if (!this.completed) {
               if (push) {
-                this.suggests.push(...res.contracts);
+                this.suggests.push(...res.items);
               } else {
-                this.suggests = res.contracts;
+                this.suggests = res.items;
               }
-              this.total = res.count;
-              this.elasticTime = res.time;
             }
+            this.total = res.count;
+            this.elasticTime = res.time;
           })
           .catch(err => {
             console.log(err);
