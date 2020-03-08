@@ -22,7 +22,7 @@
             x-small
             color="primary"
             v-else
-          >{{ item.value }}</v-btn>
+          >Big Map {{ item.value }}</v-btn>
         </template>
         <template v-slot:prepend="{ item, open }">
           <v-tooltip v-if="item.type === 'value'" left>
@@ -141,8 +141,11 @@ export default {
   },
   watch: {
     contract: "getStorage",
-    active() {
-      this.showTreeNodeDetails = !this.showTreeNodeDetails;
+    active(newVal) {
+      if (newVal !== null) this.showTreeNodeDetails = true;
+    },
+    showTreeNodeDetails(newVal) {
+      if (!newVal) this.activeField = [];
     }
   }
 };

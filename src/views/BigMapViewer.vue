@@ -1,5 +1,5 @@
 <template>
-  <div class="elevation-0 white">
+  <div class="elevation-0">
     <v-toolbar flat>
       <div>
         <v-toolbar-title>Big Map Viewer</v-toolbar-title>
@@ -62,7 +62,7 @@
               <span class="overline ml-3">Value at {{ selectedBigMapDiff.level }} level</span>
               <div v-if="selectedBigMapDiff.value !== null">
                 <v-treeview
-                  :items="getTree(selectedBigMapDiff.value)"
+                  :items="tree"
                   hoverable
                   open-all
                   transition
@@ -115,7 +115,7 @@
         </v-card>
       </v-col>
     </v-row>
-    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" v-if="active" />
+    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" />
   </div>
 </template>
 
@@ -144,6 +144,14 @@ export default {
     actions: []
   }),
   computed: {
+    tree() {
+      if (
+        this.selectedBigMapDiff == null ||
+        this.selectedBigMapDiff.value === ""
+      )
+        return [];
+      return getTree(this.selectedBigMapDiff.value);
+    },
     headers() {
       return [
         {
@@ -196,9 +204,6 @@ export default {
         })
         .finally(() => (this.loadingDetails = false));
     },
-    getTree(data) {
-      return getTree(data);
-    },
     showBigMapDiffDetails(item) {
       this.selectedBigMapDiff = item.data;
       this.getDetails();
@@ -210,6 +215,9 @@ export default {
         if (key.includes(search.toLowerCase())) return true;
       }
       return false;
+    },
+    getTree(data) {
+      return getTree(data);
     },
     isActive(item) {
       if (
@@ -226,8 +234,11 @@ export default {
     selectedAction(newValue) {
       this.selectedBigMapDiff = this.actions[newValue];
     },
-    active() {
-      this.showTreeNodeDetails = !this.showTreeNodeDetails;
+    active(newVal) {
+      if (newVal !== null) this.showTreeNodeDetails = true;
+    },
+    showTreeNodeDetails(newVal) {
+      if (!newVal) this.activeField = [];
     }
   }
 };
