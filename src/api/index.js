@@ -158,6 +158,27 @@ export function getContractRating(network, address) {
         })
 }
 
+export function getContractBigMap(network, address, ptr) {
+    return api.get(`/contract/${network}/${address}/bigmap/${ptr}`)
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+export function getContractBigMapByKeyHash(network, address, ptr, keyhash) {
+    return api.get(`/contract/${network}/${address}/bigmap/${ptr}/${keyhash}`)
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+
 export function getDiff(sn, sa, dn, da) {
     return api.get(`/diff?sn=${sn}&sa=${sa}&dn=${dn}&da=${da}`)
         .then((res) => {

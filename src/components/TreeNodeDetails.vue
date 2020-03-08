@@ -67,14 +67,10 @@ export default {
   },
   watch: {
     show(newVal) {
-      if (!newVal) {
-        this.$emit("input", false);
-      }
+      if (!newVal) this.$emit("input", newVal);
     },
     value(newVal) {
-      if (newVal) {
-        this.show = true;
-      }
+      if (newVal) this.show = newVal;
     }
   }
 };

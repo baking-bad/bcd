@@ -140,8 +140,13 @@
         </v-card>
       </v-expand-transition>
 
+      <v-overlay :value="loading">
+        <v-progress-circular indeterminate size="64"></v-progress-circular>
+      </v-overlay>
       <div v-if="total > 0">
-        <span class="time-info">Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
+        <span
+          class="time-info"
+        >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
         <template v-for="(item, idx) in suggests">
           <ContractItem :key="idx" :item="item" v-if="item.type === 'contract'" />
           <OperationItem :key="idx" :item="item" v-else-if="item.type === 'operation'" />

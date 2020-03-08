@@ -413,8 +413,14 @@ export default {
     }
   },
   watch: {
-    active() {
-      this.showTreeNodeDetails = !this.showTreeNodeDetails;
+    active(newVal) {
+      if (newVal !== null) this.showTreeNodeDetails = true;
+    },
+    showTreeNodeDetails(newVal) {
+      if (!newVal) {
+        this.activeStorage = [];
+        this.activeParameter = [];
+      }
     }
   }
 };

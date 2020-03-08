@@ -22,6 +22,7 @@ import SubscriptionsTab from '@/views/dashboard/SubscriptionsTab.vue'
 import TimelineTab from '@/views/dashboard/TimelineTab.vue'
 
 import Diff from '@/views/Diff.vue'
+import BigMapViewer from '@/views/BigMapViewer.vue'
 import Projects from '@/views/Projects.vue'
 import OPG from '@/views/OPG.vue'
 
@@ -79,6 +80,14 @@ const router = new Router({
                 nav: Nav
             },
             name: 'projects'
+        },
+        {
+            path: '/bigmap/:network(mainnet|babylonnet|zeronet|carthagenet)/:address([0-9A-z]{36})/:ptr(\\d+)',
+            components: {
+                default: BigMapViewer,
+                nav: Nav
+            },
+            name: 'bigmap'
         },
         {
             path: '/:network(mainnet|babylonnet|zeronet|carthagenet)/:address([0-9A-z]{36})',

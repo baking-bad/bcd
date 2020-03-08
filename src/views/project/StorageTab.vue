@@ -15,7 +15,14 @@
       >
         <template v-slot:label="{ item }">
           <span>{{ item.name }}:</span>&nbsp;
-          <span :class="item.type">{{ item.value }}</span>
+          <span :class="item.type" v-if="item.value_type !== 'big_map'">{{ item.value }}</span>
+          <v-btn
+            :to="{ name: 'bigmap', params: { address: contract.address, ptr: item.value, newtork: contract.network}}"
+            text
+            x-small
+            color="primary"
+            v-else
+          >Big Map {{ item.value }}</v-btn>
         </template>
         <template v-slot:prepend="{ item, open }">
           <v-tooltip v-if="item.type === 'value'" left>
@@ -126,14 +133,19 @@ export default {
         return "mdi-key";
       } else if (valueType === "lambda") {
         return "mdi-lambda";
+      } else if (valueType === "big_map") {
+        return "mdi-code-braces";
       }
       return "mdi-alphabetical";
     }
   },
   watch: {
     contract: "getStorage",
-    active() {
-      this.showTreeNodeDetails = !this.showTreeNodeDetails;
+    active(newVal) {
+      if (newVal !== null) this.showTreeNodeDetails = true;
+    },
+    showTreeNodeDetails(newVal) {
+      if (!newVal) this.activeField = [];
     }
   }
 };

@@ -2,7 +2,7 @@
   <div class="contract">
     <v-hover v-slot:default="{ hover }">
       <v-card class="my-3 transparent" :elevation="hover ? 2 : 0" @click="onSearch(item)">
-        <v-list-item three-line>
+        <v-list-item three-line selectable>
           <v-list-item-content>
             <span class="overline" v-if="item.body.found_by">Found by {{ item.body.found_by }}</span>
             <v-list-item-title class="hash">{{ item.value }}</v-list-item-title>
