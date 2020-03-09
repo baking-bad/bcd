@@ -86,7 +86,10 @@
               :key="idx"
             >
               <div class="red--text subtitle-1">{{ err.title }}</div>
-              <div class="caption">{{ err.descr }}</div>
+              <div class="caption">
+                {{ err.descr }}
+                <span v-if="err.with">: {{ err.with }}</span>
+              </div>
             </v-alert>
           </v-col>
         </v-row>

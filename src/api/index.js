@@ -82,7 +82,7 @@ export function getContractOperations(network, address, last_id = "", from = 0, 
     if (to !== 0) {
         params.to = to
     }
-    if (statuses.length > 0) {
+    if (statuses.length > 0 && statuses.length < 4) {
         params.status = statuses.join(',')
     }
     if (entrypoints.length > 0) {
