@@ -16,11 +16,10 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title class="overline">{{ text }}</v-list-item-title>
-              <v-list-item-subtitle 
-                  class="overline grey--text"
-                  v-if="value && !value.mempool && value.internal_operations.length"
-                >{{ value.internal_operations.length }} internal
-              </v-list-item-subtitle>
+              <v-list-item-subtitle
+                class="overline grey--text"
+                v-if="value && !value.mempool && value.internal_operations.length"
+              >{{ value.internal_operations.length }} internal</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
@@ -66,37 +65,15 @@ export default {
   },
   computed: {
     entryName() {
-      if (
-        this.value.kind === "transaction" &&
-        this.value.parameters != null &&
-        this.value.parameters !== undefined &&
-        this.value.destination === this.address
-      ) {
-        let keys = Object.keys(this.value.parameters);
-        if (keys.length == 1) {
-          let name = keys[0];
-          if (this.value.parameters[name] !== undefined) return name;
-        }
-        return "default";
+      if (this.value.entrypoint) {
+        return this.value.entrypoint;
       } else {
         for (let i = 0; i < this.value.internal_operations.length; i++) {
           if (
-            this.value.internal_operations[i].kind === "transaction" &&
-            this.value.internal_operations[i].parameters != null &&
-            this.value.internal_operations[i].parameters !== undefined &&
+            this.value.internal_operations[i].entrypoint &&
             this.value.internal_operations[i].destination === this.address
           ) {
-            let keys = Object.keys(
-              this.value.internal_operations[i].parameters
-            );
-            if (keys.length == 1) {
-              let name = keys[0];
-              if (
-                this.value.internal_operations[i].parameters[name] !== undefined
-              )
-                return name;
-            }
-            return "default";
+            return this.value.internal_operations[i].entrypoint;
           }
         }
       }
@@ -112,32 +89,30 @@ export default {
     },
     color() {
       if (this.value == null) return "grey";
-      if (this.value.result.status === "applied") return "primary";
-      if (this.value.result.status === "failed") return "red";
-      if (this.value.result.status === "backtracked") return "orange";
-      if (this.value.result.status === "skipped") return "blue";
-      if (this.value.result.status === "lost") return "red";
-      if (this.value.result.status === "branch_refused") return "red";
-      if (this.value.result.status === "refused") return "red";
+      if (this.value.status === "applied") return "primary";
+      if (this.value.status === "failed") return "red";
+      if (this.value.status === "backtracked") return "orange";
+      if (this.value.status === "skipped") return "blue";
+      if (this.value.status === "lost") return "red";
+      if (this.value.status === "branch_refused") return "red";
+      if (this.value.status === "refused") return "red";
       return "grey";
     },
     statusHeaderClass() {
-      if (this.value.result.status === "backtracked") return "backtracked";
-      if (this.value.result.status !== "applied") return "failed";
+      if (this.value.status === "backtracked") return "backtracked";
+      if (this.value.status !== "applied") return "failed";
       if (this.value.mempool) return "mempool";
       return "applied";
     },
     statusIcon() {
       if (this.value == null) return "";
-      if (this.value.result.status === "applied") return "mdi-check";
-      if (this.value.result.status === "failed") return "mdi-close";
-      if (this.value.result.status === "lost") return "mdi-eye-off-outline";
-      if (this.value.result.status === "branch_refused") return "mdi-cancel";
-      if (this.value.result.status === "refused") return "mdi-cancel";
-      if (this.value.result.status === "backtracked")
-        return "mdi-alert-outline";
-      if (this.value.result.status === "skipped")
-        return "mdi-crosshairs-question";
+      if (this.value.status === "applied") return "mdi-check";
+      if (this.value.status === "failed") return "mdi-close";
+      if (this.value.status === "lost") return "mdi-eye-off-outline";
+      if (this.value.status === "branch_refused") return "mdi-cancel";
+      if (this.value.status === "refused") return "mdi-cancel";
+      if (this.value.status === "backtracked") return "mdi-alert-outline";
+      if (this.value.status === "skipped") return "mdi-crosshairs-question";
       return "";
     }
   },

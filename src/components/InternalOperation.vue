@@ -31,7 +31,7 @@
           label
           dense
           tile
-        >{{ data.result.status }}</v-chip>
+        >{{ data.status }}</v-chip>
       </v-col>
     </v-row>
     <v-row no-gutters class="mt-2">
@@ -85,8 +85,8 @@
               v-for="(err, idx) in errors"
               :key="idx"
             >
-              <div class="red--text subtitle-1">{{ getError(err).title }}</div>
-              <div class="caption">{{ getError(err).descr }}</div>
+              <div class="red--text subtitle-1">{{ err.title }}</div>
+              <div class="caption">{{ err.descr }}</div>
             </v-alert>
           </v-col>
         </v-row>
@@ -136,7 +136,11 @@
               <template v-slot:label="{ item }">
                 <div :class="`${item.kind} pl-1`">
                   <span>{{ item.name }}:</span>&nbsp;
-                  <span :class="item.type">{{ item.value }}</span>
+                  <span
+                    :class="item.type"
+                    v-if="item.value_type !== 'big_map'"
+                  >{{ item.value }}</span>
+                  <span v-else>Big Map {{ item.value }}</span>
                 </div>
               </template>
             </v-treeview>
@@ -171,7 +175,6 @@ import InfoItem from "@/components/InfoItem.vue";
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import { getTree } from "@/utils/tree.js";
 import { getTzKTLink } from "@/utils/tzkt.js";
-import { getError } from "@/utils/errors.js";
 import { getOperation } from "@/api/node.js";
 import VueJsonPretty from "vue-json-pretty";
 
@@ -196,8 +199,8 @@ export default {
       return null;
     },
     errors() {
-      if (!this.data.result.errors) return null;
-      return JSON.parse(this.data.result.errors);
+      if (!this.data.errors) return [];
+      return this.data.errors;
     },
     source() {
       if (this.data.source) {
@@ -265,26 +268,15 @@ export default {
       if (isNaN(this.data.amount)) return 0;
       return this.data.amount;
     },
-    entryName() {
-      if (this.data.parameters != null && this.data.parameters !== undefined) {
-        let keys = Object.keys(this.data.parameters);
-        if (keys.length == 1) {
-          let name = keys[0];
-          if (this.data.parameters[name] !== undefined) return name;
-        }
-        return "default";
-      }
-      return null;
-    },
     header() {
       if (this.data.internal) {
-        if (this.entryName != null) {
-          return `Internal call ${this.entryName}`;
+        if (this.data.entrypoint) {
+          return `Internal call ${this.data.entrypoint}`;
         }
         return `Internal ${this.data.kind}`;
       }
-      if (this.entryName != null) {
-        return `Call ${this.entryName}`;
+      if (this.data.entrypoint) {
+        return `Call ${this.data.entrypoint}`;
       }
       return this.data.kind;
     },
@@ -327,16 +319,16 @@ export default {
       );
     },
     statusColor() {
-      if (this.data.result.status === "applied") return "green";
-      if (this.data.result.status === "backtracked") return "orange";
-      if (this.data.result.status === "failed") return "red";
-      if (this.data.result.status === "lost") return "red";
-      if (this.data.result.status === "branch_refused") return "red";
-      if (this.data.result.status === "refused") return "red";
+      if (this.data.status === "applied") return "green";
+      if (this.data.status === "backtracked") return "orange";
+      if (this.data.status === "failed") return "red";
+      if (this.data.status === "lost") return "red";
+      if (this.data.status === "branch_refused") return "red";
+      if (this.data.status === "refused") return "red";
       return "light-grey";
     },
     headerClass() {
-      if (this.entryName != null) return "overline call";
+      if (this.data.entrypoint) return "overline call";
       return `overline ${this.data.kind}`;
     },
     burned() {
@@ -362,9 +354,8 @@ export default {
   }),
   created() {
     this.showParams =
-      this.data.result.errors !== undefined ||
-      (this.data.destination === this.address &&
-        this.data.result.status == "applied");
+      this.data.errors !== undefined ||
+      (this.data.destination === this.address && this.data.status == "applied");
   },
   methods: {
     getLinkObject(address) {
@@ -394,9 +385,6 @@ export default {
         })
         .catch(err => console.log(err))
         .finally(() => (this.loadingRaw = false));
-    },
-    getError(err) {
-      return getError(err.id);
     },
     getBurned(data) {
       let val = 0;

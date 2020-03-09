@@ -1,6 +1,6 @@
 <template>
   <div class="elevation-0">
-    <v-toolbar flat>
+    <v-toolbar flat color="transparent">
       <div>
         <v-toolbar-title>Big Map Viewer</v-toolbar-title>
         <span class="grey--text hash">
@@ -30,6 +30,8 @@
           :headers="headers"
           :search="search"
           :items-per-page="15"
+          no-data-text="No big map diff availiable"
+          :hide-default-footer="bigmap.length == 0"
           :custom-filter="fileterItems"
           @click:row="showBigMapDiffDetails"
         >
@@ -54,7 +56,7 @@
           </template>
         </v-data-table>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="6" v-if="bigmap.length > 0">
         <v-card :elevation="2" v-if="selectedBigMapDiff" class="mr-4 pa-2">
           <v-card-title class="hash key-hash">{{ selectedBigMapDiff.key_hash }}</v-card-title>
           <v-card-text>
