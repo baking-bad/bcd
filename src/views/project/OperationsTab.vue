@@ -4,20 +4,95 @@
     <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
     <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
     <div v-else-if="operations !== undefined && operations.length > 0">
-      <v-toolbar flat class="mb-5 transparent">
-        <v-spacer></v-spacer>
-        <v-btn
-          small
-          text
-          @click="showMempool = !showMempool"
-          class="toolbar-btn"
-          :disabled="contract.mempool === undefined || contract.mempool.length == 0"
-        >
-          <v-icon v-if="showMempool">mdi-minus-network-outline</v-icon>
-          <v-icon v-else>mdi-plus-network-outline</v-icon>&nbsp;
-          <span>Mempool</span>
-        </v-btn>
-      </v-toolbar>
+      <v-row class="px-4">
+        <v-col cols="12" md="6" lg="3">
+          <v-select
+            v-model="status"
+            :items="['applied', 'failed', 'backtracked', 'skipped']"
+            chips
+            small-chips
+            label="Status"
+            multiple
+            outlined
+            hide-details
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip small v-if="index < 1">
+                <span>{{ item }}</span>
+              </v-chip>
+              <span v-if="index === 1 " class="grey--text caption">(+{{ status.length - 1 }} others)</span>
+            </template>
+          </v-select>
+        </v-col>
+        <v-col cols="12" md="6" lg="2">
+          <v-dialog
+            ref="fromDialog"
+            v-model="fromModal"
+            :return-value.sync="from"
+            persistent
+            width="300px"
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field v-model="from" label="Date from" readonly outlined v-on="on"></v-text-field>
+            </template>
+            <v-date-picker v-model="from" scrollable>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="fromModal = false">Cancel</v-btn>
+              <v-btn text color="primary" @click="$refs.fromDialog.save(from)">OK</v-btn>
+            </v-date-picker>
+          </v-dialog>
+        </v-col>
+        <v-col cols="12" md="6" lg="2">
+          <v-dialog
+            ref="toDialog"
+            v-model="toModal"
+            :return-value.sync="to"
+            persistent
+            width="300px"
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field v-model="to" label="Date to" readonly outlined v-on="on"></v-text-field>
+            </template>
+            <v-date-picker v-model="to" scrollable>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="toModal = false">Cancel</v-btn>
+              <v-btn text color="primary" @click="$refs.toDialog.save(to)">OK</v-btn>
+            </v-date-picker>
+          </v-dialog>
+        </v-col>
+        <v-col cols="12" md="6" lg="3">
+          <v-select
+            v-model="entrypoints"
+            :items="contract.entrypoints"
+            chips
+            small-chips
+            label="Entrypoints"
+            multiple
+            outlined
+            hide-details
+          >
+            <template v-slot:selection="{ item, index }">
+              <v-chip small v-if="index < 1">
+                <span>{{ item }}</span>
+              </v-chip>
+              <span v-if="index === 1 " class="grey--text caption">(+{{ entrypoints.length - 1 }} others)</span>
+            </template>
+          </v-select>
+        </v-col>
+        <v-col class="my-3 d-flex align-start justify-end" cols="12" lg="2">
+          <v-btn
+            small
+            text
+            @click="showMempool = !showMempool"
+            class="toolbar-btn"
+            :disabled="contract.mempool === undefined || contract.mempool.length == 0"
+          >
+            <v-icon v-if="showMempool">mdi-minus-network-outline</v-icon>
+            <v-icon v-else>mdi-plus-network-outline</v-icon>&nbsp;
+            <span>Mempool</span>
+          </v-btn>
+        </v-col>
+      </v-row>
       <v-expansion-panels multiple popout tile>
         <Operation
           :data="item"
@@ -44,6 +119,7 @@ import { mapActions } from "vuex";
 
 import Operation from "@/components/Operation.vue";
 import { getContractOperations, getContractMempool } from "@/api/index.js";
+import dayjs from "dayjs";
 
 export default {
   name: "OperationsTab",
@@ -72,9 +148,16 @@ export default {
     operationsLoading: true,
     mempoolLoading: true,
     showMempool: false,
-    last_id: ""
+    last_id: "",
+    status: ["applied", "failed", "backtracked", "skipped"],
+    from: "2018-06-30",
+    fromModal: false,
+    to: dayjs().format("YYYY-MM-DD"),
+    toModal: false,
+    entrypoints: []
   }),
   created() {
+    this.entrypoints = this.contract.entrypoints;
     this.fetchOperations();
   },
   methods: {
@@ -94,7 +177,11 @@ export default {
       getContractOperations(
         this.contract.network,
         this.contract.address,
-        this.last_id
+        this.last_id,
+        dayjs(this.from).unix(),
+        dayjs(this.to).unix(),
+        this.status,
+        this.entrypoints
       )
         .then(res => {
           this.prepareOperations(res.operations);
@@ -160,7 +247,31 @@ export default {
     }
   },
   watch: {
-    contract: "fetchOperations"
+    contract: "fetchOperations",
+    status: function() {
+      this.contract.downloadedOperations = false;
+      this.contract.operations = [];
+      this.operationsLoading = true;
+      this.getOperations();
+    },
+    entrypoints: function() {
+      this.contract.downloadedOperations = false;
+      this.contract.operations = [];
+      this.operationsLoading = true;
+      this.getOperations();
+    },
+    from: function() {
+      this.contract.downloadedOperations = false;
+      this.contract.operations = [];
+      this.operationsLoading = true;
+      this.getOperations();
+    },
+    to: function() {
+      this.contract.downloadedOperations = false;
+      this.contract.operations = [];
+      this.operationsLoading = true;
+      this.getOperations();
+    }
   }
 };
 </script>

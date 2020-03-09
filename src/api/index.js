@@ -71,10 +71,22 @@ export function getContract(network, address) {
         })
 }
 
-export function getContractOperations(network, address, last_id = "") {
+export function getContractOperations(network, address, last_id = "", from = 0, to = 0, statuses = [], entrypoints = []) {
     let params = {}
     if (last_id != "") {
         params.last_id = last_id
+    }
+    if (from !== 0) {
+        params.from = from
+    }
+    if (to !== 0) {
+        params.to = to
+    }
+    if (statuses.length > 0) {
+        params.status = statuses.join(',')
+    }
+    if (entrypoints.length > 0) {
+        params.entrypoints = entrypoints.join(',')
     }
     return api.get(`/contract/${network}/${address}/operations`, {
         params: params
