@@ -88,7 +88,7 @@
               <div class="red--text subtitle-1">{{ err.title }}</div>
               <div class="caption">
                 {{ err.descr }}
-                <span v-if="err.with">: {{ err.with }}</span>
+                <span v-if="err.with" style="word-break: break-all">: {{ err.with }}</span>
               </div>
             </v-alert>
           </v-col>

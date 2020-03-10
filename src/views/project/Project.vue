@@ -10,9 +10,9 @@
         <v-row no-gutters>
           <v-col cols="7" style="height: 64px;" class="d-flex align-end">
             <v-tabs background-color="transparent" slider-color="primary" v-if="contract">
-              <v-tab :to="{name: 'operations'}" replace class="overline" v-if="contract.tx_count">
+              <v-tab :to="{name: 'operations'}" replace class="overline">
                 <v-icon left small>mdi-swap-horizontal</v-icon>
-                Operations ({{ contract.tx_count }})
+                Operations ({{ contract.tx_count || 0 }})
               </v-tab>
               <v-tab :to="{name: 'code'}" replace class="overline">
                 <v-icon left small>mdi-code-braces</v-icon>Code
