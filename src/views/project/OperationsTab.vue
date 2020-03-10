@@ -3,8 +3,8 @@
     <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
     <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
     <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
-    <div v-else-if="operations !== undefined && operations.length > 0">
-      <v-row class="px-4">
+    <div v-else>
+      <v-row class="px-4 pb-4">
         <v-col cols="12" md="6" lg="3">
           <v-select
             v-model="status"
@@ -13,7 +13,6 @@
             small-chips
             label="Status"
             multiple
-            outlined
             hide-details
           >
             <template v-slot:selection="{ item, index }">
@@ -33,7 +32,7 @@
             width="300px"
           >
             <template v-slot:activator="{ on }">
-              <v-text-field v-model="from" label="Date from" readonly outlined v-on="on"></v-text-field>
+              <v-text-field v-model="from" label="Date from" readonly hide-details v-on="on"></v-text-field>
             </template>
             <v-date-picker v-model="from" scrollable>
               <v-spacer></v-spacer>
@@ -51,7 +50,7 @@
             width="300px"
           >
             <template v-slot:activator="{ on }">
-              <v-text-field v-model="to" label="Date to" readonly outlined v-on="on"></v-text-field>
+              <v-text-field v-model="to" label="Date to" readonly hide-details v-on="on"></v-text-field>
             </template>
             <v-date-picker v-model="to" scrollable>
               <v-spacer></v-spacer>
@@ -68,14 +67,16 @@
             small-chips
             label="Entrypoints"
             multiple
-            outlined
             hide-details
           >
             <template v-slot:selection="{ item, index }">
               <v-chip small v-if="index < 1">
                 <span>{{ item }}</span>
               </v-chip>
-              <span v-if="index === 1 " class="grey--text caption">(+{{ entrypoints.length - 1 }} others)</span>
+              <span
+                v-if="index === 1 "
+                class="grey--text caption"
+              >(+{{ entrypoints.length - 1 }} others)</span>
             </template>
           </v-select>
         </v-col>
@@ -93,24 +94,27 @@
           </v-btn>
         </v-col>
       </v-row>
-      <v-expansion-panels multiple popout tile>
-        <Operation
-          :data="item"
-          :key="item.hash + '_' + item.counter + '_' + key"
-          :address="contract.address"
-          v-for="(item, key) in operations"
-        />
-      </v-expansion-panels>
-      <span v-intersect="onDownloadPage" v-if="!contract.downloadedOperations"></span>
+      <div v-if="operations !== undefined && operations.length > 0">
+        <v-expansion-panels multiple popout tile>
+          <Operation
+            :data="item"
+            :key="item.hash + '_' + item.counter + '_' + key"
+            :address="contract.address"
+            v-for="(item, key) in operations"
+          />
+        </v-expansion-panels>
+        <span v-intersect="onDownloadPage" v-if="!contract.downloadedOperations"></span>
+      </div>
+
+      <v-card
+        v-else
+        class="d-flex flex-column align-center justify-center mt-12 transparent"
+        :elevation="0"
+      >
+        <v-icon size="100" color="grey">mdi-package-variant</v-icon>
+        <span class="title grey--text">No operations found for your request</span>
+      </v-card>
     </div>
-    <v-card
-      v-else
-      class="d-flex flex-column align-center justify-center mt-12 transparent"
-      :elevation="0"
-    >
-      <v-icon size="100">mdi-chat-sleep-outline</v-icon>
-      <span class="headline">No operations yet</span>
-    </v-card>
   </v-container>
 </template>
 
@@ -150,9 +154,9 @@ export default {
     showMempool: false,
     last_id: "",
     status: ["applied", "failed", "backtracked", "skipped"],
-    from: "2018-06-30",
+    from: "",
     fromModal: false,
-    to: dayjs().format("YYYY-MM-DD"),
+    to: "",
     toModal: false,
     entrypoints: []
   }),
@@ -174,14 +178,21 @@ export default {
     getOperations() {
       if (this.contract == null || this.contract.downloadedOperations) return;
 
+      let entries =
+        this.entrypoints.length != this.contract.entrypoints.length
+          ? this.entrypoints.length
+          : [];
+      let status = this.status.length != 4 ? this.status : [];
+      let dateTo = (this.to != "" ? dayjs(this.to).unix() * 1000 : 0) || 0;
+      let dateFrom = (this.from != "" ? dayjs(this.from).unix() * 1000 : 0) || 0;
       getContractOperations(
         this.contract.network,
         this.contract.address,
         this.last_id,
-        dayjs(this.from).unix(),
-        dayjs(this.to).unix(),
-        this.status,
-        this.entrypoints
+        dateFrom,
+        dateTo,
+        status,
+        entries
       )
         .then(res => {
           this.prepareOperations(res.operations);
@@ -249,28 +260,40 @@ export default {
   watch: {
     contract: "fetchOperations",
     status: function() {
-      this.contract.downloadedOperations = false;
-      this.contract.operations = [];
-      this.operationsLoading = true;
-      this.getOperations();
+      if (!this.operationsLoading) {
+        this.operationsLoading = true;
+        this.contract.downloadedOperations = false;
+        this.contract.operations = [];
+        this.last_id = null;
+        this.getOperations();
+      }
     },
     entrypoints: function() {
-      this.contract.downloadedOperations = false;
-      this.contract.operations = [];
-      this.operationsLoading = true;
-      this.getOperations();
+      if (!this.operationsLoading) {
+        this.operationsLoading = true;
+        this.contract.downloadedOperations = false;
+        this.contract.operations = [];
+        this.last_id = null;
+        this.getOperations();
+      }
     },
     from: function() {
-      this.contract.downloadedOperations = false;
-      this.contract.operations = [];
-      this.operationsLoading = true;
-      this.getOperations();
+      if (!this.operationsLoading) {
+        this.operationsLoading = true;
+        this.contract.downloadedOperations = false;
+        this.contract.operations = [];
+        this.last_id = null;
+        this.getOperations();
+      }
     },
     to: function() {
-      this.contract.downloadedOperations = false;
-      this.contract.operations = [];
-      this.operationsLoading = true;
-      this.getOperations();
+      if (!this.operationsLoading) {
+        this.operationsLoading = true;
+        this.contract.downloadedOperations = false;
+        this.contract.operations = [];
+        this.last_id = null;
+        this.getOperations();
+      }
     }
   }
 };

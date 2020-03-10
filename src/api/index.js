@@ -8,18 +8,21 @@ const api = axios.create({
 
 export class RequestFailedError extends Error { }
 
-export function search(text, fields = [], offset = 0, networks = [], time = {}, group = 0) {
+export function search(text, indices = [], offset = 0, networks = [], languages = [], time = {}, group = 0) {
     let params = {
         q: text
     }
     if (offset > 0) {
         params.o = offset
     }
-    if (fields.length > 0) {
-        params.f = fields.join(',')
+    if (indices.length > 0) {
+        params.i = indices.join(',')
     }
     if (networks.length > 0 && networks.length < 4) {
         params.n = networks.join(',')
+    }
+    if (languages.length > 0 && languages.length < 4) {
+        params.l = languages.join(',')
     }
     if (group > 0) {
         params.g = 1

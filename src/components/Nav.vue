@@ -104,12 +104,12 @@ export default {
   data: () => ({
     publicItems: [
       {
-        icon: "mdi-layers-search-outline",
+        icon: "mdi-cloud-search-outline",
         text: "Advanced search",
         to: "search"
       },
       {
-        icon: "mdi-rhombus-split",
+        icon: "mdi-view-dashboard-outline",
         text: "Projects",
         to: "projects"
       }
