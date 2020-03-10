@@ -1,9 +1,9 @@
 <template>
   <v-container fluid>
-    <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
-    <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
-    <v-skeleton-loader v-if="loading" height="123" type="image" class="my-3"></v-skeleton-loader>
-    <div v-else>
+    <v-overlay :value="loading" color="white" absolute>
+      <v-progress-circular indeterminate color="primary" size="64"/>
+    </v-overlay>
+    <div v-if="!loading">
       <v-row class="px-4 pb-4">
         <v-col cols="12" md="6" lg="3">
           <v-select
@@ -34,10 +34,10 @@
             <template v-slot:activator="{ on }">
               <v-text-field v-model="from" label="Date from" readonly hide-details v-on="on"></v-text-field>
             </template>
-            <v-date-picker v-model="from" scrollable>
+            <v-date-picker v-model="fromBuf" scrollable>
               <v-spacer></v-spacer>
               <v-btn text color="primary" @click="fromModal = false">Cancel</v-btn>
-              <v-btn text color="primary" @click="$refs.fromDialog.save(from)">OK</v-btn>
+              <v-btn text color="primary" @click="$refs.fromDialog.save(fromBuf)">OK</v-btn>
             </v-date-picker>
           </v-dialog>
         </v-col>
@@ -52,10 +52,10 @@
             <template v-slot:activator="{ on }">
               <v-text-field v-model="to" label="Date to" readonly hide-details v-on="on"></v-text-field>
             </template>
-            <v-date-picker v-model="to" scrollable>
+            <v-date-picker v-model="toBuf" scrollable>
               <v-spacer></v-spacer>
               <v-btn text color="primary" @click="toModal = false">Cancel</v-btn>
-              <v-btn text color="primary" @click="$refs.toDialog.save(to)">OK</v-btn>
+              <v-btn text color="primary" @click="$refs.toDialog.save(toBuf)">OK</v-btn>
             </v-date-picker>
           </v-dialog>
         </v-col>
@@ -155,8 +155,10 @@ export default {
     last_id: "",
     status: ["applied", "failed", "backtracked", "skipped"],
     from: "",
+    fromBuf: "",
     fromModal: false,
     to: "",
+    toBuf: "",
     toModal: false,
     entrypoints: []
   }),
@@ -184,7 +186,8 @@ export default {
           : [];
       let status = this.status.length != 4 ? this.status : [];
       let dateTo = (this.to != "" ? dayjs(this.to).unix() * 1000 : 0) || 0;
-      let dateFrom = (this.from != "" ? dayjs(this.from).unix() * 1000 : 0) || 0;
+      let dateFrom =
+        (this.from != "" ? dayjs(this.from).unix() * 1000 : 0) || 0;
       getContractOperations(
         this.contract.network,
         this.contract.address,

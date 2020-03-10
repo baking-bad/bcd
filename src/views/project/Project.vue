@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-overlay :value="loading" v-if="loading" absolute>
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    <v-overlay :value="loading" v-if="loading" absolute color="white">
+      <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
     </v-overlay>
     <div v-else-if="contract">
       <ProjectNav :contract="contract" />

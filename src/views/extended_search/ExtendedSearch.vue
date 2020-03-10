@@ -51,10 +51,8 @@
 
     <SearchNav v-model="showTools" :filters="filters" />
     <v-container style="max-width: 960px; margin-left: 100px;">
-      <v-overlay :value="loading">
-        <v-progress-circular indeterminate size="64"></v-progress-circular>
-      </v-overlay>
       <div v-if="total > 0">
+        <v-overlay :value="loading" color="white" absolute></v-overlay>
         <span
           class="time-info"
         >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>

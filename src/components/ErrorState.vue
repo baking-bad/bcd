@@ -8,7 +8,7 @@
         </div>
       </v-col>
       <v-col>
-          <v-img src="/empty.jpg" contain max-height="100vh"></v-img>
+          <v-img src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/05272223957341.5632ba907b4a0.jpg" contain max-height="100vh"></v-img>
       </v-col>
     </v-row>
   </v-card>

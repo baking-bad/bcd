@@ -6,7 +6,7 @@
         <v-card-title
           class="justify-center subtitle-1 text-uppercase"
         >You don`t have subscriptions yet</v-card-title>
-        <v-img src="/empty.jpg" />
+        <v-img src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/05272223957341.5632ba907b4a0.jpg" />
       </v-card>
     </div>
     <v-row v-else>
