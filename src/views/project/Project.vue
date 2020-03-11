@@ -7,9 +7,9 @@
       <ProjectNav :contract="contract" />
 
       <v-container fluid class="py-0 my-0">
-        <v-row no-gutters>
-          <v-col cols="7" style="height: 64px;" class="d-flex align-end">
-            <v-tabs background-color="transparent" slider-color="primary" v-if="contract">
+        <v-row>
+          <v-col cols="7" style="height: 64px;" class="d-flex align-end pb-0">
+            <v-tabs center-active background-color="transparent" slider-color="primary" v-if="contract">
               <v-tab :to="{name: 'operations'}" replace class="overline">
                 <v-icon left small>mdi-swap-horizontal</v-icon>
                 Operations ({{ contract.tx_count || 0 }})
@@ -28,11 +28,11 @@
               </v-tab>
             </v-tabs>
           </v-col>
-          <v-col cols="5" class="d-flex align-end">
-            <ExpandableSearch></ExpandableSearch>
-            <v-btn text small class="toolbar-btn mb-1 mr-5" @click="random">Pick random</v-btn>
+          <v-col cols="5" class="d-flex align-end pb-0">
+            <ExpandableSearch class="mb-1"></ExpandableSearch>
+            <v-btn text small class="toolbar-btn overline mb-2" @click="random">Pick random</v-btn>
           </v-col>
-          <v-col cols="12">
+          <v-col cols="12" class="pt-0">
             <v-slide-x-reverse-transition mode="out-in">
               <router-view :contract="contract" />
             </v-slide-x-reverse-transition>

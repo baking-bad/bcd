@@ -1,7 +1,7 @@
 <template>
   <v-expansion-panel>
-    <v-expansion-panel-header ripple :class="statusHeaderClass">
-      <v-row no-gutters>
+    <v-expansion-panel-header class="pa-0 pr-4" ripple :class="statusHeaderClass">
+      <v-row>
         <v-col cols="2" class="d-flex align-center">
           <v-list-item>
             <v-list-item-content>
@@ -12,7 +12,7 @@
             </v-list-item-content>
           </v-list-item>
         </v-col>
-        <v-col class="d-flex align-center">
+        <v-col cols="2" class="d-flex align-center">
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title class="overline">{{ text }}</v-list-item-title>
@@ -23,10 +23,13 @@
             </v-list-item-content>
           </v-list-item>
         </v-col>
-        <v-col cols="5" class="d-flex align-center hash line">{{ value.hash }}</v-col>
-        <v-col cols="1" class="d-flex align-center justify-start offset-1">
-          <v-icon small class="mr-1">mdi-counter</v-icon>
-          <span class="overline">{{ value.counter }}</span>
+        <v-spacer></v-spacer>
+        <v-col cols="7" class="d-flex flex-horizontal align-center justify-space-between">
+          <span class="hash line d-inline-block text-truncate">{{ value.hash }}</span>
+          <div class="mx-3 d-flex flex-horizontal">
+            <v-icon small class="mr-1">mdi-counter</v-icon>
+            <span class="overline">{{ value.counter }}</span>
+          </div>
         </v-col>
       </v-row>
     </v-expansion-panel-header>
@@ -141,8 +144,7 @@ export default {
 
 <style lang="scss" scoped>
 .line {
-  font-size: 0.85rem;
-  font-weight: 400;
+  font-size: 0.8rem !important;
 }
 
 .v-expansion-panel-header--active.applied {

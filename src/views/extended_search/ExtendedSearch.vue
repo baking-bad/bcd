@@ -16,11 +16,11 @@
         outlined
       ></v-combobox>
       <v-spacer class="hidden-sm-and-down"></v-spacer>
-      <v-btn icon color="primary">
+      <v-btn icon color="primary" href="https://twitter.com/TezosBakingBad" target="_blank">
         <v-icon>mdi-twitter</v-icon>
       </v-btn>
-      <v-btn icon color="primary">
-        <v-icon>mdi-github-circle</v-icon>
+      <v-btn icon color="primary" href="https://github.com/baking-bad" target="_blank">
+        <v-icon>mdi-github</v-icon>
       </v-btn>
 
       <template v-slot:extension>
@@ -50,7 +50,7 @@
     </v-app-bar>
 
     <SearchNav v-model="showTools" :filters="filters" />
-    <v-container style="max-width: 960px; margin-left: 100px;">
+    <v-container fluid class="pl-10">
       <div v-if="total > 0">
         <v-overlay :value="loading" color="white" absolute></v-overlay>
         <span
@@ -63,7 +63,7 @@
         <span v-intersect="onDownloadPage"></span>
       </div>
       <v-card
-        width="750"
+        height="60vh"
         v-else-if="searchText == '' || searchText == null"
         class="d-flex flex-column align-center justify-center mt-12 transparent"
         :elevation="0"
@@ -75,7 +75,7 @@
         >Type address, annotation, entrypoint name or anything else</span>
       </v-card>
       <v-card
-        width="750"
+        height="60vh"
         v-else
         class="d-flex flex-column align-center justify-center mt-12 transparent"
         :elevation="0"

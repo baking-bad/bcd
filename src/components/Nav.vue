@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app fixed mini-variant permanent class="elevation-1">
+  <v-navigation-drawer app fixed touchless mini-variant permanent class="elevation-1">
     <router-link
       :to="{name: 'home'}"
       class="d-flex justify-center align-center"

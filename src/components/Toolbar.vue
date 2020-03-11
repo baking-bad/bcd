@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-app-bar app flat class="toolbar-expanded">
-      
       <SearchBox :toolbar="true" />
 
       <v-divider vertical></v-divider>
@@ -23,10 +22,10 @@
         text
         tile
         color="primary"
-        href="https://github.com/baking-bad/better-call-dev/"
+        href="https://github.com/baking-bad"
         target="_blank"
       >
-        <v-icon>mdi-github-circle</v-icon>
+        <v-icon>mdi-github</v-icon>
       </v-btn>
     </v-app-bar>
   </div>

@@ -1,6 +1,6 @@
 <template>
   <v-container id="home" fluid>
-    <v-row no-gutters style="height:calc(100% - 64); margin-top:10rem">
+    <v-row no-gutters style="height:calc(100% - 64);">
       <v-col cols="12">
         <v-row justify="center" no-gutters>
           <img

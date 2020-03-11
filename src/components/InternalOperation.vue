@@ -1,6 +1,6 @@
 <template>
   <div class="my-3">
-    <v-row no-gutters v-if="!data.internal">
+    <v-row v-if="!data.internal" no-gutters>
       <v-col cols="2" v-if="data.fee">
         <InfoItem title="Fee" :subtitle="data.fee | uxtz" />
       </v-col>
@@ -33,9 +33,7 @@
           tile
         >{{ data.status }}</v-chip>
       </v-col>
-    </v-row>
-    <v-row no-gutters class="mt-2">
-      <v-col cols="4">
+      <v-col cols="4" class="pr-4">
         <InfoItem
           :title="sourceHeader"
           :subtitle="source"
@@ -44,7 +42,7 @@
           :href="getTzKTLink(source)"
         />
       </v-col>
-      <v-col cols="4">
+      <v-col cols="4" class="pr-4">
         <InfoItem
           :title="destinationHeader"
           :subtitle="destination"
@@ -53,7 +51,7 @@
           :href="getTzKTLink(destination)"
         />
       </v-col>
-      <v-col cols="2">
+      <v-col cols="2" class="pr-4">
         <InfoItem title="Amount" :subtitle="amount | uxtz" />
       </v-col>
       <v-spacer></v-spacer>
@@ -72,7 +70,7 @@
 
     <v-expand-transition>
       <div v-show="showParams">
-        <v-row v-if="errors">
+        <v-row v-if="errors" no-gutters>
           <v-col>
             <v-alert
               border="left"
@@ -93,7 +91,7 @@
             </v-alert>
           </v-col>
         </v-row>
-        <v-row>
+        <v-row no-gutters>
           <v-col cols="2" v-if="data.result.consumed_gas">
             <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
           </v-col>
@@ -104,7 +102,7 @@
             <InfoItem title="Paid storage diff" :subtitle="paidStorageDiff" />
           </v-col>
         </v-row>
-        <v-row class="parameters mx-1" v-if="hasParameters || hasStorageDiff">
+        <v-row class="parameters pa-3" v-if="hasParameters || hasStorageDiff" no-gutters>
           <v-col cols="6" v-if="hasParameters">
             <span class="overline ml-3">Parameter</span>
             <v-treeview
@@ -118,8 +116,10 @@
               return-object
             >
               <template v-slot:label="{ item }">
-                <span :class="item.name.startsWith('@') ? 'purple--text' : ''">{{ item.name }}:</span>&nbsp;
-                <span :class="item.type">{{ item.value }}</span>
+                <div class="tree-label">
+                  <span :class="item.name.startsWith('@') ? 'purple--text' : ''">{{ item.name }}:</span>&nbsp;
+                  <span :class="item.type">{{ item.value }}</span>
+                </div>
               </template>
             </v-treeview>
           </v-col>
@@ -137,7 +137,7 @@
               return-object
             >
               <template v-slot:label="{ item }">
-                <div :class="`${item.kind} pl-1`">
+                <div :class="`${item.kind} pl-1 tree-label`">
                   <span>{{ item.name }}:</span>&nbsp;
                   <span
                     :class="item.type"
@@ -475,6 +475,9 @@ export default {
 </style>
 
 <style>
+.tree-label {
+  font-size: 95% !important;
+}
 .v-treeview-node__label {
   white-space: unset;
 }

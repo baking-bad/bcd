@@ -1,16 +1,10 @@
 <template>
-  <v-navigation-drawer app fixed right width="400" class="elevation-1" v-if="contract">
+  <v-navigation-drawer app fixed right touchless width="350" class="elevation-1" v-if="contract">
     <v-list class="py-1">
-      <v-list-item two-line class="mb-0" v-if="!contract.alias">
+      <v-list-item two-line class="mb-0">
         <v-list-item-content>
-          <v-list-item-title class="hash">{{ contract.address }}</v-list-item-title>
-          <v-list-item-subtitle class="overline">Deployed {{ formatDate(contract.timestamp) }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item three-line class="mb-0" v-else>
-        <v-list-item-content>
-          <v-list-item-title class="headline">{{ contract.alias }}</v-list-item-title>
-          <v-list-item-subtitle class="hash">{{ contract.address }}</v-list-item-subtitle>
+          <v-list-item-title class="subtitle-2 hash">{{ contract.alias || contract.address }}</v-list-item-title>
+          <v-list-item-subtitle class="hash" v-if="contract.alias">{{ contract.address }}</v-list-item-subtitle>
           <v-list-item-subtitle class="overline">Deployed {{ formatDate(contract.timestamp) }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
@@ -35,7 +29,7 @@
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title class="overline">Deployed by</v-list-item-title>
-          <v-list-item-subtitle>{{ contract.manager }}</v-list-item-subtitle>
+          <v-list-item-subtitle class="hash contract-item-address">{{ contract.manager }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item v-if="contract.delegate" :href="getTzKTLink(contract.delegate)" target="_blank">

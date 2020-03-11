@@ -1,8 +1,8 @@
 <template>
-  <v-list-item selectable :to="to" :href="href" :target="target">
+  <v-list-item class="pa-0 ma-0" selectable :to="to" :href="href" :target="target">
     <v-list-item-content>
-      <v-list-item-subtitle class="overline">{{ title }}</v-list-item-subtitle>
-      <v-list-item-title class="info-item-subtitle hash grey--text text--darken-3">
+      <v-list-item-subtitle class="info-item-font overline">{{ title }}</v-list-item-subtitle>
+      <v-list-item-title class="hash info-item-font  grey--text text--darken-3">
         <span :class="[selected ? 'selected' : '']">{{ subtitle }}</span>
       </v-list-item-title>
     </v-list-item-content>
@@ -21,23 +21,23 @@ export default {
   },
   computed: {
     target() {
-      if (this.href != '') return '_blank';
-      return '';
+      if (this.href != "") return "_blank";
+      return "";
     }
   }
 };
 </script>
 
 <style scoped>
-.info-item-subtitle {
-  font-size: 12px;
-  line-height: 1.4;
+.info-item-font {
+  font-size: 75% !important;
+  line-height: 1.6;
 }
+
 .selected {
   color: #e83e8c;
 }
 .v-application a {
   color: transparent;
 }
-
 </style>

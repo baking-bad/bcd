@@ -37,20 +37,18 @@
         >
           <template v-slot:item="{item}">
             <tr
+              style="cursor:pointer"
               :class="isActive(item)"
               @click="showBigMapDiffDetails(item)"
               :key="item.data.key_hash"
             >
               <td class="px-2">
-                <div style="cursor:pointer">
-                  <span class="overline ml-4">Last action at {{ item.data.level }} level</span>
-                  <v-treeview :items="getTree(item.data.key)" open-all transition class="storage">
-                    <template v-slot:label="{ item }">
-                      <span>{{ item.name }}:</span>&nbsp;
-                      <span :class="item.type">{{ item.value }}</span>
-                    </template>
-                  </v-treeview>
-                </div>
+                <v-treeview :items="getTree(item.data.key)" open-all transition class="storage">
+                  <template v-slot:label="{ item }">
+                    <span :class="item.type">{{ item.value }}</span>&nbsp;
+                    <span class="grey--text text--darken-2">{{ item.name }}</span>
+                  </template>
+                </v-treeview>
               </td>
             </tr>
           </template>

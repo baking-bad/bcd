@@ -4,8 +4,8 @@
       <v-progress-circular indeterminate color="primary" size="64" />
     </v-overlay>
     <div v-if="!loading">
-      <v-row class="px-4 pb-4">
-        <v-col cols="12" md="6" lg="3">
+      <v-row class="px-lg-4 pb-lg-2">
+        <v-col cols="3">
           <v-select
             v-model="status"
             :items="['applied', 'failed', 'backtracked', 'skipped']"
@@ -16,36 +16,36 @@
             hide-details
           >
             <template v-slot:selection="{ item, index }">
-              <v-chip small v-if="index < 1">
+              <v-chip  x-small v-if="index < 1">
                 <span>{{ item }}</span>
               </v-chip>
-              <span v-if="index === 1 " class="grey--text caption">(+{{ status.length - 1 }} others)</span>
+              &nbsp;<span v-if="index === 1 " class="grey--text caption">+{{ status.length - 1 }} others</span>
             </template>
           </v-select>
         </v-col>
-        <v-col cols="12" md="6" lg="3">
+        <v-col cols="3">
           <v-select
             v-model="entrypoints"
             :items="contract.entrypoints"
-            chips
             small-chips
+            chips
             label="Entrypoints"
             multiple
             hide-details
           >
             <template v-slot:selection="{ item, index }">
-              <v-chip small v-if="index < 1">
-                <span>{{ item }}</span>
+              <v-chip x-small v-if="index < 1">
+                <span>{{ shortestEntrypoint }}</span>
               </v-chip>
-              <span
+              &nbsp;<span
                 v-if="index === 1 "
                 class="grey--text caption"
-              >(+{{ entrypoints.length - 1 }} others)</span>
+              >+{{ entrypoints.length - 1 }} others</span>
             </template>
           </v-select>
         </v-col>
 
-        <v-col cols="12" md="6" lg="3">
+        <v-col cols="3">
           <v-dialog
             ref="fromDialog"
             v-model="datesModal"
@@ -70,7 +70,7 @@
             </v-date-picker>
           </v-dialog>
         </v-col>
-        <v-col class="my-3 d-flex align-start justify-end" cols="12" lg="3">
+        <v-col class="my-3 d-flex align-start justify-end" cols="3">
           <v-btn
             small
             text
@@ -85,7 +85,7 @@
         </v-col>
       </v-row>
       <div v-if="operations !== undefined && operations.length > 0">
-        <v-expansion-panels multiple popout tile>
+        <v-expansion-panels multiple tile>
           <Operation
             :data="item"
             :key="item.hash + '_' + item.counter + '_' + key"
@@ -139,6 +139,15 @@ export default {
     },
     dateRangeText() {
       return this.dates.join(" ~ ");
+    },
+    shortestEntrypoint() {
+      if (this.entrypoints.length == 0) return '';
+      let s = this.entrypoints[0];
+
+      for (let i = 1; i < this.entrypoints.length; i++) {
+        if (this.entrypoints[i].length < s.length) s = this.entrypoints[i];
+      }
+      return s;
     }
   },
   data: () => ({

@@ -5,7 +5,7 @@
         <v-list-item three-line selectable>
           <v-list-item-content>
             <span class="overline" v-if="item.body.found_by">Found by {{ item.body.found_by }}</span>
-            <v-list-item-title class="hash">{{ item.value }}</v-list-item-title>
+            <v-list-item-title class="hash">{{ item.body.alias || item.value }}</v-list-item-title>
             <v-list-item-subtitle
               class="subtitle-2"
               v-if="item.body.manager"
