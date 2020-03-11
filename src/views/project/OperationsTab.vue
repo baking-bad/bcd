@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <v-overlay :value="loading" color="white" absolute>
-      <v-progress-circular indeterminate color="primary" size="64"/>
+      <v-progress-circular indeterminate color="primary" size="64" />
     </v-overlay>
     <div v-if="!loading">
       <v-row class="px-4 pb-4">
@@ -22,42 +22,6 @@
               <span v-if="index === 1 " class="grey--text caption">(+{{ status.length - 1 }} others)</span>
             </template>
           </v-select>
-        </v-col>
-        <v-col cols="12" md="6" lg="2">
-          <v-dialog
-            ref="fromDialog"
-            v-model="fromModal"
-            :return-value.sync="from"
-            persistent
-            width="300px"
-          >
-            <template v-slot:activator="{ on }">
-              <v-text-field v-model="from" label="Date from" readonly hide-details v-on="on"></v-text-field>
-            </template>
-            <v-date-picker v-model="fromBuf" scrollable>
-              <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="fromModal = false">Cancel</v-btn>
-              <v-btn text color="primary" @click="$refs.fromDialog.save(fromBuf)">OK</v-btn>
-            </v-date-picker>
-          </v-dialog>
-        </v-col>
-        <v-col cols="12" md="6" lg="2">
-          <v-dialog
-            ref="toDialog"
-            v-model="toModal"
-            :return-value.sync="to"
-            persistent
-            width="300px"
-          >
-            <template v-slot:activator="{ on }">
-              <v-text-field v-model="to" label="Date to" readonly hide-details v-on="on"></v-text-field>
-            </template>
-            <v-date-picker v-model="toBuf" scrollable>
-              <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="toModal = false">Cancel</v-btn>
-              <v-btn text color="primary" @click="$refs.toDialog.save(toBuf)">OK</v-btn>
-            </v-date-picker>
-          </v-dialog>
         </v-col>
         <v-col cols="12" md="6" lg="3">
           <v-select
@@ -80,7 +44,33 @@
             </template>
           </v-select>
         </v-col>
-        <v-col class="my-3 d-flex align-start justify-end" cols="12" lg="2">
+
+        <v-col cols="12" md="6" lg="3">
+          <v-dialog
+            ref="fromDialog"
+            v-model="datesModal"
+            :return-value.sync="dates"
+            persistent
+            width="300px"
+          >
+            <template v-slot:activator="{ on }">
+              <v-text-field
+                v-model="dateRangeText"
+                label="Date range"
+                placeholder="All time"
+                readonly
+                hide-details
+                v-on="on"
+              ></v-text-field>
+            </template>
+            <v-date-picker v-model="datesBuf" scrollable range show-current>
+              <v-spacer></v-spacer>
+              <v-btn text color="primary" @click="datesModal = false">Cancel</v-btn>
+              <v-btn text color="primary" @click="$refs.fromDialog.save(datesBuf)">OK</v-btn>
+            </v-date-picker>
+          </v-dialog>
+        </v-col>
+        <v-col class="my-3 d-flex align-start justify-end" cols="12" lg="3">
           <v-btn
             small
             text
@@ -146,6 +136,9 @@ export default {
       }
 
       return this.contract.operations;
+    },
+    dateRangeText() {
+      return this.dates.join(" ~ ");
     }
   },
   data: () => ({
@@ -154,12 +147,9 @@ export default {
     showMempool: false,
     last_id: "",
     status: ["applied", "failed", "backtracked", "skipped"],
-    from: "",
-    fromBuf: "",
-    fromModal: false,
-    to: "",
-    toBuf: "",
-    toModal: false,
+    dates: [],
+    datesBuf: [],
+    datesModal: false,
     entrypoints: []
   }),
   created() {
@@ -185,15 +175,16 @@ export default {
           ? this.entrypoints.length
           : [];
       let status = this.status.length != 4 ? this.status : [];
-      let dateTo = (this.to != "" ? dayjs(this.to).unix() * 1000 : 0) || 0;
-      let dateFrom =
-        (this.from != "" ? dayjs(this.from).unix() * 1000 : 0) || 0;
+      let date1 =
+        (this.dates.length == 2 ? dayjs(this.dates[1]).unix() * 1000 : 0) || 0;
+      let date2 =
+        (this.dates.length == 2 ? dayjs(this.dates[0]).unix() * 1000 : 0) || 0;
       getContractOperations(
         this.contract.network,
         this.contract.address,
         this.last_id,
-        dateFrom,
-        dateTo,
+        date1 > date2 ? date2 : date1,
+        date1 < date2 ? date2 : date1,
         status,
         entries
       )
@@ -280,16 +271,7 @@ export default {
         this.getOperations();
       }
     },
-    from: function() {
-      if (!this.operationsLoading) {
-        this.operationsLoading = true;
-        this.contract.downloadedOperations = false;
-        this.contract.operations = [];
-        this.last_id = null;
-        this.getOperations();
-      }
-    },
-    to: function() {
+    dates: function() {
       if (!this.operationsLoading) {
         this.operationsLoading = true;
         this.contract.downloadedOperations = false;
