@@ -20,7 +20,7 @@
             href="http://localhost:14000/v1/oauth/github/login"
           >
             <v-list-item-title>
-              <v-icon class="mr-4">mdi-github-circle</v-icon>GitHub
+              <v-icon class="mr-4">mdi-github</v-icon>GitHub
             </v-list-item-title>
           </v-list-item>
           <v-list-item
@@ -44,11 +44,11 @@
         </v-tooltip>
       </router-link>
 
-      <v-btn icon color="primary">
+      <v-btn icon color="primary" href="https://twitter.com/TezosBakingBad" target="_blank">
         <v-icon>mdi-twitter</v-icon>
       </v-btn>
-      <v-btn icon color="primary">
-        <v-icon>mdi-github-circle</v-icon>
+      <v-btn icon color="primary" href="https://github.com/baking-bad" target="_blank">
+        <v-icon>mdi-github</v-icon>
       </v-btn>
     </v-app-bar>
   </div>
