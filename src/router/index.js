@@ -58,7 +58,7 @@ const router = new Router({
             name: 'search'
         },
         {
-            path: '/opg/:hash([0-9A-z]{51})',
+            path: '/opg/:hash(o[0-9A-z]{50})',
             components: {
                 default: OPG,
                 nav: Nav
@@ -66,7 +66,7 @@ const router = new Router({
             name: 'opg'
         },
         {
-            path: '/diff/:network(mainnet|babylonnet|zeronet|carthagenet)/:address([0-9A-z]{36})/:network2(mainnet|babylonnet|zeronet|carthagenet)/:address2([0-9A-z]{36})',
+            path: '/diff/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})/:network2(mainnet|babylonnet|zeronet|carthagenet)/:address2(KT[0-9A-z]{34})',
             components: {
                 default: Diff,
                 nav: Nav
@@ -82,7 +82,7 @@ const router = new Router({
             name: 'projects'
         },
         {
-            path: '/bigmap/:network(mainnet|babylonnet|zeronet|carthagenet)/:address([0-9A-z]{36})/:ptr(\\d+)',
+            path: '/bigmap/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})/:ptr(\\d+)',
             components: {
                 default: BigMapViewer,
                 nav: Nav
@@ -90,7 +90,7 @@ const router = new Router({
             name: 'bigmap'
         },
         {
-            path: '/:network(mainnet|babylonnet|zeronet|carthagenet)/:address([0-9A-z]{36})',
+            path: '/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})',
             components: {
                 default: Project,
                 nav: Nav
@@ -127,6 +127,43 @@ const router = new Router({
                     component: MigrationTab
                 }
             ]
+        },
+        { // backward compatibility
+          path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
+          children: [
+              {
+                path: '',
+                redirect: to => {
+                  const { params } = to
+                  return `/${params.network}net/${params.address}`
+                }
+              },
+              {
+                path: 'operations',
+                redirect: to => {
+                  const { params } = to
+                  return `/${params.network}net/${params.address}/operations`
+                }
+              },
+              {
+                path: 'script',
+                redirect: to => {
+                  const { params } = to
+                  return `/${params.network}net/${params.address}/code`
+                }
+              },
+              {
+                path: 'state',
+                redirect: to => {
+                  const { params } = to
+                  return `/${params.network}net/${params.address}/storage`
+                }
+              },
+          ]
+        },
+        { // backward compatibility
+          path: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
+          redirect: '/opg/:hash'
         },
         {
             path: '/dashboard',
