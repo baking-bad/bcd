@@ -1,5 +1,5 @@
 <template>
-  <div class="elevation-0">
+  <v-container fluid>
     <v-toolbar flat color="transparent">
       <div>
         <v-toolbar-title>Big Map Viewer</v-toolbar-title>
@@ -22,7 +22,7 @@
     <v-row>
       <v-col cols="6">
         <v-data-table
-          class="elevation-2 ml-4 pa-2"
+          class="elevation-2 ml-4"
           :loading="loading"
           loading-text="Loading... Please wait"
           :items="bigmap"
@@ -42,7 +42,7 @@
               @click="showBigMapDiffDetails(item)"
               :key="item.data.key_hash"
             >
-              <td class="px-2">
+              <td class="px-0">
                 <v-treeview :items="getTree(item.data.key)" open-all transition class="storage">
                   <template v-slot:label="{ item }">
                     <span :class="item.type">{{ item.value }}</span>&nbsp;
@@ -86,11 +86,14 @@
                   <template v-for="(item, idx) in actions">
                     <v-list-item :key="idx">
                       <v-list-item-content>
-                        <v-list-item-subtitle>At {{ item.level }} level</v-list-item-subtitle>
+                        <v-list-item-subtitle
+                          class="red--text overline"
+                          v-if="item.value === null"
+                        >remove</v-list-item-subtitle>
+                        <v-list-item-subtitle class="primary--text overline" v-else>update</v-list-item-subtitle>
                       </v-list-item-content>
                       <v-list-item-action>
-                        <v-list-item-action-text class="red--text" v-if="item.value === null">remove</v-list-item-action-text>
-                        <v-list-item-action-text class="primary--text" v-else>update</v-list-item-action-text>
+                        <v-list-item-action-text>at {{ item.level }} level</v-list-item-action-text>
                       </v-list-item-action>
                     </v-list-item>
                     <v-divider :key="actions.length + idx" v-if="idx < actions.length -1" />
@@ -116,7 +119,7 @@
       </v-col>
     </v-row>
     <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" />
-  </div>
+  </v-container>
 </template>
 
 <script>
@@ -268,6 +271,6 @@ export default {
 }
 
 .key-hash {
-  font-size: 16px !important;
+  font-size: 0.9em;
 }
 </style>

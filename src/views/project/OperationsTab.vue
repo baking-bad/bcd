@@ -16,10 +16,13 @@
             hide-details
           >
             <template v-slot:selection="{ item, index }">
-              <v-chip  x-small v-if="index < 1">
+              <v-chip x-small v-if="index < 1">
                 <span>{{ item }}</span>
-              </v-chip>
-              &nbsp;<span v-if="index === 1 " class="grey--text caption">+{{ status.length - 1 }} others</span>
+              </v-chip>&nbsp;
+              <span
+                v-if="index === 1 "
+                class="grey--text caption"
+              >+{{ status.length - 1 }} others</span>
             </template>
           </v-select>
         </v-col>
@@ -36,8 +39,8 @@
             <template v-slot:selection="{ item, index }">
               <v-chip x-small v-if="index < 1">
                 <span>{{ shortestEntrypoint }}</span>
-              </v-chip>
-              &nbsp;<span
+              </v-chip>&nbsp;
+              <span
                 v-if="index === 1 "
                 class="grey--text caption"
               >+{{ entrypoints.length - 1 }} others</span>
@@ -138,10 +141,11 @@ export default {
       return this.contract.operations;
     },
     dateRangeText() {
-      return this.dates.join(" ~ ");
+      if (this.dates.length != 2) return "";
+      return this.dates.join("~");
     },
     shortestEntrypoint() {
-      if (this.entrypoints.length == 0) return '';
+      if (this.entrypoints.length == 0) return "";
       let s = this.entrypoints[0];
 
       for (let i = 1; i < this.entrypoints.length; i++) {

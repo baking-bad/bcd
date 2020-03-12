@@ -7,6 +7,7 @@ import router from './router'
 import { UnauthorizedError, getProfile } from "@/api/profile.js";
 import { getJwt, logout } from "@/utils/auth.js";
 
+import '@mdi/font/css/materialdesignicons.css';
 import vuetify from './plugins/vuetify';
 
 import dayjs from 'dayjs';
@@ -81,5 +82,5 @@ new Vue({
   router,
   store,
   vuetify,
-  render: function (h) { return h(App) }
+  render: function (h) { return h(App) },
 }).$mount('#app')

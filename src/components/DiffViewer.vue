@@ -7,9 +7,11 @@
       <span v-if="removed" class="red--text font-weight-medium">-{{ removed }}</span>
     </v-card-title>
     <v-card-text class="px-0">
-      <table>
-        <tbody id="table"></tbody>
-      </table>
+      <div style="overflow-x: auto;">
+        <table class="diff-table">
+          <tbody id="table"></tbody>
+        </table>
+      </div>
     </v-card-text>
   </v-card>
 </template>
@@ -29,14 +31,6 @@ export default {
     this.$nextTick(() => this.buildTable(this.left, this.right));
   },
   methods: {
-    getPartClass(type) {
-      if (type == 1 || type == -1) {
-        return "part part" + type;
-      } else if (type == 2 || type == -2) {
-        return "spaces";
-      }
-      return "";
-    },
     buildTable(left, right) {
       let leftIdx = 0;
       let rightIdx = 0;
@@ -44,7 +38,6 @@ export default {
       let table = document.getElementById("table");
       for (let i = 0; i < left.length; i++) {
         let tr = document.createElement("tr");
-
         let number_td = document.createElement("td");
         if (left[i].length > 0) number_td.textContent = ++leftIdx;
 
@@ -60,6 +53,7 @@ export default {
           }
           span.textContent = left[i][j].chunk;
           td.appendChild(span);
+          td.classList.add("part");
         }
         if (leftRowType) {
           number_td.classList.add("number" + leftRowType);
@@ -83,6 +77,7 @@ export default {
           }
           span.textContent = right[i][j].chunk;
           r_td.appendChild(span);
+          r_td.classList.add("part");
         }
 
         if (rightRowType) {
@@ -101,6 +96,21 @@ export default {
 </script>
 
 <style>
+.part {
+  position: relative;
+  padding-right: 10px;
+  padding-left: 10px;
+  line-height: 20px;
+  vertical-align: top;
+  color: #24292e;
+  font-size: 12px;
+  background-color: transparent;
+  font-family: "Roboto Mono", monospace;
+  white-space: pre-wrap;
+  font-weight: normal;
+  vertical-align: text-top;
+}
+
 .part-1 {
   background-color: #fdb8c0;
 }
@@ -118,10 +128,24 @@ export default {
 }
 
 .number {
+  width: 3%;
+  min-width: 50px;
+  padding-right: 10px;
+  padding-left: 10px;
+  font-size: 12px;
+  line-height: 20px;
   color: rgba(27, 31, 35, 0.3);
-  background-color: rgba(0, 0, 0, 0.02);
-  text-align: end;
-  min-width: 45px;
+  text-align: right;
+  white-space: nowrap;
+  vertical-align: top;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+td {
+  padding: 0;
 }
 
 .number1 {
@@ -132,24 +156,9 @@ export default {
   background-color: #ffdce0;
 }
 
-#table {
-  white-space: pre-wrap;
-  font-weight: normal;
-  color: #24292e;
-  font-size: 12px;
-  background-color: transparent;
-  font-family: "Roboto Mono", monospace;
-  vertical-align: text-top;
-  display: -webkit-inline-box;
-  margin-top: -3px;
-}
-
-td {
-  padding: 0 10px;
-}
-
-table {
-  border-spacing: 0;
-  border: 0;
+.diff-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
 }
 </style>
