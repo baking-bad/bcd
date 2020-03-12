@@ -111,3 +111,21 @@ export function getRecommendedSubscriptions() {
             throw err;
         })
 }
+
+export function getProfileTimeline() {
+    return api.get(`/subscriptions/timeline`,
+        {
+            headers: {
+                'Authorization': getJwt()
+            }
+        })
+        .then((res) => {
+            return res.data
+        })
+        .catch((err) => {
+            if (err.response !== undefined && err.response.status == 401) {
+                throw new UnauthorizedError(err);
+            }
+            throw err;
+        })
+}
