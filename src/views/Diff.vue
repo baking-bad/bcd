@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
     <v-row v-else-if="diffs">
-      <v-col cols="12" class="d-flex justify-center align-center">
+      <v-col cols="12" class="d-flex justify-center align-center" v-if="isAuthorized">
         <v-btn text icon color="primary" @click="upVote">
           <v-icon>mdi-thumb-up-outline</v-icon>
         </v-btn>
@@ -49,6 +49,11 @@ export default {
     snackbar: false,
     snacktext: ""
   }),
+  computed: {
+    isAuthorized() {
+      return this.$store.state.isAuthorized;
+    }
+  },
   created() {
     this.getDiff();
   },
