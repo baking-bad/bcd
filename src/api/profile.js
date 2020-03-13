@@ -3,7 +3,7 @@ const axios = require('axios').default;
 import { getJwt } from "@/utils/auth.js";
 
 const api = axios.create({
-    baseURL: 'http://localhost:14000/v1/profile',
+    baseURL: 'https://api.better-call.dev/v1/',
     timeout: 30000,
     responseType: 'json'
 });

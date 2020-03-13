@@ -1,7 +1,7 @@
 const axios = require('axios').default;
 
 const api = axios.create({
-    baseURL: 'http://localhost:14000/v1/',
+    baseURL: 'https://api.better-call.dev/v1/',
     timeout: 30000,
     responseType: 'json'
 });
