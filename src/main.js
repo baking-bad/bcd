@@ -71,6 +71,7 @@ router.beforeEach((to, from, next) => {
         } else {
           store.dispatch('showError', err);
         }
+        // eslint-disable-next-line
         console.log(err)
       });
   }
