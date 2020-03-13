@@ -1,7 +1,7 @@
 const axios = require('axios').default;
 
 const api = axios.create({
-    baseURL: 'https://api.better-call.dev/v1/',
+    baseURL: `${process.env.VUE_APP_API_URL}/v1/`,
     timeout: 30000,
     responseType: 'json'
 });

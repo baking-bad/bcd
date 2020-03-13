@@ -1,7 +1,7 @@
 const axios = require('axios').default;
 
 const api = axios.create({
-    baseURL: 'http://rpc.tzkt.io/',
+    baseURL: process.env.VUE_APP_NODE_RPC,
     timeout: 30000,
     responseType: 'json'
 });
