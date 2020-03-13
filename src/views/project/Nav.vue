@@ -3,7 +3,7 @@
     <v-list class="py-1">
       <v-list-item two-line class="mb-0">
         <v-list-item-content>
-          <v-list-item-title class="subtitle-2 hash">{{ contract.alias || contract.address }}</v-list-item-title>
+          <v-list-item-title class="hash subtitle-2">{{ contract.alias || contract.address }}</v-list-item-title>
           <v-list-item-subtitle class="hash" v-if="contract.alias">{{ contract.address }}</v-list-item-subtitle>
           <v-list-item-subtitle class="overline">Deployed {{ formatDate(contract.timestamp) }}</v-list-item-subtitle>
         </v-list-item-content>

@@ -6,5 +6,7 @@ export function getTzKTLink(network, address) {
             return `https://babylon.tzkt.io/${address}`;
         else if (network === "carthagenet")
             return `https://carthage.tzkt.io/${address}`;
+        else if (network === "zeronet")
+            return `https://zeronet.tzkt.io/${address}`;
     }
 }
