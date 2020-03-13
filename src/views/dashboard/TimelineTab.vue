@@ -1,13 +1,13 @@
 <template>
   <v-container>
-    <v-list v-if="timeline" max-width="1280">
+    <v-list v-if="timeline" max-width="980" class="elevation-2">
       <template v-for="(item, idx) in timeline">
         <v-list-item :key="idx">
           <v-list-item-avatar>
             <v-icon :color="getIconColor(item)">{{ getIcon(item) }}</v-icon>
           </v-list-item-avatar>
           <v-list-item-content>
-            <v-list-item-title class="hash grey--text text--darken-2">
+            <v-list-item-title class="hash grey--text text--darken-2" style="font-size: 0.8em;">
               <div v-if="item.kind==='origination'">
                 <span class="grey--text">{{item.source}}</span>&nbsp;deployed&nbsp;
                 <span class="grey--text">{{item.destination}}</span>
@@ -27,7 +27,7 @@
             <v-list-item-action-text>{{ item.timestamp | fromNow }}</v-list-item-action-text>
           </v-list-item-action>
         </v-list-item>
-        <v-divider v-if="idx != timeline.length - 1" :key="idx + timeline.length"></v-divider>
+        <v-divider inset v-if="idx != timeline.length - 1" :key="idx + timeline.length"></v-divider>
       </template>
     </v-list>
   </v-container>
