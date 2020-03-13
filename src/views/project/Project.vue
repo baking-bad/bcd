@@ -30,7 +30,6 @@
           </v-col>
           <v-col cols="5" class="d-flex align-end pb-0">
             <ExpandableSearch class="mb-1"></ExpandableSearch>
-            <v-btn text small class="toolbar-btn overline mb-2" @click="random">Pick random</v-btn>
           </v-col>
           <v-col cols="12" class="pt-0">
             <v-slide-x-reverse-transition mode="out-in">
@@ -98,17 +97,6 @@ export default {
           this.showError(err);
         })
         .finally(() => (this.loading = false));
-    },
-    random() {
-      api
-        .getRandomContract()
-        .then(res => {
-          this.$router.push({ path: `/${res.network}/${res.address}` });
-        })
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        });
     }
   },
   watch: {

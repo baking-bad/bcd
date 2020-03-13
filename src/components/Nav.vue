@@ -5,7 +5,7 @@
       class="d-flex justify-center align-center"
       style="height: 63px"
     >
-      <v-avatar color="primary" size="38"  class="elevation-2">
+      <v-avatar color="primary" size="38" class="elevation-2">
         <span class="white--text">BCD</span>
       </v-avatar>
     </router-link>
@@ -31,6 +31,21 @@
             <span>{{ item.text }}</span>
           </v-tooltip>
         </template>
+
+        <v-tooltip right>
+          <template v-slot:activator="{ on }">
+            <v-list-item @click="random" v-on="on" active-class="white--text">
+              <v-list-item-icon>
+                <v-icon color="grey">mdi-dice-3-outline</v-icon>
+              </v-list-item-icon>
+
+              <v-list-item-content>
+                <v-list-item-title>Pick random</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+          <span>Pick random</span>
+        </v-tooltip>
       </v-list-item-group>
       <v-divider v-if="isAuthorized"></v-divider>
 
@@ -91,6 +106,7 @@
 import { mapActions } from "vuex";
 
 import { logout } from "@/utils/auth.js";
+import { getRandomContract } from "@/api/index.js";
 
 export default {
   computed: {
@@ -134,6 +150,16 @@ export default {
     clickLogout() {
       this.userLogout();
       logout();
+    },
+    random() {
+      getRandomContract()
+        .then(res => {
+          this.$router.push({ path: `/${res.network}/${res.address}` });
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        });
     }
   }
 };
