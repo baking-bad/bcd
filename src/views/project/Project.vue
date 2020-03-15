@@ -8,8 +8,13 @@
 
       <v-container fluid class="py-0 my-0">
         <v-row>
-          <v-col cols="7" style="height: 64px;" class="d-flex align-end pb-0">
-            <v-tabs center-active background-color="transparent" slider-color="primary" v-if="contract">
+          <v-col cols="12" style="height: 64px;" class="d-flex align-end pb-0">
+            <v-tabs
+              center-active
+              background-color="transparent"
+              slider-color="primary"
+              v-if="contract"
+            >
               <v-tab :to="{name: 'operations'}" replace class="overline">
                 <v-icon left small>mdi-swap-horizontal</v-icon>
                 Operations ({{ contract.tx_count || 0 }})
@@ -27,8 +32,6 @@
                 <v-icon small left>mdi-alphabetical</v-icon>Migration
               </v-tab>
             </v-tabs>
-          </v-col>
-          <v-col cols="5" class="d-flex align-end pb-0">
             <ExpandableSearch class="mb-1"></ExpandableSearch>
           </v-col>
           <v-col cols="12" class="pt-0">
