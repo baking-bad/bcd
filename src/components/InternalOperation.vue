@@ -11,7 +11,7 @@
         <InfoItem title="Gas limit" :subtitle="String(data.gas_limit)" />
       </v-col>
       <v-col cols="2">
-        <InfoItem title="Storage limit" :subtitle="data.storage_limit | bytes" />
+        <InfoItem title="Storage limit" :subtitle="data.storage_limit || 0 | bytes" />
       </v-col>
       <v-spacer></v-spacer>
       <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
