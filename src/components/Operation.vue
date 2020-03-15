@@ -38,6 +38,7 @@
 
       <InternalOperation
         :data="item"
+        :mainOperation="value"
         :address="address"
         v-for="(item, idx) in value.internal_operations"
         :key="idx"

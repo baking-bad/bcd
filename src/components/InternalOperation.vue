@@ -13,8 +13,7 @@
       <v-col cols="2">
         <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
       </v-col>
-      <v-col cols="2">
-      </v-col>
+      <v-col cols="2"></v-col>
       <v-col cols="2" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
         <v-btn small text color="grey" class="d-flex align-center" :href="opgHref" target="_blank">
           <span class="overline">Open in new tab</span>
@@ -25,7 +24,7 @@
       </v-col>
     </v-row>
     <v-row no-gutters>
-      <v-col cols="12" class="title"> 
+      <v-col cols="12" class="title">
         <span :class="headerClass">{{ header }}</span>
         <v-chip
           class="ml-3"
@@ -188,7 +187,8 @@ import VueJsonPretty from "vue-json-pretty";
 export default {
   props: {
     data: Object,
-    address: String
+    address: String,
+    mainOperation: Object
   },
   components: {
     InfoItem,
@@ -237,18 +237,30 @@ export default {
       }
       return "Destination";
     },
+    gasLimit() {
+      if (this.data.internal) {
+        return this.mainOperation.gas_limit;
+      }
+      return this.data.gas_limit;
+    },
+    storageLimit() {
+      if (this.data.internal) {
+        return this.mainOperation.storage_limit;
+      }
+      return this.data.storage_limit;
+    },
     consumedGas() {
       if (this.data.result.consumed_gas) {
         let s = `${this.data.result.consumed_gas}`;
-        if (this.data.gas_limit > 0) {
+        if (this.gasLimit > 0) {
           s += ` (${(
             (this.data.result.consumed_gas * 100) /
-            this.data.gas_limit
+            this.gasLimit
           ).toFixed(0)}%)`;
         }
         return s;
       }
-      return "0";
+      return "0 (0%)";
     },
     allocationFee() {
       if (this.data.result.allocated_destination_contract) {
@@ -261,15 +273,15 @@ export default {
         let s = this.$options.filters.bytes(
           this.data.result.paid_storage_size_diff
         );
-        if (this.data.storage_limit > 0) {
+        if (this.storageLimit > 0) {
           s += ` (${(
             (this.data.result.paid_storage_size_diff * 100) /
-            this.data.storage_limit
+            this.storageLimit
           ).toFixed(0)}%)`;
         }
         return s;
       }
-      return this.$options.filters.bytes(0);
+      return this.$options.filters.bytes(0) + " (0%)";
     },
     amount() {
       if (isNaN(this.data.amount)) return 0;
@@ -339,7 +351,7 @@ export default {
       return `overline ${this.data.kind}`;
     },
     burned() {
-      let val = this.getBurned(this.data)
+      let val = this.getBurned(this.data);
       if (!this.data.internal && !this.data.mempool) {
         for (let i = 0; i < this.data.internal_operations.length; i++) {
           val += this.getBurned(this.data.internal_operations[i]);
@@ -349,7 +361,10 @@ export default {
       return val;
     },
     opgHref() {
-      let routeData = this.$router.resolve({name: 'opg', params: {'hash': this.data.hash}});
+      let routeData = this.$router.resolve({
+        name: "opg",
+        params: { hash: this.data.hash }
+      });
       return routeData.href;
     }
   },
@@ -364,9 +379,9 @@ export default {
   }),
   created() {
     this.showParams =
-      this.data.errors !== undefined 
-      || this.data.destination === this.address
-      || this.address === undefined;
+      this.data.errors !== undefined ||
+      this.data.destination === this.address ||
+      this.address === undefined;
   },
   methods: {
     getLinkObject(address) {
@@ -402,8 +417,7 @@ export default {
       if (data.result.paid_storage_size_diff)
         val += data.result.paid_storage_size_diff * 1000;
 
-      if (data.result.allocated_destination_contract) 
-        val += 257000;
+      if (data.result.allocated_destination_contract) val += 257000;
 
       return val;
     },
