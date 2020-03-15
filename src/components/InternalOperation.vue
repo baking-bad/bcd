@@ -1,17 +1,17 @@
 <template>
   <div class="my-3">
     <v-row v-if="!data.internal" no-gutters>
-      <v-col cols="2" v-if="data.fee">
+      <v-col cols="2">
         <InfoItem title="Fee" :subtitle="data.fee | uxtz" />
       </v-col>
-      <v-col cols="2" v-if="data.gas_limit">
+      <v-col cols="2">
+        <InfoItem title="Burned" :subtitle="burned | uxtz" />
+      </v-col>
+      <v-col cols="2">
         <InfoItem title="Gas limit" :subtitle="String(data.gas_limit)" />
       </v-col>
-      <v-col cols="2" v-if="data.storage_limit">
+      <v-col cols="2">
         <InfoItem title="Storage limit" :subtitle="data.storage_limit | bytes" />
-      </v-col>
-      <v-col cols="2" v-if="burned">
-        <InfoItem title="Burned" :subtitle="burned | uxtz" />
       </v-col>
       <v-spacer></v-spacer>
       <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
@@ -21,7 +21,7 @@
       </v-col>
     </v-row>
     <v-row no-gutters>
-      <v-col cols="12" class="title">
+      <v-col cols="12" class="title"> 
         <span :class="headerClass">{{ header }}</span>
         <v-chip
           class="ml-3"
@@ -95,11 +95,11 @@
           <v-col cols="2" v-if="data.result.consumed_gas">
             <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
           </v-col>
-          <v-col cols="2" v-if="data.result.allocated_destination_contract">
-            <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
-          </v-col>
           <v-col cols="3" v-if="data.result.paid_storage_size_diff">
             <InfoItem title="Paid storage diff" :subtitle="paidStorageDiff" />
+          </v-col>
+          <v-col cols="2" v-if="data.result.allocated_destination_contract">
+            <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
           </v-col>
         </v-row>
         <v-row class="parameters pa-3" v-if="hasParameters || hasStorageDiff" no-gutters>
@@ -343,7 +343,7 @@ export default {
         }
       }
 
-      return val;
+      return val || 0;
     }
   },
   data: () => ({
