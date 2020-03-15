@@ -13,9 +13,11 @@
       <v-col cols="2">
         <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
       </v-col>
+      <v-col cols="2">
+      </v-col>
       <v-col cols="2" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
-        <v-btn small text color="grey" class="d-flex align-center" :to="{name: 'opg', params: {'hash': data.hash}}">
-          <span class="overline">View</span>
+        <v-btn small text color="grey" class="d-flex align-center" :href="opgHref" target="_blank">
+          <span class="overline">Open in new tab</span>
         </v-btn>
         <v-btn small text color="grey" class="d-flex align-center" @click="getRawJSON">
           <span class="overline">Raw JSON</span>
@@ -345,6 +347,10 @@ export default {
       }
 
       return val;
+    },
+    opgHref() {
+      let routeData = this.$router.resolve({name: 'opg', params: {'hash': this.data.hash}});
+      return routeData.href;
     }
   },
   data: () => ({
