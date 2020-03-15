@@ -5,16 +5,13 @@
         <InfoItem title="Fee" :subtitle="data.fee | uxtz" />
       </v-col>
       <v-col cols="2">
-        <InfoItem title="Burned" :subtitle="burned | uxtz" />
+        <InfoItem title="Burned" :subtitle="(burned || 0) | uxtz" />
       </v-col>
       <v-col cols="2">
         <InfoItem title="Gas limit" :subtitle="String(data.gas_limit)" />
       </v-col>
       <v-col cols="2">
         <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
-      </v-col>
-      <v-col cols="2">
-        <InfoItem title="Burned" :subtitle="(burned || 0) | uxtz" />
       </v-col>
       <v-col cols="2" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
         <v-btn small text color="grey" class="d-flex align-center" :to="{name: 'opg', params: {'hash': data.hash}}">
