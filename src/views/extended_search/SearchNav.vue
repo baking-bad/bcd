@@ -6,7 +6,6 @@
           <v-select
             v-model="filters.startTime"
             :items="timeItems"
-            outlined
             label="Time"
             hide-details
             item-text="name"
@@ -25,7 +24,7 @@
             mandatory
             active-class="primary--text"
           >
-            <v-chip v-for="net in networkItems" :key="net">{{ net }}</v-chip>
+            <v-chip filter v-for="net in networkItems" :key="net">{{ net }}</v-chip>
           </v-chip-group>
         </v-list-item-content>
       </v-list-item>
@@ -40,11 +39,10 @@
             mandatory
             active-class="primary--text"
           >
-            <v-chip v-for="lang in languages" :key="lang">{{ lang }}</v-chip>
+            <v-chip filter v-for="lang in languages" :key="lang">{{ lang }}</v-chip>
           </v-chip-group>
         </v-list-item-content>
       </v-list-item>
-
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -55,6 +53,9 @@ export default {
   props: {
     value: Boolean,
     filters: Object
+  },
+  created() {
+    this.show = this.value;
   },
   data: () => ({
     show: false,
@@ -96,11 +97,13 @@ export default {
     languages: ["michelson", "smartpy", "liquidity", "ligo"]
   }),
   watch: {
-    value: function(newValue) {
-      this.show = newValue;
+    show: function(newValue) {
       if (newValue) {
         this.newFilters = this.filters;
       }
+    },
+    value: function(newValue) {
+      this.show = newValue;
     },
     newFilters: {
       deep: true,

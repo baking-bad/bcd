@@ -75,7 +75,16 @@
         </v-col>
         <v-col class="my-3 d-flex align-start justify-end" cols="3">
           <v-btn
-            small
+            x-small
+            text
+            @click="clearFilters"
+            class="toolbar-btn"
+          >
+            <v-icon>mdi-close</v-icon>
+            <span>reset</span>
+          </v-btn>
+          <v-btn
+            x-small
             text
             @click="showMempool = !showMempool"
             class="toolbar-btn"
@@ -246,7 +255,15 @@ export default {
         this.getOperations();
       }
     },
+    clearFilters() {
+      this.status = ["applied", "failed", "backtracked", "skipped"];
+      this.dates = [];
+      this.datesBuf = [];
+      this.datesModal = false;
+      this.entrypoints = [];
+    },
     fetchOperations() {
+      this.clearFilters();
       if (this.contract.operations === undefined) {
         this.contract.downloadedOperations = false;
         this.contract.operations = [];

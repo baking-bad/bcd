@@ -11,10 +11,15 @@
         <InfoItem title="Gas limit" :subtitle="String(data.gas_limit)" />
       </v-col>
       <v-col cols="2">
-        <InfoItem title="Storage limit" :subtitle="data.storage_limit || 0 | bytes" />
+        <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
       </v-col>
-      <v-spacer></v-spacer>
-      <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
+      <v-col cols="2">
+        <InfoItem title="Burned" :subtitle="(burned || 0) | uxtz" />
+      </v-col>
+      <v-col cols="2" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
+        <v-btn small text color="grey" class="d-flex align-center" :to="{name: 'opg', params: {'hash': data.hash}}">
+          <span class="overline">View</span>
+        </v-btn>
         <v-btn small text color="grey" class="d-flex align-center" @click="getRawJSON">
           <span class="overline">Raw JSON</span>
         </v-btn>

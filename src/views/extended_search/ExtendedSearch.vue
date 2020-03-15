@@ -115,7 +115,7 @@ export default {
     loading: false,
     completed: false,
     tab: 0,
-    showTools: false,
+    showTools: true,
     showTimeDialog: false,
     filters: {
       startTime: 0,
@@ -132,9 +132,6 @@ export default {
       }
       return [];
     }
-  },
-  created() {
-    this.showTools = false;
   },
   methods: {
     ...mapActions(["showError"]),

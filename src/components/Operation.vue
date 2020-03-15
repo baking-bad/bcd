@@ -68,7 +68,7 @@ export default {
   },
   computed: {
     entryName() {
-      if (this.value.entrypoint) {
+      if (this.value.entrypoint && this.value.destination === this.address) {
         return this.value.entrypoint;
       } else {
         for (let i = 0; i < this.value.internal_operations.length; i++) {
