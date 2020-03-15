@@ -45,8 +45,8 @@
               <td class="px-0">
                 <v-treeview :items="getTree(item.data.key)" open-all transition class="storage">
                   <template v-slot:label="{ item }">
-                    <span :class="item.type">{{ item.value }}</span>&nbsp;
-                    <span class="grey--text text--darken-2">{{ item.name }}</span>
+                    <span class="grey--text text--darken-2">{{ item.value }}</span>&nbsp;
+                    <span  :class="item.type">{{ item.name }}</span>
                   </template>
                 </v-treeview>
               </td>

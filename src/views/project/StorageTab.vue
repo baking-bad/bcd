@@ -19,10 +19,14 @@
           <v-btn
             :to="{ name: 'bigmap', params: { address: contract.address, ptr: item.value, newtork: contract.network}}"
             text
+            tile
             x-small
             color="primary"
             v-else
-          >Big Map {{ item.value }}</v-btn>
+          >
+            <v-icon x-small left>mdi-vector-link</v-icon>
+            Big Map {{ item.value }}
+          </v-btn>
         </template>
         <template v-slot:prepend="{ item, open }">
           <v-tooltip v-if="item.type === 'value'" left>
