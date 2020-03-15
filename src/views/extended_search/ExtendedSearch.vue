@@ -109,7 +109,7 @@ export default {
   },
   data: () => ({
     suggests: [],
-    searchText: "",
+    searchText: null,
     total: 0,
     elasticTime: 0,
     loading: false,
@@ -121,7 +121,8 @@ export default {
       startTime: 0,
       networks: ["mainnet", "babylonnet", "carthagenet", "zeronet"],
       languages: ["michelson", "ligo", "smartpy", "liquidity"]
-    }
+    },
+    _timerId: null
   }),
   computed: {
     indices() {
@@ -133,11 +134,14 @@ export default {
       return [];
     }
   },
+  mounted() {
+    this.searchText = this.$route.query.text;
+  },
   methods: {
     ...mapActions(["showError"]),
     onDownloadPage(entries) {
       if (entries[0].isIntersecting) {
-        this.search(
+        this.fetchSearchDebounced(
           this.searchText,
           this.indices,
           true,
@@ -205,13 +209,30 @@ export default {
           .unix();
       }
       return 0;
+    },
+    fetchSearchDebounced(
+      text,
+      indices = [],
+      push = false,
+      networks = [],
+      languages = [],
+      time = {}
+    ) {
+      if (text == null) return;
+      this.completed = false;
+      // cancel pending call
+      clearTimeout(this._timerId);
+
+      // delay new call 200ms
+      this._timerId = setTimeout(() => {
+        this.search(text, indices, push, networks, languages, time);
+      }, 200);
     }
   },
   watch: {
     searchText(val) {
       let startTime = { s: this.getSearchTime(this.filters.startTime) };
-      this.completed = false;
-      this.search(
+      this.fetchSearchDebounced(
         val,
         this.indices,
         false,
@@ -222,8 +243,7 @@ export default {
     },
     indices(val) {
       let startTime = { s: this.getSearchTime(this.filters.startTime) };
-      this.completed = false;
-      this.search(
+      this.fetchSearchDebounced(
         this.searchText,
         val,
         false,
@@ -236,8 +256,7 @@ export default {
       deep: true,
       handler: function(newValue) {
         let startTime = { s: this.getSearchTime(newValue.startTime) };
-        this.completed = false;
-        this.search(
+        this.fetchSearchDebounced(
           this.searchText,
           this.indices,
           false,

@@ -18,6 +18,7 @@
     :flat="toolbar"
     :outlined="!toolbar"
     @change="onSearch"
+    @keyup.enter="onEnter"
   >
     <template v-slot:item="{ item }">
       <v-list-item-avatar>
@@ -71,11 +72,16 @@ export default {
         let network = this.model.body.network;
         this.$router.push({ path: `/${network}/${value}` });
       }
+    },
+    onEnter() {
+      if (this.searchText !== null && this.searchText.length > 1) {
+        this.$router.push({ name: "search", query: { text: this.searchText } });
+      }
     }
   },
   watch: {
     searchText(val) {
-      if (val.length > 1) {
+      if (val !== null && val.length > 1) {
         api
           .search(val)
           .then(res => {

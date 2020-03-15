@@ -129,41 +129,41 @@ const router = new Router({
             ]
         },
         { // backward compatibility
-          path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
-          children: [
-              {
-                path: '',
-                redirect: to => {
-                  const { params } = to
-                  return `/${params.network}net/${params.address}`
-                }
-              },
-              {
-                path: 'operations',
-                redirect: to => {
-                  const { params } = to
-                  return `/${params.network}net/${params.address}/operations`
-                }
-              },
-              {
-                path: 'script',
-                redirect: to => {
-                  const { params } = to
-                  return `/${params.network}net/${params.address}/code`
-                }
-              },
-              {
-                path: 'state',
-                redirect: to => {
-                  const { params } = to
-                  return `/${params.network}net/${params.address}/storage`
-                }
-              },
-          ]
+            path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
+            children: [
+                {
+                    path: '',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}`
+                    }
+                },
+                {
+                    path: 'operations',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}/operations`
+                    }
+                },
+                {
+                    path: 'script',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}/code`
+                    }
+                },
+                {
+                    path: 'state',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}/storage`
+                    }
+                },
+            ]
         },
         { // backward compatibility
-          path: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
-          redirect: '/opg/:hash'
+            path: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
+            redirect: '/opg/:hash'
         },
         {
             path: '/dashboard',
