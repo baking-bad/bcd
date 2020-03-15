@@ -2,7 +2,7 @@
   <div class="my-3">
     <v-row v-if="!data.internal" no-gutters>
       <v-col cols="2">
-        <InfoItem title="Fee" :subtitle="data.fee | uxtz" />
+        <InfoItem title="Fee" :subtitle="(data.fee || 0) | uxtz" />
       </v-col>
       <v-col cols="2">
         <InfoItem title="Burned" :subtitle="(burned || 0) | uxtz" />
