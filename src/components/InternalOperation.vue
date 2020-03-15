@@ -95,7 +95,7 @@
           <v-col cols="2" v-if="data.result.consumed_gas">
             <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
           </v-col>
-          <v-col cols="3" v-if="data.result.paid_storage_size_diff">
+          <v-col cols="3" v-if="data.status === 'applied'">
             <InfoItem title="Paid storage diff" :subtitle="paidStorageDiff" />
           </v-col>
           <v-col cols="2" v-if="data.result.allocated_destination_contract">
@@ -265,7 +265,7 @@ export default {
         }
         return s;
       }
-      return "0";
+      return this.$options.filters.bytes(0);
     },
     amount() {
       if (isNaN(this.data.amount)) return 0;
@@ -335,15 +335,14 @@ export default {
       return `overline ${this.data.kind}`;
     },
     burned() {
-      let val =
-        this.allocationFee + this.data.result.paid_storage_size_diff * 1000;
+      let val = this.getBurned(this.data)
       if (!this.data.internal && !this.data.mempool) {
         for (let i = 0; i < this.data.internal_operations.length; i++) {
           val += this.getBurned(this.data.internal_operations[i]);
         }
       }
 
-      return val || 0;
+      return val;
     }
   },
   data: () => ({
@@ -357,8 +356,9 @@ export default {
   }),
   created() {
     this.showParams =
-      this.data.errors !== undefined ||
-      (this.data.destination === this.address && this.data.status == "applied");
+      this.data.errors !== undefined 
+      || this.data.destination === this.address
+      || this.address === undefined;
   },
   methods: {
     getLinkObject(address) {
@@ -394,7 +394,8 @@ export default {
       if (data.result.paid_storage_size_diff)
         val += data.result.paid_storage_size_diff * 1000;
 
-      if (data.result.allocated_destination_contract) val += 257000;
+      if (data.result.allocated_destination_contract) 
+        val += 257000;
 
       return val;
     },
