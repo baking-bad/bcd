@@ -73,7 +73,7 @@
     <div class="px-4 pb-4">
       <v-chip
         color="secondary"
-        text-color="grey darken-1"
+        :text-color="contract.network === 'mainnet' ? 'grey darken-4' : 'grey darken-1'"
         class="mr-1 caption my-1"
         small
         label
