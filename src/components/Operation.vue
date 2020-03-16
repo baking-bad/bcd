@@ -23,21 +23,16 @@
             </v-list-item-content>
           </v-list-item>
         </v-col>
-         <v-col cols="2" class="d-flex align-center">          
-          <span class="d-inline-block text-truncate hash line" v-if="invokerHeader">
-            <span class="grey--text">by</span> {{ invokerHeader }}
-          </span>
-        </v-col>
         <v-col cols="2" class="d-flex align-center">
           <v-list-item v-if="totalLocked">
             <v-list-item-content>
-              <v-list-item-title class="overline">{{ uxtz(totalLocked) }}</v-list-item-title>
+              <v-list-item-title class="overline">+{{ uxtz(totalLocked) }}</v-list-item-title>
               <v-list-item-subtitle class="overline grey--text">locked</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
           <v-list-item v-else-if="totalWithdrawn">
             <v-list-item-content>
-              <v-list-item-title class="overline">{{ uxtz(totalWithdrawn) }}</v-list-item-title>
+              <v-list-item-title class="overline">-{{ uxtz(totalWithdrawn) }}</v-list-item-title>
               <v-list-item-subtitle class="overline grey--text">withdrawn</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
@@ -54,13 +49,18 @@
           <v-list-item class="d-inline-block text-truncate">
             <v-list-item-content>
               <v-list-item-title class="hash line">
-                {{ value.hash }}
+                {{ shortcut(value.hash) }}
               </v-list-item-title>
               <v-list-item-subtitle class="overline">
                 <span class="grey--text">counter</span> {{ value.counter }}
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
+        </v-col>
+        <v-col cols="2" class="d-flex align-center">          
+          <span class="d-inline-block text-truncate hash line" v-if="invokerHeader">
+            <span class="grey--text">by</span> {{ shortcut(invokerHeader) }}
+          </span>
         </v-col>
       </v-row>
     </v-expansion-panel-header>
@@ -200,6 +200,13 @@ export default {
       });
       return `${xtz} \uA729`;
     },
+    shortcut(value, size=7) {
+      if (value !== undefined && value.length > (size + 1) * 2) {
+        return value.substr(0, size) + `\u2026\u202F` + value.substr(value.length - size, size);
+      } else {
+        return value;
+      }
+    },
     getOrientedAmount(data, sign) {
       if (this.address !== undefined && !isNaN(data.amount)) { 
         if (data.source === this.address && sign < 0) {
@@ -211,6 +218,9 @@ export default {
       return 0;
     },
     getTotalAmount(sign) {
+      if (this.value.status !== "applied") {
+        return 0;
+      }
       let val = this.getOrientedAmount(this.value, sign);
       if (!this.value.mempool) {
         for (let i = 0; i < this.value.internal_operations.length; i++) {
