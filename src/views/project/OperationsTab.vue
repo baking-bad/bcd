@@ -194,7 +194,7 @@ export default {
 
       let entries =
         this.entrypoints.length != this.contract.entrypoints.length
-          ? this.entrypoints.length
+          ? this.entrypoints
           : [];
       let status = this.status.length != 4 ? this.status : [];
       let date1 =
