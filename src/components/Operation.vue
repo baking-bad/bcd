@@ -242,7 +242,7 @@ export default {
     getInvokerHeader(data) {
       if (data.sourceHeader !== undefined) {
         return data.sourceHeader;
-      } else if (data.source.startsWith("KT")) {
+      } else if (data.internal && data.source.startsWith("KT")) {
         return data.source;
       } else {
         return null;
