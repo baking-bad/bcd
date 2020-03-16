@@ -24,7 +24,7 @@
           </v-list-item>
         </v-col>
          <v-col cols="2" class="d-flex align-center">          
-          <span class="d-inline-block overline" v-if="invokerHeader">
+          <span class="d-inline-block text-truncate hash line" v-if="invokerHeader">
             <span class="grey--text">by</span> {{ invokerHeader }}
           </span>
         </v-col>
@@ -170,15 +170,15 @@ export default {
     },
     invokerHeader() {
       if (this.value.destination === this.address) {
-          return this.value.sourceHeader;
+          return this.getInvokerHeader(this.value);
       } else if (!this.value.mempool) {
         for (let i = 0; i < this.value.internal_operations.length; i++) {
           if (this.value.internal_operations[i].destination === this.address) {
-            return this.value.internal_operations[i].sourceHeader;
+            return this.getInvokerHeader(this.value.internal_operations[i]);
           }
         }
       }
-      return undefined;
+      return null;
     }
   },
   data: () => ({
@@ -228,6 +228,15 @@ export default {
         val += 257000;
 
       return val;
+    },
+    getInvokerHeader(data) {
+      if (data.sourceHeader !== undefined) {
+        return data.sourceHeader;
+      } else if (data.source.startsWith("KT")) {
+        return data.source;
+      } else {
+        return null;
+      }
     }
   }
 };
