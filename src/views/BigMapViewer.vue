@@ -3,12 +3,7 @@
     <v-toolbar flat color="transparent">
       <div>
         <v-toolbar-title>Big Map Viewer</v-toolbar-title>
-        <span class="grey--text hash">
-          <router-link
-            :to="{name: 'project', params:{address: $route.params.address, network: $route.params.network}}"
-          >{{ $route.params.address }}</router-link>
-          (Ptr {{ $route.params.ptr }})
-        </span>
+        <v-breadcrumbs large class="px-0" :items="breadcrumbs"></v-breadcrumbs>
       </div>
       <v-spacer></v-spacer>
       <v-text-field
@@ -46,7 +41,7 @@
                 <v-treeview :items="getTree(item.data.key)" open-all transition class="storage">
                   <template v-slot:label="{ item }">
                     <span class="grey--text text--darken-2">{{ item.value }}</span>&nbsp;
-                    <span  :class="item.type">{{ item.name }}</span>
+                    <span :class="item.type">{{ item.name }}</span>
                   </template>
                 </v-treeview>
               </td>
@@ -121,7 +116,6 @@
     <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" />
   </v-container>
 </template>
-
 <script>
 import { mapActions } from "vuex";
 
@@ -144,8 +138,31 @@ export default {
     bigmap: [],
     selectedBigMapDiff: null,
     selectedAction: 0,
-    actions: []
+    actions: [],
+    breadcrumbs: []
   }),
+  mounted() {
+    this.$nextTick(() => {
+      this.breadcrumbs = [
+        {
+          text: this.$route.params.address,
+          disabled: false,
+          to: {
+            name: "project",
+            params: {
+              address: this.$route.params.address,
+              network: this.$route.params.network
+            }
+          }
+        },
+        {
+          text: `Big map ${this.$route.params.ptr}`,
+          disabled: true,
+          href: "breadcrumbs_link_2"
+        }
+      ];
+    });
+  },
   computed: {
     tree() {
       if (

@@ -1,11 +1,28 @@
 <template>
-  <v-card>
-    <v-card-title class="body-2 secondary grey--text text--darken-3">
-      {{ nameLeft }} -> {{ nameRight }}
-      <v-spacer></v-spacer>
-      <span v-if="added" class="primary--text font-weight-medium mr-1">+{{ added }}</span>
-      <span v-if="removed" class="red--text font-weight-medium">-{{ removed }}</span>
-    </v-card-title>
+  <v-card :elevation="3">
+    <v-row no-gutters>
+      <v-col cols="6">
+        <v-list-item class="pa-0 pl-8" :to="toLeft" selectable>
+          <v-list-item-content>
+            <v-list-item-subtitle>{{ nameLeft }}</v-list-item-subtitle>
+            <v-list-item-title class="overline">{{ subsLeft }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-col>
+      <v-col cols="5">
+        <v-list-item class="pa-0 pl-8" :to="toRight" selectable>
+          <v-list-item-content>
+            <v-list-item-subtitle>{{ nameRight }}</v-list-item-subtitle>
+            <v-list-item-title class="overline">{{ subsRight }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-col>
+      <v-col class="d-flex align-center justify-end mr-4">
+        <span v-if="added" class="primary--text font-weight-medium mr-1">+{{ added }}</span>
+        <span v-if="removed" class="red--text font-weight-medium">-{{ removed }}</span>
+      </v-col>
+    </v-row>
+    <v-divider></v-divider>
     <v-card-text class="px-0">
       <div style="overflow-x: auto;">
         <table class="diff-table">
@@ -23,7 +40,11 @@ export default {
     left: Array,
     right: Array,
     nameLeft: String,
+    subsLeft: String,
+    toLeft: Object,
     nameRight: String,
+    subsRight: String,
+    toRight: Object,
     added: Number,
     removed: Number
   },
@@ -161,4 +182,5 @@ td {
   border-collapse: collapse;
   table-layout: fixed;
 }
+
 </style>

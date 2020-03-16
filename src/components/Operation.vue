@@ -5,7 +5,7 @@
         <v-col cols="2" class="d-flex align-center">
           <v-list-item>
             <v-list-item-content>
-              <v-list-item-title class="overline">{{ formatDate(value.timestamp) }}</v-list-item-title>
+              <v-list-item-title class="overline">{{ value.timestamp | fromNow }}</v-list-item-title>
               <v-list-item-subtitle
                 class="overline grey--text"
               >{{ value.mempool ? 'mempool' : value.level }}</v-list-item-subtitle>

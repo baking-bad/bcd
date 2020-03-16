@@ -10,14 +10,19 @@
           <v-icon>mdi-thumb-down-outline</v-icon>
         </v-btn>
       </v-col>
+
       <v-col cols="12">
         <DiffViewer
-          :left="diffs.left"
-          :right="diffs.right"
-          :nameRight="diffs.name_right"
-          :nameLeft="diffs.name_left"
-          :added="diffs.added"
-          :removed="diffs.removed"
+        :left="diffs.left"
+        :right="diffs.right"
+        :nameRight="$route.params.address2"
+        :subsRight="$route.params.network2"
+        :nameLeft="$route.params.address"
+        :subsLeft="$route.params.network"
+        :toLeft="{ name: 'project', params: { address: $route.params.address, network: $route.params.network}}"
+        :toRight="{ name: 'project', params: { address: $route.params.address2, network: $route.params.network2}}"
+        :added="diffs.added"
+        :removed="diffs.removed"
         />
         <v-snackbar v-model="snackbar">
           {{ snacktext }}
