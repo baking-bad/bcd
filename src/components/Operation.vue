@@ -255,6 +255,7 @@ export default {
 <style lang="scss" scoped>
 .line {
   font-size: 0.8rem !important;
+  line-height: 0.9rem;
 }
 
 .v-expansion-panel-header--active.applied {
