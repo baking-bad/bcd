@@ -5,7 +5,7 @@
     <v-skeleton-loader v-if="loading" height="123" type="image" class="ma-3"></v-skeleton-loader>
     <v-card class="ma-3 transparent" v-else-if=" contract.full_entrypoints.length > 0">
       <v-expansion-panels focusable tile hover accordion v-model="panel">
-        <v-expansion-panel v-for="(item) in contract.full_entrypoints" :key="item.miguel_name">
+        <v-expansion-panel v-for="(item, idx) in contract.full_entrypoints" :key="item.miguel_name">
           <v-expansion-panel-header ripple class="hash">
             <span>{{ item.miguel_name }}</span>
           </v-expansion-panel-header>
@@ -16,6 +16,7 @@
                 <span class="primary--text">{{ item.miguel_type }}</span>
               </div>
               <v-treeview
+                :ref="'tree-' + idx"
                 v-if="showTree(item.miguel_parameters)"
                 :items="tree(item.miguel_parameters)"
                 hoverable
@@ -94,7 +95,15 @@ export default {
     }
   },
   watch: {
-    contract: "getEntrypoints"
+    contract: "getEntrypoints",
+    panel: function(newValue) {
+      let tree = this.$refs["tree-" + newValue];
+      if (tree) {
+        this.$nextTick(() => {
+          tree[0].updateAll(true);
+        });
+      }
+    }
   }
 };
 </script>
