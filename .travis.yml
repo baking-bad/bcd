@@ -1,0 +1,28 @@
+if: tag IS blank
+
+language: node_js
+node_js:
+  - 10
+
+install: npm install
+
+script:
+  - npm run lint
+  - npm run build
+
+cache:
+  yarn: true
+  directories:
+    - "node_modules"
+
+before_deploy:
+  - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
+  - tar cfvz bcd.tar.gz dist
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  file: bcd.tar.gz
+  api_key: $GITHUB_TOKEN 
+  on:
+    branch: master
