@@ -135,7 +135,9 @@ export default {
     }
   },
   mounted() {
-    this.searchText = this.$route.query.text;
+    this.$nextTick(() => {
+      this.searchText = this.$route.query.text;
+    });
   },
   methods: {
     ...mapActions(["showError"]),
