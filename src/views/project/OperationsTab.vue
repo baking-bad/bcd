@@ -74,12 +74,7 @@
           </v-dialog>
         </v-col>
         <v-col class="my-3 d-flex align-start justify-end" cols="3">
-          <v-btn
-            x-small
-            text
-            @click="clearFilters"
-            class="toolbar-btn"
-          >
+          <v-btn x-small text @click="clearFilters" class="toolbar-btn">
             <v-icon>mdi-close</v-icon>
             <span>reset</span>
           </v-btn>
@@ -261,6 +256,7 @@ export default {
       this.datesBuf = [];
       this.datesModal = false;
       this.entrypoints = [];
+      this.last_id = null;
     },
     fetchOperations() {
       this.clearFilters();
@@ -288,7 +284,6 @@ export default {
         this.operationsLoading = true;
         this.contract.downloadedOperations = false;
         this.contract.operations = [];
-        this.last_id = null;
         this.getOperations();
       }
     },
@@ -297,7 +292,6 @@ export default {
         this.operationsLoading = true;
         this.contract.downloadedOperations = false;
         this.contract.operations = [];
-        this.last_id = null;
         this.getOperations();
       }
     },
@@ -306,7 +300,6 @@ export default {
         this.operationsLoading = true;
         this.contract.downloadedOperations = false;
         this.contract.operations = [];
-        this.last_id = null;
         this.getOperations();
       }
     }
