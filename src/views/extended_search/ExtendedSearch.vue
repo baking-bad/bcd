@@ -120,7 +120,7 @@ export default {
     filters: {
       startTime: 0,
       networks: ["mainnet", "babylonnet", "carthagenet", "zeronet"],
-      languages: ["michelson", "ligo", "smartpy", "liquidity"]
+      languages: ["michelson", "ligo", "smartpy", "liquidity", "lorentz"]
     },
     _timerId: null
   }),

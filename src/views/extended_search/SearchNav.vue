@@ -94,7 +94,7 @@ export default {
       }
     ],
     networkItems: ["mainnet", "babylonnet", "carthagenet", "zeronet"],
-    languages: ["michelson", "smartpy", "liquidity", "ligo"]
+    languages: ["michelson", "smartpy", "liquidity", "ligo", "lorentz"]
   }),
   watch: {
     show: function(newValue) {
