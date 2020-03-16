@@ -23,13 +23,44 @@
             </v-list-item-content>
           </v-list-item>
         </v-col>
-        <v-spacer></v-spacer>
-        <v-col cols="7" class="d-flex flex-horizontal align-center justify-space-between">
-          <span class="hash line d-inline-block text-truncate">{{ value.hash }}</span>
-          <div class="mx-3 d-flex flex-horizontal">
-            <v-icon small class="mr-1">mdi-counter</v-icon>
-            <span class="overline">{{ value.counter }}</span>
-          </div>
+         <v-col cols="2" class="d-flex align-center">          
+          <span class="d-inline-block overline" v-if="invokerHeader">
+            <span class="grey--text">by</span> {{ invokerHeader }}
+          </span>
+        </v-col>
+        <v-col cols="2" class="d-flex align-center">
+          <v-list-item v-if="totalLocked">
+            <v-list-item-content>
+              <v-list-item-title class="overline">{{ uxtz(totalLocked) }}</v-list-item-title>
+              <v-list-item-subtitle class="overline grey--text">locked</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item v-else-if="totalWithdrawn">
+            <v-list-item-content>
+              <v-list-item-title class="overline">{{ uxtz(totalWithdrawn) }}</v-list-item-title>
+              <v-list-item-subtitle class="overline grey--text">withdrawn</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-col>
+        <v-col cols="2" class="d-flex align-center">
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-title class="overline">{{ uxtz(totalCost) }}</v-list-item-title>
+              <v-list-item-subtitle class="overline grey--text">costs</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+        </v-col>
+        <v-col cols="2" class="d-flex flex-horizontal align-center justify-space-between">
+          <v-list-item class="d-inline-block text-truncate">
+            <v-list-item-content>
+              <v-list-item-title class="hash line">
+                {{ value.hash }}
+              </v-list-item-title>
+              <v-list-item-subtitle class="overline">
+                <span class="grey--text">counter</span> {{ value.counter }}
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
         </v-col>
       </v-row>
     </v-expansion-panel-header>
@@ -118,6 +149,36 @@ export default {
       if (this.value.status === "backtracked") return "mdi-alert-outline";
       if (this.value.status === "skipped") return "mdi-crosshairs-question";
       return "";
+    },
+    totalLocked() {
+      return Math.max(0, this.getTotalAmount(1) - this.getTotalAmount(-1));
+    },
+    totalWithdrawn() {
+      return this.getTotalAmount(-1);
+    },
+    totalCost() {
+      let val = this.getBurned(this.value)
+      if (!this.value.mempool) {
+        for (let i = 0; i < this.value.internal_operations.length; i++) {
+          val += this.getBurned(this.value.internal_operations[i]);
+        }
+      }
+      if (!isNaN(this.value.fee)) {
+        val += this.value.fee;
+      }
+      return val;
+    },
+    invokerHeader() {
+      if (this.value.destination === this.address) {
+          return this.value.sourceHeader;
+      } else if (!this.value.mempool) {
+        for (let i = 0; i < this.value.internal_operations.length; i++) {
+          if (this.value.internal_operations[i].destination === this.address) {
+            return this.value.internal_operations[i].sourceHeader;
+          }
+        }
+      }
+      return undefined;
     }
   },
   data: () => ({
@@ -138,6 +199,35 @@ export default {
         maximumFractionDigits: 6
       });
       return `${xtz} \uA729`;
+    },
+    getOrientedAmount(data, sign) {
+      if (this.address !== undefined && !isNaN(data.amount)) { 
+        if (data.source === this.address && sign < 0) {
+          return data.amount;
+        } else if (data.destination === this.address && sign > 0) {
+          return data.amount;
+        }
+      }
+      return 0;
+    },
+    getTotalAmount(sign) {
+      let val = this.getOrientedAmount(this.value, sign);
+      if (!this.value.mempool) {
+        for (let i = 0; i < this.value.internal_operations.length; i++) {
+          val += this.getOrientedAmount(this.value.internal_operations[i], sign);
+        }
+      }
+      return val;
+    },
+    getBurned(data) {
+      let val = 0;
+      if (data.result.paid_storage_size_diff)
+        val += data.result.paid_storage_size_diff * 1000;
+
+      if (data.result.allocated_destination_contract) 
+        val += 257000;
+
+      return val;
     }
   }
 };
