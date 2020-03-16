@@ -48,7 +48,8 @@
         label
         v-text="item.network"
         color="secondary"
-        class="grey--text text--darken-3"
+        class="grey--text"
+        :class="item.network === 'mainnet' ? 'text--darken-4' : 'text--darken-1'"
       ></v-chip>
       <v-list-item-action-text class="mb-1">{{ item.timestamp | fromNow }}</v-list-item-action-text>
       <v-list-item-action-text>
