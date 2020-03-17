@@ -9,7 +9,7 @@
       </v-toolbar-title>
 
       <v-spacer class="hidden-sm-and-down"></v-spacer>
-      <v-menu open-on-hover bottom offset-y v-if="!isAuthorized">
+      <v-menu open-on-hover bottom offset-y v-if="!isAuthorized && isPrivate">
         <template v-slot:activator="{ on }">
           <v-btn color="primary" text v-on="on">Sign in</v-btn>
         </template>
@@ -63,6 +63,9 @@ export default {
     },
     profile() {
       return this.$store.state.profile;
+    },
+    isPrivate() {
+      return process.env.VUE_APP_PRIVATE == "1";
     }
   }
 };
