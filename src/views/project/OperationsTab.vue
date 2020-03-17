@@ -12,6 +12,7 @@
             chips
             small-chips
             label="Status"
+            placeholder="Any"
             multiple
             hide-details
           >
@@ -32,7 +33,8 @@
             :items="contract.entrypoints"
             small-chips
             chips
-            label="Entrypoints"
+            label="Entrypoint"
+            placeholder="Any"
             multiple
             hide-details
           >
@@ -161,16 +163,15 @@ export default {
   data: () => ({
     operationsLoading: true,
     mempoolLoading: true,
-    showMempool: false,
+    showMempool: true,
     last_id: "",
-    status: ["applied", "failed", "backtracked", "skipped"],
+    status: [],
     dates: [],
     datesBuf: [],
     datesModal: false,
     entrypoints: []
   }),
   created() {
-    this.entrypoints = this.contract.entrypoints;
     this.fetchOperations();
   },
   methods: {
@@ -251,7 +252,7 @@ export default {
       }
     },
     clearFilters() {
-      this.status = ["applied", "failed", "backtracked", "skipped"];
+      this.status = [];
       this.dates = [];
       this.datesBuf = [];
       this.datesModal = false;
@@ -275,34 +276,22 @@ export default {
       } else {
         this.mempoolLoading = false;
       }
-    }
-  },
-  watch: {
-    contract: "fetchOperations",
-    status: function() {
-      if (!this.operationsLoading) {
-        this.operationsLoading = true;
-        this.contract.downloadedOperations = false;
-        this.contract.operations = [];
-        this.getOperations();
-      }
     },
-    entrypoints: function() {
+    updateOperations() {
       if (!this.operationsLoading) {
         this.operationsLoading = true;
-        this.contract.downloadedOperations = false;
-        this.contract.operations = [];
-        this.getOperations();
-      }
-    },
-    dates: function() {
-      if (!this.operationsLoading) {
-        this.operationsLoading = true;
+        this.last_id = null;  // trigger computed field `operations`
         this.contract.downloadedOperations = false;
         this.contract.operations = [];
         this.getOperations();
       }
     }
+  },
+  watch: {
+    contract: "fetchOperations",
+    status: "updateOperations",
+    entrypoints: "updateOperations",
+    dates: "updateOperations"
   }
 };
 </script>
