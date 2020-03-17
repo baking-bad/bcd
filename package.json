@@ -17,6 +17,7 @@
     "diff2html": "^3.1.6",
     "json-view": "^0.4.0",
     "vue": "^2.6.10",
+    "vue-analytics": "^5.22.1",
     "vue-codemirror": "^4.0.6",
     "vue-codemirror-lite": "^1.0.4",
     "vue-json-pretty": "^1.6.3",

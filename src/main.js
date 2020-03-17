@@ -14,7 +14,9 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 
-Vue.config.productionTip = false
+const isProd = process.env.NODE_ENV === 'production';
+
+Vue.config.productionTip = false;
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
@@ -78,6 +80,25 @@ router.beforeEach((to, from, next) => {
 
   next();
 })
+
+Vue.use(VueAnalytics, {
+  id: 'UA-160856677-1',
+  router,
+  autoTracking: {
+      pageviewTemplate(route) {
+          return {
+              page: route.name,
+              title: document.title,
+              location: window.location.href
+          }
+      }
+  },
+  debug: {
+      enabled: !isProd,
+      sendHitTask: isProd
+  }
+});
+
 
 new Vue({
   router,
