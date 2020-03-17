@@ -56,6 +56,7 @@ export default {
   },
   created() {
     this.show = this.value;
+    console.log(this.filters);
   },
   data: () => ({
     show: false,
@@ -65,8 +66,8 @@ export default {
       networks: [],
       languages: []
     },
-    languagesSelection: [],
-    networksSelection: [],
+    languagesSelection: [0, 1, 2, 3, 4],
+    networksSelection: [0, 1, 2, 3],
     timeItems: [
       {
         name: "Any time",
@@ -107,28 +108,8 @@ export default {
     },
     newFilters: {
       deep: true,
-      handler: function(newValue, oldValue) {
+      handler: function(newValue) {
         this.filters = newValue;
-
-        if (
-          this.networksSelection.length == 0 &&
-          oldValue.networks.length === 0
-        ) {
-          this.networksSelection = [];
-          for (let i = 0; i < this.filters.networks.length; i++) {
-            this.networksSelection.push(i);
-          }
-        }
-
-        if (
-          this.languagesSelection.length == 0 &&
-          oldValue.languages.length === 0
-        ) {
-          this.languagesSelection = [];
-          for (let i = 0; i < this.filters.languages.length; i++) {
-            this.languagesSelection.push(i);
-          }
-        }
       }
     },
     languagesSelection: function(newValue) {
