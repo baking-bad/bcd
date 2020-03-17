@@ -3,6 +3,7 @@ import App from './App.vue'
 
 import store from './store'
 import router from './router'
+import VueAnalytics from 'vue-analytics'
 
 import { UnauthorizedError, getProfile } from "@/api/profile.js";
 import { getJwt, logout } from "@/utils/auth.js";
@@ -13,8 +14,6 @@ import vuetify from './plugins/vuetify';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
-
-const isProd = process.env.NODE_ENV === 'production';
 
 Vue.config.productionTip = false;
 
@@ -81,23 +80,27 @@ router.beforeEach((to, from, next) => {
   next();
 })
 
-Vue.use(VueAnalytics, {
-  id: 'UA-160856677-1',
-  router,
-  autoTracking: {
-      pageviewTemplate(route) {
-          return {
-              page: route.name,
-              title: document.title,
-              location: window.location.href
-          }
-      }
-  },
-  debug: {
-      enabled: !isProd,
-      sendHitTask: isProd
-  }
-});
+if (process.env.NODE_ENV === 'production') {
+  Vue.use(VueAnalytics, {
+    id: "UA-160856677-1",
+    router,
+    autoTracking: {
+        pageviewTemplate(route) {
+            return {
+                page: route.name,
+                title: document.title,
+                location: window.location.href
+            }
+        }
+    },
+    debug: {
+        enabled: false,
+        sendHitTask: true
+    }
+  });
+}
+
+
 
 
 new Vue({
