@@ -1,7 +1,7 @@
 <template>
   <div>
-    <v-app-bar app clipped-left elevation="0">
-      <v-toolbar-title class="brand headline pl-2">
+    <v-app-bar app clipped-left elevation="0" class="white">
+      <v-toolbar-title class="brand headline pl-2 white">
         <router-link to="/" class="font-weight-light toolbar-title">
           BETTER CALL
           <span class="font-weight-regular">DEV</span>

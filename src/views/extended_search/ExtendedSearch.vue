@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-app-bar extended fixed app elevation="1">
+    <v-app-bar extended fixed app elevation="1" class="white">
       <v-combobox
         dense
         class="ml-6"
