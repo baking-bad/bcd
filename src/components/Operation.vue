@@ -120,7 +120,18 @@ export default {
       if (this.value.kind === "transaction") {
         if (this.entryName) return `${this.entryName}`;
       }
-      return this.value.kind;
+      if (this.value.destination === this.address) {
+        return this.value.kind;
+      } else {
+        for (let i = 0; i < this.value.internal_operations.length; i++) {
+          if (
+            this.value.internal_operations[i].destination === this.address
+          ) {
+            return this.value.internal_operations[i].kind;
+          }
+        }
+      }
+      return null;
     },
     color() {
       if (this.value == null) return "grey";
