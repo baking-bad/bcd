@@ -100,7 +100,7 @@ export default {
   },
   computed: {
     entryName() {
-      if (this.value.entrypoint && this.value.destination === this.address) {
+      if (this.value.entrypoint && (this.address === undefined || this.value.destination === this.address)) {
         return this.value.entrypoint;
       } else {
         for (let i = 0; i < this.value.internal_operations.length; i++) {
@@ -120,7 +120,7 @@ export default {
       if (this.value.kind === "transaction") {
         if (this.entryName) return `${this.entryName}`;
       }
-      if (this.value.destination === this.address) {
+      if (this.address === undefined || this.value.destination === this.address) {
         return this.value.kind;
       } else {
         for (let i = 0; i < this.value.internal_operations.length; i++) {
