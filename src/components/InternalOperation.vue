@@ -210,12 +210,18 @@ export default {
       return this.data.errors;
     },
     source() {
+      if (this.data.source_alias) {
+        return this.data.source_alias;
+      }
       if (this.data.source) {
         return this.data.source;
       }
       return "unset";
     },
     destination() {
+      if (this.data.destination_alias) {
+        return this.data.destination_alias;
+      }
       if (this.data.destination) {
         return this.data.destination;
       }
