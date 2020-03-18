@@ -507,9 +507,6 @@ export default {
 .tree-label {
   font-size: 95% !important;
 }
-.v-treeview-node__label {
-  white-space: unset;
-}
 .v-treeview-node__root {
   min-height: 20px !important;
 }
