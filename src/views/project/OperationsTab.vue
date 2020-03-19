@@ -227,6 +227,9 @@ export default {
         .finally(() => (this.mempoolLoading = false));
     },
     getDisplayedMempool() {
+      if (this.contract.mempool == null)
+        return [];
+
       let mempoolOperations = this.contract.mempool;
       if (this.status.length > 0) {
         mempoolOperations = mempoolOperations.filter(o => this.status.includes(o.status));
