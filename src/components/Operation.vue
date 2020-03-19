@@ -24,16 +24,13 @@
           </v-list-item>
         </v-col>
         <v-col cols="2" class="d-flex align-center">
-          <v-list-item v-if="totalLocked">
+          <v-list-item v-if="totalLockedWithdrawn !== 0">
             <v-list-item-content>
-              <v-list-item-title class="overline">+{{ uxtz(totalLocked) }}</v-list-item-title>
-              <v-list-item-subtitle class="overline grey--text">locked</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-else-if="totalWithdrawn">
-            <v-list-item-content>
-              <v-list-item-title class="overline">-{{ uxtz(totalWithdrawn) }}</v-list-item-title>
-              <v-list-item-subtitle class="overline grey--text">withdrawn</v-list-item-subtitle>
+              <v-list-item-title class="overline">{{ uxtz(totalLockedWithdrawn) }}</v-list-item-title>
+              <v-list-item-subtitle class="overline grey--text">
+                <span v-if="totalLockedWithdrawn > 0">locked</span>
+                <span v-else>withdrawn</span>
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
@@ -164,11 +161,8 @@ export default {
       if (this.value.status === "skipped") return "mdi-crosshairs-question";
       return "";
     },
-    totalLocked() {
-      return Math.max(0, this.getTotalAmount(1) - this.getTotalAmount(-1));
-    },
-    totalWithdrawn() {
-      return this.getTotalAmount(-1);
+    totalLockedWithdrawn() {
+      return this.getTotalAmount(1) - this.getTotalAmount(-1);
     },
     totalCost() {
       if (this.value.mempool) return 0;
