@@ -130,16 +130,7 @@ export default {
       if (this.last_id !== null)
         operations = this.contract.operations;
 
-      let mempoolOperations = this.contract.mempool;
-      if (this.status.length > 0)
-        mempoolOperations = mempoolOperations.filter(o => this.status.includes(o.status));
-
-      let loadedCount = operations.length;
-      if (loadedCount > 0) {
-        const lastTimestamp = operations[loadedCount - 1].timestamp;
-        mempoolOperations = mempoolOperations.filter(o => o.timestamp >= lastTimestamp);
-      }
-
+      let mempoolOperations = this.getDisplayedMempool();
       if (mempoolOperations.length > 0)
         operations = operations.concat(mempoolOperations).sort(this.compareOperations);
 
@@ -183,8 +174,14 @@ export default {
       }
       return 0;
     },
+    getDates() {
+      let date1 = (this.dates.length == 2 ? dayjs(this.dates[0]).unix() * 1000 : 0) || 0;
+      let date2 = (this.dates.length == 2 ? dayjs(this.dates[1]).unix() * 1000 : 0) || 0;
+      return [date1 < date2 ? date1 : date2, date2 > date1 ? date2 : date1]
+    },
     getOperations() {
-      if (this.contract == null || this.contract.downloadedOperations) return;
+      if (this.contract == null || this.contract.downloadedOperations)
+        return;
 
       const onChainStatuses = ['applied', 'failed', 'skipped', 'backtracked'];
       let status = this.status.filter(s => onChainStatuses.includes(s));
@@ -192,18 +189,15 @@ export default {
         this.operationsLoading = false;
         return;
       }
-      
       let entries = this.entrypoints;
-      let date1 =
-        (this.dates.length == 2 ? dayjs(this.dates[1]).unix() * 1000 : 0) || 0;
-      let date2 =
-        (this.dates.length == 2 ? dayjs(this.dates[0]).unix() * 1000 : 0) || 0;
+      let dates = this.getDates();
+
       getContractOperations(
         this.contract.network,
         this.contract.address,
         this.last_id,
-        date1 > date2 ? date2 : date1,
-        date1 < date2 ? date2 : date1,
+        dates[0],
+        dates[1],
         status,
         entries
       )
@@ -219,7 +213,8 @@ export default {
         .finally(() => (this.operationsLoading = false));
     },
     getMempool() {
-      if (this.contract == null) return;
+      if (this.contract == null)
+        return;
       
       getContractMempool(this.contract.network, this.contract.address)
         .then(res => {
@@ -230,6 +225,29 @@ export default {
           this.showError(err);
         })
         .finally(() => (this.mempoolLoading = false));
+    },
+    getDisplayedMempool() {
+      let mempoolOperations = this.contract.mempool;
+      if (this.status.length > 0) {
+        mempoolOperations = mempoolOperations.filter(o => this.status.includes(o.status));
+      }
+
+      if (this.contract.operations.length > 0) {
+        const lastTimestamp = this.contract.operations[this.contract.operations.length - 1].timestamp;
+        mempoolOperations = mempoolOperations.filter(o => o.timestamp >= lastTimestamp);
+      }
+
+      // TODO: filter by entrypoints
+
+      let dates = this.getDates();
+      if (dates[0] !== 0 && dates[1] !== 0) {
+        mempoolOperations = mempoolOperations.filter(function(op) {
+          const ts = dayjs(op.timestamp).unix() * 1000;
+          return ts >= dates[0] && ts < dates[1];
+        });
+      }
+
+      return mempoolOperations;
     },
     prepareOperations(data) {
       data.forEach(element => {

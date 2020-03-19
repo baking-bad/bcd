@@ -151,7 +151,7 @@ export default {
       if (this.value.status === "lost") return "mempool";
       if (this.value.status !== "applied") return "failed";
       return this.value.status;
-    },
+    },  
     statusIcon() {
       if (this.value == null) return "";
       if (this.value.status === "pending") return "mdi-timelapse";
