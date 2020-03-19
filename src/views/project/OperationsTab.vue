@@ -229,18 +229,15 @@ export default {
     getDisplayedMempool() {
       if (this.contract.mempool == null)
         return [];
-
+      
       let mempoolOperations = this.contract.mempool;
+
       if (this.status.length > 0) {
         mempoolOperations = mempoolOperations.filter(o => this.status.includes(o.status));
       }
-
-      if (this.contract.operations.length > 0) {
-        const lastTimestamp = this.contract.operations[this.contract.operations.length - 1].timestamp;
-        mempoolOperations = mempoolOperations.filter(o => o.timestamp >= lastTimestamp);
+      if (this.entrypoints.length > 0) {
+        mempoolOperations = mempoolOperations.filter(o => this.entrypoints.includes(o.entrypoint));
       }
-
-      // TODO: filter by entrypoints
 
       let dates = this.getDates();
       if (dates[0] !== 0 && dates[1] !== 0) {
@@ -248,6 +245,11 @@ export default {
           const ts = dayjs(op.timestamp).unix() * 1000;
           return ts >= dates[0] && ts < dates[1];
         });
+      }
+
+      if (this.contract.operations.length > 0) {
+        const lastTimestamp = this.contract.operations[this.contract.operations.length - 1].timestamp;
+        mempoolOperations = mempoolOperations.filter(o => o.timestamp >= lastTimestamp);
       }
 
       return mempoolOperations;
