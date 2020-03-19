@@ -8,7 +8,7 @@
         <v-col cols="3">
           <v-select
             v-model="status"
-            :items="['applied', 'failed', 'backtracked', 'skipped']"
+            :items="['applied', 'failed', 'backtracked', 'skipped', 'pending', 'lost', 'refused', 'branch_refused']"
             chips
             small-chips
             label="Status"
@@ -78,19 +78,7 @@
         <v-col class="my-3 d-flex align-start justify-end" cols="3">
           <v-btn x-small text @click="clearFilters" class="toolbar-btn">
             <v-icon>mdi-close</v-icon>
-            <span>reset</span>
-          </v-btn>
-          <v-btn
-            x-small
-            text
-            @click="showMempool = !showMempool"
-            class="toolbar-btn"
-            :disabled="contract.mempool === undefined || contract.mempool.length == 0"
-          >
-            <v-icon v-if="showMempool">mdi-minus-network-outline</v-icon>
-            <v-icon v-else>mdi-plus-network-outline</v-icon>&nbsp;
-            <span v-if="showMempool">hide mempool</span>
-            <span v-else>show mempool</span>
+            <span>clear filters</span>
           </v-btn>
         </v-col>
       </v-row>
@@ -138,27 +126,31 @@ export default {
       return this.operationsLoading || this.mempoolLoading;
     },
     operations() {
-      if (this.last_id === null) return [];
-      if (this.showMempool) {
-        let mempoolOperations = this.contract.mempool;
-        let loadedCount = this.contract.operations.length;
-        if (loadedCount > 0) {
-          const lastTimestamp = this.contract.operations[loadedCount - 1].timestamp;
-          mempoolOperations = mempoolOperations.filter(o => o.timestamp >= lastTimestamp);
-        }
-        return this.contract.operations
-          .concat(mempoolOperations)
-          .sort(this.compareOperations);
+      let operations = [];
+      if (this.last_id !== null)
+        operations = this.contract.operations;
+
+      let mempoolOperations = this.contract.mempool;
+      if (this.status.length > 0)
+        mempoolOperations = mempoolOperations.filter(o => this.status.includes(o.status));
+
+      let loadedCount = operations.length;
+      if (loadedCount > 0) {
+        const lastTimestamp = operations[loadedCount - 1].timestamp;
+        mempoolOperations = mempoolOperations.filter(o => o.timestamp >= lastTimestamp);
       }
 
-      return this.contract.operations;
+      if (mempoolOperations.length > 0)
+        operations = operations.concat(mempoolOperations).sort(this.compareOperations);
+
+      return operations;
     },
     dateRangeText() {
-      if (this.dates.length != 2) return "";
-      return this.dates.join("~");
+      if (this.dates.length !== 2) return "";
+      return this.dates.join(" — ");
     },
     shortestEntrypoint() {
-      if (this.entrypoints.length == 0) return "";
+      if (this.entrypoints.length === 0) return "";
       let s = this.entrypoints[0];
 
       for (let i = 1; i < this.entrypoints.length; i++) {
@@ -170,7 +162,6 @@ export default {
   data: () => ({
     operationsLoading: true,
     mempoolLoading: true,
-    showMempool: true,
     last_id: "",
     status: [],
     dates: [],
@@ -195,11 +186,14 @@ export default {
     getOperations() {
       if (this.contract == null || this.contract.downloadedOperations) return;
 
-      let entries =
-        this.entrypoints.length != this.contract.entrypoints.length
-          ? this.entrypoints
-          : [];
-      let status = this.status.length != 4 ? this.status : [];
+      const onChainStatuses = ['applied', 'failed', 'skipped', 'backtracked'];
+      let status = this.status.filter(s => onChainStatuses.includes(s));
+      if (status.length === 0 && this.status.length > 0) {
+        this.operationsLoading = false;
+        return;
+      }
+      
+      let entries = this.entrypoints;
       let date1 =
         (this.dates.length == 2 ? dayjs(this.dates[1]).unix() * 1000 : 0) || 0;
       let date2 =

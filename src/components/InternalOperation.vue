@@ -8,7 +8,7 @@
         <InfoItem title="Burned" :subtitle="(burned || 0) | uxtz" />
       </v-col>
       <v-col cols="2">
-        <InfoItem title="Gas limit" :subtitle="String(data.gas_limit)" />
+        <InfoItem title="Gas limit" :subtitle="String(data.gas_limit || 0)" />
       </v-col>
       <v-col cols="2">
         <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
@@ -94,7 +94,7 @@
             </v-alert>
           </v-col>
         </v-row>
-        <v-row no-gutters>
+        <v-row no-gutters v-if="!data.mempool">
           <v-col cols="2" v-if="data.result.consumed_gas">
             <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
           </v-col>
@@ -321,10 +321,12 @@ export default {
       return (
         this.hasParameters ||
         this.hasStorageDiff ||
-        this.data.result.errors ||
-        this.data.result.consumed_gas ||
-        this.data.result.paid_storage_size_diff ||
-        this.data.result.allocated_destination_contract
+        (this.data.result && (
+          this.data.result.errors ||
+          this.data.result.consumed_gas ||
+          this.data.result.paid_storage_size_diff ||
+          this.data.result.allocated_destination_contract
+        ))
       );
     },
     hasParameters() {
@@ -347,10 +349,11 @@ export default {
       if (this.data.status === "applied") return "green";
       if (this.data.status === "backtracked") return "orange";
       if (this.data.status === "failed") return "red";
-      if (this.data.status === "lost") return "red";
+      if (this.data.status === "pending") return "grey";
+      if (this.data.status === "lost") return "black";
       if (this.data.status === "branch_refused") return "red";
       if (this.data.status === "refused") return "red";
-      return "light-grey";
+      return "grey";
     },
     headerClass() {
       if (this.data.entrypoint) return "overline call";
@@ -419,6 +422,8 @@ export default {
         .finally(() => (this.loadingRaw = false));
     },
     getBurned(data) {
+      if (this.data.status !== "applied" || this.data.mempool) return 0;
+      
       let val = 0;
       if (data.result.paid_storage_size_diff)
         val += data.result.paid_storage_size_diff * 1000;
