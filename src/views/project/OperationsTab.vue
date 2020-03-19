@@ -89,7 +89,8 @@
           >
             <v-icon v-if="showMempool">mdi-minus-network-outline</v-icon>
             <v-icon v-else>mdi-plus-network-outline</v-icon>&nbsp;
-            <span>Mempool</span>
+            <span v-if="showMempool">hide mempool</span>
+            <span v-else>show mempool</span>
           </v-btn>
         </v-col>
       </v-row>
@@ -139,8 +140,14 @@ export default {
     operations() {
       if (this.last_id === null) return [];
       if (this.showMempool) {
+        let mempoolOperations = this.contract.mempool;
+        let loadedCount = this.contract.operations.length;
+        if (loadedCount > 0) {
+          const lastTimestamp = this.contract.operations[loadedCount - 1].timestamp;
+          mempoolOperations = mempoolOperations.filter(o => o.timestamp >= lastTimestamp);
+        }
         return this.contract.operations
-          .concat(this.contract.mempool)
+          .concat(mempoolOperations)
           .sort(this.compareOperations);
       }
 
@@ -177,10 +184,10 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     compareOperations(a, b) {
-      if (a.level < b.level) {
+      if (a.timestamp < b.timestamp) {
         return 1;
       }
-      if (a.level > b.level) {
+      if (a.timestamp > b.timestamp) {
         return -1;
       }
       return 0;
@@ -219,11 +226,7 @@ export default {
     },
     getMempool() {
       if (this.contract == null) return;
-      if (this.contract.mempool !== undefined) {
-        this.mempoolLoading = false;
-        return;
-      }
-      this.mempoolLoading = true;
+      
       getContractMempool(this.contract.network, this.contract.address)
         .then(res => {
           this.contract.mempool = res;
