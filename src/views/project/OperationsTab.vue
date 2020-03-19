@@ -51,12 +51,14 @@
         </v-col>
 
         <v-col cols="3">
-          <v-dialog
-            ref="fromDialog"
+          <v-menu
+            ref="menu"
             v-model="datesModal"
+            :close-on-content-click="false"
             :return-value.sync="dates"
-            persistent
-            width="300px"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
           >
             <template v-slot:activator="{ on }">
               <v-text-field
@@ -70,10 +72,10 @@
             </template>
             <v-date-picker v-model="datesBuf" scrollable range show-current>
               <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="datesModal = false">Cancel</v-btn>
-              <v-btn text color="primary" @click="$refs.fromDialog.save(datesBuf)">OK</v-btn>
+              <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+              <v-btn text color="primary" @click="$refs.menu.save(datesBuf)">OK</v-btn>
             </v-date-picker>
-          </v-dialog>
+          </v-menu>
         </v-col>
         <v-col class="my-3 d-flex align-start justify-end" cols="3">
           <v-btn x-small text @click="clearFilters" class="toolbar-btn">
@@ -137,8 +139,14 @@ export default {
       return operations;
     },
     dateRangeText() {
-      if (this.dates.length !== 2) return "";
-      return this.dates.join(" — ");
+      let texts = this.dates.map(d => dayjs(d).format("MMM DD"));
+      if (texts.length === 2) {
+        return texts.join(" — ");
+      } else if (texts.length === 1) {
+        return texts[0];
+      } else {
+        return "";
+      }
     },
     shortestEntrypoint() {
       if (this.entrypoints.length === 0) return "";
@@ -174,10 +182,15 @@ export default {
       }
       return 0;
     },
-    getDates() {
-      let date1 = (this.dates.length == 2 ? dayjs(this.dates[0]).unix() * 1000 : 0) || 0;
-      let date2 = (this.dates.length == 2 ? dayjs(this.dates[1]).unix() * 1000 : 0) || 0;
-      return [date1 < date2 ? date1 : date2, date2 > date1 ? date2 : date1]
+    getTimestamps() {
+      let timestamps = this.dates.map(d => dayjs(d).unix() * 1000).sort();
+      if (timestamps.length === 2) {
+        return timestamps;
+      } else if (timestamps.length === 1) {
+        return [timestamps[0], timestamps[0] + 86400000]
+      } else {
+        return [0, 0];
+      }
     },
     getOperations() {
       if (this.contract == null || this.contract.downloadedOperations)
@@ -190,14 +203,14 @@ export default {
         return;
       }
       let entries = this.entrypoints;
-      let dates = this.getDates();
+      let timestamps = this.getTimestamps();
 
       getContractOperations(
         this.contract.network,
         this.contract.address,
         this.last_id,
-        dates[0],
-        dates[1],
+        timestamps[0],
+        timestamps[1],
         status,
         entries
       )
@@ -239,11 +252,11 @@ export default {
         mempoolOperations = mempoolOperations.filter(o => this.entrypoints.includes(o.entrypoint));
       }
 
-      let dates = this.getDates();
-      if (dates[0] !== 0 && dates[1] !== 0) {
+      let timestamps = this.getTimestamps();
+      if (timestamps[0] !== 0 && timestamps[1] !== 0) {
         mempoolOperations = mempoolOperations.filter(function(op) {
           const ts = dayjs(op.timestamp).unix() * 1000;
-          return ts >= dates[0] && ts < dates[1];
+          return ts >= timestamps[0] && ts < timestamps[1];
         });
       }
 
