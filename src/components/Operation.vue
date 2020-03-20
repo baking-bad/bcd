@@ -55,8 +55,8 @@
           </v-list-item>
         </v-col>
         <v-col cols="2" class="d-flex align-center">          
-          <span class="d-inline-block text-truncate hash line" v-if="invokerHeader">
-            <span class="grey--text">by</span> {{ shortcut(invokerHeader) }}
+          <span class="d-inline-block text-truncate hash line" v-if="invoker">
+            <span class="grey--text">by</span> {{ shortcut(invoker) }}
           </span>
         </v-col>
       </v-row>
@@ -175,13 +175,13 @@ export default {
       }
       return val;
     },
-    invokerHeader() {
+    invoker() {
       if (this.value.destination === this.address) {
-          return this.getInvokerHeader(this.value);
+          return this.getInvoker(this.value);
       } else if (!this.value.mempool) {
         for (let i = 0; i < this.value.internal_operations.length; i++) {
           if (this.value.internal_operations[i].destination === this.address) {
-            return this.getInvokerHeader(this.value.internal_operations[i]);
+            return this.getInvoker(this.value.internal_operations[i]);
           }
         }
       }
@@ -245,9 +245,9 @@ export default {
 
       return val;
     },
-    getInvokerHeader(data) {
-      if (data.sourceHeader !== undefined) {
-        return data.sourceHeader;
+    getInvoker(data) {
+      if (data.source_alias !== undefined) {
+        return data.source_alias;
       } else if (data.internal && data.source.startsWith("KT")) {
         return data.source;
       } else {
