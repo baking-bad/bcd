@@ -245,24 +245,26 @@ export default {
       
       let mempoolOperations = this.contract.mempool;
 
+      // Apply operation filters
       if (this.status.length > 0) {
         mempoolOperations = mempoolOperations.filter(o => this.status.includes(o.status));
       }
       if (this.entrypoints.length > 0) {
         mempoolOperations = mempoolOperations.filter(o => this.entrypoints.includes(o.entrypoint));
       }
-
-      let timestamps = this.getTimestamps();
-      if (timestamps[0] !== 0 && timestamps[1] !== 0) {
+      if (this.dates.length > 0) {
+        let timestamps = this.getTimestamps();
         mempoolOperations = mempoolOperations.filter(function(op) {
           const ts = dayjs(op.timestamp).unix() * 1000;
           return ts >= timestamps[0] && ts < timestamps[1];
         });
       }
 
+      // Ensure no duplicates (tune the number if needed) and proper cut
       if (this.contract.operations.length > 0) {
         const lastTimestamp = this.contract.operations[this.contract.operations.length - 1].timestamp;
-        mempoolOperations = mempoolOperations.filter(o => o.timestamp >= lastTimestamp);
+        const lastHashes = this.contract.operations.slice(0, 15).map(o => o.hash);
+        mempoolOperations = mempoolOperations.filter(o => o.timestamp >= lastTimestamp && !lastHashes.includes(o.hash));
       }
 
       return mempoolOperations;
