@@ -438,7 +438,7 @@ export default {
     },
     getChangedItems(item) {
       let res = item.children.map(x => this.getChangedItems(x), this).flat();
-      if (item.kind !== '' || res.length > 0)
+      if (item.kind || res.length > 0)
         res.push(item);
       return res;
     }
