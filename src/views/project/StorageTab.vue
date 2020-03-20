@@ -52,7 +52,7 @@ import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import ErrorState from "@/components/ErrorState.vue";
 
 import { getContractStorage } from "@/api/index.js";
-import { getTree } from "@/utils/tree.js";
+import { getTree } from "@/utils/diff.js";
 
 import dayjs from "dayjs";
 
@@ -67,7 +67,7 @@ export default {
   },
   computed: {
     items() {
-      return getTree(this.contract.storage);
+      return getTree(this.contract.storage, true);
     },
     active() {
       if (this.activeField.length > 0) {
