@@ -106,25 +106,27 @@
           </v-col>
         </v-row>
         <v-row class="parameters pa-3" v-if="hasParameters || hasStorageDiff" no-gutters>
-          <v-col cols="6" v-if="hasParameters">
-            <span class="overline ml-3">Parameter</span>
-            <v-treeview
-              :items="parameters"
-              :active.sync="activeParameter"
-              hoverable
-              open-all
-              transition
-              activatable
-              open-on-click
-              return-object
-            >
-              <template v-slot:label="{ item }">
-                <div class="tree-label">
-                  <span :class="item.name.startsWith('@') ? 'purple--text' : ''">{{ item.name }}:</span>&nbsp;
-                  <span :class="item.type">{{ item.value }}</span>
-                </div>
-              </template>
-            </v-treeview>
+          <v-col cols="6">
+            <div v-if="hasParameters">
+              <span class="overline ml-3">Parameter</span>
+              <v-treeview
+                :items="parameters"
+                :active.sync="activeParameter"
+                hoverable
+                open-all
+                transition
+                activatable
+                open-on-click
+                return-object
+              >
+                <template v-slot:label="{ item }">
+                  <div class="tree-label">
+                    <span :class="item.name.startsWith('@') ? 'purple--text' : ''">{{ item.name }}:</span>&nbsp;
+                    <span :class="item.type">{{ item.value }}</span>
+                  </div>
+                </template>
+              </v-treeview>
+            </div>
           </v-col>
           <v-col cols="6" v-if="hasStorageDiff">
             <span class="overline ml-3">Storage</span>&nbsp;
@@ -142,11 +144,18 @@
               <template v-slot:label="{ item }">
                 <div :class="`${item.kind} pl-1 tree-label`">
                   <span>{{ item.name }}:</span>&nbsp;
-                  <span
-                    :class="item.type"
-                    v-if="item.value_type !== 'big_map'"
-                  >{{ item.value }}</span>
-                  <span v-else>Big Map {{ item.value }}</span>
+                  <v-btn
+                    v-if="item.value_type === 'big_map' && item.children.length == 0"
+                    :to="{ name: 'bigmap', params: { address: data.destination, ptr: item.value, newtork: data.network}}"
+                    text
+                    tile
+                    x-small
+                    color="primary"
+                  >
+                    <v-icon x-small left>mdi-vector-link</v-icon>
+                    Big Map {{ item.value }}
+                  </v-btn>
+                  <span v-else :class="item.type">{{ item.value }}</span>
                 </div>
               </template>
             </v-treeview>
@@ -179,7 +188,7 @@
 <script>
 import InfoItem from "@/components/InfoItem.vue";
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
-import { getTree } from "@/utils/tree.js";
+import { getTree } from "@/utils/diff.js";
 import { getTzKTLink } from "@/utils/tzkt.js";
 import { getOperation } from "@/api/node.js";
 import VueJsonPretty from "vue-json-pretty";
@@ -312,10 +321,10 @@ export default {
       return "show";
     },
     parameters() {
-      return getTree(this.data.parameters);
+      return getTree(this.data.parameters, true);
     },
     storage() {
-      return getTree(this.data.storage_diff);
+      return getTree(this.data.storage_diff, true);
     },
     hasDetails() {
       return (

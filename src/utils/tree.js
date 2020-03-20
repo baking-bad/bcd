@@ -77,7 +77,6 @@ export function getTree(data, kind) {
     return res;
 }
 
-
 export function getEntrypointTree(data) {
     let res = [];
     if (data.miguel_type !== undefined) {
