@@ -24,16 +24,13 @@
           </v-list-item>
         </v-col>
         <v-col cols="2" class="d-flex align-center">
-          <v-list-item v-if="totalLocked">
+          <v-list-item v-if="totalLockedWithdrawn !== 0">
             <v-list-item-content>
-              <v-list-item-title class="overline">+{{ uxtz(totalLocked) }}</v-list-item-title>
-              <v-list-item-subtitle class="overline grey--text">locked</v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-else-if="totalWithdrawn">
-            <v-list-item-content>
-              <v-list-item-title class="overline">-{{ uxtz(totalWithdrawn) }}</v-list-item-title>
-              <v-list-item-subtitle class="overline grey--text">withdrawn</v-list-item-subtitle>
+              <v-list-item-title class="overline">{{ uxtz(totalLockedWithdrawn) }}</v-list-item-title>
+              <v-list-item-subtitle class="overline grey--text">
+                <span v-if="totalLockedWithdrawn > 0">locked</span>
+                <span v-else>withdrawn</span>
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
@@ -102,7 +99,7 @@ export default {
     entryName() {
       if (this.value.entrypoint && (this.address === undefined || this.value.destination === this.address)) {
         return this.value.entrypoint;
-      } else {
+      } else if (!this.value.mempool) {
         for (let i = 0; i < this.value.internal_operations.length; i++) {
           if (
             this.value.internal_operations[i].entrypoint &&
@@ -134,24 +131,27 @@ export default {
       return null;
     },
     color() {
-      if (this.value == null) return "grey";
+      if (this.value.status === "pending") return "grey";
       if (this.value.status === "applied") return "primary";
       if (this.value.status === "failed") return "red";
       if (this.value.status === "backtracked") return "orange";
       if (this.value.status === "skipped") return "blue";
-      if (this.value.status === "lost") return "red";
+      if (this.value.status === "lost") return "black";
       if (this.value.status === "branch_refused") return "red";
       if (this.value.status === "refused") return "red";
       return "grey";
     },
     statusHeaderClass() {
+      if (this.value.status === "skipped") return "backtracked";
       if (this.value.status === "backtracked") return "backtracked";
+      if (this.value.status === "pending") return "mempool";
+      if (this.value.status === "lost") return "mempool";
       if (this.value.status !== "applied") return "failed";
-      if (this.value.mempool) return "mempool";
-      return "applied";
-    },
+      return this.value.status;
+    },  
     statusIcon() {
       if (this.value == null) return "";
+      if (this.value.status === "pending") return "mdi-timelapse";
       if (this.value.status === "applied") return "mdi-check";
       if (this.value.status === "failed") return "mdi-close";
       if (this.value.status === "lost") return "mdi-eye-off-outline";
@@ -161,18 +161,14 @@ export default {
       if (this.value.status === "skipped") return "mdi-crosshairs-question";
       return "";
     },
-    totalLocked() {
-      return Math.max(0, this.getTotalAmount(1) - this.getTotalAmount(-1));
-    },
-    totalWithdrawn() {
-      return this.getTotalAmount(-1);
+    totalLockedWithdrawn() {
+      return this.getTotalAmount(1) - this.getTotalAmount(-1);
     },
     totalCost() {
+      if (this.value.mempool) return 0;
       let val = this.getBurned(this.value)
-      if (!this.value.mempool) {
-        for (let i = 0; i < this.value.internal_operations.length; i++) {
-          val += this.getBurned(this.value.internal_operations[i]);
-        }
+      for (let i = 0; i < this.value.internal_operations.length; i++) {
+        val += this.getBurned(this.value.internal_operations[i]);
       }
       if (!isNaN(this.value.fee)) {
         val += this.value.fee;
@@ -229,18 +225,17 @@ export default {
       return 0;
     },
     getTotalAmount(sign) {
-      if (this.value.status !== "applied") {
+      if (this.value.status !== "applied" || this.value.mempool)
         return 0;
-      }
       let val = this.getOrientedAmount(this.value, sign);
-      if (!this.value.mempool) {
-        for (let i = 0; i < this.value.internal_operations.length; i++) {
-          val += this.getOrientedAmount(this.value.internal_operations[i], sign);
-        }
+      for (let i = 0; i < this.value.internal_operations.length; i++) {
+        val += this.getOrientedAmount(this.value.internal_operations[i], sign);
       }
       return val;
     },
     getBurned(data) {
+      if (this.value.status !== "applied" || this.value.mempool)
+        return 0;
       let val = 0;
       if (data.result.paid_storage_size_diff)
         val += data.result.paid_storage_size_diff * 1000;

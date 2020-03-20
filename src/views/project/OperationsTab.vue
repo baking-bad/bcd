@@ -8,7 +8,7 @@
         <v-col cols="3">
           <v-select
             v-model="status"
-            :items="['applied', 'failed', 'backtracked', 'skipped']"
+            :items="['applied', 'failed', 'backtracked', 'skipped', 'pending', 'lost', 'refused', 'branch_refused']"
             chips
             small-chips
             label="Status"
@@ -51,12 +51,14 @@
         </v-col>
 
         <v-col cols="3">
-          <v-dialog
-            ref="fromDialog"
+          <v-menu
+            ref="menu"
             v-model="datesModal"
+            :close-on-content-click="false"
             :return-value.sync="dates"
-            persistent
-            width="300px"
+            transition="scale-transition"
+            offset-y
+            min-width="290px"
           >
             <template v-slot:activator="{ on }">
               <v-text-field
@@ -70,26 +72,15 @@
             </template>
             <v-date-picker v-model="datesBuf" scrollable range show-current>
               <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="datesModal = false">Cancel</v-btn>
-              <v-btn text color="primary" @click="$refs.fromDialog.save(datesBuf)">OK</v-btn>
+              <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+              <v-btn text color="primary" @click="$refs.menu.save(datesBuf)">OK</v-btn>
             </v-date-picker>
-          </v-dialog>
+          </v-menu>
         </v-col>
         <v-col class="my-3 d-flex align-start justify-end" cols="3">
           <v-btn x-small text @click="clearFilters" class="toolbar-btn">
             <v-icon>mdi-close</v-icon>
-            <span>reset</span>
-          </v-btn>
-          <v-btn
-            x-small
-            text
-            @click="showMempool = !showMempool"
-            class="toolbar-btn"
-            :disabled="contract.mempool === undefined || contract.mempool.length == 0"
-          >
-            <v-icon v-if="showMempool">mdi-minus-network-outline</v-icon>
-            <v-icon v-else>mdi-plus-network-outline</v-icon>&nbsp;
-            <span>Mempool</span>
+            <span>clear filters</span>
           </v-btn>
         </v-col>
       </v-row>
@@ -137,21 +128,28 @@ export default {
       return this.operationsLoading || this.mempoolLoading;
     },
     operations() {
-      if (this.last_id === null) return [];
-      if (this.showMempool) {
-        return this.contract.operations
-          .concat(this.contract.mempool)
-          .sort(this.compareOperations);
-      }
+      let operations = [];
+      if (this.last_id !== null)
+        operations = this.contract.operations;
 
-      return this.contract.operations;
+      let mempoolOperations = this.getDisplayedMempool();
+      if (mempoolOperations.length > 0)
+        operations = operations.concat(mempoolOperations).sort(this.compareOperations);
+
+      return operations;
     },
     dateRangeText() {
-      if (this.dates.length != 2) return "";
-      return this.dates.join("~");
+      let texts = this.dates.map(d => dayjs(d).format("MMM DD"));
+      if (texts.length === 2) {
+        return texts.join(" — ");
+      } else if (texts.length === 1) {
+        return texts[0];
+      } else {
+        return "";
+      }
     },
     shortestEntrypoint() {
-      if (this.entrypoints.length == 0) return "";
+      if (this.entrypoints.length === 0) return "";
       let s = this.entrypoints[0];
 
       for (let i = 1; i < this.entrypoints.length; i++) {
@@ -163,7 +161,6 @@ export default {
   data: () => ({
     operationsLoading: true,
     mempoolLoading: true,
-    showMempool: true,
     last_id: "",
     status: [],
     dates: [],
@@ -177,32 +174,43 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     compareOperations(a, b) {
-      if (a.level < b.level) {
+      if (a.timestamp < b.timestamp) {
         return 1;
       }
-      if (a.level > b.level) {
+      if (a.timestamp > b.timestamp) {
         return -1;
       }
       return 0;
     },
+    getTimestamps() {
+      let timestamps = this.dates.map(d => dayjs(d).unix() * 1000).sort();
+      if (timestamps.length === 2) {
+        return timestamps;
+      } else if (timestamps.length === 1) {
+        return [timestamps[0], timestamps[0] + 86400000]
+      } else {
+        return [0, 0];
+      }
+    },
     getOperations() {
-      if (this.contract == null || this.contract.downloadedOperations) return;
+      if (this.contract == null || this.contract.downloadedOperations)
+        return;
 
-      let entries =
-        this.entrypoints.length != this.contract.entrypoints.length
-          ? this.entrypoints
-          : [];
-      let status = this.status.length != 4 ? this.status : [];
-      let date1 =
-        (this.dates.length == 2 ? dayjs(this.dates[1]).unix() * 1000 : 0) || 0;
-      let date2 =
-        (this.dates.length == 2 ? dayjs(this.dates[0]).unix() * 1000 : 0) || 0;
+      const onChainStatuses = ['applied', 'failed', 'skipped', 'backtracked'];
+      let status = this.status.filter(s => onChainStatuses.includes(s));
+      if (status.length === 0 && this.status.length > 0) {
+        this.operationsLoading = false;
+        return;
+      }
+      let entries = this.entrypoints;
+      let timestamps = this.getTimestamps();
+
       getContractOperations(
         this.contract.network,
         this.contract.address,
         this.last_id,
-        date1 > date2 ? date2 : date1,
-        date1 < date2 ? date2 : date1,
+        timestamps[0],
+        timestamps[1],
         status,
         entries
       )
@@ -218,12 +226,9 @@ export default {
         .finally(() => (this.operationsLoading = false));
     },
     getMempool() {
-      if (this.contract == null) return;
-      if (this.contract.mempool !== undefined) {
-        this.mempoolLoading = false;
+      if (this.contract == null)
         return;
-      }
-      this.mempoolLoading = true;
+      
       getContractMempool(this.contract.network, this.contract.address)
         .then(res => {
           this.contract.mempool = res;
@@ -233,6 +238,36 @@ export default {
           this.showError(err);
         })
         .finally(() => (this.mempoolLoading = false));
+    },
+    getDisplayedMempool() {
+      if (this.contract.mempool == null)
+        return [];
+      
+      let mempoolOperations = this.contract.mempool;
+
+      // Apply operation filters
+      if (this.status.length > 0) {
+        mempoolOperations = mempoolOperations.filter(o => this.status.includes(o.status));
+      }
+      if (this.entrypoints.length > 0) {
+        mempoolOperations = mempoolOperations.filter(o => this.entrypoints.includes(o.entrypoint));
+      }
+      if (this.dates.length > 0) {
+        let timestamps = this.getTimestamps();
+        mempoolOperations = mempoolOperations.filter(function(op) {
+          const ts = dayjs(op.timestamp).unix() * 1000;
+          return ts >= timestamps[0] && ts < timestamps[1];
+        });
+      }
+
+      // Ensure no duplicates (tune the number if needed) and proper cut
+      if (this.contract.operations.length > 0) {
+        const lastTimestamp = this.contract.operations[this.contract.operations.length - 1].timestamp;
+        const lastHashes = this.contract.operations.slice(0, 15).map(o => o.hash);
+        mempoolOperations = mempoolOperations.filter(o => o.timestamp >= lastTimestamp && !lastHashes.includes(o.hash));
+      }
+
+      return mempoolOperations;
     },
     prepareOperations(data) {
       data.forEach(element => {
