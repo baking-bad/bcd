@@ -68,41 +68,11 @@ function parseItem(x) {
     return [item];
 }
 
-function parseList(x) {
-    let res = [];
-    if (x.children) {
-        x.children.forEach((item, idx) => {
-            let node = {
-                name: String(idx),
-                children: [],
-                value: getValue(item),
-                type: "value",
-                id: getId(),
-                kind: parseDiffType(item.diff_type)
-            }
-            if (item.children) {
-                node.type = 'object';
-                node.children = getTree(item.children);
-                node.value = `${node.children.length} items`;
-            }
-            if (node.value === undefined) node.value = 'null';
-            res.push(node);
-        })
-    } else {
-        res.push({
-            name: x.name || x.type,
-            value: '0 items',
-            kind: parseDiffType(x.diff_type)
-        })
-    }
-    return res;
-}
-
 function parseMap(x) {
     let item = {
         name: x.name || x.type,
         children: [],
-        value: x.value !== undefined ? x.value : '0 items',
+        value: x.value ? x.value : '0 items',
         type: "object",
         value_type: x.type,
         id: getId(),
@@ -124,7 +94,8 @@ function parseNamedTuple(x) {
             let node = {
                 name: item.name,
                 type: 'object',
-                children: parseItems(item)
+                children: parseItems(item),
+                id: getId(),
             }
             res.push(node)
         } else {
@@ -134,14 +105,53 @@ function parseNamedTuple(x) {
     return res;
 }
 
-function parseItems(x, isRoot = false) {
-    if (x.type === 'list' || x.type === 'tuple' || x.type === 'set') {
-        return parseList(x);
+function parseTuple(x, isRoot = false) {
+    if (isRoot) {        
+        if (x.children) {
+            let res = [];
+            x.children.forEach((x, idx) => {
+                let node = getTree(x)
+                node[0].name = String(idx);
+                res.push(...node);
+            })
+            return res;
+        }
+        return [{
+            id: getId(),
+            name: x.name || x.type,
+            type: 'object',
+            children: [],
+            value: '0 items',
+            kind: parseDiffType(x.diff_type),
+        }]
     }
-    if (x.type === 'map' || x.type === 'big_map' ) {
+
+    let children = [];
+    if (x.children) {
+        x.children.forEach((x, idx) => {
+            let node = getTree(x)
+            node[0].name = String(idx);
+            children.push(node[0]);
+        })
+    }
+    return [{
+        id: getId(),
+        name: x.name || x.type,
+        type: 'object',
+        children: children,
+        value: children.length ? `${children.length} items` : '0 items',
+        kind: parseDiffType(x.diff_type),
+    }];
+}
+
+function parseItems(x, isRoot = false) {
+    if (x.type === 'list' || x.type === 'set' || x.type === 'tuple' || x.type === 'union') {
+        return parseTuple(x, isRoot);
+    }
+    if (x.type === 'map' || x.type === 'big_map') {
         return parseMap(x);
     }
-    if ((x.type === 'namedtuple' || x.type === 'union' || x.type === 'namedunion') && isRoot) {
+    if ((x.type === 'namedtuple' || x.type === 'namedunion') && isRoot) {
         return parseNamedTuple(x);
     }
     return parseItem(x)

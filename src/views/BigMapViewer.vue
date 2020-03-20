@@ -120,7 +120,7 @@
 import { mapActions } from "vuex";
 
 import { getContractBigMap, getContractBigMapByKeyHash } from "@/api/index.js";
-import { getTree } from "@/utils/tree.js";
+import { getTree } from "@/utils/diff.js";
 
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 
