@@ -132,10 +132,10 @@
             <span class="overline ml-3">Storage</span>&nbsp;
             <span class="grey--text caption">{{ data.result.storage_size | bytes}}</span>
             <v-treeview
-              :items="storage"
+              :items="storage.tree"
+              :open="storage.open"
               :active.sync="activeStorage"
               hoverable
-              open-all
               transition
               activatable
               open-on-click
@@ -144,18 +144,7 @@
               <template v-slot:label="{ item }">
                 <div :class="`${item.kind} pl-1 tree-label`">
                   <span>{{ item.name }}:</span>&nbsp;
-                  <v-btn
-                    v-if="item.value_type === 'big_map' && item.children.length == 0"
-                    :to="{ name: 'bigmap', params: { address: data.destination, ptr: item.value, newtork: data.network}}"
-                    text
-                    tile
-                    x-small
-                    color="primary"
-                  >
-                    <v-icon x-small left>mdi-vector-link</v-icon>
-                    Big Map {{ item.value }}
-                  </v-btn>
-                  <span v-else :class="item.type">{{ item.value }}</span>
+                  <span :class="item.type">{{ item.value }}</span>
                 </div>
               </template>
             </v-treeview>
@@ -324,7 +313,9 @@ export default {
       return getTree(this.data.parameters, true);
     },
     storage() {
-      return getTree(this.data.storage_diff, true);
+      let tree = getTree(this.data.storage_diff, true);
+      let open = tree.map(x => this.getChangedItems(x), this).flat();
+      return { tree, open };
     },
     hasDetails() {
       return (
@@ -444,6 +435,12 @@ export default {
     closeTreeNodeDetails() {
       this.activeParameter = [];
       this.activeStorage = [];
+    },
+    getChangedItems(item) {
+      let res = item.children.map(x => this.getChangedItems(x), this).flat();
+      if (item.kind !== '' || res.length > 0)
+        res.push(item);
+      return res;
     }
   },
   watch: {

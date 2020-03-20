@@ -122,7 +122,7 @@ function parseTuple(x, isRoot = false) {
             type: 'object',
             children: [],
             value: '0 items',
-            kind: parseDiffType(x.diff_type),
+            kind: parseDiffType(x.diff_type)
         }]
     }
 
