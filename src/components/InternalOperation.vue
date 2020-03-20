@@ -40,7 +40,7 @@
         <InfoItem
           :title="sourceHeader"
           :subtitle="source"
-          :selected="source == this.address"
+          :selected="this.data.source == this.address"
           :to="getLinkObject(source)"
           :href="getTzKTLink(source)"
         />
@@ -49,7 +49,7 @@
         <InfoItem
           :title="destinationHeader"
           :subtitle="destination"
-          :selected="destination == this.address"
+          :selected="this.data.destination == this.address"
           :to="getLinkObject(destination)"
           :href="getTzKTLink(destination)"
         />
