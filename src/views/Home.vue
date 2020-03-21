@@ -3,8 +3,7 @@
     <v-row no-gutters style="height:calc(100% - 64);">
       <v-col cols="12">
         <v-row justify="center" no-gutters>
-          <img
-            width="300"
+          <img class="logo"
             src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/9bacdc23957341.5632ba9070591.jpg"
           />
         </v-row>
@@ -56,5 +55,9 @@ export default {
 
 .hash {
   font-family: "Roboto Mono", monospace;
+}
+
+.logo {
+  max-height: 350px;
 }
 </style>
