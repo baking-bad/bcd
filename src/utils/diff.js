@@ -4,9 +4,9 @@ function getId() {
     return Math.floor(Math.random() * (+100000000 - +1)) + +1;
 }
 
-function isArray(x) {
-    return x.type === 'list' || x.type === 'set' || x.type === 'tuple'
-}
+// function isArray(x) {
+//     return x.type === 'list' || x.type === 'set' || x.type === 'tuple'
+// }
 
 function parseDiffType(diffType) {
     if (diffType === 'create') {
@@ -90,17 +90,7 @@ function parseMap(x) {
 function parseNamedTuple(x) {
     let res = [];
     x.children.forEach(item => {
-        if (isArray(item) && item.children) {
-            let node = {
-                name: item.name,
-                type: 'object',
-                children: parseItems(item),
-                id: getId(),
-            }
-            res.push(node)
-        } else {
-            res.push(...parseItems(item))
-        }
+        res.push(...parseItems(item))
     })
     return res;
 }
@@ -134,6 +124,7 @@ function parseTuple(x, isRoot = false) {
             children.push(node[0]);
         })
     }
+
     return [{
         id: getId(),
         name: x.name || x.type,
