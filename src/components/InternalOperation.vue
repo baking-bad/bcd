@@ -144,11 +144,11 @@
               >
                 <template v-slot:label="{ item }">
                   <div :class="`${item.kind} pl-1 tree-label`">
-                    <span>{{ item.name }}:</span>&nbsp;
-                    <span
-                      :class="item.type"
-                      v-if="item.value_type === 'big_map' && item.children.length === 0"
-                    >0 items (big map {{ item.value }})</span>
+                    <span>{{ item.name }}:&nbsp;</span>
+                    <span v-if="item.value_type === 'big_map'" 
+                          class="purple--text">big_map&nbsp;</span>
+                    <span v-if="item.value_type === 'big_map' && item.children.length === 0"
+                          :class="item.type">0 diffs</span>
                     <span v-else :class="item.type">{{ item.value }}</span>
                   </div>
                 </template>
@@ -176,7 +176,7 @@
       </v-card>
     </v-dialog>
 
-    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" />
+    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" :network="data.network" />
   </div>
 </template>
 
@@ -445,6 +445,12 @@ export default {
       let res = item.children.map(x => this.getChangedItems(x), this).flat();
       if (item.kind || res.length > 0) res.push(item);
       return res;
+    },
+    isKeyHash(s) {
+      return s !== undefined && s.length === 36 && s.startsWith('tz');
+    },
+    isContract(s) {
+      return s !== undefined && s.length === 36 && s.startsWith('KT');
     }
   },
   watch: {

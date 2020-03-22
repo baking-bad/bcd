@@ -10,7 +10,7 @@
         </v-btn>
       </v-toolbar>
       <v-card tile>
-        <codemirror v-model="contract.code" :options="cmOptions"></codemirror>
+        <Michelson :code="contract.code"></Michelson>
       </v-card>
     </div>
     <ErrorState v-else />
@@ -18,13 +18,8 @@
 </template>
 
 <script>
-import { codemirror } from "vue-codemirror-lite";
-require("codemirror/addon/mode/simple.js");
-require("codemirror/theme/neo.css");
-
+import Michelson from "@/components/Michelson.vue"
 import { mapActions } from "vuex";
-
-import { create } from "@/utils/codemirror.js";
 import { getContractCode } from "@/api/index.js";
 import ErrorState from "@/components/ErrorState.vue";
 
@@ -33,21 +28,13 @@ export default {
     contract: Object
   },
   components: {
-    codemirror,
-    ErrorState
+    ErrorState,
+    Michelson
   },
   data: () => ({
-    cmOptions: {
-      mode: "michelson",
-      theme: "neo",
-      lineWrapping: true,
-      lineNumbers: true,
-      viewportMargin: Infinity
-    },
     loading: true
   }),
   created() {
-    create();
     this.getCode();
   },
   methods: {
@@ -91,15 +78,6 @@ export default {
   }
 };
 </script>
-
-<style>
-.CodeMirror {
-  background-color: #fbfbfb;
-  height: auto;
-  margin-top: 2px;
-  font-size: 0.9rem;
-}
-</style>
 
 <style scoped>
 .toolbar-btn {
