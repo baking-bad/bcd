@@ -40,12 +40,42 @@ function formatValue(val, typ) {
 
 function getValue(x) {
     if (x.type === 'big_map' && x.children && x.children.length == 0) {
-        return x.value;
+        return '0 items';
     }
     if (x.diff_type === 'update') {
         return `${formatValue(x.from, x.type)} -> ${formatValue(x.value, x.type)}`
     }
     return formatValue(x.value, x.type)
+}
+
+function deducePrim(x) {
+    if (x.prim === 'bytes') {
+        if (x.value === 'None') {
+            return 'option';
+        }
+        if (x.value === 'True' || x.value === 'False') {
+            return 'bool';
+        }
+        if (x.value === '{}') {
+            return 'map';
+        }
+        if (x.value === '[]') {
+            return 'list';
+        }
+        if (/(DIP|DUP|CAR|FAILWITH|Pair|Left|Right|Unit)/.test(x.value)) {
+            return 'lambda';
+        }
+        if (/^"(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}"$/.test(x.value)) {
+            return 'address';
+        }
+        if (/^\d+$/.test(x.value)) {
+            return 'nat';
+        }
+        if (/"\w+"/.test(x.value)) {
+            return 'string';
+        }
+    }
+    return x.prim;
 }
 
 function parseItem(x) {
@@ -55,7 +85,12 @@ function parseItem(x) {
         value: getValue(x),
         type: "value",
         id: getId(),
-        kind: parseDiffType(x.diff_type)
+        kind: parseDiffType(x.diff_type),
+        from: x.from,
+        val: x.value,
+        prim: x.prim,
+        realPrim: deducePrim(x),
+        diffType: x.diff_type
     }
 
     if (x.children) {
