@@ -4,28 +4,29 @@
         v-if="prim === 'lambda'" 
         :code="value">
     </Michelson>
+    <pre v-else-if="isPreFormatted">{{ value }}</pre>
     <v-textarea 
-        v-else-if="isMultiline"
+        v-else-if="prim === 'string' || prim === 'bytes'"
         auto-grow
         rows="1"
-        counter
+        filled
         readonly
         :label="label"
-        :value="data">
+        :value="value">
     </v-textarea>
     <v-text-field 
         v-else
-        :value="data"
+        :value="value"
         :suffix="suffix"
         readonly
         filled
         :label="label">
     </v-text-field>
-    <v-btn v-if="isKeyHash" text small link :href="getTzKTLink(this.data)" target="_blank">
+    <v-btn v-if="isKeyHash" text small link :href="getTzKTLink(this.value)" target="_blank">
         <v-icon small class="mr-1">mdi-link-variant</v-icon>Open in explorer
     </v-btn>
-    <v-btn v-else-if="isContract" text small link :to="getLinkObject(this.data)" target="_blank">
-        <v-icon small class="mr-1">mdi-magnify</v-icon>Search on BCD
+    <v-btn v-else-if="isContract" text small link :to="getLinkObject(this.value)" target="_blank">
+        <v-icon small class="mr-1">mdi-magnify</v-icon>Find contract
     </v-btn>
 </div>
 </template>
@@ -52,28 +53,16 @@ export default {
             }
             return null;
         },
-        data() {
-            if (this.prim === 'string') {
-                return String(this.value).replace(/\n/g, '<br/>');
-            } else {
-                return String(this.value);
-            }
-        },
-        isMultiline() {
-            if (this.prim === 'string' || this.prim === 'bytes') {
-                if (this.value.length > 80)
-                    return true;
-                if (/\n/.test(this.value))
-                    return true;
-            }
-            return false;
+        isPreFormatted() {
+            return this.prim === 'string' && /\n/.test(this.value);
         },
         isKeyHash() {
             return this.prim === 'key_hash' 
-                || (this.prim === 'address' && this.data.startsWith('tz'));
+                || (this.prim === 'address' && this.value.startsWith('tz'));
         },
         isContract() {
-            return this.prim === 'address' && this.data.startsWith('KT');
+            return (this.prim === 'address' || this.prim === 'contract') 
+                && this.value.startsWith('KT');
         }
     },
     methods: {
