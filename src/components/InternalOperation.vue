@@ -170,7 +170,7 @@
       </v-card>
     </v-dialog>
 
-    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" />
+    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" :network="data.network" />
   </div>
 </template>
 
