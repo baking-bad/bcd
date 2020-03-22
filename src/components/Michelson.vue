@@ -5,6 +5,7 @@
 <script>
 import { codemirror } from "vue-codemirror-lite";
 require("codemirror/addon/mode/simple.js");
+require("codemirror/addon/display/autorefresh.js");
 require("codemirror/theme/neo.css");
 
 import { create } from "@/utils/codemirror.js";
@@ -23,7 +24,8 @@ export default {
       theme: "neo",
       lineWrapping: true,
       lineNumbers: true,
-      viewportMargin: Infinity
+      viewportMargin: Infinity,
+      autoRefresh:true
     }
   }),
   created() {
