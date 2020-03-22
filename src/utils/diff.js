@@ -4,10 +4,6 @@ function getId() {
     return Math.floor(Math.random() * (+100000000 - +1)) + +1;
 }
 
-// function isArray(x) {
-//     return x.type === 'list' || x.type === 'set' || x.type === 'tuple'
-// }
-
 function parseDiffType(diffType) {
     if (diffType === 'create') {
         return 'added-tree-item'
@@ -39,9 +35,6 @@ function formatValue(val, typ) {
 }
 
 function getValue(x) {
-    if (x.type === 'big_map' && x.children && x.children.length == 0) {
-        return '0 items';
-    }
     if (x.diff_type === 'update') {
         return `${formatValue(x.from, x.type)} -> ${formatValue(x.value, x.type)}`
     }
@@ -78,6 +71,10 @@ function deducePrim(x) {
     return x.prim;
 }
 
+function unwrap(x) {
+    return String(x).replace(/^"(.*)"$/, '$1');
+}
+
 function parseItem(x) {
     let item = {
         name: x.name || x.type,
@@ -86,8 +83,8 @@ function parseItem(x) {
         type: "value",
         id: getId(),
         kind: parseDiffType(x.diff_type),
-        from: x.from,
-        val: x.value,
+        from: unwrap(x.from),
+        val: unwrap(x.value),
         prim: x.prim,
         realPrim: deducePrim(x),
         diffType: x.diff_type
@@ -104,10 +101,11 @@ function parseItem(x) {
 }
 
 function parseMap(x) {
+    const label = x.prim === 'big_map' ? 'diffs' : 'items'
     let item = {
         name: x.name || x.type,
         children: [],
-        value: x.value ? x.value : '0 items',
+        value: x.value ? x.value : `0 ${label}`,
         type: "object",
         value_type: x.type,
         id: getId(),
@@ -116,7 +114,7 @@ function parseMap(x) {
 
     if (x.children) {
         item.children = getTree(x.children);
-        item.value = `${item.children.length} items`;
+        item.value = `${item.children.length} ${label}`;
     }
 
     return [item];
@@ -143,7 +141,7 @@ function parseTuple(x, isRoot = false) {
         }
         return [{
             id: getId(),
-            name: x.name || x.type,
+            name: x.name || x.type,  // TODO: @type_0 ?
             type: 'object',
             children: [],
             value: '0 items',
@@ -162,7 +160,7 @@ function parseTuple(x, isRoot = false) {
 
     return [{
         id: getId(),
-        name: x.name || x.type,
+        name: x.name || x.type,  // TODO: @type_0 ?
         type: 'object',
         children: children,
         value: children.length ? `${children.length} items` : '0 items',
@@ -177,7 +175,7 @@ function parseItems(x, isRoot = false) {
     if (x.type === 'map' || x.type === 'big_map') {
         return parseMap(x);
     }
-    if ((x.type === 'namedtuple' || x.type === 'namedunion') && isRoot) {
+    if ((x.type === 'namedtuple' || x.type === 'namedunion') && isRoot) {  // TODO: why isRoot == true only?
         return parseNamedTuple(x);
     }
     return parseItem(x)
