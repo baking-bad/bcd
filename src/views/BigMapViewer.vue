@@ -170,7 +170,7 @@ export default {
         this.selectedBigMapDiff.value === ""
       )
         return [];
-      return getTree(this.selectedBigMapDiff.value);
+      return getTree(this.selectedBigMapDiff.value, true);
     },
     headers() {
       return [

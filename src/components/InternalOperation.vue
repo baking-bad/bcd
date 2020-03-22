@@ -128,26 +128,32 @@
               </v-treeview>
             </div>
           </v-col>
-          <v-col cols="6" v-if="hasStorageDiff">
-            <span class="overline ml-3">Storage</span>&nbsp;
-            <span class="grey--text caption">{{ data.result.storage_size | bytes}}</span>
-            <v-treeview
-              :items="storage.tree"
-              :open="storage.open"
-              :active.sync="activeStorage"
-              hoverable
-              transition
-              activatable
-              open-on-click
-              return-object
-            >
-              <template v-slot:label="{ item }">
-                <div :class="`${item.kind} pl-1 tree-label`">
-                  <span>{{ item.name }}:</span>&nbsp;
-                  <span :class="item.type">{{ item.value }}</span>
-                </div>
-              </template>
-            </v-treeview>
+          <v-col cols="6">
+            <div v-if="hasStorageDiff">
+              <span class="overline ml-3">Storage</span>&nbsp;
+              <span class="grey--text caption">{{ data.result.storage_size | bytes}}</span>
+              <v-treeview
+                :items="storage.tree"
+                :open="storage.open"
+                :active.sync="activeStorage"
+                hoverable
+                transition
+                activatable
+                open-on-click
+                return-object
+              >
+                <template v-slot:label="{ item }">
+                  <div :class="`${item.kind} pl-1 tree-label`">
+                    <span>{{ item.name }}:</span>&nbsp;
+                    <span
+                      :class="item.type"
+                      v-if="item.value_type === 'big_map' && item.children.length === 0"
+                    >0 items (big map {{ item.value }})</span>
+                    <span v-else :class="item.type">{{ item.value }}</span>
+                  </div>
+                </template>
+              </v-treeview>
+            </div>
           </v-col>
         </v-row>
       </div>
@@ -321,12 +327,11 @@ export default {
       return (
         this.hasParameters ||
         this.hasStorageDiff ||
-        (this.data.result && (
-          this.data.result.errors ||
-          this.data.result.consumed_gas ||
-          this.data.result.paid_storage_size_diff ||
-          this.data.result.allocated_destination_contract
-        ))
+        (this.data.result &&
+          (this.data.result.errors ||
+            this.data.result.consumed_gas ||
+            this.data.result.paid_storage_size_diff ||
+            this.data.result.allocated_destination_contract))
       );
     },
     hasParameters() {
@@ -423,7 +428,7 @@ export default {
     },
     getBurned(data) {
       if (this.data.status !== "applied" || this.data.mempool) return 0;
-      
+
       let val = 0;
       if (data.result.paid_storage_size_diff)
         val += data.result.paid_storage_size_diff * 1000;
@@ -438,8 +443,7 @@ export default {
     },
     getChangedItems(item) {
       let res = item.children.map(x => this.getChangedItems(x), this).flat();
-      if (item.kind || res.length > 0)
-        res.push(item);
+      if (item.kind || res.length > 0) res.push(item);
       return res;
     }
   },
