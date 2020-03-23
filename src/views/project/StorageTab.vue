@@ -1,52 +1,63 @@
 <template>
   <v-container fluid>
     <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
-    <v-card tile class="ma-3 pa-3" v-else-if="contract.storage">
-      <v-treeview
-        :items="items"
-        hoverable
-        open-all
-        transition
-        activatable
-        open-on-click
-        return-object
-        class="storage"
-        :active.sync="activeField"
-      >
-        <template v-slot:label="{ item }">
-          <span>{{ item.name }}:</span>&nbsp;
-          <span :class="item.type" v-if="item.value_type !== 'big_map'">{{ item.value }}</span>
-          <v-btn
-            :to="{ name: 'bigmap', params: { address: contract.address, ptr: item.value, newtork: contract.network}}"
-            text
-            tile
-            x-small
-            color="primary"
-            v-else
-          >
-            <v-icon x-small left>mdi-vector-link</v-icon>
-            Big Map {{ item.value }}
-          </v-btn>
-        </template>
-        <template v-slot:prepend="{ item, open }">
-          <v-tooltip v-if="item.type === 'value'" left>
-            <template v-slot:activator="{ on }">
-              <v-icon small v-on="on">{{ getTreeNodeIcon(item.value_type) }}</v-icon>
-            </template>
-            <span>{{item.value_type}}</span>
-          </v-tooltip>
-          <v-icon small v-else-if="open">mdi-folder-open</v-icon>
-          <v-icon small v-else>mdi-folder</v-icon>
-        </template>
-      </v-treeview>
-      <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" />
-    </v-card>
+    <div v-else-if="contract.storage">
+      <!-- <v-toolbar flat class="mb-2 transparent">
+        <v-btn small depressed class="toolbar-btn">
+          <v-icon class="mr-1" small>mdi-code-braces</v-icon>
+          <span class="overline">Switch to Michelson</span>
+        </v-btn>
+      </v-toolbar> -->
+      <v-card tile class="ma-3 pa-3">
+        <v-treeview
+          :items="items"
+          hoverable
+          open-all
+          transition
+          activatable
+          open-on-click
+          return-object
+          class="storage"
+          :active.sync="activeField"
+        >
+          <template v-slot:label="{ item }">
+            <span v-if="isAddress(item.name)">
+              <span>{{ item.name }}:</span>
+              <v-btn
+                :to="getLinkObject(item.name)"
+                :href="getTzKTLink(item.name)"
+                target="_blank"
+                tile
+                x-small
+                text
+              >
+                <v-icon class="purple--text" x-small>mdi-vector-link</v-icon>
+              </v-btn>
+            </span>
+            <span v-else>{{ item.name }}:&nbsp;</span>
+            <span :class="item.type" v-if="item.value_type !== 'big_map'">{{ item.value }}</span>
+            <v-btn
+              :to="{ name: 'bigmap', params: { address: contract.address, ptr: item.value, newtork: contract.network}}"
+              tile
+              x-small
+              color="secondary"
+              v-else
+            >
+              <v-icon class="grey--text text--darken-1" x-small left>mdi-vector-link</v-icon>
+              <span class="grey--text text--darken-4">Big Map {{ item.value }}</span>
+            </v-btn>
+          </template>
+        </v-treeview>
+        <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" :network="contract.network" />
+      </v-card>
+    </div>
     <ErrorState v-else />
   </v-container>
 </template>
 
 <script>
 import { mapActions } from "vuex";
+import { getTzKTLink } from "@/utils/tzkt.js";
 
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import ErrorState from "@/components/ErrorState.vue";
@@ -118,29 +129,22 @@ export default {
         })
         .finally(() => (this.loading = false));
     },
-    getTreeNodeIcon(valueType) {
-      if (valueType === "address") {
-        return "mdi-alphabetical-variant";
-      } else if (valueType === "nat" || valueType == "int") {
-        return "mdi-numeric";
-      } else if (valueType === "bool") {
-        return "mdi-format-bold";
-      } else if (valueType === "bytes") {
-        return "mdi-hexadecimal";
-      } else if (valueType === "timestamp") {
-        return "mdi-clock-outline";
-      } else if (valueType === "mutez") {
-        return "mdi-cash-100";
-      } else if (valueType === "contract") {
-        return "mdi-file-document-outline";
-      } else if (valueType === "key") {
-        return "mdi-key";
-      } else if (valueType === "lambda") {
-        return "mdi-lambda";
-      } else if (valueType === "big_map") {
-        return "mdi-code-braces";
+    getLinkObject(address) {
+      if (address.startsWith("KT") && address != this.contract.address) {
+        return {
+          name: "project",
+          params: {
+            address: address,
+            network: this.contract.network
+          }
+        };
       }
-      return "mdi-alphabetical";
+    },
+    getTzKTLink(address) {
+      return getTzKTLink(this.contract.network, address);
+    },
+    isAddress(s) {
+      return s !== undefined && /^(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(s);
     }
   },
   watch: {
@@ -168,6 +172,9 @@ export default {
     color: #bbb;
   }
 }
+.toolbar-btn {
+  color: rgba(0, 0, 0, 0.54);
+} 
 </style>
 
 <style>

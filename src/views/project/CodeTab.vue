@@ -3,10 +3,18 @@
     <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
     <div v-else-if="contract.code">
       <v-toolbar flat class="mb-2 transparent">
-        <v-spacer></v-spacer>
-        <v-btn small text class="toolbar-btn" @click="downloadFile">
-          <v-icon>mdi-download-outline</v-icon>
-          <span>Download</span>
+        <v-btn small depressed class="toolbar-btn" @click="downloadFile">
+          <v-icon class="mr-1" small>mdi-download-outline</v-icon>
+          <span class="overline">Download as .tz</span>
+        </v-btn>
+        <v-btn small depressed class="toolbar-btn" @click="openTryMichelson">
+          <v-icon class="mr-1" small>mdi-play-circle-outline</v-icon>
+          <span class="overline">Run in sandbox</span>
+        </v-btn>
+        <v-btn v-if="contract.language === 'smartpy'" small depressed class="toolbar-btn"
+               :href="getSmartPyLink()" rel="nofollow noopener" target="_blank">
+          <v-icon class="mr-1" small>mdi-link</v-icon>
+          <span class="overline">View on SmartPy.io</span>
         </v-btn>
       </v-toolbar>
       <v-card tile>
@@ -71,6 +79,17 @@ export default {
       element.click();
 
       document.body.removeChild(element);
+    },
+    getSmartPyLink() {
+      if (this.contract.language === 'smartpy')
+        return `https://smartpy.io/dev/explore.html?address=${this.contract.address}`
+    },
+    openTryMichelson() {
+      let source = this.contract.code;  // .replace(/\s+([(){};])\s*/gm, "$1");
+      let uri = encodeURI(`https://try-michelson.tzalpha.net/?source=${source}`);  // TODO: pass also current storage
+      var newTab = window.open();  // https://habr.com/ru/post/282880/
+      newTab.opener = null;
+      newTab.location = uri;
     }
   },
   watch: {
@@ -82,5 +101,6 @@ export default {
 <style scoped>
 .toolbar-btn {
   color: rgba(0, 0, 0, 0.54);
+  margin-right: 10px;
 }
 </style>
