@@ -143,10 +143,25 @@
                 return-object
               >
                 <template v-slot:label="{ item }">
-                  <div :class="`${item.kind} pl-1 tree-label`">
-                    <span>{{ item.name }}:&nbsp;</span>
-                    <span v-if="item.value_type === 'big_map'" 
-                          class="purple--text">big_map&nbsp;</span>
+                  <div :class="`${item.kind} pl-1 tree-label`">                    
+                    <span v-if="isAddress(item.name)">
+                      <span>{{ item.name }}:</span>
+                      <v-btn
+                        :to="getLinkObject(item.name)"
+                        :href="getTzKTLink(item.name)"
+                        target="_blank"
+                        tile
+                        x-small
+                        text
+                      >
+                        <v-icon class="purple--text" x-small>mdi-vector-link</v-icon>
+                      </v-btn>
+                    </span>
+                    <span v-else>
+                      <span>{{ item.name }}:&nbsp;</span>
+                      <span v-if="item.value_type === 'big_map'" 
+                            class="purple--text">big_map&nbsp;</span>
+                    </span>
                     <span v-if="item.value_type === 'big_map' && item.children.length === 0"
                           :class="item.type">0 diffs</span>
                     <span v-else :class="item.type">{{ item.value }}</span>
@@ -446,11 +461,8 @@ export default {
       if (item.kind || res.length > 0) res.push(item);
       return res;
     },
-    isKeyHash(s) {
-      return s !== undefined && s.length === 36 && s.startsWith('tz');
-    },
-    isContract(s) {
-      return s !== undefined && s.length === 36 && s.startsWith('KT');
+    isAddress(s) {
+      return s !== undefined && /^(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(s);
     }
   },
   watch: {

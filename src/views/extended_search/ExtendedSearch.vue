@@ -65,7 +65,7 @@
       <v-card
         height="60vh"
         v-else-if="searchText == '' || searchText == null"
-        class="d-flex flex-column align-center justify-center mt-12 transparent"
+        class="d-flex flex-column align-center justify-center mt-12 transparent message-card"
         :elevation="0"
       >
         <v-icon size="100" color="grey">mdi-cloud-search-outline</v-icon>
@@ -77,7 +77,7 @@
       <v-card
         height="60vh"
         v-else
-        class="d-flex flex-column align-center justify-center mt-12 transparent"
+        class="d-flex flex-column align-center justify-center mt-12 transparent message-card"
         :elevation="0"
       >
         <v-icon size="100" color="grey">mdi-package-variant</v-icon>
@@ -273,6 +273,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.message-card {
+  margin-right: 25%;
+}
+
 .toolbar-title {
   color: inherit;
   text-decoration: inherit;

@@ -3,10 +3,9 @@
     <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
     <div v-else-if="contract.code">
       <v-toolbar flat class="mb-2 transparent">
-        <v-spacer></v-spacer>
-        <v-btn small text class="toolbar-btn" @click="downloadFile">
-          <v-icon>mdi-download-outline</v-icon>
-          <span>Download</span>
+        <v-btn small depressed class="toolbar-btn" @click="downloadFile">
+          <v-icon class="mr-1" small>mdi-download-outline</v-icon>
+          <span class="overline">Download as .tz</span>
         </v-btn>
       </v-toolbar>
       <v-card tile>

@@ -77,10 +77,10 @@
             </v-date-picker>
           </v-menu>
         </v-col>
-        <v-col class="my-3 d-flex align-start justify-end" cols="3">
-          <v-btn x-small text @click="clearFilters" class="toolbar-btn">
-            <v-icon>mdi-close</v-icon>
-            <span>clear filters</span>
+        <v-col class="d-flex align-center justify-end" cols="3">
+          <v-btn small depressed @click="clearFilters" class="toolbar-btn">
+            <v-icon small class="mr-1">mdi-close</v-icon>
+            <span class="overline">clear filters</span>
           </v-btn>
         </v-col>
       </v-row>
