@@ -70,7 +70,7 @@
       </v-list-item>
     </v-list>
 
-    <div class="px-4 pb-4">
+    <div class="pb-4 px-4">
       <v-chip
         color="secondary"
         :text-color="contract.network === 'mainnet' ? 'grey darken-4' : 'grey darken-1'"
@@ -100,51 +100,60 @@
       </template>
     </div>
 
-    <v-tabs
-      grow
-      background-color="transparent"
-      slider-color="primary"
-      v-model="projectTab"
-      v-if="hasSame || hasSimilar"
+    <v-skeleton-loader
+      :loading="sameLoading || similarLoading"
+      transition="fade-transition"
+      type="list-item-three-line"
     >
-      <v-tab class="overline" :disabled="!hasSame">
-        <v-icon left small>mdi-content-copy</v-icon>
-        Same ({{ sameCount }})
-      </v-tab>
-      <v-tab class="overline" :disabled="!hasSimilar">
-        <v-icon left small>mdi-approximately-equal</v-icon>
-        Similar ({{ similarCount }})
-      </v-tab>
-    </v-tabs>
+      <div>
+        <v-tabs
+          grow
+          background-color="transparent"
+          slider-color="primary"
+          v-model="projectTab"
+          v-if="hasSame || hasSimilar"
+        >
+          <v-tab class="overline" :disabled="!hasSame">
+            <v-icon left small>mdi-content-copy</v-icon>
+            Same ({{ sameCount }})
+          </v-tab>
+          <v-tab class="overline" :disabled="!hasSimilar">
+            <v-icon left small>mdi-approximately-equal</v-icon>
+            Similar ({{ similarCount }})
+          </v-tab>
+        </v-tabs>
 
-    <v-tabs-items v-model="projectTab">
-      <v-tab-item>
-        <ContractItem
-          v-for="(item, key) in same"
-          class="py-2"
-          :item="item"
-          :key="key + '_' + item.address + '_' + item.network"
-          :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
-        />
-        <v-btn
-          class="mb-3"
-          block
-          text
-          small
-          @click="getProjectUpdate"
-          v-if="same.length < sameCount"
-        >Load more</v-btn>
-      </v-tab-item>
-      <v-tab-item>
-        <SimilarItem
-          :item="item"
-          :address="contract.address"
-          :network="contract.network"
-          v-for="(item, key) in similar"
-          :key="key + '_' + item.address + '_' + item.network"
-        />
-      </v-tab-item>
-    </v-tabs-items>
+        <v-tabs-items v-model="projectTab">
+          <v-tab-item>
+            <ContractItem
+              v-for="(item, key) in same"
+              class="py-2"
+              :item="item"
+              :key="key + '_' + item.address + '_' + item.network"
+              :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
+            />
+            <v-btn
+              class="mb-3"
+              block
+              text
+              small
+              :loading="isSameUpdating"
+              @click="getProjectUpdate"
+              v-if="same.length < sameCount"
+            >Load more</v-btn>
+          </v-tab-item>
+          <v-tab-item>
+            <SimilarItem
+              :item="item"
+              :address="contract.address"
+              :network="contract.network"
+              v-for="(item, key) in similar"
+              :key="key + '_' + item.address + '_' + item.network"
+            />
+          </v-tab-item>
+        </v-tabs-items>
+      </div>
+    </v-skeleton-loader>
   </v-navigation-drawer>
 </template>
 
@@ -179,7 +188,9 @@ export default {
   },
   data: () => ({
     projectTab: 0,
-    loading: true,
+    isSameUpdating: false,
+    sameLoading: true,
+    similarLoading: true,
     same: [],
     sameCount: 0,
     similar: [],
@@ -217,6 +228,8 @@ export default {
       this.contract.similarCount = 0;
       this.contract.sameCount = 0;
       this.rating = null;
+      this.similarLoading = true;
+      this.sameLoading = true;
 
       getSameContracts(this.contract.network, this.contract.address, 0)
         .then(res => {
@@ -232,7 +245,7 @@ export default {
           this.showError(err);
           console.log(err);
         })
-        .finally(() => (this.loading = false));
+      .finally(() => (this.sameLoading = false));
 
       getSimilarContracts(this.contract.network, this.contract.address)
         .then(res => {
@@ -247,7 +260,8 @@ export default {
         .catch(err => {
           this.showError(err);
           console.log(err);
-        });
+        })
+        .finally(() => (this.similarLoading = false));
 
       getContractRating(this.contract.network, this.contract.address).then(
         res => {
@@ -290,6 +304,7 @@ export default {
         });
     },
     getProjectUpdate() {
+      this.isSameUpdating = true;
       getSameContracts(
         this.contract.network,
         this.contract.address,
@@ -303,7 +318,7 @@ export default {
           this.showError(err);
           console.log(err);
         })
-        .finally(() => (this.loading = false));
+        .finally(() => (this.isSameUpdating = false));
     }
   },
   watch: {
