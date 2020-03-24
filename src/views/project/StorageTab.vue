@@ -24,8 +24,7 @@
             <span v-if="isAddress(item.name)">
               <span>{{ item.name }}:</span>
               <v-btn
-                :to="getLinkObject(item.name)"
-                :href="getTzKTLink(item.name)"
+                @click.prevent.stop="handleAddress(item.name)"
                 target="_blank"
                 tile
                 x-small
@@ -129,22 +128,17 @@ export default {
         })
         .finally(() => (this.loading = false));
     },
-    getLinkObject(address) {
-      if (address.startsWith("KT") && address != this.contract.address) {
-        return {
-          name: "project",
-          params: {
-            address: address,
-            network: this.contract.network
-          }
-        };
-      }
-    },
-    getTzKTLink(address) {
-      return getTzKTLink(this.contract.network, address);
-    },
     isAddress(s) {
       return s !== undefined && /^(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(s);
+    },
+    handleAddress(address) {
+      if (address.startsWith('KT')) {
+        let routeData = this.$router.resolve({ path: `/${this.contract.network}/${address}` });
+        window.open(routeData.href, '_blank');
+      } else {
+        let href = getTzKTLink(this.contract.network, address);
+        window.open(href, '_blank');
+      }
     }
   },
   watch: {
