@@ -18,7 +18,7 @@ before_deploy:
 
 deploy:
   provider: releases
-  skip_cleanup: true
+  cleanup: false
   file: bcd.tar.gz
   api_key: $GITHUB_TOKEN 
   on:
