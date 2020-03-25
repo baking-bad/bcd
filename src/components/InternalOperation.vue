@@ -424,7 +424,8 @@ export default {
       }
     },
     getTzKTLink(address) {
-      return getTzKTLink(this.data.network, address);
+      if (address.startsWith("tz"))
+        return getTzKTLink(this.data.network, address);
     },
     getRawJSON() {
       if (this.rawJson != null) {
