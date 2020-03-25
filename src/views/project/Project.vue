@@ -42,7 +42,7 @@
         </v-row>
       </v-container>
     </div>
-    <ErrorState v-else></ErrorState>
+    <ErrorState v-else :code="errorCode"></ErrorState>
   </div>
 </template>
 
@@ -76,7 +76,8 @@ export default {
   },
   data: () => ({
     contract: null,
-    loading: true
+    loading: true,
+    errorCode: 0
   }),
   created() {
     this.requestData();
@@ -96,7 +97,9 @@ export default {
           this.contract = res;
         })
         .catch(err => {
-          console.log(err);
+          const matches = err.message.match(/\d+/);
+          if (matches !== null && matches.length === 1)
+            this.errorCode = parseInt(matches[0]);
           this.showError(err);
         })
         .finally(() => (this.loading = false));
