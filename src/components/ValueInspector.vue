@@ -23,10 +23,10 @@
         :label="label">
     </v-text-field>
     <v-btn v-if="isKeyHash" text small link :href="getTzKTLink(this.value)" target="_blank">
-        <v-icon small class="mr-1">mdi-link-variant</v-icon>Open in explorer
+        <v-icon small class="mr-1">mdi-open-in-new</v-icon>Open in explorer
     </v-btn>
     <v-btn v-else-if="isContract" text small link :to="getLinkObject(this.value)" target="_blank">
-        <v-icon small class="mr-1">mdi-magnify</v-icon>Find contract
+        <v-icon small class="mr-1">mdi-open-in-new</v-icon>Search contract
     </v-btn>
 </div>
 </template>
@@ -67,7 +67,8 @@ export default {
     },
     methods: {
         getTzKTLink(address) {
-            return getTzKTLink(this.network, address);
+            if (address.startsWith("tz"))
+                return getTzKTLink(this.network, address);
         },
         getLinkObject(address) {
             return {

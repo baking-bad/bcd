@@ -1,11 +1,15 @@
 <template>
-  <v-container fluid v-if="!loading && opg" class="mt-5">
+  <v-overlay :value="loading" v-if="loading" absolute color="white">
+    <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
+  </v-overlay>
+  <v-container fluid v-else-if="opg && opg.length > 0" class="mt-5">
     <v-expansion-panels multiple popout tile v-model="panels">
       <template v-for="(item, idx) in opg">
         <Operation :data="item" :key="idx" />
       </template>
     </v-expansion-panels>
   </v-container>
+  <ErrorState v-else></ErrorState>
 </template>
 
 <script>
@@ -13,11 +17,13 @@ import { mapActions } from "vuex";
 
 import { getOPG } from "@/api/index.js";
 import Operation from "@/components/Operation.vue";
+import ErrorState from "@/components/ErrorState.vue";
 
 export default {
   name: "OPG",
   components: {
-    Operation
+    Operation,
+    ErrorState
   },
   created() {
     this.getOPG();

@@ -21,7 +21,7 @@
           :active.sync="activeField"
         >
           <template v-slot:label="{ item }">
-            <span v-if="isAddress(item.name)">
+            <span v-if="hasAddress(item.name)">
               <span>{{ item.name }}:</span>
               <v-btn
                 @click.prevent.stop="handleAddress(item.name)"
@@ -30,7 +30,7 @@
                 x-small
                 text
               >
-                <v-icon class="purple--text" x-small>mdi-vector-link</v-icon>
+                <v-icon class="purple--text" x-small>mdi-open-in-new</v-icon>
               </v-btn>
             </span>
             <span v-else>{{ item.name }}:&nbsp;</span>
@@ -128,10 +128,11 @@ export default {
         })
         .finally(() => (this.loading = false));
     },
-    isAddress(s) {
-      return s !== undefined && /^(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(s);
+    hasAddress(s) {
+      return s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s);
     },
-    handleAddress(address) {
+    handleAddress(s) {
+      const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
       if (address.startsWith('KT')) {
         let routeData = this.$router.resolve({ path: `/${this.contract.network}/${address}` });
         window.open(routeData.href, '_blank');

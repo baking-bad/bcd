@@ -56,7 +56,6 @@ export default {
   },
   created() {
     this.show = this.value;
-    console.log(this.filters);
   },
   data: () => ({
     show: false,

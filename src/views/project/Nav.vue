@@ -270,7 +270,8 @@ export default {
       );
     },
     getTzKTLink(address) {
-      return getTzKTLink(this.contract.network, address);
+      if (address.startsWith("tz"))
+        return getTzKTLink(this.contract.network, address);
     },
     subscribe() {
       addProfileSubscription(this.contract.id, "contract")

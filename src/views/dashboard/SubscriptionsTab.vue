@@ -142,7 +142,8 @@ export default {
         .finally(() => (this.recommendedLoading = false));
     },
     getTzKTLink(item) {
-      return getTzKTLink(item.network, item.address);
+      if (item.address.startsWith("tz"))
+        return getTzKTLink(item.network, item.address);
     },
     formatDate(value) {
       if (value) {

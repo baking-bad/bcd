@@ -55,7 +55,7 @@
         <v-overlay :value="loading" color="white" absolute></v-overlay>
         <span
           class="time-info"
-        >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
+        >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>       
         <template v-for="(item, idx) in suggests">
           <ContractItem :key="idx" :item="item" v-if="item.type === 'contract'" />
           <OperationItem :key="idx" :item="item" v-else-if="item.type === 'operation'" />
@@ -64,27 +64,45 @@
       </div>
       <v-card
         height="60vh"
-        v-else-if="searchText == '' || searchText == null"
-        class="d-flex flex-column align-center justify-center mt-12 transparent message-card"
-        :elevation="0"
-      >
-        <v-icon size="100" color="grey">mdi-cloud-search-outline</v-icon>
-        <span class="headline grey--text">You can try search anything</span>
-        <span
-          class="subtitle-1 grey--text"
-        >Type address, annotation, entrypoint name or anything else</span>
-      </v-card>
-      <v-card
-        height="60vh"
         v-else
         class="d-flex flex-column align-center justify-center mt-12 transparent message-card"
         :elevation="0"
       >
-        <v-icon size="100" color="grey">mdi-package-variant</v-icon>
-        <span class="headline grey--text">No results found for your request</span>
-        <span
-          class="subtitle-1 grey--text"
-        >Type another address, annotation, entrypoint name or anything else</span>
+        <template v-if="isAddress() || isOpgHash()">
+          <v-img class="img-avatar" :src="getCatavaSrc()"></v-img>
+          <span class="headline grey--text">
+            Mysterious <span v-if="isAddress()">address</span><span v-else>operation</span>
+          </span>
+          <span
+            class="subtitle-1 grey--text"
+          >We couldn't find anything, but perhaps TzKT will</span>
+           <v-btn-toggle
+            class="mt-2" 
+            dense
+            multiple>
+            <template v-for="network in filters.networks">
+              <v-btn 
+                :key="searchText + network" 
+                :href="getTzktHref(network)"
+                target="_blank"
+                small>{{ network }}</v-btn>            
+            </template>
+          </v-btn-toggle>
+        </template>
+        <template v-else-if="searchText == '' || searchText == null">
+          <v-icon size="100" color="grey">mdi-cloud-search-outline</v-icon>
+          <span class="headline grey--text">You can try search anything</span>
+          <span
+            class="subtitle-1 grey--text"
+          >Type address, annotation, entrypoint name or anything else</span>
+        </template>
+        <template v-else>
+          <v-icon size="100" color="grey">mdi-package-variant</v-icon>
+          <span class="headline grey--text">No results found for your request</span>
+          <span
+            class="subtitle-1 grey--text"
+          >Type another address, annotation, entrypoint name or anything else</span>
+        </template>
       </v-card>
     </v-container>
   </div>
@@ -94,6 +112,7 @@
 import dayjs from "dayjs";
 import { mapActions } from "vuex";
 
+import { getTzKTLink } from "@/utils/tzkt.js";
 import * as api from "@/api/index.js";
 
 import ContractItem from "@/views/extended_search/ContractItem.vue";
@@ -132,7 +151,7 @@ export default {
         return ["operation"];
       }
       return [];
-    }
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -141,10 +160,13 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    getSearchText() {
+      return this.searchText ? this.searchText.trim() : '';
+    },
     onDownloadPage(entries) {
       if (entries[0].isIntersecting) {
         this.fetchSearchDebounced(
-          this.searchText,
+          this.getSearchText(),
           this.indices,
           true,
           this.filters.networks,
@@ -229,13 +251,25 @@ export default {
       this._timerId = setTimeout(() => {
         this.search(text, indices, push, networks, languages, time);
       }, 200);
+    },
+    isAddress() {
+      return /^(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(this.getSearchText());
+    },
+    isOpgHash() {
+      return /^o[1-9A-HJ-NP-Za-km-z]{50}$/.test(this.getSearchText());
+    },
+    getTzktHref(network) {
+      return getTzKTLink(network, this.getSearchText());
+    },
+    getCatavaSrc() {
+      return `https://services.tzkt.io/v1/avatars/${this.getSearchText()}`;
     }
   },
   watch: {
     searchText(val) {
       let startTime = { s: this.getSearchTime(this.filters.startTime) };
       this.fetchSearchDebounced(
-        val,
+        val ? val.trim() : null,
         this.indices,
         false,
         this.filters.networks,
@@ -246,7 +280,7 @@ export default {
     indices(val) {
       let startTime = { s: this.getSearchTime(this.filters.startTime) };
       this.fetchSearchDebounced(
-        this.searchText,
+        this.getSearchText(),
         val,
         false,
         this.filters.networks,
@@ -259,7 +293,7 @@ export default {
       handler: function(newValue) {
         let startTime = { s: this.getSearchTime(newValue.startTime) };
         this.fetchSearchDebounced(
-          this.searchText,
+          this.getSearchText(),
           this.indices,
           false,
           this.filters.networks,
@@ -274,7 +308,7 @@ export default {
 
 <style lang="scss" scoped>
 .message-card {
-  margin-right: 25%;
+  margin-right: 30%;
 }
 
 .toolbar-title {
@@ -314,5 +348,10 @@ export default {
 
 .same-link:hover {
   color: #5b942a;
+}
+
+.img-avatar {
+  max-width: 125px;
+  max-height: 125px;
 }
 </style>

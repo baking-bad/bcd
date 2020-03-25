@@ -16,10 +16,12 @@
       <v-col cols="2"></v-col>
       <v-col cols="2" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
         <v-btn small text color="grey" class="d-flex align-center" :href="opgHref" target="_blank">
-          <span class="overline">Open in new tab</span>
+          <v-icon x-small>mdi-open-in-new</v-icon>
+          <span class="overline ml-1">Open in new tab</span>
         </v-btn>
         <v-btn small text color="grey" class="d-flex align-center" @click="getRawJSON">
-          <span class="overline">Raw JSON</span>
+          <v-icon x-small>mdi-code-braces</v-icon>
+          <span class="overline ml-1">Raw JSON</span>
         </v-btn>
       </v-col>
     </v-row>
@@ -144,7 +146,7 @@
               >
                 <template v-slot:label="{ item }">
                   <div :class="`${item.kind} pl-1 tree-label`">                    
-                    <span v-if="isAddress(item.name)">
+                    <span v-if="hasAddress(item.name)">
                       <span>{{ item.name }}:</span>
                       <v-btn
                         @click.prevent.stop="handleAddress(item.name)"
@@ -153,7 +155,7 @@
                         x-small
                         text
                       >
-                        <v-icon class="purple--text" x-small>mdi-vector-link</v-icon>
+                        <v-icon class="purple--text" x-small>mdi-open-in-new</v-icon>
                       </v-btn>
                     </span>
                     <span v-else>
@@ -424,7 +426,8 @@ export default {
       }
     },
     getTzKTLink(address) {
-      return getTzKTLink(this.data.network, address);
+      if (address.startsWith("tz"))
+        return getTzKTLink(this.data.network, address);
     },
     getRawJSON() {
       if (this.rawJson != null) {
@@ -460,10 +463,11 @@ export default {
       if (item.kind || res.length > 0) res.push(item);
       return res;
     },
-    isAddress(s) {
-      return s !== undefined && /^(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(s);
+    hasAddress(s) {
+      return s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s);
     },
-    handleAddress(address) {
+    handleAddress(s) {
+      const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
       if (address.startsWith('KT')) {
         let routeData = this.$router.resolve({ path: `/${this.data.network}/${address}` });
         window.open(routeData.href, '_blank');
