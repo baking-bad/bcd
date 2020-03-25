@@ -1,5 +1,3 @@
-if: tag IS blank
-
 language: node_js
 node_js:
   - 10
@@ -16,7 +14,6 @@ cache:
     - "node_modules"
 
 before_deploy:
-  - export TRAVIS_TAG=${TRAVIS_TAG:-$(date +'%Y%m%d%H%M%S')-$(git log --format=%h -1)}
   - tar cfvz bcd.tar.gz dist
 
 deploy:
@@ -25,4 +22,4 @@ deploy:
   file: bcd.tar.gz
   api_key: $GITHUB_TOKEN 
   on:
-    branch: master
+    tags: true
