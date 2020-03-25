@@ -22,4 +22,5 @@ deploy:
   file: bcd.tar.gz
   api_key: $GITHUB_TOKEN 
   on:
+    branch: master
     tags: true
