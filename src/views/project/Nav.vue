@@ -3,11 +3,16 @@
     <v-list class="py-1">
       <v-list-item two-line class="mb-0">
         <v-list-item-content>
-          <v-list-item-title class="hash subtitle-2">{{ contract.alias || contract.address }}</v-list-item-title>
-          <v-list-item-subtitle class="hash" v-if="contract.alias">{{ contract.address }}</v-list-item-subtitle>
-          <v-list-item-subtitle class="overline">Deployed {{ formatDate(contract.timestamp) }}</v-list-item-subtitle>
+          <v-list-item-title class="headline" v-if="contract.alias">{{ contract.alias }}</v-list-item-title>
+          <v-list-item-subtitle class="hash" :class="contract.alias ? '' : 'subtitle-2'">{{ contract.address }}</v-list-item-subtitle>
+          <v-list-item-subtitle 
+            class="overline" 
+            :class="contract.network === 'mainnet' ? 'primary--text' : ''">
+              {{ contract.network }}
+          </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
+      <v-divider></v-divider>
 
       <div class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between pb-2">
         <div v-if="isAuthorized">
@@ -23,66 +28,47 @@
         <Rating :rating="rating" />
       </div>
 
+      <v-list-item>
+        <v-list-item-content>
+          <v-list-item-title class="overline">Active</v-list-item-title>
+          <v-list-item-subtitle class="body-2">
+            {{ formatDate(contract.timestamp) }}
+            <span v-if="contract.last_action"> — {{ formatDate(contract.last_action) }}</span>
+          </v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item v-if="contract.balance">
+        <v-list-item-content>
+          <v-list-item-title class="overline">Locked amount</v-list-item-title>
+          <v-list-item-subtitle class="body-2">{{ contract.balance| uxtz }}</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
+      <v-list-item v-if="withdrawn">
+        <v-list-item-content>
+          <v-list-item-title class="overline">Total withdrawn</v-list-item-title>
+          <v-list-item-subtitle class="body-2">{{ withdrawn| uxtz }}</v-list-item-subtitle>
+        </v-list-item-content>
+      </v-list-item>
       <v-list-item v-if="contract.manager" :href="getTzKTLink(contract.manager)" target="_blank">
-        <v-list-item-avatar size="28" class="mr-3">
-          <v-icon small>mdi-doctor</v-icon>
-        </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title class="overline">Deployed by</v-list-item-title>
-          <v-list-item-subtitle class="hash contract-item-address">{{ contract.manager }}</v-list-item-subtitle>
+          <v-list-item-subtitle class="body-2">{{ contract.manager }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
       <v-list-item v-if="contract.delegate" :href="getTzKTLink(contract.delegate)" target="_blank">
-        <v-list-item-avatar size="28" class="mr-3">
-          <v-icon small>mdi-account-check-outline</v-icon>
-        </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title class="overline">Delegated to</v-list-item-title>
-          <v-list-item-subtitle>{{ contract.delegate }}</v-list-item-subtitle>
+          <v-list-item-subtitle class="body-2">{{ contract.delegate }}</v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item v-if="contract.last_action">
-        <v-list-item-avatar size="28" class="mr-3">
-          <v-icon small>mdi-calendar-clock</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title class="overline">Last call</v-list-item-title>
-          <v-list-item-subtitle>{{ formatDate(contract.last_action) }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item v-if="contract.median_consumed_gas">
-        <v-list-item-avatar size="28" class="mr-3">
-          <v-icon small>mdi-fire</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title class="overline">Median consumed gas</v-list-item-title>
-          <v-list-item-subtitle>{{ contract.median_consumed_gas }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item v-if="contract.sum_tx_amount">
-        <v-list-item-avatar size="28" class="mr-3">
-          <v-icon small>mdi-sigma</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title class="overline">Summary tx amount</v-list-item-title>
-          <v-list-item-subtitle>{{ contract.sum_tx_amount| uxtz }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
+
     </v-list>
 
     <div class="pb-4 px-4">
       <v-chip
         color="secondary"
-        :text-color="contract.network === 'mainnet' ? 'grey darken-4' : 'grey darken-1'"
-        class="mr-1 caption my-1"
-        small
-        label
-        pill
-      >{{ contract.network }}</v-chip>
-      <v-chip
-        color="secondary"
-        text-color="grey darken-1"
-        class="mr-1 caption my-1"
+        text-color="grey darken-3"
+        class="mr-1 overline my-1"
         small
         label
         pill
@@ -90,9 +76,9 @@
       <template v-for="tag in contract.tags">
         <v-chip
           :key="tag"
-          color="secondary"
-          text-color="grey darken-1"
-          class="mr-1 caption my-1"
+          color="secondary "
+          text-color="grey darken-3"
+          class="mr-1 overline my-1"
           small
           label
           pill
@@ -209,6 +195,13 @@ export default {
     },
     hasSimilar() {
       return this.similarCount > 0;
+    },
+    withdrawn() {
+      if (this.contract.sum_tx_amount) {
+        return (this.sum_tx_amount - (this.contract.balance || 0)) / 2;
+      } else {
+        return 0;
+      }
     }
   },
   created() {
