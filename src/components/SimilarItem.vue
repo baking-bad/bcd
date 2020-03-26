@@ -1,66 +1,47 @@
 <template>
   <v-list-item
-    :three-line="item.count > 1"
-    :two-line="item.count <= 1"
     :key="item.address"
     :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
     class="py-2"
   >
-    <v-list-item-avatar size="25">
-      <v-tooltip left>
-        <template v-slot:activator="{ on }">
-          <v-btn v-on="on" text icon @click.prevent="onDiffClick(item)">
-            <v-icon small>mdi-vector-difference</v-icon>
-          </v-btn>
-        </template>
-        <span>Show diff</span>
-      </v-tooltip>
-    </v-list-item-avatar>
+
     <v-list-item-content>
       <v-list-item-title class="contract-item-address hash" v-text="item.address"></v-list-item-title>
-      <v-list-item-subtitle class="overline">{{item.language}}</v-list-item-subtitle>
-      <v-list-item-subtitle class="caption grey--text text-lighten-5">
-        <span v-if="item.count > 1">
-          {{item.count - 1}} same contracts
-          <br />
-        </span>
+      <v-list-item-subtitle 
+        class="overline" 
+        :class="item.network === 'mainnet' ? 'primary--text' : ''">{{item.network}}</v-list-item-subtitle>
+      <v-list-item-subtitle class="overline grey--text text-lighten-5">
+        <v-btn text x-small @click.prevent.stop="onDiffClick(item)" class="grey--text text--darken-2">
+          <span>Show diff</span>
+          <span v-if="item.added" class="primary--text ml-1">+{{item.added }}&#9;</span>
+          <span v-if="item.removed" class="red--text ml-1">-{{item.removed }}</span>  
+        </v-btn>      
+      </v-list-item-subtitle>
+    </v-list-item-content>
 
+    <v-list-item-action>
+      <v-list-item-action-text class=""><span class="caption">{{ 1 + (item.tx_count || 0) }}</span> operations</v-list-item-action-text>
+      <v-list-item-action-text class="overline"> {{ formatDate(item.last_action || item.timestamp) }}</v-list-item-action-text>
+      <v-list-item-action-text v-if="item.tx_count">
         <v-tooltip left>
           <template v-slot:activator="{ on }">
-            <div v-on="on">
+            <div v-on="on" class="overline">
               <v-icon x-small :color="consumed_gas_diff > 0 ? 'red' : 'green'">mdi-fire</v-icon>
-              <span
-                :class="consumed_gas_diff <= 0 ? 'primary--text' : 'red--text'"
-                style="line-height:12px; font-size: 10px;"
-              >
+              <span :class="consumed_gas_diff <= 0 ? 'primary--text' : 'red--text'">
                 <span v-if="consumed_gas_diff > 0">+</span>{{ consumed_gas_diff }}%
               </span>
             </div>
           </template>
           <span>Median consumed gas change</span>
         </v-tooltip>
-      </v-list-item-subtitle>
-    </v-list-item-content>
-
-    <v-list-item-action>
-      <v-chip
-        x-small
-        label
-        v-text="item.network"
-        color="secondary"
-        class="grey--text"
-        :class="item.network === 'mainnet' ? 'text--darken-4' : 'text--darken-1'"
-      ></v-chip>
-      <v-list-item-action-text class="mb-1">{{ item.timestamp | fromNow }}</v-list-item-action-text>
-      <v-list-item-action-text>
-        <span v-if="item.added" class="primary--text">+{{item.added }}&#9;</span>
-        <span v-if="item.removed" class="red--text">-{{item.removed }}</span>
       </v-list-item-action-text>
     </v-list-item-action>
   </v-list-item>
 </template>
 
 <script>
+import dayjs from "dayjs";
+
 export default {
   name: "SimilarItem",
   props: {
@@ -85,6 +66,12 @@ export default {
         }
       });
       window.open(routeData.href, "_blank");
+    },
+    formatDate(value) {
+      if (value) {
+        let val = dayjs(value);
+        if (val.unix() > 0) return val.format("MMM D, YYYY");
+      }
     }
   }
 };
