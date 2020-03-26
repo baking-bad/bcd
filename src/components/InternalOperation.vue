@@ -15,9 +15,9 @@
       </v-col>
       <v-col cols="2"></v-col>
       <v-col cols="2" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
-        <v-btn small text color="grey" class="d-flex align-center" :href="opgHref" target="_blank">
+        <v-btn small text color="grey" class="d-flex align-center" v-if="address" :href="opgHref" target="_blank">
           <v-icon x-small>mdi-open-in-new</v-icon>
-          <span class="overline ml-1">Open in new tab</span>
+          <span class="overline ml-1">In new tab</span>
         </v-btn>
         <v-btn small text color="grey" class="d-flex align-center" @click="getRawJSON">
           <v-icon x-small>mdi-code-braces</v-icon>
@@ -107,7 +107,7 @@
             <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
           </v-col>
         </v-row>
-        <v-row class="parameters pa-3" v-if="hasParameters || hasStorageDiff" no-gutters>
+        <v-row class="parameters pa-3 mt-2" v-if="hasParameters || hasStorageDiff" no-gutters>
           <v-col cols="6">
             <div v-if="hasParameters">
               <span class="overline ml-3">Parameter</span>
@@ -175,16 +175,16 @@
       </div>
     </v-expand-transition>
 
-    <v-dialog v-model="showRaw" width="700">
+    <v-dialog v-model="showRaw" fullscreen>
       <v-card>
-        <v-card-title class="headline secondary" primary-title>
-          <span>Raw JSON</span>
+        <v-card-title class="headline" primary-title>
+          <span>Raw JSON viewer</span>
           <v-spacer></v-spacer>
           <v-btn icon text @click="showRaw = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-
+        <v-divider></v-divider>
         <v-progress-linear v-if="loadingRaw" indeterminate color="primary"></v-progress-linear>
         <v-card-text class="mt-5">
           <vue-json-pretty v-if="!loadingRaw" :data="rawJson" :highlightMouseoverNode="true"></vue-json-pretty>

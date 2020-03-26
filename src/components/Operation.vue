@@ -208,7 +208,8 @@ export default {
       return `${xtz} \uA729`;
     },
     shortcut(value, size=7) {
-      if (value !== undefined && value.length > (size + 1) * 2) {
+      if (value !== undefined 
+        && (value.startsWith('KT') || value.startsWith('tz') || value.startsWith('o'))) {
         return value.substr(0, size) + `\u2026\u202F` + value.substr(value.length - size, size);
       } else {
         return value;

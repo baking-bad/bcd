@@ -2,27 +2,30 @@
   <v-dialog v-if="data" v-model="show" width="800" :fullscreen="data.realPrim === 'lambda' && data.diffType === 'update'">
     <v-card>
       <v-card-title>
-        <v-row no-gutters>
-          <v-col cols="11">
-            <v-row no-gutters>
-              <v-col cols="auto" class="mr-5">
-                <InfoItem title="Key" :subtitle="data.name" />
-              </v-col>
-              <v-col cols="2">
-                <InfoItem title="Primitive" :subtitle="data.prim" />
-              </v-col>
-              <v-col cols="2" v-if="data.diffType">
-                <InfoItem title="Action" :subtitle="data.diffType" />
-              </v-col>
-            </v-row>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="1" class="d-flex pt-1 align-start justify-end">
-            <v-btn small text @click="show = false">
-              <v-icon small>mdi-close</v-icon>&nbsp;<span class="overline">Close</span>
-            </v-btn>
-          </v-col>
-        </v-row>        
+          <v-row no-gutters>
+            <v-col cols="11">
+              <v-row no-gutters>
+                <v-col cols="auto" class="mr-5 my-1 d-flex flex-column justify-center">
+                  <span class="overline grey--text text--darken-1">Key</span>
+                  <span class="info-item-title grey--text text--darken-3">{{ data.name }}</span>
+                </v-col>
+                <v-col cols="2" class="my-1 d-flex flex-column justify-center">
+                  <span class="overline grey--text text--darken-1">Primitive</span>
+                  <span class="info-item-title grey--text text--darken-3">{{ data.prim }}</span>
+                </v-col>
+                <v-col cols="2" v-if="data.diffType" class="my-1 d-flex flex-column justify-center">
+                  <span class="overline grey--text text--darken-1">Action</span>
+                  <span class="info-item-title grey--text text--darken-3">{{ data.diffType }}</span>
+                </v-col>
+              </v-row>
+            </v-col>
+            <v-spacer></v-spacer>
+            <v-col cols="1" class="d-flex align-center justify-end">
+              <v-btn icon text @click="show = false">
+                <v-icon>mdi-close</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>        
       </v-card-title>
       <v-divider></v-divider>
       <v-card-text>
@@ -49,13 +52,11 @@
 
 <script>
 import ValueInspector from "@/components/ValueInspector.vue"
-import InfoItem from "@/components/InfoItem.vue";
 
 export default {
   name: "TreeNodeDetails",
   components: {
-    ValueInspector,
-    InfoItem
+    ValueInspector
   },
   props: {
     value: Boolean,
@@ -99,3 +100,11 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.info-item-title {
+  font-family: "Roboto Mono", monospace;
+  font-size: 0.9rem;
+  line-height: 1.2rem;
+}
+</style>

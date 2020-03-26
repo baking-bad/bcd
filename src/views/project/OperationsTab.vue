@@ -4,7 +4,7 @@
       <v-progress-circular indeterminate color="primary" size="64" />
     </v-overlay>
     <div v-if="!loading">
-      <v-row class="px-lg-4 pb-lg-2">
+      <v-row class="px-lg-2 pb-lg-4">
         <v-col cols="3">
           <v-select
             v-model="status"

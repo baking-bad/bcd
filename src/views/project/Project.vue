@@ -105,7 +105,7 @@ export default {
         .finally(() => (this.loading = false));
     }
   },
-  watch: {
+  watch: {  
     $route: "requestData"
   }
 };
