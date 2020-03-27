@@ -9,7 +9,7 @@
       </v-list-item-subtitle>
     </v-list-item-content>
 
-    <v-list-item-action class="mt-2 mb-4">
+    <v-list-item-action class="mt-2 mb-3">
       <v-list-item-action-text class=""><span class="caption">{{ 1 + (item.tx_count || 0) }}</span> operations till</v-list-item-action-text>
       <v-list-item-action-text class="overline">
         {{ formatDate(item.last_action || item.timestamp) }}
