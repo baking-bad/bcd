@@ -4,7 +4,7 @@
       <v-list-item-title class="contract-item-address hash" v-text="item.address"></v-list-item-title>
       <v-list-item-subtitle>
         <span class="overline" :class="item.network === 'mainnet' ? 'primary--text' : ''">{{ item.network }}&nbsp;</span>
-        <span v-if="item.timestamp > basetime" class="teal--text caption">newer</span>
+        <span v-if="item.timestamp > basetime" class="light-green--text text--darken-2 caption">newer</span>
         <span v-else class="grey--text caption">older</span>
       </v-list-item-subtitle>
     </v-list-item-content>
