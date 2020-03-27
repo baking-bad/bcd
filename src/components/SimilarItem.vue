@@ -22,7 +22,7 @@
     </v-list-item-content>
 
     <v-list-item-action class="mt-2 mb-4">
-      <v-list-item-action-text>{{ 1 + (item.tx_count || 0) }} operations till</v-list-item-action-text>
+      <v-list-item-action-text>{{ item.tx_count || 1 }} operations till</v-list-item-action-text>
       <v-list-item-action-text class="overline"> {{ formatDate(item.last_action || item.timestamp) }}</v-list-item-action-text>
       <v-list-item-action-text>
         <v-tooltip left>
@@ -50,7 +50,7 @@ export default {
     item: Object,
     address: String,
     network: String,
-    basetime: Number
+    basetime: String
   },
   computed: {
     consumed_gas_diff() {
