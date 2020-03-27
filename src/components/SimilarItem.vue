@@ -7,9 +7,11 @@
 
     <v-list-item-content>
       <v-list-item-title class="contract-item-address hash" v-text="item.address"></v-list-item-title>
-      <v-list-item-subtitle 
-        class="overline" 
-        :class="item.network === 'mainnet' ? 'primary--text' : ''">{{item.network}}</v-list-item-subtitle>
+      <v-list-item-subtitle>
+        <span class="overline" :class="item.network === 'mainnet' ? 'primary--text' : ''">{{ item.network }}&nbsp;</span>
+        <span v-if="item.timestamp > basetime" class="teal--text caption">newer</span>
+        <span v-else class="grey--text caption">older</span>
+      </v-list-item-subtitle>
       <v-list-item-subtitle class="overline grey--text text-lighten-5">
         <v-btn text x-small @click.prevent.stop="onDiffClick(item)" class="grey--text text--darken-2 px-0">
           <span>Show diff</span>
@@ -47,7 +49,8 @@ export default {
   props: {
     item: Object,
     address: String,
-    network: String
+    network: String,
+    basetime: Number
   },
   computed: {
     consumed_gas_diff() {

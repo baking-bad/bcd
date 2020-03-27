@@ -30,7 +30,7 @@
 
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-title class="overline">Active</v-list-item-title>
+          <v-list-item-title class="overline">Was active</v-list-item-title>
           <v-list-item-subtitle class="body-2">
             {{ formatDate(contract.timestamp) }}
             <span v-if="contract.last_action"> — {{ formatDate(contract.last_action) }}</span>
@@ -117,6 +117,7 @@
               :item="item"
               :key="key + '_' + item.address + '_' + item.network"
               :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
+              :basetime="contract.timestamp"
             />
             <v-btn
               class="mb-3"
@@ -135,6 +136,7 @@
               :network="contract.network"
               v-for="(item, key) in similar"
               :key="key + '_' + item.address + '_' + item.network"
+              :basetime="contract.timestamp"
             />
           </v-tab-item>
         </v-tabs-items>
