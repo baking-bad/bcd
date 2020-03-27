@@ -72,7 +72,7 @@
             </template>
             <v-date-picker v-model="datesBuf" scrollable range show-current>
               <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+              <v-btn text color="primary" @click="datesModal = false">Cancel</v-btn>
               <v-btn text color="primary" @click="$refs.menu.save(datesBuf)">OK</v-btn>
             </v-date-picker>
           </v-menu>
