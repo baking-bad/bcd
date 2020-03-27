@@ -12,6 +12,27 @@
           </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>
+
+      <div class="pb-3 px-4">
+        <v-chip
+          color="grey"
+          text-color="grey darken-3"
+          class="mr-1 mb-1 caption"
+          small
+          outlined
+        >{{ contract.language }}</v-chip>
+        <template v-for="tag in contract.tags">
+          <v-chip
+            :key="tag"
+            color="grey"
+            text-color="grey darken-3"
+            class="mr-1 mb-1 caption"
+            small
+            outlined
+          >{{ tag.replace('_', ' ') }}</v-chip>
+        </template>
+      </div>  
+      
       <v-divider></v-divider>
 
       <div class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between pb-2">
@@ -64,27 +85,7 @@
 
     </v-list>
 
-    <div class="pb-4 px-4">
-      <v-chip
-        color="secondary"
-        text-color="grey darken-3"
-        class="mr-1 overline my-1"
-        small
-        label
-        pill
-      >{{ contract.language }}</v-chip>
-      <template v-for="tag in contract.tags">
-        <v-chip
-          :key="tag"
-          color="secondary "
-          text-color="grey darken-3"
-          class="mr-1 overline my-1"
-          small
-          label
-          pill
-        >{{ tag.replace('_', ' ') }}</v-chip>
-      </template>
-    </div>
+    
 
     <v-skeleton-loader
       :loading="sameLoading || similarLoading"
