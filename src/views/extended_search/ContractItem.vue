@@ -51,7 +51,7 @@
               {{ formatDate(item.body.timestamp) }}<span v-if="item.body.last_action"> — {{ formatDate(item.body.last_action) }}</span>
             </v-list-item-action-text>
           </v-list-item-action>
-        </v-list-item>
+        </v-list-item>  
 
         <v-row no-gutters class="mx-6 pb-2">
           <v-col cols="3" v-if="item.body.entrypoints">

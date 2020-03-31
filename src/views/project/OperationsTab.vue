@@ -185,9 +185,9 @@ export default {
     getTimestamps() {
       let timestamps = this.dates.map(d => dayjs(d).unix() * 1000).sort();
       if (timestamps.length === 2) {
-        return timestamps;
+        return [timestamps[0], timestamps[1] + 86400000];
       } else if (timestamps.length === 1) {
-        return [timestamps[0], timestamps[0] + 86400000]
+        return [timestamps[0], timestamps[0] + 86400000];
       } else {
         return [0, 0];
       }

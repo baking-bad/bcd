@@ -28,8 +28,9 @@
 <script>
 import Michelson from "@/components/Michelson.vue"
 import { mapActions } from "vuex";
-import { getContractCode } from "@/api/index.js";
+import { getContractCode, getContractStorageRaw } from "@/api/index.js";
 import ErrorState from "@/components/ErrorState.vue";
+import LZString from "lz-string"
 
 export default {
   props: {
@@ -87,8 +88,24 @@ export default {
         return `https://smartpy.io/dev/explore.html?address=${this.contract.address}`
     },
     openTryMichelson() {
-      let source = this.contract.code;  // .replace(/\s+([(){};])\s*/gm, "$1");
-      let uri = encodeURI(`https://try-michelson.tzalpha.net/?source=${source}`);  // TODO: pass also current storage
+      if (this.contract.raw_storage === undefined) {
+        getContractStorageRaw(this.contract.network, this.contract.address)
+        .then(res => {
+          this.contract.raw_storage = String(res);
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
+      }
+      let query = `source=${this.contract.code}`
+      if (this.contract.raw_storage !== undefined) {
+        let storage = this.contract.raw_storage.replace(/\n|\s+/gm, ' ');
+        query += `&storage=${storage}`
+      }
+      let lzQuery = LZString.compressToEncodedURIComponent(query);
+      let uri = `https://try-michelson.tzalpha.net/?${lzQuery}`;
+      
       var newTab = window.open();  // https://habr.com/ru/post/282880/
       newTab.opener = null;
       newTab.location = uri;
