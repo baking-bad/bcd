@@ -5,19 +5,37 @@
         <v-list-item three-line selectable>
           <v-list-item-content>
             <span class="overline" v-if="item.body.found_by">Found by {{ item.body.found_by }}</span>
-            <v-list-item-title class="hash">{{ item.value }}</v-list-item-title>
-            <v-list-item-subtitle
-              class="subtitle-2"
-              v-if="item.body.source && item.body.destination"
-            >Sent to {{ item.body.destination }}</v-list-item-subtitle>
-            <v-list-item-subtitle class="caption">Sent {{ formatDate(item.body.timestamp)}}</v-list-item-subtitle>
+            <v-list-item-title class="hash subtitle-1">{{ item.value }}</v-list-item-title>
+            <v-list-item-subtitle>
+              <span class="overline" :class="item.body.network === 'mainnet' ? 'primary--text' : ''">
+                {{ item.body.network }}
+              </span>
+            </v-list-item-subtitle>
 
-            <div v-if="item.group" class="mt-3 mx-2">
-              <span class="overline">With {{ plural(item.group.count - 1, "internal operation") }}</span>
+            <div class="d-flex flex-horizontal mt-1">
+              <v-chip
+                v-if="item.body.internal"
+                key="internal"
+                color="grey"
+                text-color="grey darken-1"
+                class="mr-1 caption"
+                small
+                outlined
+                pill
+              >internal</v-chip>
             </div>
+
           </v-list-item-content>
           <v-list-item-action>
-            <v-list-item-action-text class="overline primary--text" v-text="item.body.network"></v-list-item-action-text>
+            <v-list-item-action-text class="caption">
+              {{ item.body.status }}
+            </v-list-item-action-text>
+            <v-list-item-action-text class="caption" v-if="item.group">
+              {{ plural(item.group.count - 1, "internal") }}
+            </v-list-item-action-text>
+            <v-list-item-action-text class="overline">
+              {{ formatDate(item.body.timestamp)}}
+            </v-list-item-action-text>
           </v-list-item-action>
         </v-list-item>
       </v-card>

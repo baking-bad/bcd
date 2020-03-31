@@ -153,6 +153,16 @@ export function getContractStorage(network, address) {
         })
 }
 
+export function getContractStorageRaw(network, address) {
+    return api.get(`/contract/${network}/${address}/raw_storage`)
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
 export function getContractMempool(network, address) {
     return api.get(`/contract/${network}/${address}/mempool`)
         .then((res) => {
