@@ -57,7 +57,7 @@
           class="time-info"
         >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>       
         <template v-for="(item, idx) in suggests">
-          <ContractItem :key="idx" :item="item" v-if="item.type === 'contract'" />
+          <ContractItem :key="idx" :item="item" :words="getSearchWords()" v-if="item.type === 'contract'" />
           <OperationItem :key="idx" :item="item" v-else-if="item.type === 'operation'" />
         </template>
         <span v-intersect="onDownloadPage"></span>
@@ -162,6 +162,9 @@ export default {
     ...mapActions(["showError"]),
     getSearchText() {
       return this.searchText ? this.searchText.trim() : '';
+    },
+    getSearchWords() {
+      return this.getSearchText().split(' ');
     },
     onDownloadPage(entries) {
       if (entries[0].isIntersecting) {

@@ -4,58 +4,79 @@
       <v-card class="my-3 transparent" :elevation="hover ? 2 : 0" @click="onSearch(item)">
         <v-list-item three-line selectable>
           <v-list-item-content>
-            <span class="overline" v-if="item.body.found_by">Found by {{ item.body.found_by }}</span>
-            <v-list-item-title class="hash">{{ item.body.alias || item.value }}</v-list-item-title>
-            <v-list-item-subtitle
-              class="subtitle-2"
-              v-if="item.body.manager"
-            >Created by {{ item.body.manager }}</v-list-item-subtitle>
-            <v-list-item-subtitle
-              class="caption"
-            >Deployed {{ formatDate(item.body.timestamp)}} - {{ item.body.language }}</v-list-item-subtitle>
+            <span class="overline" v-if="item.body.found_by">Found in {{ item.body.found_by }}</span>
+            <v-list-item-title class="subtitle-1"  v-if="item.body.alias" >
+              <span v-html="highlight(item.body.alias)"></span>
+            </v-list-item-title>
+            <v-list-item-subtitle class="hash" :class="item.body.alias ? '' : 'subtitle-1'">
+              {{ item.value }}
+            </v-list-item-subtitle>
+            <v-list-item-subtitle>
+              <span class="overline" :class="item.body.network === 'mainnet' ? 'primary--text' : ''">
+                {{ item.body.network }}
+              </span>
+            </v-list-item-subtitle>
 
             <div class="d-flex flex-horizontal mt-1">
               <v-chip
-                v-for="tag in item.body.tags"
-                :key="tag"
-                color="secondary"
+                key="language"
+                color="grey"
                 text-color="grey darken-1"
                 class="mr-1 caption"
                 small
-                label
+                outlined
+                pill
+              >{{ item.body.language }}</v-chip>
+              <v-chip
+                v-for="tag in item.body.tags"
+                :key="tag"
+                color="grey"
+                text-color="grey darken-1"
+                class="mr-1 caption"
+                small
+                outlined
                 pill
               >{{ tag.replace('_', ' ') }}</v-chip>
             </div>
 
-            <div v-if="item.group" class="mt-3 mx-2">
-              <span class="overline">Same contracts</span>
-              <template v-for="(top) in item.group.top">
-                <div :key="top.key" class="d-flex flex-horizontal my-2 align-center">
-                  <router-link
-                    class="hash same-link mr-3"
-                    :to="{'name': 'project', params:{'address': top.key, 'network': top.network}}"
-                  >{{ top.key }}</router-link>
-                  <span class="same-network">{{ top.network }}</span>
-                </div>
-              </template>
-              <p
-                class="others"
-                v-if="item.group.count > 5"
-              >and {{ plural(item.group.count - 5, "other") }}</p>
-            </div>
           </v-list-item-content>
           <v-list-item-action>
-            <v-list-item-action-text class="overline primary--text" v-text="item.body.network"></v-list-item-action-text>
-            <v-list-item-action-text
-              v-if="item.body.tx_count"
-              class="caption"
-            >{{ item.body.tx_count }} operations</v-list-item-action-text>
-            <v-list-item-action-text
-              v-if="item.body.last_action"
-              class="caption"
-            >the last one was {{ formatDate(item.body.last_action) }}</v-list-item-action-text>
+            <v-list-item-action-text class="caption">
+              <span>{{ item.body.tx_count || 1 }} operations</span>
+            </v-list-item-action-text>
+            <v-list-item-action-text v-if="item.group" class="caption">
+              <span>{{ item.group.count - 1 }} same contracts</span>
+            </v-list-item-action-text>
+            <v-list-item-action-text class="overline mt-1">
+              {{ formatDate(item.body.timestamp) }}<span v-if="item.body.last_action"> — {{ formatDate(item.body.last_action) }}</span>
+            </v-list-item-action-text>
           </v-list-item-action>
         </v-list-item>
+
+        <v-row no-gutters class="mx-6 pb-2">
+          <v-col cols="3" v-if="item.body.entrypoints">
+            <span class="overline">Entrypoints</span>
+            <template v-for="(item) in item.body.entrypoints.slice(0, limit)">
+              <div :key="item" class="d-flex flex-horizontal my-2 align-center">
+                <span class="same-network" v-html="highlight(item)"></span>
+              </div>
+            </template>
+          </v-col>
+          <v-col cols="9" v-if="item.body.fail_strings">
+            <span class="overline">Fail strings</span>
+            <template v-for="(item) in item.body.fail_strings.slice(0, limit)">
+              <div :key="item" class="d-flex flex-horizontal my-2 align-center">
+                <span class="same-network" v-html="highlight(item)"></span>
+              </div>
+            </template>
+          </v-col>
+        </v-row>
+        <v-btn
+          @click.prevent.stop="limit = 50"
+          v-if="hasMore"
+          x-small 
+          depressed 
+          class="grey--text text--darken-3 ml-4 mb-4">Show more</v-btn>
       </v-card>
     </v-hover>
   </div>
@@ -69,7 +90,18 @@ import { plural } from '@/utils/plural.js';
 export default {
   name: "ContractItem",
   props: {
-    item: Object
+    item: Object,
+    words: Array
+  },
+  data: () => ({
+    limit: 5
+  }),
+  computed: {
+    hasMore() {
+      return this.limit == 5 && (
+        (this.item.body.entrypoints && this.item.body.entrypoints.length > 5) ||
+        (this.item.body.fail_strings && this.item.body.fail_strings.length > 5));
+    }
   },
   methods: {
     onSearch(item) {
@@ -83,8 +115,16 @@ export default {
         return dayjs(value).format("MMM D, YYYY");
       }
     },
-    plural (count, word) {
-        return plural(count, word);
+    plural(count, word) {
+      return plural(count, word);
+    },
+    highlight(s) {
+      if (this.words === undefined) return s;
+      for (var i = 0; i < this.words.length; i++) {
+        let re = new RegExp(`(${this.words[i]})`, 'gmi');
+        s = s.replace(re, "<mark>$1</mark>")
+      }
+      return s;
     }
   }
 };
