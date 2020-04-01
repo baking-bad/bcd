@@ -77,23 +77,7 @@
       <div v-show="showParams">
         <v-row v-if="errors" no-gutters>
           <v-col>
-            <v-alert
-              border="left"
-              color="red lighten-2"
-              dense
-              prominent
-              text
-              outlined
-              type="error"
-              v-for="(err, idx) in errors"
-              :key="idx"
-            >
-              <div class="red--text subtitle-1">{{ err.title }}</div>
-              <div class="caption">
-                {{ err.descr }}
-                <span v-if="err.with" style="word-break: break-all">: {{ err.with }}</span>
-              </div>
-            </v-alert>
+            <OperationAlert :errors="errors"/>
           </v-col>
         </v-row>
         <v-row no-gutters v-if="!data.mempool">
@@ -199,10 +183,12 @@
 <script>
 import InfoItem from "@/components/InfoItem.vue";
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
+import OperationAlert from "@/components/OperationAlert.vue";
+import VueJsonPretty from "vue-json-pretty";
+
 import { getTree } from "@/utils/diff.js";
 import { getTzKTLink } from "@/utils/tzkt.js";
 import { getOperation } from "@/api/node.js";
-import VueJsonPretty from "vue-json-pretty";
 
 export default {
   props: {
@@ -213,7 +199,8 @@ export default {
   components: {
     InfoItem,
     TreeNodeDetails,
-    VueJsonPretty
+    VueJsonPretty,
+    OperationAlert
   },
   computed: {
     active() {
