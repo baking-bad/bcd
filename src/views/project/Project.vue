@@ -94,6 +94,7 @@ export default {
       api
         .getContract(this.$route.params.network, this.$route.params.address)
         .then(res => {
+          if (!res) return;
           this.contract = res;
         })
         .catch(err => {

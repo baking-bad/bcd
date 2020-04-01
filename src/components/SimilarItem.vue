@@ -1,7 +1,7 @@
 <template>
   <v-list-item
     :key="item.address"
-    :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
+    @click="onItemClick"
     class="py-2"
   >
 
@@ -43,6 +43,7 @@
 
 <script>
 import dayjs from "dayjs";
+import { cancelRequests } from '@/api/cancellation.js';
 
 export default {
   name: "SimilarItem",
@@ -75,6 +76,10 @@ export default {
         let val = dayjs(value);
         if (val.unix() > 0) return val.format("MMM D, YYYY");
       }
+    },
+    onItemClick() {
+      cancelRequests();
+      this.$router.push({name: 'project', params: {'address': this.item.address, 'network': this.item.network}})
     }
   }
 };

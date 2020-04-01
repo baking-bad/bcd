@@ -120,6 +120,7 @@ export default {
       }
       getContractStorage(this.contract.network, this.contract.address)
         .then(res => {
+          if (!res) return;
           this.contract.storage = res;
         })
         .catch(err => {

@@ -47,6 +47,7 @@ export default {
         this.$route.params.address
       )
         .then(res => {
+          if (!res) return;
           this.contract.migration = res;
         })
         .catch(err => {

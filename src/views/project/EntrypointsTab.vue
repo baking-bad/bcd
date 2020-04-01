@@ -78,6 +78,7 @@ export default {
       }
       getContractEntrypoints(this.contract.network, this.contract.address)
         .then(res => {
+          if (!res) return;
           this.contract.full_entrypoints = res;
         })
         .catch(err => {

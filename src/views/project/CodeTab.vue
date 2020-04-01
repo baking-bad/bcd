@@ -55,6 +55,7 @@ export default {
       }
       getContractCode(this.contract.network, this.contract.address)
         .then(res => {
+          if (!res) return;
           this.contract.code = res;
         })
         .catch(err => {
