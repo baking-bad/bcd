@@ -6,6 +6,8 @@ const api = axios.create({
     responseType: 'json'
 });
 
+import { getCancellable, cancelRequests } from '@/api/cancellation.js';
+
 export class RequestFailedError extends Error { }
 
 export function search(text, indices = [], offset = 0, networks = [], languages = [], time = {}, group = 0) {
@@ -39,14 +41,26 @@ export function search(text, indices = [], offset = 0, networks = [], languages 
         })
 }
 
+export function getContract(network, address) {
+    return getCancellable(api, `/contract/${network}/${address}`, {})
+        .then((res) => {
+            if (!res) { return res; }
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
 
 export function getSameContracts(network, address, offset = 0) {
     let params = {}
     if (offset > 0) params.offset = offset;
-    return api.get(`/contract/${network}/${address}/same`, {
+    return getCancellable(api, `/contract/${network}/${address}/same`, {
         params: params
     })
         .then((res) => {
+            if (!res) { return res; }
             if (res.status != 200) {
                 throw new RequestFailedError(res);
             }
@@ -55,18 +69,9 @@ export function getSameContracts(network, address, offset = 0) {
 }
 
 export function getSimilarContracts(network, address) {
-    return api.get(`/contract/${network}/${address}/similar`)
+    return getCancellable(api, `/contract/${network}/${address}/similar`, {})
         .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
-            return res.data
-        })
-}
-
-export function getContract(network, address) {
-    return api.get(`/contract/${network}/${address}`)
-        .then((res) => {
+            if (!res) { return res; }
             if (res.status != 200) {
                 throw new RequestFailedError(res);
             }
@@ -91,10 +96,12 @@ export function getContractOperations(network, address, last_id = "", from = 0, 
     if (entrypoints.length > 0) {
         params.entrypoints = entrypoints.join(',')
     }
-    return api.get(`/contract/${network}/${address}/operations`, {
-        params: params
+
+    return getCancellable(api, `/contract/${network}/${address}/operations`, {
+        params: params,
     })
         .then((res) => {
+            if (!res) { return res; }
             if (res.status != 200) {
                 throw new RequestFailedError(res);
             }
@@ -103,7 +110,7 @@ export function getContractOperations(network, address, last_id = "", from = 0, 
 }
 
 export function getContractCode(network, address, level = 0) {
-    return api.get(`/contract/${network}/${address}/code?level=${level}`)
+    return getCancellable(api, `/contract/${network}/${address}/code?level=${level}`, {})
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
@@ -114,18 +121,9 @@ export function getContractCode(network, address, level = 0) {
 
 
 export function getContractMigration(network, address) {
-    return api.get(`/contract/${network}/${address}/migration`)
+    return getCancellable(api, `/contract/${network}/${address}/migration`, {})
         .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
-            return res.data
-        })
-}
-
-export function getRandomContract() {
-    return api.get(`/pick_random`)
-        .then((res) => {
+            if (!res) { return res; }
             if (res.status != 200) {
                 throw new RequestFailedError(res);
             }
@@ -134,8 +132,9 @@ export function getRandomContract() {
 }
 
 export function getContractEntrypoints(network, address) {
-    return api.get(`/contract/${network}/${address}/entrypoints`)
+    return getCancellable(api, `/contract/${network}/${address}/entrypoints`, {})
         .then((res) => {
+            if (!res) { return res; }
             if (res.status != 200) {
                 throw new RequestFailedError(res);
             }
@@ -144,8 +143,9 @@ export function getContractEntrypoints(network, address) {
 }
 
 export function getContractStorage(network, address) {
-    return api.get(`/contract/${network}/${address}/storage`)
+    return getCancellable(api, `/contract/${network}/${address}/storage`, {})
         .then((res) => {
+            if (!res) { return res; }
             if (res.status != 200) {
                 throw new RequestFailedError(res);
             }
@@ -154,8 +154,9 @@ export function getContractStorage(network, address) {
 }
 
 export function getContractMempool(network, address) {
-    return api.get(`/contract/${network}/${address}/mempool`)
+    return getCancellable(api, `/contract/${network}/${address}/mempool`, {})
         .then((res) => {
+            if (!res) { return res; }
             if (res.status != 200) {
                 throw new RequestFailedError(res);
             }
@@ -164,8 +165,9 @@ export function getContractMempool(network, address) {
 }
 
 export function getContractRating(network, address) {
-    return api.get(`/contract/${network}/${address}/rating`)
+    return getCancellable(api, `/contract/${network}/${address}/rating`, {})
         .then((res) => {
+            if (!res) { return res; }
             if (res.status != 200) {
                 throw new RequestFailedError(res);
             }
@@ -174,8 +176,9 @@ export function getContractRating(network, address) {
 }
 
 export function getContractBigMap(network, address, ptr) {
-    return api.get(`/contract/${network}/${address}/bigmap/${ptr}`)
+    return getCancellable(api, `/contract/${network}/${address}/bigmap/${ptr}`, {})
         .then((res) => {
+            if (!res) { return res; }
             if (res.status != 200) {
                 throw new RequestFailedError(res);
             }
@@ -193,6 +196,16 @@ export function getContractBigMapByKeyHash(network, address, ptr, keyhash) {
         })
 }
 
+export function getRandomContract() {
+    cancelRequests();
+    return api.get(`/pick_random`)
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
 
 export function getDiff(sn, sa, dn, da) {
     return api.get(`/diff?sn=${sn}&sa=${sa}&dn=${dn}&da=${da}`)

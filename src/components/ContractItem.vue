@@ -1,30 +1,36 @@
 <template>
-  <v-list-item :key="item.address" :to="to">
+  <v-list-item :key="item.address" @click="onItemClick">
     <v-list-item-content>
       <v-list-item-title class="contract-item-address hash" v-text="item.address"></v-list-item-title>
       <v-list-item-subtitle>
-        <span class="overline" :class="item.network === 'mainnet' ? 'primary--text' : ''">{{ item.network }}&nbsp;</span>
-        <span v-if="item.timestamp > basetime" class="light-green--text text--darken-2 caption">newer</span>
+        <span
+          class="overline"
+          :class="item.network === 'mainnet' ? 'primary--text' : ''"
+        >{{ item.network }}&nbsp;</span>
+        <span
+          v-if="item.timestamp > basetime"
+          class="light-green--text text--darken-2 caption"
+        >newer</span>
         <span v-else class="grey--text caption">older</span>
       </v-list-item-subtitle>
     </v-list-item-content>
 
     <v-list-item-action class="mt-2 mb-3">
-      <v-list-item-action-text class=""><span class="caption">{{ item.tx_count || 1 }}</span> operations till</v-list-item-action-text>
-      <v-list-item-action-text class="overline">
-        {{ formatDate(item.last_action || item.timestamp) }}
+      <v-list-item-action-text class>
+        <span class="caption">{{ item.tx_count || 1 }}</span> operations till
       </v-list-item-action-text>
+      <v-list-item-action-text class="overline">{{ formatDate(item.last_action || item.timestamp) }}</v-list-item-action-text>
     </v-list-item-action>
   </v-list-item>
 </template>
 
 <script>
 import dayjs from "dayjs";
+import { cancelRequests } from "@/api/cancellation.js";
 
 export default {
   props: {
     item: Object,
-    to: Object,
     basetime: String
   },
   name: "ContractItem",
@@ -34,6 +40,13 @@ export default {
         let val = dayjs(value);
         if (val.unix() > 0) return val.format("MMM D, YYYY");
       }
+    },
+    onItemClick() {
+      cancelRequests();
+      this.$router.push({
+        name: "project",
+        params: { address: this.item.address, network: this.item.network }
+      });
     }
   }
 };

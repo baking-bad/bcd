@@ -215,6 +215,7 @@ export default {
         entries
       )
         .then(res => {
+          if (!res) return;
           this.prepareOperations(res.operations);
           this.contract.downloadedOperations = res.operations.length == 0;
           this.last_id = res.last_id;

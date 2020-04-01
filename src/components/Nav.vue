@@ -145,7 +145,8 @@ export default {
   }),
   methods: {
     ...mapActions({
-      userLogout: "logout"
+      userLogout: "logout",
+      showError: "showError"
     }),
     clickLogout() {
       this.userLogout();

@@ -117,7 +117,6 @@
               class="py-2"
               :item="item"
               :key="key + '_' + item.address + '_' + item.network"
-              :to="{name: 'project', params: {'address': item.address, 'network': item.network}}"
               :basetime="contract.timestamp"
             />
             <v-btn
@@ -229,6 +228,7 @@ export default {
 
       getSameContracts(this.contract.network, this.contract.address, 0)
         .then(res => {
+          if (!res) return;
           this.contract.same = res.contracts;
           this.contract.sameCount = res.count;
           if (this.contract.sameCount > 0) {
@@ -245,6 +245,7 @@ export default {
 
       getSimilarContracts(this.contract.network, this.contract.address)
         .then(res => {
+          if (!res) return;
           this.contract.similar = res;
           this.contract.similarCount = res.length;
           if (this.contract.similarCount > 0) {
@@ -261,6 +262,7 @@ export default {
 
       getContractRating(this.contract.network, this.contract.address).then(
         res => {
+          if (!res) return;
           this.rating = res;
         }
       );
@@ -308,6 +310,7 @@ export default {
         this.contract.same.length
       )
         .then(res => {
+          if (!res) return;
           this.contract.same.push(...res.contracts);
           this.same = this.contract.same;
         })
