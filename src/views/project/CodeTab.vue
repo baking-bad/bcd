@@ -48,6 +48,7 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     getCode() {
+      this.loading = true;
       if (this.contract == null) return;
       if (this.contract.code !== undefined) {
         this.loading = false;
