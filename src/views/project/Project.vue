@@ -28,8 +28,8 @@
               <v-tab :to="{name: 'storage'}" replace class="overline">
                 <v-icon small left>mdi-alphabetical</v-icon>Storage
               </v-tab>
-              <v-tab :to="{name: 'migration'}" replace class="overline" v-if="hasMigration">
-                <v-icon small left>mdi-alphabetical</v-icon>Migration
+              <v-tab :to="{name: 'migrations'}" replace class="overline">
+                <v-icon small left>mdi-transfer</v-icon>Migrations
               </v-tab>
             </v-tabs>
             <ExpandableSearch class="mb-1"></ExpandableSearch>
@@ -66,11 +66,6 @@ export default {
       return (
         this.contract.entrypoints !== undefined &&
         this.contract.entrypoints.length > 0
-      );
-    },
-    hasMigration() {
-      return (
-        this.contract.network === "mainnet" && this.contract.level < 655360
       );
     }
   },

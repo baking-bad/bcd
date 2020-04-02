@@ -110,7 +110,9 @@ export function getContractOperations(network, address, last_id = "", from = 0, 
 }
 
 export function getContractCode(network, address, level = 0) {
-    return getCancellable(api, `/contract/${network}/${address}/code?level=${level}`, {})
+    return getCancellable(api, `/contract/${network}/${address}/code`, {
+        level: level
+    })
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
@@ -119,9 +121,20 @@ export function getContractCode(network, address, level = 0) {
         })
 }
 
+export function getContractMigration(network, address, protocol) {
+    return getCancellable(api, `/contract/${network}/${address}/migration`, {
+        protocol: protocol
+    })
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
 
-export function getContractMigration(network, address) {
-    return getCancellable(api, `/contract/${network}/${address}/migration`, {})
+export function getContractMigrations(network, address) {
+    return getCancellable(api, `/contract/${network}/${address}/migrations`, {})
         .then((res) => {
             if (!res) { return res; }
             if (res.status != 200) {

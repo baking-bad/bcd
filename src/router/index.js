@@ -15,13 +15,14 @@ import OperationsTab from '@/views/project/OperationsTab.vue'
 import CodeTab from '@/views/project/CodeTab.vue'
 import EntrypointsTab from '@/views/project/EntrypointsTab.vue'
 import StorageTab from '@/views/project/StorageTab.vue'
-import MigrationTab from '@/views/project/MigrationTab.vue'
+import MigrationsTab from '@/views/project/MigrationsTab.vue'
 
 import Dashboard from '@/views/dashboard/Dashboard.vue'
 import SubscriptionsTab from '@/views/dashboard/SubscriptionsTab.vue'
 import TimelineTab from '@/views/dashboard/TimelineTab.vue'
 
 import Diff from '@/views/Diff.vue'
+import Migration from '@/views/Migration.vue'
 import BigMapViewer from '@/views/BigMapViewer.vue'
 import Projects from '@/views/Projects.vue'
 import OPG from '@/views/OPG.vue'
@@ -74,6 +75,14 @@ const router = new Router({
             name: 'diff'
         },
         {
+            path: '/migration/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})/:protocol',
+            components: {
+                default: Migration,
+                nav: Nav
+            },
+            name: 'migration'
+        },
+        {
             path: '/projects',
             components: {
                 default: Projects,
@@ -122,9 +131,9 @@ const router = new Router({
                     component: StorageTab
                 },
                 {
-                    path: 'migration',
-                    name: 'migration',
-                    component: MigrationTab
+                    path: 'migrations',
+                    name: 'migrations',
+                    component: MigrationsTab
                 }
             ]
         },

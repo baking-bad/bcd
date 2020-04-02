@@ -11,14 +11,34 @@
           <v-icon class="mr-1" small>mdi-play-circle-outline</v-icon>
           <span class="overline">Run in sandbox</span>
         </v-btn>
-        <v-btn v-if="contract.language === 'smartpy'" small depressed class="toolbar-btn"
-               :href="getSmartPyLink()" rel="nofollow noopener" target="_blank">
+        <v-btn
+          v-if="contract.language === 'smartpy'"
+          small
+          depressed
+          class="toolbar-btn"
+          :href="getSmartPyLink()"
+          rel="nofollow noopener"
+          target="_blank"
+        >
           <v-icon class="mr-1" small>mdi-link</v-icon>
           <span class="overline">View on SmartPy.io</span>
         </v-btn>
+        <v-spacer></v-spacer>
+        <v-select
+          v-model="selectedLevel"
+          v-if="contract.code.versions.length > 1"
+          :items="contract.code.versions"
+          item-text="name"
+          item-value="level"
+          label="Version"
+          style="max-width: 150px;"
+          dense
+          outlined
+          hide-details
+        ></v-select>
       </v-toolbar>
       <v-card tile>
-        <Michelson :code="contract.code"></Michelson>
+        <Michelson :code="contract.code.code"></Michelson>
       </v-card>
     </div>
     <ErrorState v-else />
@@ -26,7 +46,7 @@
 </template>
 
 <script>
-import Michelson from "@/components/Michelson.vue"
+import Michelson from "@/components/Michelson.vue";
 import { mapActions } from "vuex";
 import { getContractCode, getContractStorageRaw } from "@/api/index.js";
 import ErrorState from "@/components/ErrorState.vue";
@@ -41,9 +61,13 @@ export default {
     Michelson
   },
   data: () => ({
-    loading: true
+    loading: true,
+    selectedLevel: 0
   }),
   created() {
+    if (this.$route.query.level && this.$route.query.level > 0) {
+      this.selectedLevel = this.$route.query.level;
+    }
     this.getCode();
   },
   methods: {
@@ -55,7 +79,11 @@ export default {
         this.loading = false;
         return;
       }
-      getContractCode(this.contract.network, this.contract.address)
+      getContractCode(
+        this.contract.network,
+        this.contract.address,
+        this.selectedLevel
+      )
         .then(res => {
           if (!res) return;
           this.contract.code = res;
@@ -72,7 +100,8 @@ export default {
       var element = document.createElement("a");
       element.setAttribute(
         "href",
-        "data:text/plain;charset=utf-8," + encodeURIComponent(this.contract.code)
+        "data:text/plain;charset=utf-8," +
+          encodeURIComponent(this.contract.code.code)
       );
       element.setAttribute("download", this.contract.address + ".tz");
 
@@ -84,8 +113,8 @@ export default {
       document.body.removeChild(element);
     },
     getSmartPyLink() {
-      if (this.contract.language === 'smartpy')
-        return `https://smartpy.io/dev/explore.html?address=${this.contract.address}`
+      if (this.contract.language === "smartpy")
+        return `https://smartpy.io/dev/explore.html?address=${this.contract.address}`;
     },
     openTryMichelson() {
       if (this.contract.raw_storage === undefined) {
@@ -98,7 +127,7 @@ export default {
           this.showError(err);
         })
       }
-      let query = `source=${this.contract.code}`
+      let query = `source=${this.contract.code.code}`
       if (this.contract.raw_storage !== undefined) {
         let storage = this.contract.raw_storage.replace(/\n|\s+/gm, ' ');
         query += `&storage=${storage}`
@@ -112,7 +141,25 @@ export default {
     }
   },
   watch: {
-    contract: "getCode"
+    contract: "getCode",
+    selectedLevel: function(newValue) {
+      this.loading = true;
+      getContractCode(
+        this.contract.network,
+        this.contract.address,
+        newValue
+      )
+        .then(res => {
+          this.contract.code = res;
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    }
   }
 };
 </script>

@@ -1,15 +1,17 @@
 <template>
   <v-container fluid>
-    <DiffViewer
-      v-if="!loading"
-      :left="contract.migration.left"
-      :right="contract.migration.right"
-      :nameRight="contract.migration.name_right"
-      :nameLeft="contract.migration.name_left"
-      :added="contract.migration.added"
-      :removed="contract.migration.removed"
-    />
-    <v-skeleton-loader v-else height="400" type="image" class="ma-3"></v-skeleton-loader>
+    <v-skeleton-loader :loading="loading" height="400" type="image" class="ma-3">
+      <DiffViewer
+        v-if="diff != null"
+        :left="diff.left"
+        :right="diff.right"
+        :nameRight="diff.name_right"
+        :nameLeft="diff.name_left"
+        :added="diff.added"
+        :removed="diff.removed"
+      />
+      <ErrorState v-else />
+    </v-skeleton-loader>
   </v-container>
 </template>
 
@@ -18,37 +20,33 @@ import { mapActions } from "vuex";
 import { getContractMigration } from "@/api/index.js";
 
 import DiffViewer from "@/components/DiffViewer.vue";
+import ErrorState from "@/components/ErrorState.vue";
 
 export default {
-  name: "MigrationTab",
-  props: {
-    contract: Object
-  },
+  name: "Migration",
   components: {
-    DiffViewer
+    DiffViewer,
+    ErrorState
   },
   created() {
     this.getMigration();
   },
   data: () => ({
-    loading: true
+    loading: true,
+    diff: null
   }),
   methods: {
     ...mapActions(["showError"]),
     getMigration() {
-      if (this.contract == null) return;
-      if (this.contract.migration !== undefined) {
-        this.loading = false;
-        return;
-      }
       this.loading = true;
       getContractMigration(
         this.$route.params.network,
-        this.$route.params.address
+        this.$route.params.address,
+        this.$route.params.protocol
       )
         .then(res => {
           if (!res) return;
-          this.contract.migration = res;
+           this.diff = res;
         })
         .catch(err => {
           console.log(err);
