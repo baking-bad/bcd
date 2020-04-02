@@ -4,12 +4,12 @@
       <v-card class="my-3 transparent" :elevation="hover ? 2 : 0" @click="onSearch(item)">
         <v-list-item three-line selectable>
           <v-list-item-content>
-            <v-list-item-title class="subtitle-1"  v-if="item.body.alias" >
+            <v-list-item-title v-if="item.body.alias">
               <span v-html="highlight(item.body.alias)"></span>
             </v-list-item-title>
-            <v-list-item-subtitle class="hash" :class="item.body.alias ? '' : 'subtitle-1'">
+            <v-list-item-title class="hash" :class="item.body.alias ? 'body-2 grey--text text--darken-2' : ''">
               <span v-html="highlight(item.value)"></span>
-            </v-list-item-subtitle>
+            </v-list-item-title>
             <v-list-item-subtitle>
               <span class="overline" :class="item.body.network === 'mainnet' ? 'primary--text' : ''">
                 {{ item.body.network }}
@@ -52,9 +52,9 @@
           </v-list-item-action>
         </v-list-item>
 
-        <div class="d-flex flex-row mx-6 pt-2 pb-4">
+        <div class="d-flex flex-row mx-6">
           <div v-for="(values, key) in item.highlights" :key="key">
-            <div class="d-flex flex-column mr-6" v-if="!['alias', 'address', 'tags', 'language'].includes(key)">
+            <div class="d-flex flex-column mr-6 pt-2 pb-4" v-if="!['alias', 'address', 'tags', 'language'].includes(key)">
               <span class="overline">{{ key }}</span>
               <span v-for="(value, i) in values" :key="key + i">
                 <span v-html="highlight(value)" class="caption"></span>
@@ -123,23 +123,5 @@ export default {
 }
 .contract:hover {
   cursor: pointer;
-}
-.others {
-  color: grey;
-  font-size: 12px;
-}
-
-.same-link {
-  font-size: 12px;
-  color: grey;
-}
-
-.same-network {
-  font-size: 12px;
-  color: #70757a;
-}
-
-.same-link:hover {
-  color: #5b942a;
 }
 </style>

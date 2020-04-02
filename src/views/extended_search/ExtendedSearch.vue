@@ -28,7 +28,7 @@
           <v-tabs-slider color="primary"></v-tabs-slider>
 
           <v-tab>
-            <v-icon left small>mdi-auto-fix</v-icon>All
+            <v-icon left small>mdi-auto-fix</v-icon>Everywhere
           </v-tab>
           <v-tab>
             <v-icon left small>mdi-code-tags</v-icon>Contracts
@@ -36,20 +36,14 @@
           <v-tab>
             <v-icon left small>mdi-swap-horizontal</v-icon>Operations
           </v-tab>
-          <v-spacer></v-spacer>
-          <v-btn
-            small
-            tile
-            ripple
-            :depressed="showTools"
-            class="align-self-center mr-4 tab-btn primary--text"
-            @click="showTools = !showTools"
-          >Filters</v-btn>
+          <v-tab disabled>
+            <v-icon left small>mdi-file-tree</v-icon>Big Maps
+          </v-tab>
         </v-tabs>
       </template>
     </v-app-bar>
 
-    <SearchNav v-model="showTools" :filters="filters" />
+    <SearchNav :filters="filters" />
     <v-container fluid class="pl-10">
       <div v-if="total > 0">
         <v-overlay :value="loading" color="white" absolute></v-overlay>
@@ -134,14 +128,13 @@ export default {
     loading: false,
     completed: false,
     tab: 0,
-    showTools: true,
-    showTimeDialog: false,
     filters: {
       startTime: 0,
       networks: ["mainnet", "babylonnet", "carthagenet", "zeronet"],
       languages: ["michelson", "ligo", "smartpy", "liquidity", "lorentz"]
     },
-    _timerId: null
+    _timerId: null,
+    _locked: false
   }),
   computed: {
     indices() {
@@ -160,22 +153,12 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
-    getSearchText() {
-      return this.searchText ? this.searchText.trim() : '';
-    },
     getSearchWords() {
-      return this.getSearchText().split(' ');
+      return this.searchText.split(' ');
     },
     onDownloadPage(entries) {
       if (entries[0].isIntersecting) {
-        this.fetchSearchDebounced(
-          this.getSearchText(),
-          this.indices,
-          true,
-          this.filters.networks,
-          this.filters.languages,
-          this.filters.startTime
-        );
+        this.fetchSearchDebounced(true);
       }
     },
     search(
@@ -237,72 +220,60 @@ export default {
       }
       return 0;
     },
-    fetchSearchDebounced(
-      text,
-      indices = [],
-      push = false,
-      networks = [],
-      languages = [],
-      time = {}
-    ) {
-      if (text == null) return;
+    fetchSearchDebounced(push = false) {
+      if (!this.searchText || this.searchText.length < 3) return;
+
       this.completed = false;
       // cancel pending call
       clearTimeout(this._timerId);
 
-      // delay new call 200ms
+      let text = this.searchText;
+      let indices = this.indices;
+      let networks = this.filters.networks;
+      let languages = this.filters.languages;
+      let time = { s: this.getSearchTime(this.filters.startTime) };
+
+      // delay new call 500ms
       this._timerId = setTimeout(() => {
         this.search(text, indices, push, networks, languages, time);
-      }, 200);
+        this.$router.replace({ query: { text: text } })
+      }, 500);
     },
     isAddress() {
-      return /^(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(this.getSearchText());
+      return /^(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(this.searchText);
     },
     isOpgHash() {
-      return /^o[1-9A-HJ-NP-Za-km-z]{50}$/.test(this.getSearchText());
+      return /^o[1-9A-HJ-NP-Za-km-z]{50}$/.test(this.searchText);
     },
     getTzktHref(network) {
-      return getTzKTLink(network, this.getSearchText());
+      return getTzKTLink(network, this.searchText);
     },
     getCatavaSrc() {
-      return `https://services.tzkt.io/v1/avatars/${this.getSearchText()}`;
+      return `https://services.tzkt.io/v1/avatars/${this.searchText}`;
     }
   },
   watch: {
     searchText(val) {
-      let startTime = { s: this.getSearchTime(this.filters.startTime) };
-      this.fetchSearchDebounced(
-        val ? val.trim() : null,
-        this.indices,
-        false,
-        this.filters.networks,
-        this.filters.languages,
-        startTime
-      );
+      if (this._locked) return;
+      this._locked = true;
+      this.searchText = val ? val.trim() : '';
+      this._locked = false;
+      if (this.searchText) {
+        this.fetchSearchDebounced();
+      } else {
+        this.suggests = [];
+        this.total = 0;
+        this.$router.replace({ query: {} });
+
+      }
     },
-    indices(val) {
-      let startTime = { s: this.getSearchTime(this.filters.startTime) };
-      this.fetchSearchDebounced(
-        this.getSearchText(),
-        val,
-        false,
-        this.filters.networks,
-        this.filters.languages,
-        startTime
-      );
+    indices() {
+      this.fetchSearchDebounced();
     },
     filters: {
       deep: true,
-      handler: function(newValue) {
-        let startTime = { s: this.getSearchTime(newValue.startTime) };
-        this.fetchSearchDebounced(
-          this.getSearchText(),
-          this.indices,
-          false,
-          this.filters.networks,
-          this.filters.languages,
-          startTime
-        );
+      handler: function() {
+        this.fetchSearchDebounced();
       }
     }
   }

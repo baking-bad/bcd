@@ -31,6 +31,16 @@
                 outlined
                 pill
               >internal</v-chip>
+              <v-chip
+                v-if="item.body.destination_alias"
+                key="internal"
+                color="grey"
+                text-color="grey darken-1"
+                class="mr-1 caption"
+                small
+                outlined
+                pill
+              ><span v-html="highlight(item.body.destination_alias)"></span></v-chip>
             </div>
 
           </v-list-item-content>
@@ -46,9 +56,9 @@
 
         <div class="d-flex flex-row mx-6 pt-2 pb-4">
           <div v-for="(values, key) in item.highlights" :key="key">
-            <div class="d-flex flex-column mr-6">
+            <div class="d-flex flex-column mr-6" v-if="!['hash'].includes(key)">
               <span class="overline">{{ key }}</span>
-              <span v-for="(value, i) in values" :key="i">
+              <span v-for="(value, i) in values" :key="key + i">
               <span v-html="highlight(value)" class="caption"></span>
               </span>
             </div>
@@ -105,23 +115,5 @@ export default {
 }
 .operation:hover {
   cursor: pointer;
-}
-.others {
-  color: grey;
-  font-size: 12px;
-  }
-
-.same-link {
-  font-size: 12px;
-  color: grey;
-}
-
-.same-network {
-  font-size: 12px;
-  color: #70757a;
-}
-
-.same-link:hover {
-  color: #5b942a;
 }
 </style>
