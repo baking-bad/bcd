@@ -3,10 +3,11 @@
     <v-list>
       <v-list-item>
         <v-list-item-content>
+          <v-list-item-subtitle class="subtitle-1">Time period</v-list-item-subtitle>
           <v-select
+            class="pt-0 mr-8"
             v-model="filters.startTime"
             :items="timeItems"
-            label="Time"
             hide-details
             item-text="name"
             item-value="value"
@@ -16,7 +17,7 @@
 
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-subtitle>Networks</v-list-item-subtitle>
+          <v-list-item-subtitle class="subtitle-1">Networks</v-list-item-subtitle>
           <v-chip-group
             v-model="networksSelection"
             column
@@ -31,7 +32,10 @@
 
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-subtitle>Languages (only for contracts)</v-list-item-subtitle>
+          <v-list-item-subtitle>
+            <span class="subtitle-1">Languages</span>
+            <span class="ml-4 overline">applied to contracts</span>
+          </v-list-item-subtitle>
           <v-chip-group
             v-model="languagesSelection"
             column
@@ -51,14 +55,10 @@
 export default {
   name: "SearchNav",
   props: {
-    value: Boolean,
     filters: Object
   },
-  created() {
-    this.show = this.value;
-  },
   data: () => ({
-    show: false,
+    show: true,
     selectedTime: 0,
     newFilters: {
       startTime: 0,
@@ -93,18 +93,10 @@ export default {
         value: 5
       }
     ],
-    networkItems: ["mainnet", "babylonnet", "carthagenet", "zeronet"],
-    languages: ["michelson", "smartpy", "liquidity", "ligo", "lorentz"]
-  }),
+    networkItems: ["mainnet", "carthagenet", "zeronet", "babylonnet"],
+    languages: ["michelson", "ligo", "lorentz", "smartpy", "liquidity"]
+  }), 
   watch: {
-    show: function(newValue) {
-      if (newValue) {
-        this.newFilters = this.filters;
-      }
-    },
-    value: function(newValue) {
-      this.show = newValue;
-    },
     newFilters: {
       deep: true,
       handler: function(newValue) {
