@@ -73,23 +73,23 @@ export default {
         value: 0
       },
       {
-        name: "Past hour",
+        name: "Last hour",
         value: 1
       },
       {
-        name: "Past 24 hours",
+        name: "Last 24 hours",
         value: 2
       },
       {
-        name: "Past week",
+        name: "Last week",
         value: 3
       },
       {
-        name: "Past month",
+        name: "Last month",
         value: 4
       },
       {
-        name: "Past year",
+        name: "Last year",
         value: 5
       }
     ],
