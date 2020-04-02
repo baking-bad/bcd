@@ -58,7 +58,7 @@
         >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>       
         <template v-for="(item, idx) in suggests">
           <ContractItem :key="idx" :item="item" :words="getSearchWords()" v-if="item.type === 'contract'" />
-          <OperationItem :key="idx" :item="item" v-else-if="item.type === 'operation'" />
+          <OperationItem :key="idx" :item="item" :words="getSearchWords()" v-else-if="item.type === 'operation'" />
         </template>
         <span v-intersect="onDownloadPage"></span>
       </div>
