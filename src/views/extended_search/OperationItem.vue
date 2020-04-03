@@ -54,9 +54,9 @@
           </v-list-item-action>
         </v-list-item>
 
-        <div class="d-flex flex-row mx-6 pt-2 pb-4">
+        <div class="d-flex flex-row mx-6">
           <div v-for="(values, key) in item.highlights" :key="key">
-            <div class="d-flex flex-column mr-6" v-if="!['hash'].includes(key)">
+            <div class="d-flex flex-column mr-6 pt-2 pb-4" v-if="!['hash'].includes(key)">
               <span class="overline">{{ key }}</span>
               <span v-for="(value, i) in values" :key="key + i">
               <span v-html="highlight(value)" class="caption"></span>
