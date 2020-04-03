@@ -21,17 +21,36 @@
     @keyup.enter="onEnter"
   >
     <template v-slot:item="{ item }">
-      <v-list-item-avatar>
-        <v-icon v-if="item.type == 'contract'">mdi-code-tags</v-icon>
-        <v-icon v-else-if="item.type == 'operation'">mdi-swap-horizontal</v-icon>
-      </v-list-item-avatar>
-      <v-list-item-content>
-        <v-list-item-title class="hash" v-text="item.body.address || item.body.hash"></v-list-item-title>
-        <v-list-item-subtitle>Found in {{item.body.found_by}}</v-list-item-subtitle>
-      </v-list-item-content>
-      <v-list-item-action>
-        <v-list-item-action-text class="overline primary--text" v-text="item.body.network"></v-list-item-action-text>
-      </v-list-item-action>
+        <v-list-item-avatar>
+          <v-icon v-if="item.type == 'contract'">mdi-code-tags</v-icon>
+          <v-icon v-else-if="item.type == 'operation'">mdi-swap-horizontal</v-icon>
+        </v-list-item-avatar>
+        <v-list-item-content>
+          <v-list-item-title v-if="item.body.alias">
+            <span>{{ item.body.alias }}</span>
+          </v-list-item-title>
+          <v-list-item-title v-if="!item.body.alias">
+            <span>{{ shortcut(item.value) }}</span>
+          </v-list-item-title>
+          <v-list-item-subtitle>
+            <span class="overline" :class="item.body.network === 'mainnet' ? 'primary--text' : ''">
+              {{ item.body.network }},
+            </span>
+            <span class="overline">
+              {{ formatDate(item.body.timestamp) }}<span v-if="item.body.last_action"> — {{ formatDate(item.body.last_action) }}</span>
+            </span>
+          </v-list-item-subtitle>
+        </v-list-item-content>
+        <v-list-item-action>
+          <v-list-item-action-text>
+            <span class="body-2"
+              v-if="!['alias', 'hash', 'address'].includes(item.body.found_by)" 
+              v-html="item.highlights[item.body.found_by][0]"></span>
+          </v-list-item-action-text>
+          <v-list-item-action-text>
+            <span class="overline grey--text">{{ item.body.found_by }}</span>
+          </v-list-item-action-text>
+        </v-list-item-action>
     </template>
   </v-combobox>
 </template>
@@ -41,6 +60,7 @@ import { mapActions } from "vuex";
 
 import * as api from "@/api/index.js";
 import { checkAddress, checkOperation } from "@/utils/tz.js";
+import dayjs from "dayjs";
 
 export default {
   props: {
@@ -55,10 +75,12 @@ export default {
     }
   },
   data: () => ({
-    history: [],
     suggests: [],
     model: null,
-    searchText: null
+    searchText: null,
+    _locked: false,
+    _timerId: null,
+    seqno: 0
   }),
   methods: {
     ...mapActions(["showError"]),
@@ -74,24 +96,56 @@ export default {
       }
     },
     onEnter() {
-      if (this.searchText !== null && this.searchText.length > 1) {
+      if (this.searchText !== null && this.searchText.length > 2) {
         this.$router.push({ name: "search", query: { text: this.searchText } });
       }
-    }
-  },
-  watch: {
-    searchText(val) {
-      if (val !== null && val.length > 1) {
+    },
+    formatDate(value) {
+      if (value) {
+        return dayjs(value).format("MMM D, YYYY");
+      }
+    },
+    fetchSearchDebounced(text, seqno) {
+      if (!text || text.length < 3) return;
+
+      clearTimeout(this._timerId);
+
+      this._timerId = setTimeout(() => {
         api
-          .search(val)
+          .search(text)
           .then(res => {
-            this.suggests = res.items;
+            if (seqno === this.seqno) {
+              this.suggests = res.items;
+            }
           })
           .catch(err => {
             console.log(err);
             this.showError(err);
           });
+      }, 100);
+    },
+    shortcut(value, size=18) {
+      if (value !== undefined
+        && value.length > 2 * size + 1
+        && (value.startsWith('KT') || value.startsWith('tz') || value.startsWith('o'))) {
+        return value.substr(0, size) + `\u2026` + value.substr(value.length - size, size);
+      } else {
+        return value;
       }
+    },
+  },
+  watch: {
+    searchText(val) {
+      if (this._locked) return;
+      this._locked = true;
+      this.searchText = val ? val.trim() : '';
+      if (this.searchText) {
+        this.fetchSearchDebounced(this.searchText, ++this.seqno);
+      } else {
+        this.suggests = [];
+        this.model = null;
+      }
+      this._locked = false;
     }
   }
 };
@@ -116,17 +170,10 @@ export default {
   }
   .v-list-item__action {
     margin: 0;
-  }
-  .v-list-item__content {
-    flex-direction: column;
+    justify-content: center;
 
-    .v-list-item__title {
-      margin-right: auto;
-    }
-    .v-list-item__subtitle {
-      margin-right: auto;
-      opacity: 0.65;
-      max-width: 100%;
+    .v-list-item__action-text {
+      max-width: 300px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;

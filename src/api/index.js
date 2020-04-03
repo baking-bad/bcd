@@ -24,7 +24,7 @@ export function search(text, indices = [], offset = 0, networks = [], languages 
     if (languages.length > 0) {
         params.l = languages.join(',')
     }
-    if (group > 0) {
+    if (group >= 0) {  // maybe remove group parameter?
         params.g = 1
     }
     params = Object.assign(params, time)

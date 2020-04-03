@@ -133,7 +133,8 @@ export default {
       languages: []
     },
     _timerId: null,
-    _locked: false
+    _locked: false,
+    seqno: 0
   }),
   computed: {
     indices() {
@@ -157,7 +158,7 @@ export default {
     },
     onDownloadPage(entries) {
       if (entries[0].isIntersecting) {
-        this.fetchSearchDebounced(true);
+        this.fetchSearchDebounced(++this.seqno, true);
       }
     },
     search(
@@ -195,7 +196,7 @@ export default {
           });
       }
     },
-    fetchSearchDebounced(push = false) {
+    fetchSearchDebounced(seqno, push = false) {
       if (!this.searchText || this.searchText.length < 3) return;
 
       this.completed = false;
@@ -210,9 +211,11 @@ export default {
 
       // delay new call 500ms
       this._timerId = setTimeout(() => {
-        this.search(text, indices, push, networks, languages, time);
-        if (text !== this.$route.query.text) {
-          this.$router.replace({ query: { text: text } })
+        if (seqno === this.seqno) {
+          this.search(text, indices, push, networks, languages, time);
+          if (text !== this.$route.query.text) {
+            this.$router.replace({ query: { text: text } })
+          }
         }
       }, 500);
     },
@@ -234,21 +237,21 @@ export default {
       if (this._locked) return;
       this._locked = true;
       this.searchText = val ? val.trim() : '';
-      this._locked = false;
       if (this.searchText) {
-        this.fetchSearchDebounced();
+        this.fetchSearchDebounced(++this.seqno);
       } else {
         this.suggests = [];
         this.total = 0;
       }
+      this._locked = false;
     },
     indices() {
-      this.fetchSearchDebounced();
+      this.fetchSearchDebounced(++this.seqno);
     },
     filters: {
       deep: true,
       handler: function() {
-        this.fetchSearchDebounced();
+        this.fetchSearchDebounced(++this.seqno);
       }
     }
   }
