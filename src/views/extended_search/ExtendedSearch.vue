@@ -103,7 +103,6 @@
 </template>
 
 <script>
-import dayjs from "dayjs";
 import { mapActions } from "vuex";
 
 import { getTzKTLink } from "@/utils/tzkt.js";
@@ -130,8 +129,8 @@ export default {
     tab: 0,
     filters: {
       startTime: 0,
-      networks: ["mainnet", "babylonnet", "carthagenet", "zeronet"],
-      languages: ["michelson", "ligo", "smartpy", "liquidity", "lorentz"]
+      networks: [],
+      languages: []
     },
     _timerId: null,
     _locked: false
@@ -196,30 +195,6 @@ export default {
           });
       }
     },
-    getSearchTime(selectedTime) {
-      if (selectedTime == 1) {
-        return dayjs()
-          .subtract(1, "hour")
-          .unix();
-      } else if (selectedTime == 2) {
-        return dayjs()
-          .subtract(1, "day")
-          .unix();
-      } else if (selectedTime == 3) {
-        return dayjs()
-          .subtract(1, "week")
-          .unix();
-      } else if (selectedTime == 4) {
-        return dayjs()
-          .subtract(1, "month")
-          .unix();
-      } else if (selectedTime == 5) {
-        return dayjs()
-          .subtract(1, "year")
-          .unix();
-      }
-      return 0;
-    },
     fetchSearchDebounced(push = false) {
       if (!this.searchText || this.searchText.length < 3) return;
 
@@ -231,12 +206,14 @@ export default {
       let indices = this.indices;
       let networks = this.filters.networks;
       let languages = this.filters.languages;
-      let time = { s: this.getSearchTime(this.filters.startTime) };
+      let time = {s : this.filters.startTime };
 
       // delay new call 500ms
       this._timerId = setTimeout(() => {
         this.search(text, indices, push, networks, languages, time);
-        this.$router.replace({ query: { text: text } })
+        if (text !== this.$route.query.text) {
+          this.$router.replace({ query: { text: text } })
+        }
       }, 500);
     },
     isAddress() {
@@ -263,8 +240,6 @@ export default {
       } else {
         this.suggests = [];
         this.total = 0;
-        this.$router.replace({ query: {} });
-
       }
     },
     indices() {

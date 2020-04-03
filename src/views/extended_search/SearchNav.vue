@@ -6,7 +6,7 @@
           <v-list-item-subtitle class="subtitle-1">Time period</v-list-item-subtitle>
           <v-select
             class="pt-0 mr-8"
-            v-model="filters.startTime"
+            v-model="selectedTime"
             :items="timeItems"
             hide-details
             item-text="name"
@@ -52,6 +52,8 @@
 </template>
 
 <script>
+import dayjs from "dayjs";
+
 export default {
   name: "SearchNav",
   props: {
@@ -60,11 +62,6 @@ export default {
   data: () => ({
     show: true,
     selectedTime: 0,
-    newFilters: {
-      startTime: 0,
-      networks: [],
-      languages: []
-    },
     languagesSelection: [0, 1, 2, 3, 4],
     networksSelection: [0, 1, 2, 3],
     timeItems: [
@@ -97,23 +94,36 @@ export default {
     languages: ["michelson", "ligo", "lorentz", "smartpy", "liquidity"]
   }), 
   watch: {
-    newFilters: {
-      deep: true,
-      handler: function(newValue) {
-        this.filters = newValue;
-      }
-    },
     languagesSelection: function(newValue) {
       this.filters.languages = [];
-      newValue.forEach(x => {
-        this.filters.languages.push(this.languages[x]);
-      });
+      if (newValue.length < this.languages.length) {
+        newValue.forEach(x => {
+          this.filters.languages.push(this.languages[x]);
+        });
+      }
     },
     networksSelection: function(newValue) {
       this.filters.networks = [];
-      newValue.forEach(x => {
-        this.filters.networks.push(this.networkItems[x]);
-      });
+      if (newValue.length < this.languages.length) {
+        newValue.forEach(x => {
+          this.filters.networks.push(this.networkItems[x]);
+        });
+      }
+    },
+    selectedTime: function(newValue) {
+      let ts = 0;
+      if (newValue === 1) {
+        ts = dayjs().subtract(1, "hour").unix();
+      } else if (newValue === 2) {
+        ts = dayjs().subtract(1, "day").unix();
+      } else if (newValue === 3) {
+        ts = dayjs().subtract(1, "week").unix();
+      } else if (newValue === 4) {
+        ts = dayjs().subtract(1, "month").unix();
+      } else if (newValue === 5) {
+        ts = dayjs().subtract(1, "year").unix();
+      }
+      this.filters.startTime = ts;
     }
   }
 };

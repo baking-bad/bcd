@@ -18,10 +18,10 @@ export function search(text, indices = [], offset = 0, networks = [], languages 
     if (indices.length > 0) {
         params.i = indices.join(',')
     }
-    if (networks.length > 0 && networks.length < 4) {
+    if (networks.length > 0) {
         params.n = networks.join(',')
     }
-    if (languages.length > 0 && languages.length < 4) {
+    if (languages.length > 0) {
         params.l = languages.join(',')
     }
     if (group > 0) {
