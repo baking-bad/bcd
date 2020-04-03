@@ -9,7 +9,7 @@
         </v-row>
         <v-row justify="center" no-gutters>
           <v-col cols="12" sm="8" lg="6" xl="4">
-            <SearchBox />
+            <SearchBox :expandable="false" />
           </v-col>
           <v-col cols="12" align="center">
             <v-btn large depressed tile color="primary" class="mr-5" to="/search">Advanced Search</v-btn>

@@ -4,21 +4,22 @@
     :search-input.sync="searchText"
     :items="suggests"
     item-text="value"
+    @change="onSearch"
+    @keyup.enter="onEnter"
     return-object
-    prepend-inner-icon="mdi-magnify"
     placeholder="Search anything"
     autocomplete="off"
     no-filter
     append-icon
     clearable
     hide-selected
-    :background-color="background"
-    :hide-details="toolbar"
-    :solo="toolbar"
-    :flat="toolbar"
-    :outlined="!toolbar"
-    @change="onSearch"
-    @keyup.enter="onEnter"
+    :prepend-inner-icon="expandable? null : 'mdi-magnify'"
+    :outlined="!expandable"
+    :background-color="expandable ? 'grey lighten-4' : 'transparent'"
+    :hide-details="expandable"
+    :solo="expandable"
+    :dense="expandable"
+    :class="expandable ? 'expandable-search' : ''"
   >
     <template v-slot:item="{ item }">
         <v-list-item-avatar>
@@ -64,7 +65,7 @@ import dayjs from "dayjs";
 
 export default {
   props: {
-    toolbar: Boolean
+    expandable: Boolean
   },
   computed: {
     background() {
@@ -126,9 +127,9 @@ export default {
     },
     shortcut(value, size=18) {
       if (value !== undefined
-        && value.length > 2 * size + 1
+        && value.length > 2 * size + 2
         && (value.startsWith('KT') || value.startsWith('tz') || value.startsWith('o'))) {
-        return value.substr(0, size) + `\u2026` + value.substr(value.length - size, size);
+        return value.substr(0, size) + `\u2026\u202F` + value.substr(value.length - size, size);
       } else {
         return value;
       }
@@ -179,5 +180,20 @@ export default {
       text-overflow: ellipsis;
     }
   }
+  .v-list-item__content {
+    flex-direction: column;
+
+    .v-list-item__title {
+      margin-right: auto;
+      font-family: "Roboto Mono";
+    }
+    .v-list-item__subtitle {
+      margin-right: auto;
+    }
+  }
+}
+.expandable-search {
+  font-size: 12px;
+  margin-bottom: 1px;
 }
 </style>
