@@ -84,19 +84,33 @@
           </v-btn-toggle>
         </template>
         <template v-else-if="searchText == '' || searchText == null">
-          <v-icon size="100" color="grey">mdi-cloud-search-outline</v-icon>
-          <span class="headline grey--text">You can try search anything</span>
-          <span
-            class="subtitle-1 grey--text"
-          >Type address, annotation, entrypoint name or anything else</span>
+          <v-card flat outlined>
+            <v-card-text class="pa-10">
+              <div class="d-flex flex-row justify-start align-center">
+                <v-icon size="50">mdi-sort-ascending</v-icon>
+                <span class="display-1 ml-5">Ranking Factors</span>
+              </div>
+              <div class="d-flex flex-row mt-5">
+                <div class="d-flex flex-column" v-for="(values, key) in help" :key="key">
+                  <span class="title text-capitalize">{{ key }}</span>
+                  <span v-for="(value, i) in values" :key="'help' + key + i" class="mt-1">
+                    <span class="overline">{{ value[0] }}</span> <span class="body-2">{{ value[1] }}</span>
+                  </span>
+                </div>
+              </div>
+            </v-card-text>
+          </v-card>
         </template>
-        <template v-else>
+        <template v-else-if="!cold">
           <v-icon size="100" color="grey">mdi-package-variant</v-icon>
           <span class="headline grey--text">No results found for your request</span>
           <span
             class="subtitle-1 grey--text"
           >Type another address, annotation, entrypoint name or anything else</span>
         </template>
+        <v-overlay v-else :value="cold" color="white" absolute>
+          <v-progress-circular indeterminate size="64" color="grey"></v-progress-circular>
+        </v-overlay>
       </v-card>
     </v-container>
   </div>
@@ -124,6 +138,7 @@ export default {
     searchText: null,
     total: 0,
     elasticTime: 0,
+    cold: true,
     loading: false,
     completed: false,
     tab: 0,
@@ -134,7 +149,27 @@ export default {
     },
     _timerId: null,
     _locked: false,
-    seqno: 0
+    seqno: 0,
+    help: {
+      'contracts': [
+        ['alias', 'known contract name'],
+        ['tags', 'derived from the code'],
+        ['entrypoints', ''],
+        ['fail_strings', 'custom error messages'],
+        ['language', 'determined by heuristics'],
+        ['annotations', ''],
+        ['delegate', 'address'],
+        ['hardcoded', 'strings inside the code section'],
+        ['manager', '[deployer] address'],
+        ['address']
+      ],
+      'operations': [
+        ['entrypoint', 'called'],
+        ['error.with', 'error message if operation has failed'],
+        ['error.id', 'if operation has failed'],
+        ['hash', 'of the operation group']
+      ]
+    }
   }),
   computed: {
     indices() {
@@ -186,6 +221,7 @@ export default {
             }
             this.total = res.count;
             this.elasticTime = res.time;
+            this.cold = false;
           })
           .catch(err => {
             console.log(err);
@@ -242,6 +278,7 @@ export default {
       } else {
         this.suggests = [];
         this.total = 0;
+        this.cold = true;
       }
       this._locked = false;
     },
