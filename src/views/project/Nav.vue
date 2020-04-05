@@ -35,7 +35,7 @@
       
       <v-divider></v-divider>
 
-      <div class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between pb-2">
+      <div class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between my-2">
         <div v-if="isAuthorized">
           <v-btn
             small
@@ -83,9 +83,7 @@
         </v-list-item-content>
       </v-list-item>
 
-    </v-list>
-
-    
+    </v-list>    
 
     <v-skeleton-loader
       :loading="sameLoading || similarLoading"

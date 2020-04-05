@@ -136,11 +136,11 @@ export default {
         text: "Subscriptions",
         to: "subscriptions"
       },
-      {
-        icon: "mdi-poll",
-        text: "Statistics",
-        to: "projects"
-      }
+      // {
+      //   icon: "mdi-poll",
+      //   text: "Statistics",
+      //   to: "projects"
+      // }
     ]
   }),
   methods: {
