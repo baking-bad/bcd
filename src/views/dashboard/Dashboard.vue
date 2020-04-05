@@ -13,9 +13,9 @@
             <v-tab :to="{ name: 'subscriptions' }" replace class="overline">
               <v-icon left small>mdi-content-duplicate</v-icon>Subscriptions
             </v-tab>
-            <v-tab replace class="overline">
+            <!-- <v-tab replace class="overline">
               <v-icon left small>mdi-poll</v-icon>Statistics
-            </v-tab>
+            </v-tab> -->
           </v-tabs>
         </v-col>
         <v-col cols="12">

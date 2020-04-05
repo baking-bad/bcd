@@ -210,7 +210,7 @@ export function getContractBigMap(network, address, ptr) {
 }
 
 export function getContractBigMapByKeyHash(network, address, ptr, keyhash) {
-    return api.get(`/contract/${network}/${address}/bigmap/${ptr}/${keyhash}`)
+    return getCancellable(api, `/contract/${network}/${address}/bigmap/${ptr}/${keyhash}`, {})
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
@@ -221,7 +221,7 @@ export function getContractBigMapByKeyHash(network, address, ptr, keyhash) {
 
 export function getRandomContract() {
     cancelRequests();
-    return api.get(`/pick_random`)
+    return getCancellable(api, `/pick_random`, {})
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
@@ -231,22 +231,11 @@ export function getRandomContract() {
 }
 
 export function getDiff(sn, sa, dn, da) {
-    return api.get(`/diff?sn=${sn}&sa=${sa}&dn=${dn}&da=${da}`)
-        .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
-            return res.data
-        })
-}
-
-export function vote(sn, sa, dn, da, vote) {
-    return api.post(`/vote`, {
-        src: sa,
-        src_network: sn,
-        dest: da,
-        dest_network: dn,
-        vote: vote,
+    return getCancellable(api, `/diff`, {
+        sn: sn,
+        sa: sa,
+        dn: dn,
+        da: da
     })
         .then((res) => {
             if (res.status != 200) {
@@ -257,7 +246,7 @@ export function vote(sn, sa, dn, da, vote) {
 }
 
 export function getProjects() {
-    return api.get(`/projects`)
+    return getCancellable(api, `/projects`, {})
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
@@ -267,7 +256,24 @@ export function getProjects() {
 }
 
 export function getOPG(hash) {
-    return api.get(`/opg/${hash}`)
+    return getCancellable(api, `/opg/${hash}`, {})
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+
+export function vote(sn, sa, dn, da, vote) {
+    return api.post(`/vote`, {
+        src: sa,
+        src_network: sn,
+        dest: da,
+        dest_network: dn,
+        vote: vote,
+    })
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);

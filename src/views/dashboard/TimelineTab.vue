@@ -1,8 +1,8 @@
 <template>
-  <v-container>
-    <v-list v-if="timeline" max-width="980" class="elevation-2">
+  <v-container fluid>
+    <v-list v-if="timeline" class="elevation-2 py-0">
       <template v-for="(item, idx) in timeline">
-        <v-list-item :key="idx">
+        <v-list-item :key="idx" two-line :to="getTo(item)">
           <v-list-item-avatar>
             <v-icon :color="getIconColor(item)">{{ getIcon(item) }}</v-icon>
           </v-list-item-avatar>
@@ -12,16 +12,17 @@
                 <span class="grey--text">{{item.source}}</span>&nbsp;deployed&nbsp;
                 <span class="grey--text">{{item.destination}}</span>
               </div>
-              <div v-else-if="item.entrypoint">
-                <span class="grey--text">{{item.source}}</span>&nbsp;calls&nbsp;
-                <span class="grey--text">{{item.entrypoint}}</span>
+              <div v-else-if="item.kind==='migration'">
+                <span class="grey--text">{{item.source}}</span>&nbsp;was altered at level&nbsp;
+                <span class="grey--text">{{item.level}}</span>
               </div>
               <div v-else-if="item.kind==='transaction'">
-                <span class="grey--text">{{item.source}}</span>&nbsp;sent&nbsp;
-                <span class="grey--text">{{item.amount | uxtz}}</span>&nbsp;to&nbsp;
+                Error occured during call&nbsp;
+                <span class="grey--text">{{item.entrypoint}}</span>&nbsp;of&nbsp;
                 <span class="grey--text">{{item.destination}}</span>
               </div>
             </v-list-item-title>
+            <v-list-item-subtitle class="overline">{{ item.network}}</v-list-item-subtitle>
           </v-list-item-content>
           <v-list-item-action>
             <v-list-item-action-text>{{ item.timestamp | fromNow }}</v-list-item-action-text>
@@ -58,16 +59,21 @@ export default {
         .finally(() => (this.loading = false));
     },
     getIcon(item) {
+      if (item.kind === "migration") return "mdi-transfer";
       if (item.kind === "origination") return "mdi-new-box";
-      if (item.entrypoint) return "mdi-play-speed";
-      if (item.kind === "transaction") return "mdi-swap-horizontal";
+      if (item.kind === "transaction") return "mdi-alert-outline";
       return "mdi-new";
     },
     getIconColor(item) {
+      if (item.kind === "migration") return "purple";
       if (item.kind === "origination") return "green";
-      if (item.entrypoint) return "primary";
-      if (item.kind === "transaction") return "blue";
+      if (item.kind === "transaction") return "red";
       return "grey";
+    },
+    getTo(item) {
+      if (item.hash)
+        return { name: "opg", params: { hash: item.hash } };
+      return null;
     }
   },
   watch: {
