@@ -24,85 +24,92 @@
       </div>
       <v-row v-else>
         <v-col>
-          <v-list :elevation="2">
+          <v-card>
             <v-subheader>Your subscriptions</v-subheader>
-            <template v-for="(item, idx) in subscriptions">
-              <v-list-item
-                three-line
-                :key="idx"
-                :to="{ name: 'project', params: {address: item.address, network: item.network}}"
-              >
-                <v-list-item-content>
-                  <v-list-item-title v-if="!item.alias" class="hash card-title">{{ item.address }}</v-list-item-title>
-                  <v-list-item-title v-else class="card-title">
-                    {{ item.alias }}&nbsp;
-                    <span
-                      class="body-2 grey--text text--darken-1 hash"
-                    >{{ item.address}}</span>
-                  </v-list-item-title>
-                  <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
-                  <v-list-item-subtitle class="d-flex flex-horizontal">
-                    <div class="d-flex flex-horizontal">
-                      <v-icon small color="primary">mdi-calendar-clock</v-icon>
-                      <span class="ml-2">Last call {{ formatDate(item.last_action) }}</span>
-                    </div>
-                    <div class="d-flex flex-horizontal ml-5">
-                      <v-icon small color="primary">mdi-code-tags</v-icon>
-                      <span class="ml-2">{{ item.language }}</span>
-                    </div>
-                    <div class="d-flex flex-horizontal ml-5">
-                      <v-icon small color="primary">mdi-swap-horizontal</v-icon>
-                      <span class="ml-2">{{ item.tx_count }} operations</span>
-                    </div>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-list-item-action-text>Subscribed {{ item.subscribed_at | fromNow }}</v-list-item-action-text>
-                  <v-btn icon text @click.prevent="unsubscribe(item)">
-                    <v-icon>mdi-bell-off</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-              </v-list-item>
-              <v-divider :key="subscriptions.length + idx" v-if="idx != subscriptions.length - 1"></v-divider>
-            </template>
-          </v-list>
+            <v-slide-y-transition class="py-0" group tag="v-list">
+              <template v-for="(item, idx) in subscriptions">
+                <v-divider :key="`${idx}-divider`" v-if="idx !== 0"></v-divider>
+                <v-list-item
+                  three-line
+                  :key="idx"
+                  :to="{ name: 'project', params: {address: item.address, network: item.network}}"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title v-if="!item.alias" class="hash card-title">{{ item.address }}</v-list-item-title>
+                    <v-list-item-title v-else class="card-title">
+                      {{ item.alias }}&nbsp;
+                      <span
+                        class="body-2 grey--text text--darken-1 hash"
+                      >{{ item.address}}</span>
+                    </v-list-item-title>
+                    <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
+                    <v-list-item-subtitle class="d-flex flex-horizontal">
+                      <div class="d-flex flex-horizontal">
+                        <v-icon small color="primary">mdi-calendar-clock</v-icon>
+                        <span class="ml-2">Last action {{ formatDate(item.last_action) }}</span>
+                      </div>
+                      <div class="d-flex flex-horizontal ml-5">
+                        <v-icon small color="primary">mdi-code-tags</v-icon>
+                        <span class="ml-2">{{ item.language }}</span>
+                      </div>
+                      <div class="d-flex flex-horizontal ml-5">
+                        <v-icon small color="primary">mdi-swap-horizontal</v-icon>
+                        <span class="ml-2">{{ item.tx_count }} operations</span>
+                      </div>
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-list-item-action-text>Subscribed {{ item.subscribed_at | fromNow }}</v-list-item-action-text>
+                    <v-btn icon text @click.prevent="unsubscribe(item)">
+                      <v-icon>mdi-bell-off</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+                </v-list-item>
+              </template>
+            </v-slide-y-transition>
+          </v-card>
         </v-col>
         <v-col cols="4" v-if="recommended && recommended.length > 0">
-          <v-list :elevation="2">
+          <v-card>
+            <v-overlay absolute :value="recommendedLoading">
+              <v-progress-circular indeterminate size="64"></v-progress-circular>
+            </v-overlay>
             <v-subheader>Recommendations</v-subheader>
-            <template v-for="(item, idx) in recommended">
-              <v-list-item
-                three-line
-                :key="idx"
-                :to="{ name: 'project', params: {address: item.address, network: item.network}}"
-              >
-                <v-list-item-content>
-                  <v-list-item-title class="hash card-title">{{ item.address }}</v-list-item-title>
-                  <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
-                  <v-list-item-subtitle class="d-flex flex-horizontal">
-                    <div class="d-flex flex-horizontal">
-                      <v-icon small color="primary" v-if="item.last_action">mdi-calendar-clock</v-icon>
-                      <span class="ml-2">Last call {{ formatDate(item.last_action) }}</span>
-                    </div>
-                    <div class="d-flex flex-horizontal ml-5">
-                      <v-icon small color="primary">mdi-code-tags</v-icon>
-                      <span class="ml-2">{{ item.language }}</span>
-                    </div>
-                    <div class="d-flex flex-horizontal ml-5">
-                      <v-icon small color="primary">mdi-swap-horizontal</v-icon>
-                      <span class="ml-2">{{ item.tx_count }} operations</span>
-                    </div>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-btn icon text @click.prevent="subscribe(item)">
-                    <v-icon>mdi-bell-outline</v-icon>
-                  </v-btn>
-                </v-list-item-action>
-              </v-list-item>
-              <v-divider :key="recommended.length + idx" v-if="idx != recommended.length - 1"></v-divider>
-            </template>
-          </v-list>
+            <v-list>
+              <template v-for="(item, idx) in recommended">
+                <v-list-item
+                  three-line
+                  :key="idx"
+                  :to="{ name: 'project', params: {address: item.address, network: item.network}}"
+                >
+                  <v-list-item-content>
+                    <v-list-item-title class="hash card-title">{{ item.address }}</v-list-item-title>
+                    <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
+                    <v-list-item-subtitle class="d-flex flex-horizontal">
+                      <div class="d-flex flex-horizontal">
+                        <v-icon small color="primary" v-if="item.last_action">mdi-calendar-clock</v-icon>
+                        <span class="ml-2">Last call {{ formatDate(item.last_action) }}</span>
+                      </div>
+                      <div class="d-flex flex-horizontal ml-5">
+                        <v-icon small color="primary">mdi-code-tags</v-icon>
+                        <span class="ml-2">{{ item.language }}</span>
+                      </div>
+                      <div class="d-flex flex-horizontal ml-5">
+                        <v-icon small color="primary">mdi-swap-horizontal</v-icon>
+                        <span class="ml-2">{{ item.tx_count }} operations</span>
+                      </div>
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-btn icon text @click.prevent="subscribe(item)">
+                      <v-icon>mdi-bell-outline</v-icon>
+                    </v-btn>
+                  </v-list-item-action>
+                </v-list-item>
+                <v-divider :key="recommended.length + idx" v-if="idx != recommended.length - 1"></v-divider>
+              </template>
+            </v-list>
+          </v-card>
         </v-col>
       </v-row>
     </v-skeleton-loader>
@@ -169,24 +176,39 @@ export default {
       removeProfileSubscription(item.id, "contract")
         .then(() => {
           for (var i = 0; i < this.subscriptions.length; i++) {
-            if (this.subscriptions.id === item.id) {
+            if (this.subscriptions[i].id === item.id) {
               this.subscriptions.splice(i, 1);
               break;
             }
           }
+          this.recommendedLoading = true;
+          return getRecommendedSubscriptions();
+        })
+        .then(res => {
+          this.recommended = res;
         })
         .catch(err => {
           this.showError(err);
           console.log(err);
-        });
+        })
+        .finally(() => (this.recommendedLoading = false));
     },
     subscribe(item) {
       addProfileSubscription(item.id, "contract")
-        .then(() => {})
+        .then(() => {
+          item.subscrebed_at = dayjs().format();
+          this.subscriptions.push(item);
+          this.recommendedLoading = true;
+          return getRecommendedSubscriptions();
+        })
+        .then(res => {
+          this.recommended = res;
+        })
         .catch(err => {
           this.showError(err);
           console.log(err);
-        });
+        })
+        .finally(() => (this.recommendedLoading = false));
     }
   },
   $route: "getData"
