@@ -9,17 +9,17 @@
           <v-list-item-content>
             <v-list-item-title class="hash grey--text text--darken-2" style="font-size: 0.8em;">
               <div v-if="item.kind==='origination'">
-                <span class="grey--text">{{item.source}}</span>&nbsp;deployed&nbsp;
-                <span class="grey--text">{{item.destination}}</span>
+                <span class="grey--text">{{item.source_alias || item.source}}</span>&nbsp;deployed&nbsp;
+                <span class="grey--text">{{item.destination_alias || item.destination}}</span>
               </div>
               <div v-else-if="item.kind==='migration'">
-                <span class="grey--text">{{item.source}}</span>&nbsp;was altered at level&nbsp;
+                <span class="grey--text">{{item.source_alias || item.source}}</span>&nbsp;was altered at level&nbsp;
                 <span class="grey--text">{{item.level}}</span>
               </div>
               <div v-else-if="item.kind==='transaction'">
                 Error occured during call&nbsp;
                 <span class="grey--text">{{item.entrypoint}}</span>&nbsp;of&nbsp;
-                <span class="grey--text">{{item.destination}}</span>
+                <span class="grey--text">{{item.destination_alias || item.destination}}</span>
               </div>
             </v-list-item-title>
             <v-list-item-subtitle class="overline">{{ item.network}}</v-list-item-subtitle>
@@ -31,6 +31,7 @@
         <v-divider inset v-if="idx != timeline.length - 1" :key="idx + timeline.length"></v-divider>
       </template>
     </v-list>
+    <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
   </v-container>
 </template>
 
@@ -43,14 +44,19 @@ export default {
     this.getTimeline();
   },
   data: () => ({
-    timeline: null,
-    loading: true
+    timeline: [],
+    loading: false,
+    downloaded: false
   }),
   methods: {
     getTimeline() {
-      getProfileTimeline()
+      if (this.downloaded || this.loading) return;
+
+      this.loading = true;
+      getProfileTimeline(this.timeline.length)
         .then(res => {
-          this.timeline = res;
+          this.timeline.push(...res)
+          this.downloaded = res.length < 20
         })
         .catch(err => {
           console.log(err);
@@ -71,9 +77,13 @@ export default {
       return "grey";
     },
     getTo(item) {
-      if (item.hash)
-        return { name: "opg", params: { hash: item.hash } };
+      if (item.hash) return { name: "opg", params: { hash: item.hash } };
       return null;
+    },
+    onDownloadPage(entries, observer, isIntersecting) {
+      if (isIntersecting) {
+        this.getTimeline();
+      }
     }
   },
   watch: {

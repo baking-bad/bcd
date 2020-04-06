@@ -112,11 +112,14 @@ export function getRecommendedSubscriptions() {
         })
 }
 
-export function getProfileTimeline() {
+export function getProfileTimeline(offset = 0) {
     return api.get(`/subscriptions/timeline`,
         {
             headers: {
                 'Authorization': getJwt()
+            },
+            params: {
+                offset: offset
             }
         })
         .then((res) => {
