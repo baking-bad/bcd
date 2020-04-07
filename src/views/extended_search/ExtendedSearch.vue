@@ -36,7 +36,7 @@
           <v-tab>
             <v-icon left small>mdi-swap-horizontal</v-icon>Operations
           </v-tab>
-          <v-tab disabled>
+          <v-tab>
             <v-icon left small>mdi-file-tree</v-icon>Big Maps
           </v-tab>
         </v-tabs>
@@ -53,6 +53,7 @@
         <template v-for="(item, idx) in suggests">
           <ContractItem :key="idx" :item="item" :words="getSearchWords()" v-if="item.type === 'contract'" />
           <OperationItem :key="idx" :item="item" :words="getSearchWords()" v-else-if="item.type === 'operation'" />
+          <BigMapDiffItem :key="idx" :item="item" :words="getSearchWords()" v-else-if="item.type === 'bigmapdiff'" />
         </template>
         <span v-intersect="onDownloadPage"></span>
       </div>
@@ -124,6 +125,7 @@ import * as api from "@/api/index.js";
 
 import ContractItem from "@/views/extended_search/ContractItem.vue";
 import OperationItem from "@/views/extended_search/OperationItem.vue";
+import BigMapDiffItem from "@/views/extended_search/BigMapDiffItem.vue";
 import SearchNav from "@/views/extended_search/SearchNav.vue";
 
 export default {
@@ -131,6 +133,7 @@ export default {
   components: {
     ContractItem,
     OperationItem,
+    BigMapDiffItem,
     SearchNav
   },
   data: () => ({
@@ -177,6 +180,8 @@ export default {
         return ["contract"];
       } else if (this.tab == 2) {
         return ["operation"];
+      } else if (this.tab == 3) {
+        return ["bigmapdiff"];
       }
       return [];
     },
