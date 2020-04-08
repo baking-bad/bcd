@@ -198,8 +198,8 @@ export function getContractRating(network, address) {
         })
 }
 
-export function getContractBigMap(network, address, ptr) {
-    return getCancellable(api, `/contract/${network}/${address}/bigmap/${ptr}`, {})
+export function getContractBigMap(network, address, ptr, q = '', offset = 0) {
+    return getCancellable(api, `/contract/${network}/${address}/bigmap/${ptr}?q=${q}&offset=${offset}`, {})
         .then((res) => {
             if (!res) { return res; }
             if (res.status != 200) {
@@ -209,8 +209,8 @@ export function getContractBigMap(network, address, ptr) {
         })
 }
 
-export function getContractBigMapByKeyHash(network, address, ptr, keyhash) {
-    return getCancellable(api, `/contract/${network}/${address}/bigmap/${ptr}/${keyhash}`, {})
+export function getContractBigMapByKeyHash(network, address, ptr, keyhash, offset=0) {
+    return getCancellable(api, `/contract/${network}/${address}/bigmap/${ptr}/${keyhash}?offset=${offset}`, {})
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);

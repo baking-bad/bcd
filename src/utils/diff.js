@@ -105,7 +105,7 @@ function parseMap(x) {
     let item = {
         name: x.name || x.type,
         children: [],
-        value: x.value ? x.value : `0 ${label}`,
+        value: (x.value !== undefined && x.value !== null) ? x.value : `0 ${label}`,
         type: "object",
         value_type: x.type,
         id: getId(),

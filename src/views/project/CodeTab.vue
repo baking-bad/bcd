@@ -1,47 +1,48 @@
 <template>
   <v-container fluid>
-    <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
-    <div v-else-if="contract.code">
-      <v-toolbar flat class="mb-2 transparent">
-        <v-btn small depressed class="toolbar-btn" @click="downloadFile">
-          <v-icon class="mr-1" small>mdi-download-outline</v-icon>
-          <span class="overline">Download as .tz</span>
-        </v-btn>
-        <v-btn small depressed class="toolbar-btn" @click="openTryMichelson">
-          <v-icon class="mr-1" small>mdi-play-circle-outline</v-icon>
-          <span class="overline">Run in sandbox</span>
-        </v-btn>
-        <v-btn
-          v-if="contract.language === 'smartpy'"
-          small
-          depressed
-          class="toolbar-btn"
-          :href="getSmartPyLink()"
-          rel="nofollow noopener"
-          target="_blank"
-        >
-          <v-icon class="mr-1" small>mdi-link</v-icon>
-          <span class="overline">View on SmartPy.io</span>
-        </v-btn>
-        <v-spacer></v-spacer>
-        <v-select
-          v-model="selectedLevel"
-          v-if="contract.code.versions.length > 1"
-          :items="contract.code.versions"
-          item-text="name"
-          item-value="level"
-          label="Version"
-          style="max-width: 150px;"
-          dense
-          outlined
-          hide-details
-        ></v-select>
-      </v-toolbar>
-      <v-card tile>
-        <Michelson :code="contract.code.code"></Michelson>
-      </v-card>
-    </div>
-    <ErrorState v-else />
+    <v-skeleton-loader :loading="loading" height="500" type="image" class="ma-3">
+      <div v-if="contract.code">
+        <v-toolbar flat class="mb-2 transparent">
+          <v-btn small depressed class="toolbar-btn" @click="downloadFile">
+            <v-icon class="mr-1" small>mdi-download-outline</v-icon>
+            <span class="overline">Download as .tz</span>
+          </v-btn>
+          <v-btn small depressed class="toolbar-btn" @click="openTryMichelson">
+            <v-icon class="mr-1" small>mdi-play-circle-outline</v-icon>
+            <span class="overline">Run in sandbox</span>
+          </v-btn>
+          <v-btn
+            v-if="contract.language === 'smartpy'"
+            small
+            depressed
+            class="toolbar-btn"
+            :href="getSmartPyLink()"
+            rel="nofollow noopener"
+            target="_blank"
+          >
+            <v-icon class="mr-1" small>mdi-link</v-icon>
+            <span class="overline">View on SmartPy.io</span>
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-select
+            v-model="selectedLevel"
+            v-if="contract.code.versions.length > 1"
+            :items="contract.code.versions"
+            item-text="name"
+            item-value="level"
+            label="Version"
+            style="max-width: 150px;"
+            dense
+            outlined
+            hide-details
+          ></v-select>
+        </v-toolbar>
+        <v-card tile>
+          <Michelson :code="contract.code.code"></Michelson>
+        </v-card>
+      </div>
+      <ErrorState v-else />
+    </v-skeleton-loader>
   </v-container>
 </template>
 
@@ -50,7 +51,7 @@ import Michelson from "@/components/Michelson.vue";
 import { mapActions } from "vuex";
 import { getContractCode, getContractStorageRaw } from "@/api/index.js";
 import ErrorState from "@/components/ErrorState.vue";
-import LZString from "lz-string"
+import LZString from "lz-string";
 
 export default {
   props: {
@@ -119,23 +120,23 @@ export default {
     openTryMichelson() {
       if (this.contract.raw_storage === undefined) {
         getContractStorageRaw(this.contract.network, this.contract.address)
-        .then(res => {
-          this.contract.raw_storage = String(res);
-        })
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        })
+          .then(res => {
+            this.contract.raw_storage = String(res);
+          })
+          .catch(err => {
+            console.log(err);
+            this.showError(err);
+          });
       }
-      let query = `source=${this.contract.code.code}`
+      let query = `source=${this.contract.code.code}`;
       if (this.contract.raw_storage !== undefined) {
-        let storage = this.contract.raw_storage.replace(/\n|\s+/gm, ' ');
-        query += `&storage=${storage}`
+        let storage = this.contract.raw_storage.replace(/\n|\s+/gm, " ");
+        query += `&storage=${storage}`;
       }
       let lzQuery = LZString.compressToEncodedURIComponent(query);
       let uri = `https://try-michelson.tzalpha.net/?${lzQuery}`;
-      
-      var newTab = window.open();  // https://habr.com/ru/post/282880/
+
+      var newTab = window.open(); // https://habr.com/ru/post/282880/
       newTab.opener = null;
       newTab.location = uri;
     }
@@ -144,11 +145,7 @@ export default {
     contract: "getCode",
     selectedLevel: function(newValue) {
       this.loading = true;
-      getContractCode(
-        this.contract.network,
-        this.contract.address,
-        newValue
-      )
+      getContractCode(this.contract.network, this.contract.address, newValue)
         .then(res => {
           this.contract.code = res;
         })
