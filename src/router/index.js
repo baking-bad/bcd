@@ -24,6 +24,7 @@ import TimelineTab from '@/views/dashboard/TimelineTab.vue'
 import Diff from '@/views/Diff.vue'
 import Migration from '@/views/Migration.vue'
 import BigMapViewer from '@/views/BigMapViewer.vue'
+import BigMapDiffViewer from '@/views/BigMapDiffViewer.vue'
 import Projects from '@/views/Projects.vue'
 import OPG from '@/views/OPG.vue'
 
@@ -97,6 +98,13 @@ const router = new Router({
                 nav: Nav
             },
             name: 'bigmap'
+        },{
+            path: '/bigmap/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})/:ptr(\\d+)/:keyhash',
+            components: {
+                default: BigMapDiffViewer,
+                nav: Nav
+            },
+            name: 'bigmapdiff'
         },
         {
             path: '/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})',

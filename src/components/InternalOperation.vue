@@ -441,10 +441,6 @@ export default {
 
       return val;
     },
-    closeTreeNodeDetails() {
-      this.activeParameter = [];
-      this.activeStorage = [];
-    },
     getChangedItems(item) {
       let res = item.children.map(x => this.getChangedItems(x), this).flat();
       if (item.kind || res.length > 0) res.push(item);
