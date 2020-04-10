@@ -176,6 +176,16 @@ export function getContractStorageRaw(network, address) {
         })
 }
 
+export function getContractStorageRich(network, address) {
+    return api.get(`/contract/${network}/${address}/rich_storage`)
+        .then((res) => {
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
 export function getContractMempool(network, address) {
     return getCancellable(api, `/contract/${network}/${address}/mempool`, {})
         .then((res) => {

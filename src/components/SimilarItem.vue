@@ -10,7 +10,7 @@
       <v-list-item-subtitle>
         <span class="overline" :class="item.network === 'mainnet' ? 'primary--text' : ''">{{ item.network }}&nbsp;</span>
         <span v-if="item.timestamp > basetime" class="light-green--text text--darken-2 caption">newer</span>
-        <span v-else class="grey--text caption">older</span>
+        <span v-else-if="item.timestamp < basetime" class="grey--text caption">older</span>
       </v-list-item-subtitle>
       <v-list-item-subtitle class="overline grey--text text-lighten-5">
         <v-btn text x-small @click.prevent.stop="onDiffClick(item)" class="grey--text text--darken-2 px-0">

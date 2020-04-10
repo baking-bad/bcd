@@ -3,6 +3,14 @@
     <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
     <div v-else-if="contract.storage">
       <v-toolbar flat class="mb-2 transparent">
+        <v-btn 
+          small depressed class="toolbar-btn" 
+          @click="downloadFile"
+          :loading="downloading"
+          :disabled="downloading">
+            <v-icon class="mr-1" small>mdi-download-outline</v-icon>
+            <span class="overline">Download as .json</span>
+          </v-btn>
         <v-btn v-if="raw" @click="getStorage()" small depressed class="toolbar-btn">
           <v-icon class="mr-1" small>mdi-file-tree</v-icon>
           <span class="overline">Switch to Tree View</span>
@@ -23,7 +31,7 @@
         <v-btn v-if="contract.raw_storage && raw" 
           v-clipboard="getStorageString()"
           v-clipboard:success="onStorageCopy"
-          small depressed class="toolbar-btn ml-2">
+          small depressed class="toolbar-btn">
           <v-icon class="mr-1" small>mdi-content-copy</v-icon>
           <span class="overline">Copy one-liner</span>
         </v-btn>
@@ -63,6 +71,7 @@
               tile
               x-small
               color="secondary"
+              class="mb-1"
               v-else
             >
               <v-icon class="grey--text text--darken-1" x-small left>mdi-vector-link</v-icon>
@@ -85,7 +94,7 @@ import Michelson from "@/components/Michelson.vue"
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import ErrorState from "@/components/ErrorState.vue";
 
-import { getContractStorage, getContractStorageRaw } from "@/api/index.js";
+import { getContractStorage, getContractStorageRaw, getContractStorageRich } from "@/api/index.js";
 import { getTree } from "@/utils/diff.js";
 
 import dayjs from "dayjs";
@@ -114,6 +123,7 @@ export default {
   data: () => ({
     panel: 0,
     loading: true,
+    downloading: false,
     showTreeNodeDetails: false,
     activeField: [],
     raw: false,
@@ -196,6 +206,28 @@ export default {
         let href = getTzKTLink(this.contract.network, address);
         window.open(href, '_blank');
       }
+    },
+    downloadFile() {
+      this.downloading = true;
+      getContractStorageRich(this.contract.network, this.contract.address)
+        .then(res => {
+          var element = document.createElement("a");
+          element.setAttribute(
+            "href",
+            "data:text/plain;charset=utf-8," +
+              encodeURIComponent(JSON.stringify(res))
+          );
+          element.setAttribute("download", this.contract.address + ".storage.json");
+          element.style.display = "none";
+          document.body.appendChild(element);
+          element.click();
+          document.body.removeChild(element);
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
+        .finally(() => (this.downloading = false));
     }
   },
   watch: {
@@ -225,6 +257,7 @@ export default {
 }
 .toolbar-btn {
   color: rgba(0, 0, 0, 0.54);
+  margin-right: 10px;
 } 
 </style>
 
