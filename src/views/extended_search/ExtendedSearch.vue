@@ -92,7 +92,7 @@
                 <span class="display-1 ml-5">Ranking Factors</span>
               </div>
               <div class="d-flex flex-row mt-5">
-                <div class="d-flex flex-column" v-for="(values, key) in help" :key="key">
+                <div class="d-flex flex-column mr-5" v-for="(values, key) in help" :key="key">
                   <span class="title text-capitalize">{{ key }}</span>
                   <span v-for="(value, i) in values" :key="'help' + key + i" class="mt-1">
                     <span class="overline">{{ value[0] }}</span> <span class="body-2">{{ value[1] }}</span>
@@ -167,10 +167,17 @@ export default {
         ['address']
       ],
       'operations': [
-        ['entrypoint', 'called'],
-        ['error.with', 'error message if operation has failed'],
-        ['error.id', 'if operation has failed'],
+        ['entrypoint', ''],
+        ['parameter_strings', ''],
+        ['storage_strings', ''],
+        ['error.with', 'error message [if failed]'],
+        ['error.id', 'if failed'],
         ['hash', 'of the operation group']
+      ],
+      'big maps': [
+        ['key_strings', ''],
+        ['value_strings', ''],
+        ['key_hash', '']
       ]
     }
   }),

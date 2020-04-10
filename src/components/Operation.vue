@@ -195,9 +195,8 @@ export default {
     formatDate(value) {
       let d = dayjs(value);
       if (value) {
+        if (d.year() < dayjs().year()) return d.format("MMM D HH:mm, YYYY");
         if (d.add(1, "days").isBefore(dayjs())) return d.format("MMM D HH:mm");
-        if (d.add(1, "year").isBefore(dayjs()))
-          return d.format("MMM D HH:mm, YYYY");
         return d.fromNow();
       }
     },
