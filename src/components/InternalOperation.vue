@@ -39,21 +39,21 @@
         >{{ data.status }}</v-chip>
       </v-col>
       <v-col cols="4" class="pr-4">
-        <InfoItem
+        <AccountBox
           :title="sourceHeader"
-          :subtitle="source"
-          :selected="this.data.source == this.address"
-          :to="getLinkObject(source)"
-          :href="getTzKTLink(source)"
+          :address="data.source"
+          :alias="data.source_alias"
+          :highlighted="data.source == address"
+          :network="data.network"
         />
       </v-col>
       <v-col cols="4" class="pr-4">
-        <InfoItem
+        <AccountBox
           :title="destinationHeader"
-          :subtitle="destination"
-          :selected="this.data.destination == this.address"
-          :to="getLinkObject(destination)"
-          :href="getTzKTLink(destination)"
+          :address="data.destination"
+          :alias="data.destination_alias"
+          :highlighted="data.destination == address"
+          :network="data.network"
         />
       </v-col>
       <v-col cols="2" class="pr-4">
@@ -168,7 +168,6 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-divider></v-divider>
         <v-progress-linear v-if="loadingRaw" indeterminate color="primary"></v-progress-linear>
         <v-card-text class="mt-5">
           <vue-json-pretty v-if="!loadingRaw" :data="rawJson" :highlightMouseoverNode="true"></vue-json-pretty>
@@ -184,6 +183,7 @@
 import InfoItem from "@/components/InfoItem.vue";
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import OperationAlert from "@/components/OperationAlert.vue";
+import AccountBox from "@/components/AccountBox.vue"
 import VueJsonPretty from "vue-json-pretty";
 
 import { getTree } from "@/utils/diff.js";
@@ -200,7 +200,23 @@ export default {
     InfoItem,
     TreeNodeDetails,
     VueJsonPretty,
-    OperationAlert
+    OperationAlert,
+    AccountBox
+  },
+  data: () => ({
+    activeStorage: [],
+    activeParameter: [],
+    showParams: false,
+    showTreeNodeDetails: false,
+    showRaw: false,
+    rawJson: null,
+    loadingRaw: false
+  }),
+  created() {
+    this.showParams =
+      this.data.errors !== undefined ||
+      this.data.destination === this.address ||
+      this.address === undefined;
   },
   computed: {
     active() {
@@ -385,37 +401,7 @@ export default {
       return routeData.href;
     }
   },
-  data: () => ({
-    activeStorage: [],
-    activeParameter: [],
-    showParams: false,
-    showTreeNodeDetails: false,
-    showRaw: false,
-    rawJson: null,
-    loadingRaw: false
-  }),
-  created() {
-    this.showParams =
-      this.data.errors !== undefined ||
-      this.data.destination === this.address ||
-      this.address === undefined;
-  },
   methods: {
-    getLinkObject(address) {
-      if (address.startsWith("KT") && address != this.address) {
-        return {
-          name: "project",
-          params: {
-            address: address,
-            network: this.data.network
-          }
-        };
-      }
-    },
-    getTzKTLink(address) {
-      if (address.startsWith("tz"))
-        return getTzKTLink(this.data.network, address);
-    },
     getRawJSON() {
       if (this.rawJson != null) {
         this.showRaw = true;
@@ -528,6 +514,13 @@ export default {
     color: navy;
   }
   color: #76a34e;
+}
+.v-dialog > .v-card > .v-card__title {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: white;
+  border-bottom: 1px solid #eee;
 }
 </style>
 

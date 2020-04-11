@@ -108,6 +108,9 @@ function parseMap(x) {
         value: (x.value !== undefined && x.value !== null) ? x.value : `0 ${label}`,
         type: "object",
         value_type: x.type,
+        prim: x.prim,
+        realPrim: x.prim,
+        val: x.prim === 'big_map' ? String(x.value) : undefined,
         id: getId(),
         kind: parseDiffType(x.diff_type)
     }
