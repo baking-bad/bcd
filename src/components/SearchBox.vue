@@ -4,8 +4,8 @@
     :search-input.sync="searchText"
     :items="suggests"
     item-text="value"
+    @keyup.enter="onEnter(searchText)"
     @change="onSearch"
-    @keyup.enter="onEnter"
     return-object
     placeholder="Search anything"
     autocomplete="off"
@@ -88,21 +88,24 @@ export default {
     ...mapActions(["showError"]),
     onSearch() {
       if (!this.model) return;
-      this.$nextTick(() => {
-        this.model = null;
-      })
       let value = this.model.value || this.model;
       if (this.model.type == "operation" && checkOperation(value)) {
+        this.$nextTick(() => {
+          this.model = null;
+        })
         this.$router.push({ path: `/opg/${value}` });
       }
       if (this.model.type == "contract" && checkAddress(value)) {
         let network = this.model.body.network;
+        this.$nextTick(() => {
+          this.model = null;
+        })
         this.$router.push({ path: `/${network}/${value}` });
       }
     },
-    onEnter() {
-      if (this.searchText !== null && this.searchText.length > 2) {
-        this.$router.push({ name: "search", query: { text: this.searchText } });
+    onEnter(searchText) {
+      if (searchText !== null && searchText.length > 2) {
+        this.$router.push({ name: "search", query: { text: searchText } });
       }
     },
     formatDate(value) {
