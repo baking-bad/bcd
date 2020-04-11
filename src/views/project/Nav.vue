@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer app fixed right touchless width="350" class="elevation-1" v-if="contract">
-    <v-list class="py-1">
+    <v-list class="pa-0">
       <v-list-item two-line class="mb-0">
         <v-list-item-content>
           <v-list-item-title class="headline" v-if="contract.alias">{{ contract.alias }}</v-list-item-title>
@@ -35,8 +35,8 @@
       
       <v-divider></v-divider>
 
-      <div class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between my-2">
-        <div v-if="isAuthorized">
+      <div class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between mt-1">
+        <div v-if="isAuthorized" class="mb-1">
           <v-btn
             small
             text
@@ -49,39 +49,20 @@
         <Rating :rating="rating" />
       </div>
 
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title class="overline">Was active</v-list-item-title>
-          <v-list-item-subtitle class="body-2">
-            {{ formatDate(contract.timestamp) }}
-            <span v-if="contract.last_action"> — {{ formatDate(contract.last_action) }}</span>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item v-if="contract.balance">
-        <v-list-item-content>
-          <v-list-item-title class="overline">Locked amount</v-list-item-title>
-          <v-list-item-subtitle class="body-2">{{ contract.balance| uxtz }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item v-if="withdrawn">
-        <v-list-item-content>
-          <v-list-item-title class="overline">Total withdrawn</v-list-item-title>
-          <v-list-item-subtitle class="body-2">{{ withdrawn| uxtz }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item v-if="contract.manager" :href="getTzKTLink(contract.manager)" target="_blank">
-        <v-list-item-content>
-          <v-list-item-title class="overline">Deployed by</v-list-item-title>
-          <v-list-item-subtitle class="body-2">{{ contract.manager }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-      <v-list-item v-if="contract.delegate" :href="getTzKTLink(contract.delegate)" target="_blank">
-        <v-list-item-content>
-          <v-list-item-title class="overline">Delegated to</v-list-item-title>
-          <v-list-item-subtitle class="body-2">{{ contract.delegate }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
+      <InfoItem title="Was active" :subtitle="wasActive" gutters/>
+      <InfoItem v-if="contract.balance" title="Locked balance" :subtitle="contract.balance | uxtz" gutters/>
+      <InfoItem v-if="contract.total_withdrawn" title="Total withdrawn" :subtitle="contract.total_withdrawn | uxtz" gutters/>
+      <AccountBox v-if="contract.manager" 
+        title="Deployed by" 
+        :address="contract.manager" 
+        :network="contract.network" 
+        gutters />
+      <AccountBox v-if="contract.delegate"
+        title="Delegated to" 
+        :address="contract.delegate" 
+        :network="contract.network"
+        :alias="contract.delegate_alias"
+        gutters />
 
     </v-list>    
 
@@ -161,13 +142,17 @@ import { getTzKTLink } from "@/utils/tzkt.js";
 import ContractItem from "@/components/ContractItem.vue";
 import SimilarItem from "@/components/SimilarItem.vue";
 import Rating from "@/components/Rating.vue";
+import InfoItem from "@/components/InfoItem.vue";
+import AccountBox from "@/components/AccountBox.vue";
 
 export default {
   name: "ProjectNav",
   components: {
     ContractItem,
     SimilarItem,
-    Rating
+    Rating,
+    InfoItem,
+    AccountBox
   },
   props: {
     contract: Object
@@ -196,12 +181,13 @@ export default {
     hasSimilar() {
       return this.similarCount > 0;
     },
-    withdrawn() {
-      if (this.contract.sum_tx_amount) {
-        return (this.sum_tx_amount - (this.contract.balance || 0)) / 2;
-      } else {
-        return 0;
+    wasActive() {
+      let res = this.formatDate(this.contract.timestamp);
+      if (this.contract.last_action) {
+        let lastAction = this.formatDate(this.contract.last_action);
+        res = `${res} — ${lastAction}`;
       }
+      return res;
     }
   },
   created() {

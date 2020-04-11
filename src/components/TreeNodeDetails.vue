@@ -2,32 +2,35 @@
   <v-dialog v-if="data" v-model="show" width="800" :fullscreen="data.realPrim === 'lambda' && data.diffType === 'update'">
     <v-card>
       <v-card-title>
-          <v-row no-gutters>
-            <v-col cols="11">
-              <v-row no-gutters>
-                <v-col cols="auto" class="mr-5 my-1 d-flex flex-column justify-center">
-                  <span class="overline grey--text text--darken-1">Key</span>
-                  <span class="info-item-title grey--text text--darken-3">{{ data.name }}</span>
-                </v-col>
-                <v-col cols="2" class="my-1 d-flex flex-column justify-center">
-                  <span class="overline grey--text text--darken-1">Primitive</span>
-                  <span class="info-item-title grey--text text--darken-3">{{ data.prim }}</span>
-                </v-col>
-                <v-col cols="2" v-if="data.diffType" class="my-1 d-flex flex-column justify-center">
-                  <span class="overline grey--text text--darken-1">Action</span>
-                  <span class="info-item-title grey--text text--darken-3">{{ data.diffType }}</span>
-                </v-col>
-              </v-row>
-            </v-col>
-            <v-spacer></v-spacer>
-            <v-col cols="1" class="d-flex align-center justify-end">
-              <v-btn icon text @click="show = false">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>        
+        <v-row no-gutters>
+          <v-col cols="11">
+            <v-row no-gutters>
+              <v-col cols="auto" class="mr-5 my-1 d-flex flex-column justify-center">
+                <span class="overline grey--text text--darken-1">Key</span>
+                <span class="info-item-title grey--text text--darken-3">{{ data.name }}</span>
+              </v-col>
+              <v-col cols="2" class="my-1 d-flex flex-column justify-center">
+                <span class="overline grey--text text--darken-1">Primitive</span>
+                <span class="info-item-title grey--text text--darken-3">{{ data.prim }}</span>
+              </v-col>
+              <v-col cols="2" v-if="data.realPrim === 'address'" class="my-1 d-flex flex-column justify-center">
+                <span class="overline grey--text text--darken-1">Network</span>
+                <span class="info-item-title grey--text text--darken-3">{{ network }}</span>
+              </v-col>
+              <v-col cols="2" v-if="data.diffType" class="my-1 d-flex flex-column justify-center">
+                <span class="overline grey--text text--darken-1">Action</span>
+                <span class="info-item-title grey--text text--darken-3">{{ data.diffType }}</span>
+              </v-col>
+            </v-row>
+          </v-col>
+          <v-spacer></v-spacer>
+          <v-col cols="1" class="d-flex align-center justify-end">
+            <v-btn icon text @click="show = false">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-col>
+        </v-row>        
       </v-card-title>
-      <v-divider></v-divider>
       <v-card-text>
         <v-row no-gutters class="mt-5">
           <v-col v-if="data.diffType === 'update'" cols="6" class="pr-5">
@@ -41,6 +44,7 @@
             <ValueInspector :prim="data.realPrim" 
                             :value="data.val"
                             :network="network"
+                            :address="address"
                             :label="data.diffType === 'update' ? 'After' : 'Value'">
             </ValueInspector>
           </v-col>
@@ -61,7 +65,8 @@ export default {
   props: {
     value: Boolean,
     data: Object,
-    network: String
+    network: String,
+    address: String
   },
   data: () => ({
     show: false
@@ -106,5 +111,12 @@ export default {
   font-family: "Roboto Mono", monospace;
   font-size: 0.9rem;
   line-height: 1.2rem;
+}
+.v-dialog > .v-card > .v-card__title {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: white;
+  border-bottom: 1px solid #eee;
 }
 </style>

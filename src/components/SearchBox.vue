@@ -25,6 +25,7 @@
         <v-list-item-avatar>
           <v-icon v-if="item.type == 'contract'">mdi-code-tags</v-icon>
           <v-icon v-else-if="item.type == 'operation'">mdi-swap-horizontal</v-icon>
+          <v-icon v-else>mdi-alphabetical</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title v-if="item.body.alias">
@@ -45,7 +46,7 @@
         <v-list-item-action>
           <v-list-item-action-text>
             <span class="body-2"
-              v-if="!['alias', 'hash', 'address'].includes(item.body.found_by)" 
+              v-if="!['alias', 'hash', 'address'].includes(item.body.found_by) && item.highlights[item.body.found_by]" 
               v-html="item.highlights[item.body.found_by][0]"></span>
           </v-list-item-action-text>
           <v-list-item-action-text>
@@ -87,6 +88,9 @@ export default {
     ...mapActions(["showError"]),
     onSearch() {
       if (!this.model) return;
+      this.$nextTick(() => {
+        this.model = null;
+      })
       let value = this.model.value || this.model;
       if (this.model.type == "operation" && checkOperation(value)) {
         this.$router.push({ path: `/opg/${value}` });

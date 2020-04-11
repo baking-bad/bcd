@@ -22,11 +22,18 @@
         filled
         :label="label">
     </v-text-field>
-    <v-btn v-if="isKeyHash" text small link :href="getTzKTLink(this.value)" target="_blank">
-        <v-icon small class="mr-1">mdi-open-in-new</v-icon>Open in explorer
+    <v-btn v-if="isKeyHash || isContract" text small link @click.prevent.stop="handleAddress(value, true)" target="_blank">
+        <v-icon small class="mr-1">mdi-open-in-new</v-icon>
+        <span>Open in TzKT.io</span>
     </v-btn>
-    <v-btn v-else-if="isContract" text small link :to="getLinkObject(this.value)" target="_blank">
-        <v-icon small class="mr-1">mdi-open-in-new</v-icon>Search contract
+    <v-btn v-if="isContract" text small link @click.prevent.stop="handleAddress(value)" target="_blank">
+        <v-icon small class="mr-1">mdi-magnify</v-icon>
+        <span>Search contract</span>
+    </v-btn>
+    <v-btn v-else-if="prim === 'big_map'" text small link 
+        :to="{ name: 'bigmap', params: { address: address, ptr: value, network: network}}" 
+        target="_blank">
+        <v-icon small class="mr-1">mdi-open-in-new</v-icon>View Big Map
     </v-btn>
 </div>
 </template>
@@ -41,7 +48,8 @@ export default {
         value: String,
         prim: String,
         label: String,
-        network: String
+        network: String,
+        address: String
     },
     components: {
         Michelson
@@ -66,19 +74,16 @@ export default {
         }
     },
     methods: {
-        getTzKTLink(address) {
-            if (address.startsWith("tz"))
-                return getTzKTLink(this.network, address);
-        },
-        getLinkObject(address) {
-            return {
-                name: "project",
-                params: {
-                    address: address,
-                    network: this.network
-                }
-            };
-        },
+      handleAddress(s, external = false) {
+        const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
+        if (address.startsWith('tz') || external) {
+          let href = getTzKTLink(this.network, address);
+          window.open(href, '_blank');
+        } else {
+          let routeData = this.$router.resolve({ path: `/${this.network}/${address}` });
+          window.open(routeData.href, '_blank');
+        }
+      }
     }
 }
 </script>

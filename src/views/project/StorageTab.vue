@@ -67,7 +67,7 @@
             <span v-else>{{ item.name }}:&nbsp;</span>
             <span :class="item.type" v-if="item.value_type !== 'big_map'">{{ item.value }}</span>
             <v-btn
-              :to="{ name: 'bigmap', params: { address: contract.address, ptr: item.value, newtork: contract.network}}"
+              :to="{ name: 'bigmap', params: { address: contract.address, ptr: item.value, network: contract.network}}"
               tile
               x-small
               color="secondary"
@@ -79,7 +79,7 @@
             </v-btn>
           </template>
         </v-treeview>
-        <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" :network="contract.network" />
+        <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" :network="contract.network" :address="contract.address" />
       </v-card>
     </div>
     <ErrorState v-else />
