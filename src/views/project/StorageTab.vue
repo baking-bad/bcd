@@ -11,14 +11,6 @@
             <v-icon class="mr-1" small>mdi-download-outline</v-icon>
             <span class="overline">Download as .json</span>
           </v-btn>
-        <v-btn v-if="raw" @click="getStorage()" small depressed class="toolbar-btn">
-          <v-icon class="mr-1" small>mdi-file-tree</v-icon>
-          <span class="overline">Switch to Tree View</span>
-        </v-btn>
-        <v-btn v-else @click="getStorageRaw()" small depressed class="toolbar-btn">
-          <v-icon class="mr-1" small>mdi-code-braces</v-icon>
-          <span class="overline">Switch to Micheline</span>
-        </v-btn>
         <v-snackbar color="light-green darken-1" v-model="clipboard_ok">
           Copied to clipboard!
           <v-btn
@@ -34,6 +26,14 @@
           small depressed class="toolbar-btn">
           <v-icon class="mr-1" small>mdi-content-copy</v-icon>
           <span class="overline">Copy one-liner</span>
+        </v-btn>
+        <v-btn v-if="raw" @click="getStorage()" small depressed class="toolbar-btn">
+          <v-icon class="mr-1" small>mdi-file-tree</v-icon>
+          <span class="overline">Switch to Tree View</span>
+        </v-btn>
+        <v-btn v-else @click="getStorageRaw()" small depressed class="toolbar-btn">
+          <v-icon class="mr-1" small>mdi-code-braces</v-icon>
+          <span class="overline">Switch to Micheline</span>
         </v-btn>
       </v-toolbar>
       <v-card v-if="raw" tile class="py-4">
