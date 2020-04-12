@@ -166,9 +166,9 @@ export default {
     },
     totalCost() {
       if (this.value.mempool) return 0;
-      let val = this.getBurned(this.value)
+      let val = this.value.burned || 0;
       for (let i = 0; i < this.value.internal_operations.length; i++) {
-        val += this.getBurned(this.value.internal_operations[i]);
+        val += this.value.internal_operations[i].burned || 0;
       }
       if (!isNaN(this.value.fee)) {
         val += this.value.fee;
@@ -231,18 +231,6 @@ export default {
       for (let i = 0; i < this.value.internal_operations.length; i++) {
         val += this.getOrientedAmount(this.value.internal_operations[i], sign);
       }
-      return val;
-    },
-    getBurned(data) {
-      if (this.value.status !== "applied" || this.value.mempool)
-        return 0;
-      let val = 0;
-      if (data.result.paid_storage_size_diff)
-        val += data.result.paid_storage_size_diff * 1000;
-
-      if (data.result.allocated_destination_contract) 
-        val += 257000;
-
       return val;
     },
     getInvoker(data) {
