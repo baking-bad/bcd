@@ -384,10 +384,10 @@ export default {
       return `overline ${this.data.kind}`;
     },
     burned() {
-      let val = this.getBurned(this.data);
+      let val = this.data.burned || 0;
       if (!this.data.internal && !this.data.mempool) {
         for (let i = 0; i < this.data.internal_operations.length; i++) {
-          val += this.getBurned(this.data.internal_operations[i]);
+          val += this.data.internal_operations[i].burned || 0;
         }
       }
 
@@ -415,17 +415,6 @@ export default {
         })
         .catch(err => console.log(err))
         .finally(() => (this.loadingRaw = false));
-    },
-    getBurned(data) {
-      if (this.data.status !== "applied" || this.data.mempool) return 0;
-
-      let val = 0;
-      if (data.result.paid_storage_size_diff)
-        val += data.result.paid_storage_size_diff * 1000;
-
-      if (data.result.allocated_destination_contract) val += 257000;
-
-      return val;
     },
     getChangedItems(item) {
       let res = item.children.map(x => this.getChangedItems(x), this).flat();
