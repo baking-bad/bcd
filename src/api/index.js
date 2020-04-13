@@ -122,9 +122,7 @@ export function getContractCode(network, address, level = 0) {
 }
 
 export function getContractMigration(network, address, protocol) {
-    return getCancellable(api, `/contract/${network}/${address}/migration`, {
-        protocol: protocol
-    })
+    return getCancellable(api, `/contract/${network}/${address}/migration?protocol=${protocol}`, {})
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
