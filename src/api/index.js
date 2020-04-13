@@ -6,7 +6,7 @@ const api = axios.create({
     responseType: 'json'
 });
 
-import { getCancellable, cancelRequests } from '@/api/cancellation.js';
+import { getCancellable, postCancellable, cancelRequests } from '@/api/cancellation.js';
 
 export class RequestFailedError extends Error { }
 
@@ -144,6 +144,31 @@ export function getContractMigrations(network, address) {
 
 export function getContractEntrypoints(network, address) {
     return getCancellable(api, `/contract/${network}/${address}/entrypoints`, {})
+        .then((res) => {
+            if (!res) { return res; }
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+export function getContractEntrypointSchema(network, address, path) {
+    return getCancellable(api, `/contract/${network}/${address}/entrypoints/schema?path=${path}`, {})
+        .then((res) => {
+            if (!res) { return res; }
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+export function getContractEntrypointData(network, address, path, data) {
+    return postCancellable(api, `/contract/${network}/${address}/entrypoints/data`, {
+        path: path,
+        data: data
+    })
         .then((res) => {
             if (!res) { return res; }
             if (res.status != 200) {
