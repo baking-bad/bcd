@@ -53,12 +53,55 @@
                   <v-overlay absolute :value="loadingSchema">
                     <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
                   </v-overlay>
-                  <v-form v-if="schema">
-                    <v-jsf v-model="model" :schema="schema"></v-jsf>
-                    <v-btn outlined color="primary" @click="getData">
-                      <v-icon small left>mdi-code-braces</v-icon>build
-                    </v-btn>
-                  </v-form>
+                  <div v-if="schema">
+                    <v-form>
+                      <v-jsf v-model="model" :schema="schema"></v-jsf>
+                      <div class="d-flex justify-space-between">
+                        <v-btn outlined color="primary" @click="getData" :loading="loadingData">
+                          <v-icon small left>mdi-code-braces</v-icon>build
+                        </v-btn>
+                        <div v-if="entrypointData">
+                          <v-snackbar color="light-green darken-1" v-model="clipboard_ok">
+                            Copied to clipboard!
+                            <v-btn text @click="clipboard_ok = false">OK</v-btn>
+                          </v-snackbar>
+                          <v-btn
+                            v-if="entrypointData"
+                            v-clipboard="JSON.stringify(entrypointData)"
+                            v-clipboard:success="onEntrypointDataCopy"
+                            small
+                            depressed
+                            class="toolbar-btn"
+                          >
+                            <v-icon class="mr-1" small>mdi-content-copy</v-icon>
+                            <span class="overline">Copy one-liner</span>
+                          </v-btn>
+                          <v-btn small depressed class="toolbar-btn" @click="fullscreenData = true">
+                            <v-icon class="mr-1" small>mdi-fullscreen</v-icon>
+                            <span class="overline">Fullscreen</span>
+                          </v-btn>
+                        </div>
+                      </div>
+                    </v-form>
+                    <v-expand-transition mode="out-in">
+                      <div class="my-3" v-show="alertData || entrypointData">
+                        <v-alert
+                          v-if="alertData"
+                          border="left"
+                          dense
+                          outlined
+                          type="error"
+                          dark
+                        >{{ alertData }}</v-alert>
+                        <vue-json-pretty
+                          class="json-viewer"
+                          v-else-if="entrypointData"
+                          :data="entrypointData"
+                          :highlightMouseoverNode="true"
+                        ></vue-json-pretty>
+                      </div>
+                    </v-expand-transition>
+                  </div>
                   <v-card
                     v-else
                     class="d-flex flex-column align-center justify-center my-6 transparent"
@@ -82,6 +125,21 @@
         <v-icon size="100">mdi-chat-sleep-outline</v-icon>
         <span class="headline">Entrypoints are not found</span>
       </v-card>
+
+      <v-dialog v-model="fullscreenData" fullscreen>
+        <v-card>
+          <v-card-title class="headline elevation-1" primary-title>
+            <span>Entrypoint data</span>
+            <v-spacer></v-spacer>
+            <v-btn icon text @click="fullscreenData = false">
+              <v-icon>mdi-close</v-icon>
+            </v-btn>
+          </v-card-title>
+          <v-card-text class="mt-5">
+            <vue-json-pretty v-if="entrypointData" :data="entrypointData" :highlightMouseoverNode="true"></vue-json-pretty>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
     </v-skeleton-loader>
   </v-container>
 </template>
@@ -96,10 +154,15 @@ import {
 } from "@/api/index.js";
 import { getEntrypointTree } from "@/utils/tree.js";
 
+import VueJsonPretty from "vue-json-pretty";
+
 export default {
   name: "EntrypointsTab",
   props: {
     contract: Object
+  },
+  components: {
+    VueJsonPretty
   },
   data: () => ({
     loading: true,
@@ -108,7 +171,10 @@ export default {
     model: {},
     schema: {},
     entrypointData: null,
-    selected: -1
+    alertData: null,
+    selected: -1,
+    clipboard_ok: false,
+    fullscreenData: false
   }),
   computed: {
     selectedItem() {
@@ -138,7 +204,10 @@ export default {
     getEntrypoints() {
       this.loading = true;
       this.loadingSchema = true;
-      if (this.contract == null || this.contract.full_entrypoints !== undefined) {
+      if (
+        this.contract == null ||
+        this.contract.full_entrypoints !== undefined
+      ) {
         this.loading = false;
         this.loadingSchema = false;
         return;
@@ -168,7 +237,10 @@ export default {
     },
     getSchema(item) {
       this.loadingSchema = true;
-      if (this.contract == null || this.contract.full_entrypoints === undefined) {
+      if (
+        this.contract == null ||
+        this.contract.full_entrypoints === undefined
+      ) {
         this.loadingSchema = false;
         return;
       }
@@ -195,6 +267,9 @@ export default {
         this.loadingData = false;
         return;
       }
+
+      this.alertData = null;
+      this.entrypointData = null;
       getContractEntrypointData(
         this.contract.network,
         this.contract.address,
@@ -205,8 +280,7 @@ export default {
           this.entrypointData = res;
         })
         .catch(err => {
-          console.log(err);
-          this.showError(err);
+          this.alertData = err;
         })
         .finally(() => (this.loadingData = false));
     },
@@ -224,11 +298,16 @@ export default {
           tree.updateAll(true);
         });
       }
+    },
+    onEntrypointDataCopy() {
+      this.clipboard_ok = true;
     }
   },
   watch: {
     contract: "getEntrypoints",
     selectedItem: function(newValue) {
+      this.entrypointData = null;
+      this.alertData = null;
       if (newValue === null) return;
       this.getSchema(newValue);
     },
@@ -250,6 +329,19 @@ export default {
   .object {
     color: #bbb;
   }
+}
+
+.json-viewer {
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid rgba(0, 0, 0, 0.38);
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.toolbar-btn {
+  color: rgba(0, 0, 0, 0.54);
+  margin-right: 10px;
 }
 </style>
 
