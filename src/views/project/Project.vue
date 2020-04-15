@@ -28,8 +28,8 @@
               <v-tab :to="{name: 'storage'}" replace class="overline">
                 <v-icon small left>mdi-alphabetical</v-icon>Storage
               </v-tab>
-              <v-tab :to="{name: 'migrations'}" replace class="overline">
-                <v-icon small left>mdi-transfer</v-icon>Migrations
+              <v-tab :to="{name: 'migrations'}" replace class="overline" v-if="contract.migrations_count">
+                <v-icon small left>mdi-transfer</v-icon>Migrations ({{ contract.migrations_count || 0 }})
               </v-tab>
             </v-tabs>
             <ExpandableSearch class="mb-1"></ExpandableSearch>
