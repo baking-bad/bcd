@@ -164,10 +164,11 @@ export function getContractEntrypointSchema(network, address, path) {
         })
 }
 
-export function getContractEntrypointData(network, address, path, data) {
+export function getContractEntrypointData(network, address, path, data, format = '') {
     return postCancellable(api, `/contract/${network}/${address}/entrypoints/data`, {
         path: path,
-        data: data
+        data: data,
+        format: format
     })
         .then((res) => {
             if (!res) { return res; }
@@ -242,7 +243,7 @@ export function getContractBigMap(network, address, ptr, q = '', offset = 0) {
         })
 }
 
-export function getContractBigMapByKeyHash(network, address, ptr, keyhash, offset=0) {
+export function getContractBigMapByKeyHash(network, address, ptr, keyhash, offset = 0) {
     return getCancellable(api, `/contract/${network}/${address}/bigmap/${ptr}/${keyhash}?offset=${offset}`, {})
         .then((res) => {
             if (res.status != 200) {

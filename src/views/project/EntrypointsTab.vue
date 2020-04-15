@@ -16,7 +16,7 @@
             </v-list-item-group>
           </v-list>
         </v-col>
-        <v-col>
+        <v-col cols="9">
           <div v-if="selectedItem">
             <v-card>
               <v-card-text>
@@ -57,18 +57,23 @@
                     <v-form>
                       <v-jsf v-model="model" :schema="schema"></v-jsf>
                       <div class="d-flex justify-space-between">
-                        <v-btn outlined color="primary" @click="getData" :loading="loadingData">
+                        <v-btn
+                          outlined
+                          color="primary"
+                          @click="loadData(selectedItem)"
+                          :loading="loadingData"
+                        >
                           <v-icon small left>mdi-code-braces</v-icon>build
                         </v-btn>
-                        <div v-if="entrypointData">
+                        <div v-if="micheline">
                           <v-snackbar color="light-green darken-1" v-model="clipboard_ok">
                             Copied to clipboard!
                             <v-btn text @click="clipboard_ok = false">OK</v-btn>
                           </v-snackbar>
                           <v-btn
-                            v-if="entrypointData"
-                            v-clipboard="JSON.stringify(entrypointData)"
-                            v-clipboard:success="onEntrypointDataCopy"
+                            v-if="micheline"
+                            v-clipboard="JSON.stringify(micheline)"
+                            v-clipboard:success="onmichelineCopy"
                             small
                             depressed
                             class="toolbar-btn"
@@ -80,11 +85,25 @@
                             <v-icon class="mr-1" small>mdi-fullscreen</v-icon>
                             <span class="overline">Fullscreen</span>
                           </v-btn>
+                          <v-btn
+                            small
+                            depressed
+                            class="toolbar-btn"
+                            @click="formatAsMichelson = !formatAsMichelson"
+                          >
+                            <v-icon
+                              class="mr-1"
+                              small
+                            >{{ formatAsMichelson ? 'mdi-code-parentheses' : 'mdi-code-json' }}</v-icon>
+                            <span
+                              class="overline"
+                            >{{ formatAsMichelson ? 'michelson' : 'micheline' }}</span>
+                          </v-btn>
                         </div>
                       </div>
                     </v-form>
                     <v-expand-transition mode="out-in">
-                      <div class="my-3" v-show="alertData || entrypointData">
+                      <div v-show="alertData || micheline || michelson" class="my-3">
                         <v-alert
                           v-if="alertData"
                           border="left"
@@ -95,10 +114,11 @@
                         >{{ alertData }}</v-alert>
                         <vue-json-pretty
                           class="json-viewer"
-                          v-else-if="entrypointData"
-                          :data="entrypointData"
+                          v-else-if="micheline && !formatAsMichelson"
+                          :data="micheline"
                           :highlightMouseoverNode="true"
                         ></vue-json-pretty>
+                        <Michelson v-else-if="michelson && formatAsMichelson" :code="michelson"></Michelson>
                       </div>
                     </v-expand-transition>
                   </div>
@@ -136,7 +156,7 @@
             </v-btn>
           </v-card-title>
           <v-card-text class="mt-5">
-            <vue-json-pretty v-if="entrypointData" :data="entrypointData" :highlightMouseoverNode="true"></vue-json-pretty>
+            <vue-json-pretty v-if="micheline" :data="micheline" :highlightMouseoverNode="true"></vue-json-pretty>
           </v-card-text>
         </v-card>
       </v-dialog>
@@ -155,6 +175,7 @@ import {
 import { getEntrypointTree } from "@/utils/tree.js";
 
 import VueJsonPretty from "vue-json-pretty";
+import Michelson from "@/components/Michelson.vue";
 
 export default {
   name: "EntrypointsTab",
@@ -162,7 +183,8 @@ export default {
     contract: Object
   },
   components: {
-    VueJsonPretty
+    VueJsonPretty,
+    Michelson
   },
   data: () => ({
     loading: true,
@@ -170,11 +192,13 @@ export default {
     loadingData: false,
     model: {},
     schema: {},
-    entrypointData: null,
+    micheline: null,
+    michelson: null,
     alertData: null,
     selected: -1,
     clipboard_ok: false,
-    fullscreenData: false
+    fullscreenData: false,
+    formatAsMichelson: false
   }),
   computed: {
     selectedItem() {
@@ -268,16 +292,23 @@ export default {
         return;
       }
 
-      this.alertData = null;
-      this.entrypointData = null;
       getContractEntrypointData(
         this.contract.network,
         this.contract.address,
         this.selectedItem.miguel_path,
-        this.model
+        this.model,
+        this.formatAsMichelson ? "michelson" : ""
       )
         .then(res => {
-          this.entrypointData = res;
+          if (!this.formatAsMichelson) {
+            this.micheline = res;
+          } else if (this.formatAsMichelson) {
+            if (res instanceof String) {
+              this.michelson = res;
+            } else {
+              this.michelson = String(res);
+            }
+          }
         })
         .catch(err => {
           this.alertData = err;
@@ -299,20 +330,34 @@ export default {
         });
       }
     },
-    onEntrypointDataCopy() {
+    onmichelineCopy() {
       this.clipboard_ok = true;
+    },
+    loadData(item) {
+      this.micheline = null;
+      this.michelson = null;
+      this.alertData = null;
+      this.getData(item);
     }
   },
   watch: {
     contract: "getEntrypoints",
     selectedItem: function(newValue) {
-      this.entrypointData = null;
-      this.alertData = null;
       if (newValue === null) return;
+      this.micheline = null;
+      this.michelson = null;
+      this.alertData = null;
       this.getSchema(newValue);
     },
     selectedTree() {
       this.openAllNodes();
+    },
+    formatAsMichelson() {
+      if (
+        (!this.formatAsMichelson && !this.micheline) ||
+        (this.formatAsMichelson && !this.michelson)
+      )
+        this.getData();
     }
   }
 };
