@@ -19,6 +19,9 @@ import utc from 'dayjs/plugin/utc';
 
 import VJsf from '@koumoul/vjsf/lib/VJsf.js'
 import '@koumoul/vjsf/lib/VJsf.css'
+
+import draggable from 'vuedraggable';
+Vue.component('draggable', draggable);
 Vue.component('VJsf', VJsf)
 
 Vue.config.productionTip = false;
