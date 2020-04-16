@@ -16,6 +16,14 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 
+
+import VJsf from '@koumoul/vjsf/lib/VJsf.js'
+import '@koumoul/vjsf/lib/VJsf.css'
+
+import draggable from 'vuedraggable';
+Vue.component('draggable', draggable);
+Vue.component('VJsf', VJsf)
+
 Vue.config.productionTip = false;
 
 dayjs.extend(relativeTime);
@@ -87,23 +95,20 @@ if (process.env.NODE_ENV === 'production') {
     id: "UA-160856677-1",
     router,
     autoTracking: {
-        pageviewTemplate(route) {
-            return {
-                page: route.name,
-                title: document.title,
-                location: window.location.href
-            }
+      pageviewTemplate(route) {
+        return {
+          page: route.name,
+          title: document.title,
+          location: window.location.href
         }
+      }
     },
     debug: {
-        enabled: false,
-        sendHitTask: true
+      enabled: false,
+      sendHitTask: true
     }
   });
 }
-
-
-
 
 new Vue({
   router,

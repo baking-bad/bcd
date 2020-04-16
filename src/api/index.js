@@ -6,7 +6,7 @@ const api = axios.create({
     responseType: 'json'
 });
 
-import { getCancellable, cancelRequests } from '@/api/cancellation.js';
+import { getCancellable, postCancellable, cancelRequests } from '@/api/cancellation.js';
 
 export class RequestFailedError extends Error { }
 
@@ -147,6 +147,32 @@ export function getContractEntrypoints(network, address) {
         })
 }
 
+export function getContractEntrypointSchema(network, address, path) {
+    return getCancellable(api, `/contract/${network}/${address}/entrypoints/schema?path=${path}`, {})
+        .then((res) => {
+            if (!res) { return res; }
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+export function getContractEntrypointData(network, address, path, data, format = '') {
+    return postCancellable(api, `/contract/${network}/${address}/entrypoints/data`, {
+        path: path,
+        data: data,
+        format: format
+    })
+        .then((res) => {
+            if (!res) { return res; }
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
 export function getContractStorage(network, address) {
     return getCancellable(api, `/contract/${network}/${address}/storage`, {})
         .then((res) => {
@@ -211,7 +237,7 @@ export function getContractBigMap(network, address, ptr, q = '', offset = 0) {
         })
 }
 
-export function getContractBigMapByKeyHash(network, address, ptr, keyhash, offset=0) {
+export function getContractBigMapByKeyHash(network, address, ptr, keyhash, offset = 0) {
     return getCancellable(api, `/contract/${network}/${address}/bigmap/${ptr}/${keyhash}?offset=${offset}`, {})
         .then((res) => {
             if (res.status != 200) {

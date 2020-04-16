@@ -26,6 +26,25 @@ export function getCancellable(api, url, params) {
             delete cancelTokens[id];
         })
 }
+export function postCancellable(api, url, params) {
+    let id = getCancelSource();
+    params.cancelToken = cancelTokens[id].token;
+    return api.post(url, params)
+        .then(res => {
+            return res
+        })
+        .catch((err) => {
+            if (axios.isCancel(err)) {
+                return false;
+            } else if (err.response) {
+                return err.response.data.error;
+            }
+            return err;
+        })
+        .finally(() => {
+            delete cancelTokens[id];
+        })
+}
 
 export function cancelRequests() {
     if (cancelTokens) {
