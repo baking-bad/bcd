@@ -6,25 +6,26 @@
     >
       <div class="elevation-2 ma-3">
         <template v-for="(item, idx) in migrations">
-          <template v-if="item.vesting">
+          <template v-if="item.kind == 'bootstrap'">
             <v-hover :key="idx" v-slot:default="{ hover }">
               <v-row
                 :class="{ 'on-hover': hover, 'migration-row vesting': true }"
                 no-gutters
                 align="center"
-                @click="to({name: 'code', params: {address: $route.params.address, network: $route.params.network}, query: {level: 1}})"
-              >
+                @click="to(`https://tzkt.io/protocols/${item.protocol}`)"
+              > 
                 <v-col cols="2">
                   <div class="subtitle-2">{{ item.timestamp | formatDate }}</div>
-                  <div class="overline grey--text text--darken-3">genesis block</div>
+                  <div class="overline grey--text text--darken-3">{{ item.level }}</div>
                 </v-col>
                 <v-col cols="10">
-                  <div class="subtitle-2">Vesting</div>
+                  <div class="subtitle-2">Originated during the protocol activation</div>
+                  <div class="subtitle hash grey--text text--darken-3">{{ item.protocol }}</div>
                 </v-col>
               </v-row>
             </v-hover>
           </template>
-          <template v-else-if="item.hash">
+          <template v-else-if="item.kind == 'lambda'">
             <v-hover :key="idx" v-slot:default="{ hover }">
               <v-row
                 :class="{ 'on-hover': hover, 'migration-row lambda': true }"
@@ -37,26 +38,35 @@
                   <div class="overline grey--text text--darken-3">{{ item.level }}</div>
                 </v-col>
                 <v-col cols="10">
-                  <div class="subtitle-2">Lambda in storage was altered</div>
+                  <div class="subtitle-2">Lambda expression in the storage was updated</div>
                   <div class="subtitle hash grey--text text--darken-3">{{ item.hash }}</div>
                 </v-col>
               </v-row>
             </v-hover>
           </template>
-          <template v-else>
+          <template v-else-if="item.kind == 'update'">
             <v-hover :key="idx" v-slot:default="{ hover }">
               <v-row
                 :class="{ 'on-hover': hover, 'migration-row protocol': true }"
                 no-gutters
                 align="center"
-                @click="to({name: 'migration', params: {address: $route.params.address, network: $route.params.network, protocol: item.protocol}})"
+                @click="to({name: 'diff', query: {
+                  addressA: contract.address, 
+                  networkA: contract.network, 
+                  protocolA: item.prev_protocol,
+                  levelA: item.level - 1,
+                  addressB: contract.address,
+                  networkB: contract.network,
+                  protocolB: item.protocol,
+                  levelB: item.level + 1
+                }})"
               >
                 <v-col cols="2">
                   <div class="subtitle-2">{{ item.timestamp | formatDate }}</div>
                   <div class="overline grey--text text--darken-3">{{ item.level }}</div>
                 </v-col>
                 <v-col cols="10">
-                  <div class="subtitle-2">Contract was altered during a protocol update</div>
+                  <div class="subtitle-2">Contract code was altered during the protocol update</div>
                   <div class="subtitle hash grey--text text--darken-3">{{ item.protocol }}</div>
                 </v-col>
               </v-row>

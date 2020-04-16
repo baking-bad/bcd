@@ -4,7 +4,10 @@
       <v-card class="my-3 transparent" :elevation="hover ? 2 : 0" @click="onSearch(item)">
         <v-list-item three-line selectable>
           <v-list-item-content>
-            <v-list-item-title class="hash">
+            <v-list-item-title>
+              <span v-html="highlight(item.body.key)"></span>
+            </v-list-item-title>
+            <v-list-item-title class="key_hash grey--text text--darken-2">
               <span v-html="highlight(item.value)"></span>
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -14,7 +17,7 @@
               >{{ item.body.network }}</span>
             </v-list-item-subtitle>
 
-            <div class="d-flex flex-horizontal mt-1">
+            <div class="d-flex flex-horizontal mt-1">              
               <v-chip
                 v-if="item.body.ptr > 0"
                 key="ptr"
@@ -25,34 +28,23 @@
                 outlined
                 pill
               >
-                <span>Pointer {{ item.body.ptr }}</span>
-              </v-chip>
-              <v-chip
-                key="level"
-                color="grey"
-                text-color="grey darken-1"
-                class="mr-1 caption"
-                small
-                outlined
-                pill
-              >
-                <span>Level {{ item.body.level }}</span>
+                <span>big map {{ item.body.ptr }}</span>
               </v-chip>
             </div>
           </v-list-item-content>
           <v-list-item-action>
             <v-list-item-action-text class="overline mt-1">{{ formatDate(item.body.timestamp) }}</v-list-item-action-text>
             <v-list-item-action-text v-if="item.group" class="caption">
-              <span>{{ plural(item.group.count, 'change') }}</span>
+              <span>{{ plural(item.group.count, 'update') }}</span>
             </v-list-item-action-text>
           </v-list-item-action>
         </v-list-item>
 
-        <div class="d-flex flex-row mx-6">
+        <div class="d-flex flex-wrap flex-row mx-6">
           <div v-for="(values, key) in item.highlights" :key="key">
             <div
               class="d-flex flex-column mr-6 pt-2 pb-4"
-              v-if="!['alias', 'address', 'tags', 'language'].includes(key)"
+              v-if="!['key_strings'].includes(key)"
             >
               <span class="overline">{{ key }}</span>
               <span v-for="(value, i) in values" :key="key + i">
@@ -79,21 +71,10 @@ export default {
   data: () => ({
     limit: 5
   }),
-  computed: {
-    hasMore() {
-      return (
-        this.limit == 5 &&
-        ((this.item.body.entrypoints &&
-          this.item.body.entrypoints.length > 5) ||
-          (this.item.body.fail_strings &&
-            this.item.body.fail_strings.length > 5))
-      );
-    }
-  },
   methods: {
     onSearch(item) {
       let routeData = this.$router.resolve({
-        path: `/bigmap/${item.body.network}/${item.body.address}/${item.body.ptr}`
+        path: `/bigmap/${item.body.network}/${item.body.address}/${item.body.ptr}/${item.body.key_hash}`
       });
       console.log(routeData.href);
       window.open(routeData.href, "_blank");
@@ -125,5 +106,9 @@ export default {
 }
 .bigmapdiff:hover {
   cursor: pointer;
+}
+.key_hash {
+  font-family: "Roboto Mono", monospace;
+  font-size: 0.9rem;
 }
 </style>

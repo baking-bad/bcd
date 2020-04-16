@@ -21,22 +21,9 @@
       </v-list-item-subtitle>
     </v-list-item-content>
 
-    <v-list-item-action class="mt-2 mb-4">
+    <v-list-item-action class="mt-2 mb-9">
       <v-list-item-action-text>{{ item.tx_count || 1 }} operations till</v-list-item-action-text>
       <v-list-item-action-text class="overline"> {{ formatDate(item.last_action || item.timestamp) }}</v-list-item-action-text>
-      <v-list-item-action-text>
-        <v-tooltip left>
-          <template v-slot:activator="{ on }">
-            <div v-on="on" class="overline">
-              <v-icon x-small :color="consumed_gas_diff > 0 ? 'red' : 'green'">mdi-fire</v-icon>
-              <span v-if="item.tx_count" :class="consumed_gas_diff <= 0 ? 'primary--text' : 'red--text'">
-                <span v-if="consumed_gas_diff > 0">+</span>{{ consumed_gas_diff }}%
-              </span>
-            </div>
-          </template>
-          <span>Median consumed gas change</span>
-        </v-tooltip>
-      </v-list-item-action-text>
     </v-list-item-action>
   </v-list-item>
 </template>
@@ -62,11 +49,11 @@ export default {
     onDiffClick(item) {
       let routeData = this.$router.resolve({
         name: "diff",
-        params: {
-          address: this.address,
-          network: this.network,
-          address2: item.address,
-          network2: item.network
+        query: {
+          addressA: this.address,
+          networkA: this.network,
+          addressB: item.address,
+          networkB: item.network
         }
       });
       window.open(routeData.href, "_blank");

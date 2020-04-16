@@ -244,12 +244,16 @@ export default {
         })
         .finally(() => (this.similarLoading = false));
 
-      getContractRating(this.contract.network, this.contract.address).then(
-        res => {
-          if (!res) return;
-          this.rating = res;
-        }
-      );
+      getContractRating(this.contract.network, this.contract.address)
+        .then(
+          res => {
+            if (!res) return;
+            this.rating = res;
+          }
+        )
+        .catch(err => {
+          console.log(err);
+        });
     },
     getTzKTLink(address) {
       if (address.startsWith("tz"))

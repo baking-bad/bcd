@@ -109,21 +109,13 @@ export function getContractOperations(network, address, last_id = "", from = 0, 
         })
 }
 
-export function getContractCode(network, address, level = 0) {
+export function getContractCode(network, address, protocol = "") {
+    let params = {}
+    if (protocol !== "") {
+        params.protocol = protocol;
+    }
     return getCancellable(api, `/contract/${network}/${address}/code`, {
-        level: level
-    })
-        .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
-            return res.data
-        })
-}
-
-export function getContractMigration(network, address, protocol) {
-    return getCancellable(api, `/contract/${network}/${address}/migration`, {
-        protocol: protocol
+        params: params
     })
         .then((res) => {
             if (res.status != 200) {
@@ -240,13 +232,8 @@ export function getRandomContract() {
         })
 }
 
-export function getDiff(sn, sa, dn, da) {
-    return getCancellable(api, `/diff`, {
-        sn: sn,
-        sa: sa,
-        dn: dn,
-        da: da
-    })
+export function getDiff(query) {
+    return api.post(`/diff`, query)
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);

@@ -18,6 +18,14 @@
 
             <div class="d-flex flex-horizontal mt-1">
               <v-chip
+                color="grey"
+                text-color="grey darken-1"
+                class="mr-1 caption"
+                small
+                outlined
+                pill
+              ><span>contract</span></v-chip>
+              <v-chip
                 key="language"
                 color="grey"
                 text-color="grey darken-1"
@@ -52,7 +60,7 @@
           </v-list-item-action>
         </v-list-item>
 
-        <div class="d-flex flex-row mx-6">
+        <div class="d-flex flex-wrap flex-row mx-6">
           <div v-for="(values, key) in item.highlights" :key="key">
             <div class="d-flex flex-column mr-6 pt-2 pb-4" v-if="!['alias', 'address', 'tags', 'language'].includes(key)">
               <span class="overline">{{ key }}</span>
@@ -82,13 +90,6 @@ export default {
   data: () => ({
     limit: 5
   }),
-  computed: {
-    hasMore() {
-      return this.limit == 5 && (
-        (this.item.body.entrypoints && this.item.body.entrypoints.length > 5) ||
-        (this.item.body.fail_strings && this.item.body.fail_strings.length > 5));
-    }
-  },
   methods: {
     onSearch(item) {
       if (checkAddress(item.value)) {

@@ -4,16 +4,16 @@
       <v-col cols="6">
         <v-list-item class="pa-0 pl-8" :to="toLeft" selectable>
           <v-list-item-content>
-            <v-list-item-subtitle>{{ nameLeft }}</v-list-item-subtitle>
-            <v-list-item-title class="overline">{{ subsLeft }}</v-list-item-title>
+            <v-list-item-title class="hash">{{ nameLeft }}</v-list-item-title>
+            <v-list-item-subtitle class="overline">{{ subsLeft }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-col>
       <v-col cols="5">
         <v-list-item class="pa-0 pl-8" :to="toRight" selectable>
           <v-list-item-content>
-            <v-list-item-subtitle>{{ nameRight }}</v-list-item-subtitle>
-            <v-list-item-title class="overline">{{ subsRight }}</v-list-item-title>
+            <v-list-item-title class="hash">{{ nameRight }}</v-list-item-title>
+            <v-list-item-subtitle class="overline">{{ subsRight }}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-col>
