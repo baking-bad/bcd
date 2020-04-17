@@ -2,24 +2,34 @@
   <v-card :elevation="3">
     <v-row no-gutters>
       <v-col cols="6">
-        <v-list-item class="pa-0 pl-8" :to="toLeft" selectable>
+        <v-list-item class="pa-0 pl-8" :to="{ name: 'code', params: left, query: {protocol: left.protocol}}" selectable>
           <v-list-item-content>
-            <v-list-item-title class="hash">{{ nameLeft }}</v-list-item-title>
-            <v-list-item-subtitle class="overline">{{ subsLeft }}</v-list-item-subtitle>
+            <v-list-item-title>
+              <span class="hash">{{ left.address }}</span>
+              <span class="hash grey--text text--darken-2">::{{ left.protocol.slice(0, 8) }}</span>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <span class="overline">{{ left.network }}</span>
+            </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-col>
       <v-col cols="5">
-        <v-list-item class="pa-0 pl-8" :to="toRight" selectable>
+        <v-list-item class="pa-0 pl-8" :to="{ name: 'code', params: right, query: {protocol: right.protocol}}" selectable>
           <v-list-item-content>
-            <v-list-item-title class="hash">{{ nameRight }}</v-list-item-title>
-            <v-list-item-subtitle class="overline">{{ subsRight }}</v-list-item-subtitle>
+            <v-list-item-title>
+              <span class="hash">{{ right.address }}</span>
+              <span class="hash grey--text text--darken-2">::{{ right.protocol.slice(0, 8) }}</span>
+            </v-list-item-title>
+            <v-list-item-subtitle>
+              <span class="overline">{{ right.network }}</span>
+            </v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-col>
       <v-col class="d-flex align-center justify-end mr-4">
-        <span v-if="added" class="primary--text font-weight-medium mr-1">+{{ added }}</span>
-        <span v-if="removed" class="red--text font-weight-medium">-{{ removed }}</span>
+        <span v-if="diff.added" class="primary--text font-weight-medium mr-1">+{{ diff.added }}</span>
+        <span v-if="diff.removed" class="red--text font-weight-medium">-{{ diff.removed }}</span>
       </v-col>
     </v-row>
     <v-divider></v-divider>
@@ -37,19 +47,12 @@
 export default {
   name: "DiffViewer",
   props: {
-    left: Array,
-    right: Array,
-    nameLeft: String,
-    subsLeft: String,
-    toLeft: Object,
-    nameRight: String,
-    subsRight: String,
-    toRight: Object,
-    added: Number,
-    removed: Number
+    left: Object,
+    right: Object,
+    diff: Object
   },
   created() {
-    this.$nextTick(() => this.buildTable(this.left, this.right));
+    this.$nextTick(() => this.buildTable(this.diff.left, this.diff.right));
   },
   methods: {
     buildTable(left, right) {

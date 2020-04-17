@@ -83,7 +83,7 @@ export default {
     codeVersions() {
       if (this.contract != null && this.contract.migrations) {
         let versions = this.contract.migrations
-          .filter(m => m.kind === 'protocol')
+          .filter(m => m.kind === 'update')
           .map(function(m) { return {proto: m.prev_protocol.slice(0, 8), protocol: m.prev_protocol}})
         if (versions.length > 0) {
           versions.unshift({proto: "Latest", protocol: ""})
@@ -95,6 +95,16 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    getFallbackLevel(protocol = "") {
+      if (protocol !== "" && this.contract != null && this.contract.migrations) {
+        for (var i = 0; i < this.contract.migrations.length; i++) {
+          if (this.contract.migrations[i].prev_protocol === protocol) {
+            return Math.max(0, this.contract.migrations[i].level - 4096);
+          }
+        }
+      }
+      return 0;
+    },
     getCode(protocol = "") {
       if (this.contract == null) return;
       this.loading = true;
@@ -104,7 +114,9 @@ export default {
         this.loading = false;
         return;
       }
-      getContractCode(this.contract.network, this.contract.address, protocol)
+
+      let level = this.getFallbackLevel(protocol);
+      getContractCode(this.contract.network, this.contract.address, protocol, level)
         .then(res => {
           if (!res) return;
           this.contract.code[protocol] = res;

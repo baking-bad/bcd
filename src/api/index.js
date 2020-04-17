@@ -109,10 +109,13 @@ export function getContractOperations(network, address, last_id = "", from = 0, 
         })
 }
 
-export function getContractCode(network, address, protocol = "") {
+export function getContractCode(network, address, protocol = "", level = 0) {
     let params = {}
     if (protocol !== "") {
         params.protocol = protocol;
+    }
+    if (level > 0) {
+        params.level = level;
     }
     return getCancellable(api, `/contract/${network}/${address}/code`, {
         params: params

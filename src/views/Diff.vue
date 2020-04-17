@@ -12,18 +12,7 @@
       </v-col>
 
       <v-col cols="12">
-        <DiffViewer
-        :left="res.diff.left"
-        :right="res.diff.right"
-        :nameLeft="query.left.address"
-        :subsLeft="query.left.protocol || query.left.network"
-        :nameRight="query.right.address"
-        :subsRight="query.right.protocol || query.right.network"
-        :toLeft="{ name: 'project', params: { address: res.left.address, network: res.left.network}}"
-        :toRight="{ name: 'project', params: { address: res.right.address, network: res.right.network}}"
-        :added="res.diff.added"
-        :removed="res.diff.removed"
-        />
+        <DiffViewer :left="res.left" :right="res.right" :diff="res.diff" />
         <v-snackbar v-model="snackbar">
           {{ snacktext }}
           <v-btn color="pink" text @click="snackbar = false">Close</v-btn>
@@ -67,13 +56,13 @@ export default {
         address: params.addressA,
         network: params.networkA,
         protocol: params.protocolA,
-        level: params.levelA
+        level: parseInt(params.levelA)
       }
       const right = {
         address: params.addressB,
         network: params.networkB,
         protocol: params.protocolB,
-        level: params.levelB
+        level: parseInt(params.levelB)
       }
       return {left, right}
     }

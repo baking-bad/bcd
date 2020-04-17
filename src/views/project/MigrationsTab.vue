@@ -12,7 +12,10 @@
                 :class="{ 'on-hover': hover, 'migration-row vesting': true }"
                 no-gutters
                 align="center"
-                @click="to(`https://tzkt.io/protocols/${item.protocol}`)"
+                @click="to({name: 'code', 
+                  params: {address: contract.address, network: contract.network},
+                  query: {protocol: item.protocol}
+                })"
               > 
                 <v-col cols="2">
                   <div class="subtitle-2">{{ item.timestamp | formatDate }}</div>
@@ -54,13 +57,13 @@
                   addressA: contract.address, 
                   networkA: contract.network, 
                   protocolA: item.prev_protocol,
-                  levelA: item.level - 1,
+                  levelA: Math.max(0, item.level - 4096),
                   addressB: contract.address,
                   networkB: contract.network,
                   protocolB: item.protocol,
-                  levelB: item.level + 1
+                  levelB: item.level
                 }})"
-              >
+              > 
                 <v-col cols="2">
                   <div class="subtitle-2">{{ item.timestamp | formatDate }}</div>
                   <div class="overline grey--text text--darken-3">{{ item.level }}</div>
