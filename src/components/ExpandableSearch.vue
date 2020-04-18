@@ -13,7 +13,7 @@
     :z-index="10"
   >
     <template v-slot:activator="{ on }">
-      <v-btn icon @click="expanded = !expanded" v-on="on" class="mb-2">
+      <v-btn icon @click="expanded = !expanded" v-on="on">
         <v-icon :color="expanded ? 'primary': ''">mdi-magnify</v-icon>
       </v-btn>
     </template>

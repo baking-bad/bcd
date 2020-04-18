@@ -37,7 +37,7 @@
           hide-details
         ></v-select>
       </v-toolbar>
-      <v-card tile>
+      <v-card tile class="pa-4">
         <Michelson :code="selectedCode"></Michelson>
       </v-card>
     </div>
