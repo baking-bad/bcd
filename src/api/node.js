@@ -22,3 +22,13 @@ export function getOperation(network, level, hash) {
         throw new RequestFailedError(res);
     })
 }
+
+export function getBigMapValue(network, level, ptr, key_hash) {
+    return api.get(`/${network}/chains/main/blocks/${level}/context/big_maps/${ptr}/${key_hash}`)
+    .then((res) => {
+        if (res.status != 200) {
+            throw new RequestFailedError(res);
+        }
+        return res.data;
+    })
+}

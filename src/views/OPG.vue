@@ -1,15 +1,17 @@
 <template>
-  <v-overlay :value="loading" v-if="loading" absolute color="white">
-    <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
-  </v-overlay>
-  <v-container fluid v-else-if="opg && opg.length > 0" class="mt-5">
-    <v-expansion-panels multiple popout tile v-model="panels">
-      <template v-for="(item, idx) in opg">
-        <Operation :data="item" :key="idx" />
-      </template>
-    </v-expansion-panels>
-  </v-container>
-  <ErrorState v-else></ErrorState>
+  <div>
+    <v-overlay :value="loading" v-if="loading" absolute color="white">
+      <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
+    </v-overlay>
+    <v-container fluid v-else-if="opg && opg.length > 0" class="pa-6">
+      <v-expansion-panels multiple popout tile v-model="panels">
+        <template v-for="(item, idx) in opg">
+          <Operation :data="item" :key="idx" />
+        </template>
+      </v-expansion-panels>
+    </v-container>
+    <ErrorState v-else></ErrorState>
+  </div>
 </template>
 
 <script>
@@ -66,3 +68,10 @@ export default {
   }
 };
 </script>
+
+<style>
+.bcd-toolbar > .v-toolbar__content {
+  border-bottom: 1px solid #ddd;
+  background-color: rgb(250, 250, 250);
+}
+</style>

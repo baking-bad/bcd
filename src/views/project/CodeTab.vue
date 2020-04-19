@@ -37,7 +37,7 @@
           hide-details
         ></v-select>
       </v-toolbar>
-      <v-card tile class="pa-4">
+      <v-card tile flat class="pa-4 code-card">
         <Michelson :code="selectedCode"></Michelson>
       </v-card>
     </div>
@@ -191,6 +191,13 @@ export default {
       this.selectedProtocol = "";
       this.getCode();
       this.getMigrations();
+    },
+    selectedProtocol: function(newValue) {
+      if (newValue !== "") {
+        this.$router.replace({ query: { protocol: newValue } })
+      } else {
+        this.$router.replace({ query: null });
+      }
     }
   }
 };
@@ -200,5 +207,8 @@ export default {
 .toolbar-btn {
   color: rgba(0, 0, 0, 0.54);
   margin-right: 10px;
+}
+.code-card {
+  border: 1px solid #eee;
 }
 </style>

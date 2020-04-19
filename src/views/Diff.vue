@@ -1,17 +1,16 @@
 <template>
-  <v-container fluid>
-    <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
-    <v-row v-else-if="res">
-      <v-col cols="12" class="d-flex justify-center align-center" v-if="isAuthorized">
-        <v-btn text icon color="primary" @click="upVote">
-          <v-icon>mdi-thumb-up-outline</v-icon>
-        </v-btn>
-        <v-btn text icon color="red" @click="downVote">
-          <v-icon>mdi-thumb-down-outline</v-icon>
-        </v-btn>
-      </v-col>
-
+  <v-container fluid class="pa-4">
+    <v-skeleton-loader v-if="loading" height="400" type="image"></v-skeleton-loader>
+    <v-row v-else-if="res" no-gutters>
       <v-col cols="12">
+        <template v-if="isAuthorized">
+          <v-btn fab elevation="3" right bottom fixed color="primary lighten-2" style="margin-right: 65px;" @click="upVote">
+            <v-icon>mdi-thumb-up-outline</v-icon>
+          </v-btn>
+          <v-btn fab elevation="3" right bottom fixed color="red lighten-2" @click="downVote">
+            <v-icon>mdi-thumb-down-outline</v-icon>
+          </v-btn>
+        </template>
         <DiffViewer :left="res.left" :right="res.right" :diff="res.diff" />
         <v-snackbar v-model="snackbar">
           {{ snacktext }}

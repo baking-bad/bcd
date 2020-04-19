@@ -38,32 +38,6 @@
 
       <v-container fluid class="py-0 my-0">
         <v-row>
-          <!-- <v-col cols="12" style="height: 64px;" class="d-flex align-end pb-0">
-            <v-tabs
-              center-active
-              background-color="transparent"
-              slider-color="primary"
-              v-if="contract"
-            >
-              <v-tab :to="{name: 'operations'}" replace class="overline">
-                <v-icon left small>mdi-swap-horizontal</v-icon>
-                Operations ({{ contract.tx_count || 0 }})
-              </v-tab>
-              <v-tab :to="{name: 'code'}" replace class="overline">
-                <v-icon left small>mdi-code-braces</v-icon>Code
-              </v-tab>
-              <v-tab :to="{name: 'entrypoints'}" replace v-if="hasEntrypoints" class="overline">
-                <v-icon left small>mdi-doorbell</v-icon>Entrypoints
-              </v-tab>
-              <v-tab :to="{name: 'storage'}" replace class="overline">
-                <v-icon small left>mdi-alphabetical</v-icon>Storage
-              </v-tab>
-              <v-tab :to="{name: 'migrations'}" replace class="overline" v-if="contract.migrations_count">
-                <v-icon small left>mdi-transfer</v-icon>Migrations ({{ contract.migrations_count || 0 }})
-              </v-tab>
-            </v-tabs>
-            <ExpandableSearch class="mb-1"></ExpandableSearch>
-          </v-col> -->
           <v-col cols="12" class="pt-0">
             <v-slide-x-reverse-transition mode="out-in">
               <router-view :contract="contract" />

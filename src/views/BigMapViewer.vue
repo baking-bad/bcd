@@ -50,86 +50,9 @@
         >
           <div v-if="bigmap.length > 0">
             <v-expansion-panels multiple tile>
-              <v-expansion-panel v-for="(diff, idx) in bigmap" :key="idx">
-                <v-expansion-panel-header class="pa-0 pr-4" ripple>
-                  <v-row>
-                    <v-col cols="2" class="d-flex align-center">
-                      <v-list-item>
-                        <v-list-item-content>
-                          <v-list-item-title class="overline">{{ diff.data.timestamp | formatDate }}</v-list-item-title>
-                          <v-list-item-subtitle class="overline grey--text">{{ diff.data.level }}</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-col>
-                    <v-col cols="8" class="d-flex flex-horizontal align-center justify-space-between">
-                      <v-list-item class="d-inline-block text-truncate">
-                        <v-list-item-content>
-                          <v-list-item-title>
-                            <v-treeview
-                              :items="getTree(diff.data.key)"
-                              open-all
-                              transition
-                              class="storage"
-                            >
-                              <template v-slot:label="{ item }">
-                                <span>{{ item.value }}</span>
-                              </template>
-                            </v-treeview>
-                          </v-list-item-title>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-col>
-                    <v-col cols="2" class="d-flex align-center">
-                      <v-list-item>
-                        <v-list-item-content>
-                          <v-list-item-title class="overline">{{ plural(diff.count, 'change') }}</v-list-item-title>
-                          <v-list-item-subtitle
-                            class="overline red--text"
-                            v-if="!diff.data.value"
-                          >removed</v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-list-item>
-                    </v-col>
-                  </v-row>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content class="pl-1">
-                  <v-row>
-                    <v-col cols="11">
-                      <v-treeview
-                        :items="getTree(diff.data.value)"
-                        open-all
-                        transition
-                        class="storage"
-                        v-if="diff.data.value"
-                      >
-                        <template v-slot:label="{ item }">
-                          <span class="grey--text text--darken-2">{{ item.name }}</span>&nbsp;
-                          <span :class="item.type">{{ item.value }}</span>
-                        </template>
-                      </v-treeview>
-                    </v-col>
-                    <v-col cols="1">
-                      <v-btn
-                        small
-                        text
-                        color="grey darken-3"
-                        class="d-flex align-center"
-                        :to="{name: 'bigmapdiff', 
-                        params: {
-                          network: $route.params.network,
-                          address: $route.params.address,
-                          ptr: $route.params.ptr,
-                          keyhash: diff.data.key_hash
-                          }
-                        }"
-                      >
-                        <v-icon x-small>mdi-history</v-icon>
-                        <span class="overline ml-1">History</span>
-                      </v-btn>
-                    </v-col>
-                  </v-row>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
+              <template v-for="(diff, idx) in bigmap">
+                <BigMapDiff :diff="diff" :network="$route.params.network" :address="$route.params.address" :key="idx" />
+              </template>
             </v-expansion-panels>
             <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
           </div>
@@ -157,16 +80,17 @@
 
 <script>
 import ExpandableSearch from "@/components/ExpandableSearch.vue";
+import BigMapDiff from "@/components/BigMapDiff.vue"
+
 import { mapActions } from "vuex";
 
 import { getContractBigMap } from "@/api/index.js";
-import { getTree } from "@/utils/diff.js";
-import { plural } from "@/utils/plural.js";
 
 export default {
   name: "BigMapViewer",
   components: {
-    ExpandableSearch
+    ExpandableSearch,
+    BigMapDiff
   },
   data: () => ({
     loading: true,
@@ -226,9 +150,6 @@ export default {
     requestData() {
       this.fetchSearchDebounced(this.search);
     },
-    getTree(data) {
-      return getTree(data);
-    },
     fetchSearchDebounced(text) {
       clearTimeout(this._timerId);
 
@@ -256,9 +177,6 @@ export default {
       if (isIntersecting) {
         this.fetchSearchDebounced(this.search);
       }
-    },
-    plural(count, word) {
-      return plural(count, word);
     }
   },
   watch: {
@@ -269,7 +187,9 @@ export default {
       this.downloaded = false;
       let searchText = val ? val.trim() : "";
       this.bigmap = [];
-      this.fetchSearchDebounced(searchText);
+      if (searchText.length > 2) {
+        this.fetchSearchDebounced(searchText);
+      }
       this._locked = false;
     }
   }
@@ -280,24 +200,5 @@ export default {
 .bigmap-toolbar > .v-toolbar__content {
   border-bottom: 1px solid #ddd;
   background-color: rgb(250, 250, 250);
-}
-</style>
-
-<style lang="scss" scoped>
-.storage {
-  font-size: 12px;
-  font-family: "Roboto Mono", monospace;
-
-  .value {
-    color: #6ba13b;
-  }
-  .object {
-    color: #bbb;
-  }
-}
-
-.key-hash {
-  font-size: 0.9em;
-  margin-left: 38px;
 }
 </style>
