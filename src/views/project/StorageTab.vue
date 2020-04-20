@@ -36,10 +36,10 @@
           <span class="overline">Switch to Micheline</span>
         </v-btn>
       </v-toolbar>
-      <v-card v-if="raw" tile class="py-4">
+      <v-card v-if="raw" tile flat class="py-4 storage-card">
         <Michelson :code="contract.raw_storage"></Michelson>
       </v-card>
-      <v-card v-else tile class="py-4">
+      <v-card v-else tile flat class="py-4 storage-card">
         <v-treeview
           :items="items"
           hoverable
@@ -244,6 +244,9 @@ export default {
 
 
 <style lang="scss" scoped>
+.storage-card {
+  border: 1px solid #eee;
+}
 .storage {
   font-size: 12px;
   font-family: "Roboto Mono", monospace;

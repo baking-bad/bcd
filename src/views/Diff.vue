@@ -1,29 +1,17 @@
 <template>
-  <v-container fluid>
-    <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
-    <v-row v-else-if="diffs">
-      <v-col cols="12" class="d-flex justify-center align-center" v-if="isAuthorized">
-        <v-btn text icon color="primary" @click="upVote">
-          <v-icon>mdi-thumb-up-outline</v-icon>
-        </v-btn>
-        <v-btn text icon color="red" @click="downVote">
-          <v-icon>mdi-thumb-down-outline</v-icon>
-        </v-btn>
-      </v-col>
-
+  <v-container fluid class="pa-4">
+    <v-skeleton-loader v-if="loading" height="400" type="image"></v-skeleton-loader>
+    <v-row v-else-if="res" no-gutters>
       <v-col cols="12">
-        <DiffViewer
-        :left="diffs.left"
-        :right="diffs.right"
-        :nameRight="$route.params.address2"
-        :subsRight="$route.params.network2"
-        :nameLeft="$route.params.address"
-        :subsLeft="$route.params.network"
-        :toLeft="{ name: 'project', params: { address: $route.params.address, network: $route.params.network}}"
-        :toRight="{ name: 'project', params: { address: $route.params.address2, network: $route.params.network2}}"
-        :added="diffs.added"
-        :removed="diffs.removed"
-        />
+        <template v-if="isAuthorized">
+          <v-btn fab elevation="3" right bottom fixed color="primary lighten-2" style="margin-right: 65px;" @click="upVote">
+            <v-icon>mdi-thumb-up-outline</v-icon>
+          </v-btn>
+          <v-btn fab elevation="3" right bottom fixed color="red lighten-2" @click="downVote">
+            <v-icon>mdi-thumb-down-outline</v-icon>
+          </v-btn>
+        </template>
+        <DiffViewer :left="res.left" :right="res.right" :diff="res.diff" />
         <v-snackbar v-model="snackbar">
           {{ snacktext }}
           <v-btn color="pink" text @click="snackbar = false">Close</v-btn>
@@ -49,30 +37,41 @@ export default {
     ErrorState
   },
   data: () => ({
-    diffs: null,
+    res: null,
     loading: true,
     snackbar: false,
     snacktext: ""
   }),
+  created() {
+    this.getDiff();
+  },
   computed: {
     isAuthorized() {
       return this.$store.state.isAuthorized;
+    },
+    query() {
+      const params = this.$route.query;
+      const left = {
+        address: params.addressA,
+        network: params.networkA,
+        protocol: params.protocolA,
+        level: parseInt(params.levelA)
+      }
+      const right = {
+        address: params.addressB,
+        network: params.networkB,
+        protocol: params.protocolB,
+        level: parseInt(params.levelB)
+      }
+      return {left, right}
     }
-  },
-  created() {
-    this.getDiff();
   },
   methods: {
     ...mapActions(["showError"]),
     getDiff() {
       this.loading = true;
-      getDiff(
-        this.$route.params.network,
-        this.$route.params.address,
-        this.$route.params.network2,
-        this.$route.params.address2
-      )
-        .then(res => (this.diffs = res))
+      getDiff(this.query)
+        .then(res => (this.res = res))
         .catch(err => {
           console.log(err);
           this.showError(err);
@@ -81,10 +80,10 @@ export default {
     },
     upVote() {
       vote(
-        this.$route.params.network,
-        this.$route.params.address,
-        this.$route.params.network2,
-        this.$route.params.address2,
+        this.query.left.network,
+        this.query.left.address,
+        this.query.right.network,
+        this.query.right.address,
         1
       )
         .then(() => {
@@ -98,10 +97,10 @@ export default {
     },
     downVote() {
       vote(
-        this.$route.params.network,
-        this.$route.params.address,
-        this.$route.params.network2,
-        this.$route.params.address2,
+        this.query.left.network,
+        this.query.left.address,
+        this.query.right.network,
+        this.query.right.address,
         0
       )
         .then(() => {
@@ -113,9 +112,6 @@ export default {
           this.showError(err);
         });
     }
-  },
-  watch: {
-    $route: "getDiff"
   }
 };
 </script>

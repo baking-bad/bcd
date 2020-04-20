@@ -22,7 +22,6 @@ import SubscriptionsTab from '@/views/dashboard/SubscriptionsTab.vue'
 import TimelineTab from '@/views/dashboard/TimelineTab.vue'
 
 import Diff from '@/views/Diff.vue'
-import Migration from '@/views/Migration.vue'
 import BigMapViewer from '@/views/BigMapViewer.vue'
 import BigMapDiffViewer from '@/views/BigMapDiffViewer.vue'
 import Projects from '@/views/Projects.vue'
@@ -68,20 +67,12 @@ const router = new Router({
             name: 'opg'
         },
         {
-            path: '/diff/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})/:network2(mainnet|babylonnet|zeronet|carthagenet)/:address2(KT[0-9A-z]{34})',
+            path: '/diff',
             components: {
                 default: Diff,
                 nav: Nav
             },
             name: 'diff'
-        },
-        {
-            path: '/migration/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})/:protocol',
-            components: {
-                default: Migration,
-                nav: Nav
-            },
-            name: 'migration'
         },
         {
             path: '/projects',
@@ -92,14 +83,14 @@ const router = new Router({
             name: 'projects'
         },
         {
-            path: '/bigmap/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})/:ptr(\\d+)',
+            path: '/bigmap/:network/:address(KT[0-9A-z]{34})/:ptr(\\d+)',
             components: {
                 default: BigMapViewer,
                 nav: Nav
             },
             name: 'bigmap'
         },{
-            path: '/bigmap/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})/:ptr(\\d+)/:keyhash',
+            path: '/bigmap/:network/:address(KT[0-9A-z]{34})/:ptr(\\d+)/:keyhash',
             components: {
                 default: BigMapDiffViewer,
                 nav: Nav
@@ -107,7 +98,7 @@ const router = new Router({
             name: 'bigmapdiff'
         },
         {
-            path: '/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})',
+            path: '/:network/:address(KT[0-9A-z]{34})',
             components: {
                 default: Project,
                 nav: Nav

@@ -29,9 +29,15 @@
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title v-if="item.body.alias">
-            <span>{{ item.body.alias }}</span>
+            <span>{{ shortcut(item.body.alias) }}</span>
           </v-list-item-title>
-          <v-list-item-title v-if="!item.body.alias">
+          <v-list-item-title v-else-if="item.body.key">
+            <span>{{ shortcut(item.body.key) }}</span>
+          </v-list-item-title>
+          <v-list-item-title v-else-if="item.body.entrypoint">
+            <span>{{ shortcut(item.body.entrypoint) }}()</span>
+          </v-list-item-title>
+          <v-list-item-title v-else>
             <span>{{ shortcut(item.value) }}</span>
           </v-list-item-title>
           <v-list-item-subtitle>
@@ -46,7 +52,7 @@
         <v-list-item-action>
           <v-list-item-action-text>
             <span class="body-2"
-              v-if="!['alias', 'hash', 'address'].includes(item.body.found_by) && item.highlights[item.body.found_by]" 
+              v-if="!['alias', 'address', 'key_strings', 'entrypoint'].includes(item.body.found_by) && item.highlights[item.body.found_by]" 
               v-html="item.highlights[item.body.found_by][0]"></span>
           </v-list-item-action-text>
           <v-list-item-action-text>
@@ -133,10 +139,12 @@ export default {
       }, 100);
     },
     shortcut(value, size=18) {
-      if (value !== undefined
-        && value.length > 2 * size + 2
-        && (value.startsWith('KT') || value.startsWith('tz') || value.startsWith('o'))) {
-        return value.substr(0, size) + `\u2026\u202F` + value.substr(value.length - size, size);
+      if (value !== undefined && value.length > 2 * size + 2) {
+        if (value.startsWith('KT') || value.startsWith('tz') || value.startsWith('o') || value.startsWith('expr')) {
+          return value.substr(0, size) + `\u2026\u202F` + value.substr(value.length - size, size);
+        } else {
+          return value.slice(0, 2 * size + 2) + `\u2026\u202F`;
+        }
       } else {
         return value;
       }

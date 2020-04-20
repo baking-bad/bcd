@@ -4,7 +4,12 @@
       <v-card class="my-3 transparent" :elevation="hover ? 2 : 0" @click="onSearch(item)">
         <v-list-item three-line selectable>
           <v-list-item-content>
-            <v-list-item-title class="hash"><span v-html="highlight(item.value)"></span></v-list-item-title>
+            <v-list-item-title>
+              <span v-html="highlight(item.body.entrypoint + '()')"></span>
+            </v-list-item-title>
+            <v-list-item-title class="opg_hash grey--text text--darken-2">
+              <span v-html="highlight(item.value)"></span>
+            </v-list-item-title>
             <v-list-item-subtitle>
               <span class="overline" :class="item.body.network === 'mainnet' ? 'primary--text' : ''">
                 {{ item.body.network }}
@@ -12,6 +17,14 @@
             </v-list-item-subtitle>
 
             <div class="d-flex flex-horizontal mt-1">
+               <v-chip
+                color="grey"
+                text-color="grey darken-1"
+                class="mr-1 caption"
+                small
+                outlined
+                pill
+              ><span>operation</span></v-chip>
               <v-chip
                 key="status"
                 color="grey"
@@ -40,7 +53,7 @@
                 small
                 outlined
                 pill
-              ><span v-html="highlight(item.body.destination_alias)"></span></v-chip>
+              ><span v-html="highlight(item.body.destination_alias)"></span></v-chip>            
             </div>
 
           </v-list-item-content>
@@ -54,9 +67,9 @@
           </v-list-item-action>
         </v-list-item>
 
-        <div class="d-flex flex-row mx-6">
+        <div class="d-flex flex-wrap flex-row mx-6">
           <div v-for="(values, key) in item.highlights" :key="key">
-            <div class="d-flex flex-column mr-6 pt-2 pb-4" v-if="!['hash'].includes(key)">
+            <div class="d-flex flex-column mr-6 pt-2 pb-4" v-if="!['hash', 'entrypoint'].includes(key)">
               <span class="overline">{{ key }}</span>
               <span v-for="(value, i) in values" :key="key + i">
               <span v-html="highlight(value)" class="caption"></span>
@@ -80,6 +93,11 @@ export default {
   props: {
     item: Object,
     words: Array
+  },
+  computed: {
+    nonDefault() {
+      return this.item.body.entrypoint && this.item.body.entrypoint !== 'default'
+    }
   },
   methods: {
     onSearch(item) {
@@ -115,5 +133,9 @@ export default {
 }
 .operation:hover {
   cursor: pointer;
+}
+.opg_hash {
+  font-family: "Roboto Mono", monospace;
+  font-size: 0.9rem;
 }
 </style>

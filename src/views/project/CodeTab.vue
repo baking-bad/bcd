@@ -1,55 +1,54 @@
 <template>
   <v-container fluid>
-    <v-skeleton-loader :loading="loading" height="500" type="image" class="ma-3">
-      <div v-if="contract.code">
-        <v-toolbar flat class="mb-2 transparent">
-          <v-btn small depressed class="toolbar-btn" @click="downloadFile">
-            <v-icon class="mr-1" small>mdi-download-outline</v-icon>
-            <span class="overline">Download as .tz</span>
-          </v-btn>
-          <v-btn small depressed class="toolbar-btn" @click="openTryMichelson">
-            <v-icon class="mr-1" small>mdi-play-circle-outline</v-icon>
-            <span class="overline">Run in sandbox</span>
-          </v-btn>
-          <v-btn
-            v-if="contract.language === 'smartpy'"
-            small
-            depressed
-            class="toolbar-btn"
-            :href="getSmartPyLink()"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <v-icon class="mr-1" small>mdi-link</v-icon>
-            <span class="overline">View on SmartPy.io</span>
-          </v-btn>
-          <v-spacer></v-spacer>
-          <v-select
-            v-model="selectedLevel"
-            v-if="contract.code.versions.length > 1"
-            :items="contract.code.versions"
-            item-text="name"
-            item-value="level"
-            label="Version"
-            style="max-width: 150px;"
-            dense
-            outlined
-            hide-details
-          ></v-select>
-        </v-toolbar>
-        <v-card tile>
-          <Michelson :code="contract.code.code"></Michelson>
-        </v-card>
-      </div>
-      <ErrorState v-else />
-    </v-skeleton-loader>
+    <v-skeleton-loader v-if="loading" height="500" type="image" class="ma-3"/>
+    <div v-else-if="selectedCode">
+      <v-toolbar flat class="mb-2 transparent">
+        <v-btn small depressed class="toolbar-btn" @click="downloadFile">
+          <v-icon class="mr-1" small>mdi-download-outline</v-icon>
+          <span class="overline">Download as .tz</span>
+        </v-btn>
+        <v-btn small depressed class="toolbar-btn" @click="openTryMichelson">
+          <v-icon class="mr-1" small>mdi-play-circle-outline</v-icon>
+          <span class="overline">Run in sandbox</span>
+        </v-btn>
+        <v-btn
+          v-if="contract.language === 'smartpy'"
+          small
+          depressed
+          class="toolbar-btn"
+          :href="getSmartPyLink()"
+          rel="nofollow noopener"
+          target="_blank"
+        >
+          <v-icon class="mr-1" small>mdi-link</v-icon>
+          <span class="overline">View on SmartPy.io</span>
+        </v-btn>
+        <v-spacer></v-spacer>
+        <v-select
+          v-if="codeVersions.length > 0"
+          v-model="selectedProtocol"
+          @change="getCode(selectedProtocol)"
+          :items="codeVersions"
+          item-text="proto"
+          item-value="protocol"
+          label="Version"
+          style="max-width: 150px;"
+          dense
+          hide-details
+        ></v-select>
+      </v-toolbar>
+      <v-card tile flat class="pa-4 code-card">
+        <Michelson :code="selectedCode"></Michelson>
+      </v-card>
+    </div>
+    <ErrorState v-else />
   </v-container>
 </template>
 
 <script>
 import Michelson from "@/components/Michelson.vue";
 import { mapActions } from "vuex";
-import { getContractCode, getContractStorageRaw } from "@/api/index.js";
+import { getContractCode, getContractStorageRaw, getContractMigrations } from "@/api/index.js";
 import ErrorState from "@/components/ErrorState.vue";
 import LZString from "lz-string";
 
@@ -63,31 +62,64 @@ export default {
   },
   data: () => ({
     loading: true,
-    selectedLevel: 0
+    selectedProtocol: ""
   }),
   created() {
-    if (this.$route.query.level && this.$route.query.level > 0) {
-      this.selectedLevel = this.$route.query.level;
+    if (this.$route.query.protocol) {
+      this.selectedProtocol = this.$route.query.protocol;
+      this.getCode(this.$route.query.protocol);
+    } else {
+      this.getCode();
     }
-    this.getCode();
+    this.getMigrations();
+  },
+  computed: {
+    selectedCode() {
+      if (!this.loading && this.contract != null && this.contract.code) {
+        return this.contract.code[this.selectedProtocol];
+      }
+      return null;
+    },
+    codeVersions() {
+      if (this.contract != null && this.contract.migrations) {
+        let versions = this.contract.migrations
+          .filter(m => m.kind === 'update')
+          .map(function(m) { return {proto: m.prev_protocol.slice(0, 8), protocol: m.prev_protocol}})
+        if (versions.length > 0) {
+          versions.unshift({proto: "Latest", protocol: ""})
+          return versions
+        }
+      }
+      return []
+    }
   },
   methods: {
     ...mapActions(["showError"]),
-    getCode() {
-      this.loading = true;
+    getFallbackLevel(protocol = "") {
+      if (protocol !== "" && this.contract != null && this.contract.migrations) {
+        for (var i = 0; i < this.contract.migrations.length; i++) {
+          if (this.contract.migrations[i].prev_protocol === protocol) {
+            return Math.max(0, this.contract.migrations[i].level - 4096);
+          }
+        }
+      }
+      return 0;
+    },
+    getCode(protocol = "") {
       if (this.contract == null) return;
-      if (this.contract.code !== undefined) {
+      this.loading = true;
+      if (typeof this.contract.code !== 'object') {
+        this.contract.code = {};
+      } else if (this.contract.code[protocol]) {
         this.loading = false;
         return;
       }
-      getContractCode(
-        this.contract.network,
-        this.contract.address,
-        this.selectedLevel
-      )
+
+      let level = this.getFallbackLevel(protocol);
+      getContractCode(this.contract.network, this.contract.address, protocol, level)
         .then(res => {
           if (!res) return;
-          this.contract.code = res;
+          this.contract.code[protocol] = res;
         })
         .catch(err => {
           console.log(err);
@@ -97,12 +129,25 @@ export default {
           this.loading = false;
         });
     },
+    getMigrations() {
+      if (this.contract == null || this.contract.migrations) {
+        return;
+      }
+      getContractMigrations(this.contract.network, this.contract.address)
+        .then(res => {
+          if (!res) return;
+          this.contract.migrations = res;
+        })
+        .catch(err => {
+          console.log(err);
+        })
+    },
     downloadFile() {
       var element = document.createElement("a");
       element.setAttribute(
         "href",
         "data:text/plain;charset=utf-8," +
-          encodeURIComponent(this.contract.code.code)
+          encodeURIComponent(this.selectedCode)
       );
       element.setAttribute("download", this.contract.address + ".tz");
 
@@ -128,7 +173,7 @@ export default {
             this.showError(err);
           });
       }
-      let query = `source=${this.contract.code.code}`;
+      let query = `source=${this.selectedCode}`;
       if (this.contract.raw_storage !== undefined) {
         let storage = this.contract.raw_storage.replace(/\n|\s+/gm, " ");
         query += `&storage=${storage}`;
@@ -142,20 +187,17 @@ export default {
     }
   },
   watch: {
-    contract: "getCode",
-    selectedLevel: function(newValue) {
-      this.loading = true;
-      getContractCode(this.contract.network, this.contract.address, newValue)
-        .then(res => {
-          this.contract.code = res;
-        })
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+    contract: function() {
+      this.selectedProtocol = "";
+      this.getCode();
+      this.getMigrations();
+    },
+    selectedProtocol: function(newValue) {
+      if (newValue !== "") {
+        this.$router.replace({ query: { protocol: newValue } })
+      } else {
+        this.$router.replace({ query: null });
+      }
     }
   }
 };
@@ -165,5 +207,8 @@ export default {
 .toolbar-btn {
   color: rgba(0, 0, 0, 0.54);
   margin-right: 10px;
+}
+.code-card {
+  border: 1px solid #eee;
 }
 </style>
