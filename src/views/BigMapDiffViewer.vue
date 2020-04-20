@@ -1,132 +1,137 @@
 <template>
-  <v-container fluid class="pt-5">
-    <v-toolbar flat color="transparent">
-      <div>
-        <v-toolbar-title>Big Map Viewer</v-toolbar-title>
-        <v-breadcrumbs large class="px-0" :items="breadcrumbs"></v-breadcrumbs>
+  <v-container fluid class="pa-0">
+    <v-toolbar flat class="bigmap-toolbar">
+      <v-breadcrumbs large class="px-2 hash" :items="breadcrumbs">
+        <template v-slot:divider>
+          <v-icon>mdi-chevron-right</v-icon>
+        </template>
+      </v-breadcrumbs>
+      <v-spacer></v-spacer>
+      <div class="mr-2">
+        <ExpandableSearch></ExpandableSearch>
       </div>
     </v-toolbar>
 
-    <v-skeleton-loader
-      :loading="loading"
-      type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
-    >
-      <div v-if="diffs.length > 0" class="pt-2">
-        <v-row>
-          <v-col cols="6">
-            <v-subheader class="mt-0 pt-0 overline">Key</v-subheader>
-            <v-card flat outlined class="py-5" v-if="key">
-              <v-treeview
-                :items="keyTree.tree"
-                :open="keyTree.open"
-                :active.sync="activeKey"
-                hoverable
-                open-all
-                transition
-                activatable
-                open-on-click
-                return-object
-                class="storage"
-              >
-                <template v-slot:label="{ item }">
-                  <span class="grey--text text--darken-2">{{ item.name }}</span>&nbsp;
-                  <span :class="item.type">{{ item.value }}</span>
-                </template>
-              </v-treeview>
-            </v-card>
-            <v-list>
-              <v-list-item-group v-model="selectedItem" mandatory color="primary">
-                <template v-for="(item, i) in diffs">
-                  <v-divider :key="`${i}-divider`" v-if="i != 0" />
-                  <v-list-item :key="i">
-                    <v-list-item-content>
-                      <v-list-item-title class="overline">{{ item.timestamp | formatDate }}</v-list-item-title>
-                      <v-list-item-subtitle class="overline grey--text">{{ item.level }}</v-list-item-subtitle>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                      <span
-                        :class="item.value ? 'primary--text overline' : 'red--text overline'"
-                      >{{ item.value ? 'Updated' : 'Removed'}}</span>
-                    </v-list-item-action>
-                  </v-list-item>
-                </template>
-              </v-list-item-group>
-            </v-list>
-            <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
-          </v-col>
-          <v-col cols="6">
-            <v-subheader class="mt-0 pt-0 overline">Value</v-subheader>
-            <v-card flat outlined v-if="selectedValue" class="py-5">
-              <v-treeview
-                :items="selectedValue.tree"
-                :open="selectedValue.open"
-                :active.sync="activeValue"
-                hoverable
-                open-all
-                transition
-                activatable
-                open-on-click
-                return-object
-                class="storage"
-              >
-                <template v-slot:label="{ item }">
-                  <span class="grey--text text--darken-2">{{ item.name }}</span>&nbsp;
-                  <span :class="item.type">{{ item.value }}</span>
-                </template>
-              </v-treeview>
-            </v-card>
-            <v-card flat outlined v-else-if="selectedValue === null">
-              <v-card-text class="pa-10">
-                <div class="d-flex flex-row justify-center align-center">
-                  <v-icon size="40">mdi-table-row-remove</v-icon>
-                  <span class="headline ml-5">Value was removed</span>
-                </div>
-              </v-card-text>
-            </v-card>
-            <v-card flat outlined v-else-if="selectedValue === undefined">
-              <v-card-text class="pa-10">
-                <div class="d-flex flex-row justify-center align-center">
-                  <v-icon size="40">mdi-code-braces</v-icon>
-                  <span class="headline ml-5">Select one of item to explore it</span>
-                </div>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </div>
-      <v-card
-        height="60vh"
-        v-else
-        class="d-flex flex-column align-center mt-12 transparent message-card"
-        :elevation="0"
-      >
-        <v-card flat outlined>
-          <v-card-text class="pa-10">
-            <div class="d-flex flex-row justify-start align-center">
-              <v-icon size="40">mdi-cloud-search-outline</v-icon>
-              <span class="headline ml-5">Your search did not match</span>
-            </div>
-          </v-card-text>
+    <v-row class="pa-8 ma-0" v-if="loading || total > 0">
+      <v-col cols="7">
+        <v-skeleton-loader
+          :loading="loading"
+          type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
+        >
+          <v-card flat tile outlined class="px-4 pt-2 pb-4 mb-4" v-if="key">
+            <span class="overline">Key</span>
+            <v-treeview
+              :items="keyTree"
+              :active.sync="activeKey"
+              hoverable
+              open-all
+              transition
+              activatable
+              open-on-click
+              return-object
+              class="storage"
+            >
+              <template v-slot:label="{ item }">
+                <span class="grey--text text--darken-2">{{ item.name }}</span>&nbsp;
+                <span :class="item.type">{{ item.value }}</span>
+              </template>
+            </v-treeview>
+          </v-card>
+          <v-card flat tile outlined v-if="selectedValue" class="px-4 pb-4 pt-2">
+            <span class="overline">Value</span>
+            <v-treeview
+              :items="selectedValue.tree"
+              :open="selectedValue.open"
+              :active.sync="activeValue"
+              hoverable
+              open-all
+              transition
+              activatable
+              open-on-click
+              return-object
+              class="storage"
+            >
+              <template v-slot:label="{ item }">
+                <span class="grey--text text--darken-2">{{ item.name }}</span>&nbsp;
+                <span :class="item.type">{{ item.value }}</span>
+              </template>
+            </v-treeview>
+          </v-card>
+          <v-card flat outlined v-else-if="selectedValue === null">
+            <v-card-text class="pa-4">
+              <div class="d-flex flex-row justify-start align-center">
+                <v-icon large>mdi-playlist-remove</v-icon>
+                <span class="subtitle-1 ml-5">Value was removed</span>
+              </div>
+            </v-card-text>
+          </v-card>
+          <v-card flat outlined v-else-if="selectedValue === undefined">
+            <v-card-text class="pa-4">
+              <div class="d-flex flex-row justify-start align-center">
+                <v-icon large>mdi-playlist-check</v-icon>
+                <span class="subtitle-1 ml-5">Select a level</span>
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-skeleton-loader>
+      </v-col>
+      <v-spacer></v-spacer>
+      <v-col cols="4" class="pt-3">
+        <v-card tile elevation="1">
+          <v-list class="ma-0 pa-0">
+            <v-list-item-group v-model="selectedItem" mandatory color="primary">
+              <template v-for="(item, i) in diffs">
+                <v-divider :key="`${i}-divider`" v-if="i != 0" />
+                <v-list-item :key="i" class="px-6">
+                  <v-list-item-icon>
+                    <v-icon v-if="(page - 1) * diffsPerPage + i + 1 == total">mdi-playlist-plus</v-icon>
+                    <v-icon v-else-if="!diffs[i].value">mdi-playlist-remove</v-icon>
+                    <v-icon v-else>mdi-playlist-edit</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title class="overline">{{ formatDate(item.timestamp) }}</v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-list-item-action-text class="overline grey--text">
+                      {{ item.level }}
+                    </v-list-item-action-text>
+                  </v-list-item-action>
+                </v-list-item>
+              </template>
+            </v-list-item-group>
+          </v-list>
         </v-card>
-      </v-card>
-    </v-skeleton-loader>
+        <v-pagination
+          v-if="total > diffsPerPage"
+          v-model="page" 
+          :length="Math.ceil(total / diffsPerPage)" 
+          class="mt-4">
+        </v-pagination>
+      </v-col>
+    </v-row>
+    <ErrorState v-else />
     <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" :network="$route.params.network" />
   </v-container>
 </template>
 
 <script>
+import dayjs from "dayjs";
+
 import { mapActions } from "vuex";
 
 import { getContractBigMapByKeyHash } from "@/api/index.js";
 import { getTree } from "@/utils/diff.js";
-import { plural } from "@/utils/plural.js";
 
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
+import ExpandableSearch from "@/components/ExpandableSearch.vue"
+import ErrorState from "@/components/ErrorState.vue";
 
 export default {
   name: "BigMapDiffViewer",
   components: {
-    TreeNodeDetails
+    TreeNodeDetails,
+    ExpandableSearch,
+    ErrorState
   },
   computed: {
     selectedValue() {
@@ -149,16 +154,16 @@ export default {
     },
     keyTree() {
       if (!this.key) return null;
-      let tree = getTree(this.key, true);
-      let open = tree.map(x => this.getChangedItems(x), this).flat();
-      return { tree, open };
+      return getTree(this.key, true);
     }
   },
   data: () => ({
     loading: true,
-    downloaded: false,
     diffs: [],
     key: null,
+    total: 0,
+    page: 1,
+    diffsPerPage: 10,
     breadcrumbs: [],
     selectedItem: -1,
     showTreeNodeDetails: false,
@@ -167,28 +172,53 @@ export default {
   }),
   mounted() {
     this.$nextTick(() => {
+      const params = this.$route.params;
       this.breadcrumbs = [
         {
-          text: this.$route.params.address,
+          text: this.capitalize(params.network),
+          disabled: true,
+          href: "breadcrumbs_link_0"
+        },
+        {
+          text: params.address,
           disabled: false,
           to: {
             name: "project",
             params: {
-              address: this.$route.params.address,
-              network: this.$route.params.network
+              address: params.address,
+              network: params.network
             }
           }
         },
         {
-          text: `Big map ${this.$route.params.ptr}`,
+          text: 'Storage',
           disabled: false,
-          href: `/bigmap/${this.$route.params.network}/${this.$route.params.address}/${this.$route.params.ptr}`
+          to: {
+            name: "storage",
+            params: {
+              address: params.address,
+              network: params.network
+            }
+          }
         },
         {
-          text: `${this.$route.params.keyhash}`,
+          text: `Big Map ${params.ptr}`,
+          disabled: false,
+          exact: true,
+          to: {
+            name: "bigmap",
+            params: {
+              network: params.network,
+              address: params.address,
+              ptr: params.ptr
+            }
+          }
+        },
+        {
+          text: params.keyhash,
           disabled: true,
-          href: "breadcrumbs_link_2"
-        }
+          href: "breadcrumbs_link_4"
+        },
       ];
     });
   },
@@ -197,23 +227,22 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    capitalize(text) {
+      return text.length > 0 ? text.slice(0, 1).toUpperCase() + text.slice(1) : text;
+    },
     requestData() {
+      this.loading = true;
       getContractBigMapByKeyHash(
         this.$route.params.network,
         this.$route.params.address,
         this.$route.params.ptr,
         this.$route.params.keyhash,
-        this.diffs.length
+        (this.page - 1) * this.diffsPerPage
       )
         .then(res => {
-          if (!res.values) {
-            this.downloaded = true;
-            return;
-          }
-          if (this.diffs.length == 0) {
-            this.diffs = res.values;
-            this.key = res.key;
-          } else this.diffs.push(...res.values);
+          this.diffs = res.values;
+          this.key = res.key;
+          this.total = res.total;
         })
         .catch(err => {
           console.log(err);
@@ -224,18 +253,18 @@ export default {
     getTree(data) {
       return getTree(data);
     },
-    onDownloadPage(entries, observer, isIntersecting) {
-      if (isIntersecting) {
-        this.requestData();
-      }
-    },
-    plural(count, word) {
-      return plural(count, word);
-    },
     getChangedItems(item) {
       let res = item.children.map(x => this.getChangedItems(x), this).flat();
-      if (item.kind || res.length > 0) res.push(item);
+      res.push(item);
       return res;
+    },
+    formatDate(value) {
+      let d = dayjs(value);
+      if (value) {
+        if (d.year() < dayjs().year()) return d.format("MMM D HH:mm, YYYY");
+        if (d.add(1, "days").isBefore(dayjs())) return d.format("MMM D HH:mm");
+        return d.fromNow();
+      }
     },
   },
   watch: {
@@ -247,6 +276,11 @@ export default {
       if (!newVal) {
         this.activeKey = [];
         this.activeValue = [];
+      }
+    },
+    page(newVal) {
+      if (newVal && newVal > 0 && newVal <= this.total) {
+        this.requestData();
       }
     }
   }

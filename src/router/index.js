@@ -83,14 +83,14 @@ const router = new Router({
             name: 'projects'
         },
         {
-            path: '/bigmap/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})/:ptr(\\d+)',
+            path: '/bigmap/:network/:address(KT[0-9A-z]{34})/:ptr(\\d+)',
             components: {
                 default: BigMapViewer,
                 nav: Nav
             },
             name: 'bigmap'
         },{
-            path: '/bigmap/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})/:ptr(\\d+)/:keyhash',
+            path: '/bigmap/:network/:address(KT[0-9A-z]{34})/:ptr(\\d+)/:keyhash',
             components: {
                 default: BigMapDiffViewer,
                 nav: Nav
@@ -98,7 +98,7 @@ const router = new Router({
             name: 'bigmapdiff'
         },
         {
-            path: '/:network(mainnet|babylonnet|zeronet|carthagenet)/:address(KT[0-9A-z]{34})',
+            path: '/:network/:address(KT[0-9A-z]{34})',
             components: {
                 default: Project,
                 nav: Nav
