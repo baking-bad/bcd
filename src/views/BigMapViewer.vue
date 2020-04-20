@@ -57,19 +57,12 @@
             <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
           </div>
           <v-card
-            height="60vh"
             v-else
-            class="d-flex flex-column align-center mt-12 transparent message-card"
+            class="d-flex flex-column align-center justify-center mt-12 transparent"
             :elevation="0"
           >
-            <v-card flat outlined>
-              <v-card-text class="pa-10">
-                <div class="d-flex flex-row justify-start align-center">
-                  <v-icon size="40">mdi-cloud-search-outline</v-icon>
-                  <span class="headline ml-5">Your search did not match</span>
-                </div>
-              </v-card-text>
-            </v-card>
+            <v-icon size="100" color="grey">mdi-package-variant</v-icon>
+            <span class="title grey--text">Nothing found for your request</span>
           </v-card>
         </v-skeleton-loader>
       </v-col>
@@ -186,8 +179,9 @@ export default {
       this._locked = true;
       this.downloaded = false;
       let searchText = val ? val.trim() : "";
-      this.bigmap = [];
-      if (searchText.length > 2) {
+      if (searchText.length > 2 || searchText.length == 0) {
+        this.bigmap = [];
+        this.loading = true;
         this.fetchSearchDebounced(searchText);
       }
       this._locked = false;

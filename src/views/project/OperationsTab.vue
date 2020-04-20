@@ -102,7 +102,7 @@
         :elevation="0"
       >
         <v-icon size="100" color="grey">mdi-package-variant</v-icon>
-        <span class="title grey--text">No operations found for your request</span>
+        <span class="title grey--text">Nothing found for your request</span>
       </v-card>
     </div>
   </v-container>
