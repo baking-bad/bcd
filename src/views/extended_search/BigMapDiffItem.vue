@@ -76,7 +76,6 @@ export default {
       let routeData = this.$router.resolve({
         path: `/bigmap/${item.body.network}/${item.body.address}/${item.body.ptr}/${item.body.key_hash}`
       });
-      console.log(routeData.href);
       window.open(routeData.href, "_blank");
     },
     formatDate(value) {
