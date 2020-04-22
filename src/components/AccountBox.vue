@@ -50,7 +50,8 @@
                             :value="address"
                             :network="network"
                             :address="address"
-                            :label="title">
+                            :label="title"
+                            :sameTab="true">
             </ValueInspector>
           </v-col>
         </v-row>

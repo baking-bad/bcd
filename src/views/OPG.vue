@@ -3,7 +3,7 @@
     <v-overlay :value="loading" v-if="loading" absolute color="white">
       <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
     </v-overlay>
-    <v-container fluid v-else-if="opg && opg.length > 0" class="pa-6">
+    <v-container fluid v-else-if="opg && opg.length > 0" class="py-6 px-8">
       <v-expansion-panels multiple popout tile v-model="panels">
         <template v-for="(item, idx) in opg">
           <Operation :data="item" :key="idx" />

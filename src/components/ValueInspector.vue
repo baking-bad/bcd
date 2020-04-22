@@ -28,7 +28,7 @@
     </v-btn>
     <v-btn v-if="isContract" text small link @click.prevent.stop="handleAddress(value)" target="_blank">
         <v-icon small class="mr-1">mdi-magnify</v-icon>
-        <span>Search contract</span>
+        <span>View contract</span>
     </v-btn>
     <v-btn v-else-if="prim === 'big_map'" text small link 
         :to="{ name: 'bigmap', params: { address: address, ptr: value, network: network}}" 
@@ -49,7 +49,8 @@ export default {
         prim: String,
         label: String,
         network: String,
-        address: String
+        address: String,
+        sameTab: Boolean
     },
     components: {
         Michelson
@@ -80,8 +81,12 @@ export default {
           let href = getTzKTLink(this.network, address);
           window.open(href, '_blank');
         } else {
-          let routeData = this.$router.resolve({ path: `/${this.network}/${address}` });
-          window.open(routeData.href, '_blank');
+          const path = { path: `/${this.network}/${address}` };
+          if (this.sameTab) {
+              this.$router.push(path)
+          } else {
+              window.open(this.$router.resolve(path).href, '_blank');
+          }
         }
       }
     }
