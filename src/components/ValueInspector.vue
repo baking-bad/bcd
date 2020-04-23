@@ -22,18 +22,17 @@
         filled
         :label="label">
     </v-text-field>
-    <v-btn v-if="isKeyHash || isContract" text small link @click.prevent.stop="handleAddress(value, true)" target="_blank">
+    <v-btn v-if="isKeyHash || isContract" text small link @click.prevent.stop="handleAddress(value, true)" >
         <v-icon small class="mr-1">mdi-open-in-new</v-icon>
         <span>Open in TzKT.io</span>
     </v-btn>
-    <v-btn v-if="isContract" text small link @click.prevent.stop="handleAddress(value)" target="_blank">
-        <v-icon small class="mr-1">mdi-magnify</v-icon>
+    <v-btn v-if="isContract && value !== $route.params.address" text small link @click.prevent.stop="handleAddress(value)">
+        <v-icon small class="mr-1" v-if="!sameTab">mdi-open-in-new</v-icon>
         <span>View contract</span>
     </v-btn>
     <v-btn v-else-if="prim === 'big_map'" text small link 
-        :to="{ name: 'bigmap', params: { address: address, ptr: value, network: network}}" 
-        target="_blank">
-        <v-icon small class="mr-1">mdi-open-in-new</v-icon>View Big Map
+        :to="{ name: 'bigmap', params: { address: address, ptr: value, network: network}}">
+        View Big Map
     </v-btn>
 </div>
 </template>

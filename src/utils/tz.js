@@ -15,3 +15,11 @@ export function checkOperation(operation) {
     if (bs58check.decode(operation) === undefined) return false;
     return true;
 }
+
+export function checkKeyHash(keyhash) {
+    if (keyhash === undefined && keyhash == null) return false;
+    if (typeof keyhash !== "string") return false;
+    if (keyhash.length != 54 && !keyhash.startsWith("expr")) return false;
+    if (bs58check.decode(keyhash) === undefined) return false;
+    return true;
+}

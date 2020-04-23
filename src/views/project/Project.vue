@@ -115,6 +115,7 @@ export default {
 .project-toolbar > .v-toolbar__content {
   border-bottom: 1px solid #ddd;
   background-color: rgb(250, 250, 250);
+  padding: 0 10px;
 }
 </style>
 

@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
     <div v-else-if="contract.storage">
-      <v-toolbar flat class="mb-2 transparent">
+      <v-toolbar flat class="mb-2 transparent storage-toolbar">
         <v-btn 
           small depressed class="toolbar-btn" 
           @click="downloadFile"
@@ -36,10 +36,10 @@
           <span class="overline">Switch to Micheline</span>
         </v-btn>
       </v-toolbar>
-      <v-card v-if="raw" tile flat class="py-4 storage-card">
+      <v-card v-if="raw" tile flat outlined class="py-4">
         <Michelson :code="contract.raw_storage"></Michelson>
       </v-card>
-      <v-card v-else tile flat class="py-4 storage-card">
+      <v-card v-else tile flat outlined class="py-4">
         <v-treeview
           :items="items"
           hoverable
@@ -244,9 +244,6 @@ export default {
 
 
 <style lang="scss" scoped>
-.storage-card {
-  border: 1px solid #eee;
-}
 .storage {
   font-size: 12px;
   font-family: "Roboto Mono", monospace;
@@ -265,6 +262,9 @@ export default {
 </style>
 
 <style>
+.storage-toolbar > .v-toolbar__content {
+  padding: 0;
+}
 .v-treeview-node__root {
   min-height: 20px !important;
 }

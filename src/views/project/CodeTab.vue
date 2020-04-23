@@ -2,7 +2,7 @@
   <v-container fluid>
     <v-skeleton-loader v-if="loading" height="500" type="image" class="ma-3"/>
     <div v-else-if="selectedCode">
-      <v-toolbar flat class="mb-2 transparent">
+      <v-toolbar flat class="mb-2 transparent code-toolbar">
         <v-btn small depressed class="toolbar-btn" @click="downloadFile">
           <v-icon class="mr-1" small>mdi-download-outline</v-icon>
           <span class="overline">Download as .tz</span>
@@ -33,11 +33,12 @@
           item-value="protocol"
           label="Version"
           style="max-width: 150px;"
+          class="mr-1"
           dense
           hide-details
         ></v-select>
       </v-toolbar>
-      <v-card tile flat class="pa-4 code-card">
+      <v-card tile flat outlined class="pa-4">
         <Michelson :code="selectedCode"></Michelson>
       </v-card>
     </div>
@@ -208,7 +209,10 @@ export default {
   color: rgba(0, 0, 0, 0.54);
   margin-right: 10px;
 }
-.code-card {
-  border: 1px solid #eee;
+</style>
+
+<style>
+.code-toolbar > .v-toolbar__content {
+  padding: 0;
 }
 </style>

@@ -5,6 +5,7 @@
         <v-list-item three-line selectable>
           <v-list-item-content>
             <v-list-item-title>
+              <span v-if="item.body.destination_alias" v-html="highlight(item.body.destination_alias + ' :: ')"></span> 
               <span v-html="highlight(item.body.entrypoint + '()')"></span>
             </v-list-item-title>
             <v-list-item-title class="opg_hash grey--text text--darken-2">
@@ -43,17 +44,7 @@
                 small
                 outlined
                 pill
-              >internal</v-chip>
-              <v-chip
-                v-if="item.body.destination_alias"
-                key="internal"
-                color="grey"
-                text-color="grey darken-1"
-                class="mr-1 caption"
-                small
-                outlined
-                pill
-              ><span v-html="highlight(item.body.destination_alias)"></span></v-chip>            
+              >internal</v-chip>       
             </div>
 
           </v-list-item-content>
