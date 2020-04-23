@@ -26,6 +26,7 @@ import BigMapViewer from '@/views/BigMapViewer.vue'
 import BigMapDiffViewer from '@/views/BigMapDiffViewer.vue'
 import Projects from '@/views/Projects.vue'
 import OPG from '@/views/OPG.vue'
+import Stats from '@/views/Stats.vue'
 
 Vue.use(VueRouter)
 
@@ -57,6 +58,14 @@ const router = new Router({
                 nav: Nav
             },
             name: 'search'
+        },
+        {
+            path: '/stats',
+            components: {
+                default: Stats,
+                nav: Nav
+            },
+            name: 'stats'
         },
         {
             path: '/opg/:hash(o[0-9A-z]{50})',
