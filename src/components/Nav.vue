@@ -128,6 +128,11 @@ export default {
         icon: "mdi-view-dashboard-outline",
         text: "Projects",
         to: "projects"
+      },
+      {
+        icon: "mdi-poll",
+        text: "Statistics",
+        to: "stats"
       }
     ],
     privateItems: [

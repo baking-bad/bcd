@@ -10,6 +10,39 @@ import { getCancellable, postCancellable, cancelRequests } from '@/api/cancellat
 
 export class RequestFailedError extends Error { }
 
+export function getStats() {
+    return getCancellable(api, `/stats`, {})
+        .then((res) => {
+            if (!res) { return res; }
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+export function getNetworkStats(network) {
+    return getCancellable(api, `/stats/${network}`, {})
+        .then((res) => {
+            if (!res) { return res; }
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
+export function getNetworkStatsSeries(network, index, period) {
+    return getCancellable(api, `/stats/${network}/series?index=${index}&period=${period}`, {})
+        .then((res) => {
+            if (!res) { return res; }
+            if (res.status != 200) {
+                throw new RequestFailedError(res);
+            }
+            return res.data
+        })
+}
+
 export function search(text, indices = [], offset = 0, networks = [], languages = [], time = {}, group = 0) {
     let params = {
         q: text
