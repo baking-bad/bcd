@@ -1,7 +1,7 @@
 <template>
   <v-expansion-panel>
     <v-expansion-panel-header class="pa-0 pr-4" ripple :class="statusHeaderClass">
-      <v-row>
+      <v-row no-gutters class="py-2">
         <v-col cols="2" class="d-flex align-center">
           <v-list-item>
             <v-list-item-content>
@@ -61,7 +61,7 @@
         </v-col>
       </v-row>
     </v-expansion-panel-header>
-    <v-expansion-panel-content class="pl-1">
+    <v-expansion-panel-content class="opg-content">
       <InternalOperation :data="value" :address="address" />
 
       <InternalOperation
@@ -245,6 +245,12 @@ export default {
   }
 };
 </script>
+
+<style>
+.opg-content > .v-expansion-panel-content__wrap {
+  padding: 0;
+}
+</style>
 
 <style lang="scss" scoped>
 .line {

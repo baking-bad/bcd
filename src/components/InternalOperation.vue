@@ -1,31 +1,42 @@
 <template>
-  <div class="my-3">
-    <v-row v-if="!data.internal" no-gutters>
-      <v-col cols="2">
+  <div class="pb-2">
+    <v-row v-if="!data.internal" no-gutters class="pl-4 pr-6 py-1 mb-1 operation-info">
+      <v-col v-if="!address">
+        <InfoItem title="Time" :subtitle="formatDate(data.timestamp)" />
+      </v-col>
+      <v-col v-if="!address">
+        <InfoItem title="Level" :subtitle="data.level" />
+      </v-col>
+      <v-col v-if="!address">
+        <InfoItem title="Counter" :subtitle="data.counter" />
+      </v-col>
+      <v-col>
         <InfoItem title="Fee" :subtitle="(data.fee || 0) | uxtz" />
       </v-col>
-      <v-col cols="2">
+      <v-col>
         <InfoItem title="Burned" :subtitle="(burned || 0) | uxtz" />
       </v-col>
-      <v-col cols="2">
+      <v-col>
         <InfoItem title="Gas limit" :subtitle="String(data.gas_limit || 0)" />
       </v-col>
-      <v-col cols="2">
+      <v-col>
         <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
       </v-col>
-      <v-col cols="2"></v-col>
-      <v-col cols="2" class="py-0 d-flex justify-end align-center" v-if="!data.mempool">
-        <v-btn small text color="grey" class="d-flex align-center" v-if="address" :href="opgHref" target="_blank">
+      <v-spacer v-if="address"></v-spacer>
+      <v-col cols="1" v-if="!data.mempool && address" class="py-0 d-flex justify-end align-center pr-8">
+        <v-btn small depressed class="d-flex align-center" :href="opgHref" target="_blank">
           <v-icon x-small>mdi-open-in-new</v-icon>
           <span class="overline ml-1">In new tab</span>
         </v-btn>
-        <v-btn small text color="grey" class="d-flex align-center" @click="getRawJSON">
+      </v-col>
+      <v-col cols="1" v-if="!data.mempool" class="py-0 d-flex justify-end align-center">
+        <v-btn small depressed class="d-flex align-center" @click="getRawJSON">
           <v-icon x-small>mdi-code-braces</v-icon>
           <span class="overline ml-1">Raw JSON</span>
         </v-btn>
       </v-col>
     </v-row>
-    <v-row no-gutters>
+    <v-row no-gutters class="px-5">
       <v-col cols="12" class="title">
         <span :class="headerClass">{{ header }}</span>
         <v-chip
@@ -62,10 +73,11 @@
       <v-spacer></v-spacer>
       <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="hasDetails">
         <v-btn
-          text
+          :text="showParams"
+          :depressed="!showParams"
+          :color="showParams ? 'grey' : ''"
           small
           @click="showParams = !showParams"
-          color="grey"
           class="d-flex align-center"
         >
           <span class="overline">{{btnText}} details</span>
@@ -74,7 +86,7 @@
     </v-row>
 
     <v-expand-transition>
-      <div v-show="showParams">
+      <div v-show="showParams" class="px-5 pb-2">
         <v-row v-if="errors" no-gutters>
           <v-col>
             <OperationAlert :errors="errors"/>
@@ -180,6 +192,8 @@
 </template>
 
 <script>
+import dayjs from "dayjs";
+
 import InfoItem from "@/components/InfoItem.vue";
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import OperationAlert from "@/components/OperationAlert.vue";
@@ -433,7 +447,15 @@ export default {
         let href = getTzKTLink(this.data.network, address);
         window.open(href, '_blank');
       }
-    }
+    },
+    formatDate(value) {
+      let d = dayjs(value);
+      if (value) {
+        if (d.year() < dayjs().year()) return d.format("MMM D HH:mm, YYYY");
+        if (d.add(1, "days").isBefore(dayjs())) return d.format("MMM D HH:mm");
+        return d.fromNow();
+      }
+    },
   },
   watch: {
     active(newVal) {
@@ -451,6 +473,11 @@ export default {
 
 
 <style lang="scss" scoped>
+.operation-info {
+  background: rgb(250, 250, 250);
+  border-left: 4px solid rgb(230, 230, 230);
+}
+
 .address {
   font-size: 13px;
 }

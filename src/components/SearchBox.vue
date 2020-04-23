@@ -67,7 +67,7 @@
 import { mapActions } from "vuex";
 
 import * as api from "@/api/index.js";
-import { checkAddress, checkOperation } from "@/utils/tz.js";
+import { checkAddress, checkOperation, checkKeyHash } from "@/utils/tz.js";
 import dayjs from "dayjs";
 
 export default {
@@ -107,6 +107,15 @@ export default {
           this.model = null;
         })
         this.$router.push({ path: `/${network}/${value}` });
+      }
+      if (this.model.type == "bigmapdiff" && checkKeyHash(value)) {
+        let network = this.model.body.network;
+        let address = this.model.body.address;
+        let bigmap = this.model.body.ptr; 
+        this.$nextTick(() => {
+          this.model = null;
+        })
+        this.$router.push({ path: `/bigmap/${network}/${address}/${bigmap}/${value}` });
       }
     },
     onEnter(searchText) {

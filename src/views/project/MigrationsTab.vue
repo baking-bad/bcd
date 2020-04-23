@@ -4,7 +4,7 @@
       :loading="loading"
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
     >
-      <div class="elevation-2 ma-3">
+      <div class="elevation-2 mx-3 my-6">
         <template v-for="(item, idx) in migrations">
           <template v-if="item.kind == 'bootstrap'">
             <v-hover :key="idx" v-slot:default="{ hover }">
