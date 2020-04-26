@@ -6,7 +6,7 @@
     <div v-else-if="contract">
       <ProjectNav :contract="contract" />
 
-       <v-toolbar flat class="project-toolbar">
+      <v-toolbar flat class="project-toolbar">
         <v-tabs
           class="ml-4"
           center-active
@@ -18,7 +18,7 @@
             <v-icon left small>mdi-swap-horizontal</v-icon>
             Operations ({{ contract.tx_count || 0 }})
           </v-tab>
-          <v-tab :to="{name: 'code'}" replace >
+          <v-tab :to="{name: 'code'}" replace>
             <v-icon left small>mdi-code-braces</v-icon>Code
           </v-tab>
           <v-tab :to="{name: 'entrypoints'}" replace v-if="hasEntrypoints">
@@ -28,13 +28,14 @@
             <v-icon small left>mdi-alphabetical</v-icon>Storage
           </v-tab>
           <v-tab :to="{name: 'migrations'}" replace v-if="contract.migrations_count">
-            <v-icon small left>mdi-transfer</v-icon>Migrations ({{ contract.migrations_count || 0 }})
+            <v-icon small left>mdi-transfer</v-icon>
+            Migrations ({{ contract.migrations_count || 0 }})
           </v-tab>
         </v-tabs>
         <div class="mr-4">
           <ExpandableSearch></ExpandableSearch>
         </div>
-       </v-toolbar>
+      </v-toolbar>
 
       <v-container fluid class="py-0 my-0">
         <v-row>
@@ -53,6 +54,7 @@
 <script>
 import { mapActions } from "vuex";
 
+import { cancelRequests } from "@/api/cancellation.js";
 import * as api from "@/api/index.js";
 import ExpandableSearch from "@/components/ExpandableSearch.vue";
 import ProjectNav from "@/views/project/Nav.vue";
@@ -90,6 +92,7 @@ export default {
         this.contract.address === this.$route.params.address
       )
         return;
+      cancelRequests();
       api
         .getContract(this.$route.params.network, this.$route.params.address)
         .then(res => {
@@ -105,7 +108,7 @@ export default {
         .finally(() => (this.loading = false));
     }
   },
-  watch: {  
+  watch: {
     $route: "requestData"
   }
 };

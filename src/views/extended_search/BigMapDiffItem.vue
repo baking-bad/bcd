@@ -1,13 +1,18 @@
 <template>
   <div class="bigmapdiff">
     <v-hover v-slot:default="{ hover }">
-      <v-card class="my-3 transparent" :elevation="hover ? 2 : 0" @click="onSearch(item)">
+      <v-card
+        class="my-3 transparent card"
+        :elevation="hover ? 2 : 0"
+        :to="{path: `/bigmap/${item.body.network}/${item.body.address}/${item.body.ptr}/${item.body.key_hash}`}"
+        target="_blank"
+      >
         <v-list-item three-line selectable>
           <v-list-item-content>
-            <v-list-item-title>
+            <v-list-item-title class="header">
               <span v-html="highlight(item.body.key)"></span>
             </v-list-item-title>
-            <v-list-item-title class="key_hash grey--text text--darken-2">
+            <v-list-item-title class="key_hash header grey--text text--darken-2">
               <span v-html="highlight(item.value)"></span>
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -17,7 +22,7 @@
               >{{ item.body.network }}</span>
             </v-list-item-subtitle>
 
-            <div class="d-flex flex-horizontal mt-1">              
+            <div class="d-flex flex-horizontal mt-1">
               <v-chip
                 v-if="item.body.ptr > 0"
                 key="ptr"
@@ -42,10 +47,7 @@
 
         <div class="d-flex flex-wrap flex-row mx-6">
           <div v-for="(values, key) in item.highlights" :key="key">
-            <div
-              class="d-flex flex-column mr-6 pt-2 pb-4"
-              v-if="!['key_strings'].includes(key)"
-            >
+            <div class="d-flex flex-column mr-6 pt-2 pb-4" v-if="!['key_strings'].includes(key)">
               <span class="overline">{{ key }}</span>
               <span v-for="(value, i) in values" :key="key + i">
                 <span v-html="highlight(value)" class="caption"></span>
@@ -72,12 +74,6 @@ export default {
     limit: 5
   }),
   methods: {
-    onSearch(item) {
-      let routeData = this.$router.resolve({
-        path: `/bigmap/${item.body.network}/${item.body.address}/${item.body.ptr}/${item.body.key_hash}`
-      });
-      window.open(routeData.href, "_blank");
-    },
     formatDate(value) {
       if (value) {
         return dayjs(value).format("MMM D, YYYY");
@@ -109,5 +105,10 @@ export default {
 .key_hash {
   font-family: "Roboto Mono", monospace;
   font-size: 0.9rem;
+}
+.card:visited {
+  .header {
+    color: purple;
+  }
 }
 </style>
