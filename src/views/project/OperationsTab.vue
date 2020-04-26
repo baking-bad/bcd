@@ -166,7 +166,8 @@ export default {
     dates: [],
     datesBuf: [],
     datesModal: false,
-    entrypoints: []
+    entrypoints: [],
+    operationsSeqNo: 0
   }),
   created() {
     this.fetchOperations();
@@ -192,7 +193,7 @@ export default {
         return [0, 0];
       }
     },
-    getOperations() {
+    getOperations(seqno) {
       if (this.contract == null || this.contract.downloadedOperations)
         return;
 
@@ -216,6 +217,7 @@ export default {
       )
         .then(res => {
           if (!res) return;
+          if (seqno !== this.operationsSeqNo) return;
           this.prepareOperations(res.operations);
           this.contract.downloadedOperations = res.operations.length == 0;
           this.last_id = res.last_id;
@@ -284,7 +286,7 @@ export default {
     },
     onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
-        this.getOperations();
+        this.getOperations(++this.operationsSeqNo);
       }
     },
     clearFilters() {
@@ -301,7 +303,7 @@ export default {
         this.contract.downloadedOperations = false;
         this.contract.operations = [];
         this.operationsLoading = true;
-        this.getOperations();
+        this.getOperations(++this.operationsSeqNo);
       } else {
         this.operationsLoading = false;
       }
@@ -319,7 +321,7 @@ export default {
         this.last_id = null;  // trigger computed field `operations`
         this.contract.downloadedOperations = false;
         this.contract.operations = [];
-        this.getOperations();
+        this.getOperations(++this.operationsSeqNo);
       }
     }
   },
