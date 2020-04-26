@@ -1,5 +1,8 @@
 <template>
-  <v-list-item :key="item.address" @click="onItemClick">
+  <v-list-item
+    :key="item.address"
+    :to="{name: 'project',params: { address: this.item.address, network: this.item.network }}"
+  >
     <v-list-item-content>
       <v-list-item-title class="contract-item-address hash">
         <span>{{ item.alias || item.address }}</span>
@@ -28,7 +31,6 @@
 
 <script>
 import dayjs from "dayjs";
-import { cancelRequests } from "@/api/cancellation.js";
 
 export default {
   props: {
@@ -42,20 +44,12 @@ export default {
         let val = dayjs(value);
         if (val.unix() > 0) return val.format("MMM D, YYYY");
       }
-    },
-    onItemClick() {
-      cancelRequests();
-      this.$router.push({
-        name: "project",
-        params: { address: this.item.address, network: this.item.network }
-      });
     }
   }
 };
 </script>
 
-
-<style>
+<style lang="scss" scoped>
 .contract-item-address {
   font-size: 12px;
 }
