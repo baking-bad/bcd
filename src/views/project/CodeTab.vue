@@ -49,7 +49,6 @@
 <script>
 import Michelson from "@/components/Michelson.vue";
 import { mapActions } from "vuex";
-import { getContractCode, getContractStorageRaw, getContractMigrations } from "@/api/index.js";
 import ErrorState from "@/components/ErrorState.vue";
 import LZString from "lz-string";
 
@@ -117,7 +116,7 @@ export default {
       }
 
       let level = this.getFallbackLevel(protocol);
-      getContractCode(this.contract.network, this.contract.address, protocol, level)
+      this.api.getContractCode(this.contract.network, this.contract.address, protocol, level)
         .then(res => {
           if (!res) return;
           this.contract.code[protocol] = res;
@@ -134,7 +133,7 @@ export default {
       if (this.contract == null || this.contract.migrations) {
         return;
       }
-      getContractMigrations(this.contract.network, this.contract.address)
+      this.api.getContractMigrations(this.contract.network, this.contract.address)
         .then(res => {
           if (!res) return;
           this.contract.migrations = res;
@@ -165,7 +164,7 @@ export default {
     },
     openTryMichelson() {
       if (this.contract.raw_storage === undefined) {
-        getContractStorageRaw(this.contract.network, this.contract.address)
+        this.api.getContractStorageRaw(this.contract.network, this.contract.address)
           .then(res => {
             this.contract.raw_storage = String(res);
           })

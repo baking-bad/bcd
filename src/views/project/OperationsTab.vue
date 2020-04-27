@@ -112,7 +112,6 @@
 import { mapActions } from "vuex";
 
 import Operation from "@/components/Operation.vue";
-import { getContractOperations, getContractMempool } from "@/api/index.js";
 import dayjs from "dayjs";
 
 export default {
@@ -205,7 +204,7 @@ export default {
       let entries = this.entrypoints;
       let timestamps = this.getTimestamps();
 
-      getContractOperations(
+      this.api.getContractOperations(
         this.contract.network,
         this.contract.address,
         this.last_id,
@@ -230,7 +229,7 @@ export default {
       if (this.contract == null)
         return;
       
-      getContractMempool(this.contract.network, this.contract.address)
+      this.api.getContractMempool(this.contract.network, this.contract.address)
         .then(res => {
           this.contract.mempool = res;
         })

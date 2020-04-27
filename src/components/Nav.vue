@@ -106,7 +106,6 @@
 import { mapActions } from "vuex";
 
 import { logout } from "@/utils/auth.js";
-import { getRandomContract } from "@/api/index.js";
 
 export default {
   computed: {
@@ -158,7 +157,7 @@ export default {
       logout();
     },
     random() {
-      getRandomContract()
+      this.api.getRandomContract()
         .then(res => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })

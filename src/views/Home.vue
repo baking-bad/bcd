@@ -25,7 +25,6 @@
 import { mapActions } from "vuex";
 
 import SearchBox from "@/components/SearchBox.vue";
-import { getRandomContract } from "@/api/index.js";
 
 export default {
   components: {
@@ -34,7 +33,7 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     pickRandom() {
-      getRandomContract()
+      this.api.getRandomContract()
         .then(res => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })

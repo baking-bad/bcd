@@ -1,0 +1,11 @@
+{
+    "BCD_API_URI": "http://localhost:14000",
+    "BCD_NETWORKS": ["sandboxnet"],
+    "BCD_OAUTH_ENABLED": false,
+    "BCD_HOME_PAGE": "projects",
+    "BCD_GA_ENABLED": false,
+    "RPC_ENDPOINTS": {
+      "sandboxnet": "http://localhost:8732"
+    },
+    "TZKT_ENDPOINTS": {}
+}

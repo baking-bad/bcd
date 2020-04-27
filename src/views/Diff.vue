@@ -25,8 +25,6 @@
 <script>
 import { mapActions } from "vuex";
 
-import { getDiff, vote } from "@/api/index.js";
-
 import DiffViewer from "@/components/DiffViewer.vue";
 import ErrorState from "@/components/ErrorState.vue";
 
@@ -70,7 +68,7 @@ export default {
     ...mapActions(["showError"]),
     getDiff() {
       this.loading = true;
-      getDiff(this.query)
+      this.api.getDiff(this.query)
         .then(res => (this.res = res))
         .catch(err => {
           console.log(err);
@@ -79,7 +77,7 @@ export default {
         .finally(() => (this.loading = false));
     },
     upVote() {
-      vote(
+      this.api.vote(
         this.query.left.network,
         this.query.left.address,
         this.query.right.network,
@@ -96,7 +94,7 @@ export default {
         });
     },
     downVote() {
-      vote(
+      this.api.vote(
         this.query.left.network,
         this.query.left.address,
         this.query.right.network,

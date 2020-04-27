@@ -119,13 +119,6 @@
 <script>
 import { mapActions } from "vuex";
 import dayjs from "dayjs";
-
-import {
-  getProfileSubscriptions,
-  addProfileSubscription,
-  removeProfileSubscription,
-  getRecommendedSubscriptions
-} from "@/api/profile.js";
 import { getTzKTLink } from "@/utils/tzkt.js";
 
 export default {
@@ -142,7 +135,7 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     getData() {
-      getProfileSubscriptions()
+      this.api.getProfileSubscriptions()
         .then(res => {
           this.subscriptions = res;
         })
@@ -152,7 +145,7 @@ export default {
         })
         .finally(() => (this.loading = false));
 
-      getRecommendedSubscriptions()
+      this.api.getRecommendedSubscriptions()
         .then(res => {
           this.recommended = res;
         })
@@ -173,7 +166,7 @@ export default {
       }
     },
     unsubscribe(item) {
-      removeProfileSubscription(item.id, "contract")
+      this.api.removeProfileSubscription(item.id, "contract")
         .then(() => {
           for (var i = 0; i < this.subscriptions.length; i++) {
             if (this.subscriptions[i].id === item.id) {
@@ -182,7 +175,7 @@ export default {
             }
           }
           this.recommendedLoading = true;
-          return getRecommendedSubscriptions();
+          return this.api.getRecommendedSubscriptions();
         })
         .then(res => {
           this.recommended = res;
@@ -194,12 +187,12 @@ export default {
         .finally(() => (this.recommendedLoading = false));
     },
     subscribe(item) {
-      addProfileSubscription(item.id, "contract")
+      this.api.addProfileSubscription(item.id, "contract")
         .then(() => {
           item.subscrebed_at = dayjs().format();
           this.subscriptions.push(item);
           this.recommendedLoading = true;
-          return getRecommendedSubscriptions();
+          return this.api.getRecommendedSubscriptions();
         })
         .then(res => {
           this.recommended = res;

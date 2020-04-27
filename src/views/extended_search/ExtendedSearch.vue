@@ -121,7 +121,6 @@
 import { mapActions } from "vuex";
 
 import { getTzKTLink } from "@/utils/tzkt.js";
-import * as api from "@/api/index.js";
 
 import ContractItem from "@/views/extended_search/ContractItem.vue";
 import OperationItem from "@/views/extended_search/OperationItem.vue";
@@ -220,7 +219,7 @@ export default {
       if (!this.loading && hasText && !this.completed) {
         this.loading = true;
         let offset = push ? this.suggests.length : 0;
-        api
+        this.api
           .search(text, indices, offset, networks, languages, time, 1)
           .then(res => {
             this.completed = res.items.length == 0;

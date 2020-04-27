@@ -127,16 +127,6 @@
 <script>
 import dayjs from "dayjs";
 import { mapActions } from "vuex";
-
-import {
-  getSameContracts,
-  getSimilarContracts,
-  getContractRating
-} from "@/api/index.js";
-import {
-  addProfileSubscription,
-  removeProfileSubscription
-} from "@/api/profile.js";
 import { getTzKTLink } from "@/utils/tzkt.js";
 
 import ContractItem from "@/components/ContractItem.vue";
@@ -210,7 +200,7 @@ export default {
       this.similarLoading = true;
       this.sameLoading = true;
 
-      getSameContracts(this.contract.network, this.contract.address, 0)
+      this.api.getSameContracts(this.contract.network, this.contract.address, 0)
         .then(res => {
           if (!res) return;
           this.contract.same = res.contracts;
@@ -227,7 +217,7 @@ export default {
         })
       .finally(() => (this.sameLoading = false));
 
-      getSimilarContracts(this.contract.network, this.contract.address)
+      this.api.getSimilarContracts(this.contract.network, this.contract.address)
         .then(res => {
           if (!res) return;
           this.contract.similar = res;
@@ -244,7 +234,7 @@ export default {
         })
         .finally(() => (this.similarLoading = false));
 
-      getContractRating(this.contract.network, this.contract.address)
+      this.api.getContractRating(this.contract.network, this.contract.address)
         .then(
           res => {
             if (!res) return;
@@ -260,7 +250,7 @@ export default {
         return getTzKTLink(this.contract.network, address);
     },
     subscribe() {
-      addProfileSubscription(this.contract.id, "contract")
+      this.api.addProfileSubscription(this.contract.id, "contract")
         .then(() => {
           this.contract.profile.subscribed = true;
           this.rating.count += 1;
@@ -274,7 +264,7 @@ export default {
         });
     },
     unsubscribe() {
-      removeProfileSubscription(this.contract.id, "contract")
+      this.api.removeProfileSubscription(this.contract.id, "contract")
         .then(() => {
           this.contract.profile.subscribed = false;
           this.rating.count -= 1;
@@ -292,7 +282,7 @@ export default {
     },
     getProjectUpdate() {
       this.isSameUpdating = true;
-      getSameContracts(
+      this.api.getSameContracts(
         this.contract.network,
         this.contract.address,
         this.contract.same.length

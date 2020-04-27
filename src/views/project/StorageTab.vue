@@ -94,7 +94,6 @@ import Michelson from "@/components/Michelson.vue"
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import ErrorState from "@/components/ErrorState.vue";
 
-import { getContractStorage, getContractStorageRaw, getContractStorageRich } from "@/api/index.js";
 import { getTree } from "@/utils/diff.js";
 
 import dayjs from "dayjs";
@@ -156,7 +155,7 @@ export default {
         this.raw = false;
         return;
       }
-      getContractStorage(this.contract.network, this.contract.address)
+      this.api.getContractStorage(this.contract.network, this.contract.address)
         .then(res => {
           if (!res) return;
           this.contract.storage = res;
@@ -175,7 +174,7 @@ export default {
         this.raw = true;
         return;
       }
-      getContractStorageRaw(this.contract.network, this.contract.address)
+      this.api.getContractStorageRaw(this.contract.network, this.contract.address)
         .then(res => {
           this.contract.raw_storage = String(res);
           this.raw = true;
@@ -209,7 +208,7 @@ export default {
     },
     downloadFile() {
       this.downloading = true;
-      getContractStorageRich(this.contract.network, this.contract.address)
+      this.api.getContractStorageRich(this.contract.network, this.contract.address)
         .then(res => {
           var element = document.createElement("a");
           element.setAttribute(

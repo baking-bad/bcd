@@ -1,0 +1,19 @@
+{
+    "API_URI": "https://api.better-call.dev/v1/",
+    "NETWORKS": ["mainnet", "carthagenet", "zeronet", "babylonnet"],
+    "OAUTH_ENABLED": false,
+    "HOME_PAGE": "home",
+    "GA_ENABLED": true,
+    "RPC_ENDPOINTS": {
+      "mainnet": "https://rpc.tzkt.io/mainnet",
+      "carthagenet": "https://rpc.tzkt.io/carthagenet",
+      "zeronet": "https://rpc.tzkt.io/zeronet",
+      "babylonnet": "https://rpc.tzkt.io/babylonnet"
+    },
+    "TZKT_ENDPOINTS": {
+      "mainnet": "https://tzkt.io/",
+      "carthagenet": "https://carthagenet.tzkt.io/",
+      "zeronet": "https://zeronet.tzkt.io/",
+      "babylonnet": "https://babylonnet.tzkt.io/"
+    }
+}

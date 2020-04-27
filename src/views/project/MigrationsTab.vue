@@ -85,8 +85,6 @@
 <script>
 import { mapActions } from "vuex";
 
-import { getContractMigrations } from "@/api/index.js";
-
 export default {
   name: "MigrationsTab",
   props: {
@@ -115,7 +113,7 @@ export default {
         this.loading = false;
         return;
       }
-      getContractMigrations(this.contract.network, this.contract.address)
+      this.api.getContractMigrations(this.contract.network, this.contract.address)
         .then(res => {
           if (!res) return;
           this.contract.migrations = res;

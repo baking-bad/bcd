@@ -65,8 +65,6 @@
 
 <script>
 import { mapActions } from "vuex";
-
-import * as api from "@/api/index.js";
 import { checkAddress, checkOperation, checkKeyHash } from "@/utils/tz.js";
 import dayjs from "dayjs";
 
@@ -134,7 +132,7 @@ export default {
       clearTimeout(this._timerId);
 
       this._timerId = setTimeout(() => {
-        api
+        this.api
           .search(text)
           .then(res => {
             if (seqno === this.seqno) {

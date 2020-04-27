@@ -55,7 +55,6 @@
 import { mapActions } from "vuex";
 
 import { cancelRequests } from "@/api/cancellation.js";
-import * as api from "@/api/index.js";
 import ExpandableSearch from "@/components/ExpandableSearch.vue";
 import ProjectNav from "@/views/project/Nav.vue";
 import ErrorState from "@/components/ErrorState.vue";
@@ -93,7 +92,7 @@ export default {
       )
         return;
       cancelRequests();
-      api
+      this.api
         .getContract(this.$route.params.network, this.$route.params.address)
         .then(res => {
           if (!res) return;

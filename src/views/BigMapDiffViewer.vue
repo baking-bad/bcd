@@ -119,7 +119,6 @@ import dayjs from "dayjs";
 
 import { mapActions } from "vuex";
 
-import { getContractBigMapByKeyHash } from "@/api/index.js";
 import { getTree } from "@/utils/diff.js";
 
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
@@ -232,7 +231,7 @@ export default {
     },
     requestData() {
       this.loading = true;
-      getContractBigMapByKeyHash(
+      this.api.getContractBigMapByKeyHash(
         this.$route.params.network,
         this.$route.params.address,
         this.$route.params.ptr,

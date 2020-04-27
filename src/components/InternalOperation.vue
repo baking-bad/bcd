@@ -202,7 +202,6 @@ import VueJsonPretty from "vue-json-pretty";
 
 import { getTree } from "@/utils/diff.js";
 import { getTzKTLink } from "@/utils/tzkt.js";
-import { getOperation } from "@/api/node.js";
 
 export default {
   props: {
@@ -423,7 +422,7 @@ export default {
       }
       this.showRaw = true;
       this.loadingRaw = true;
-      getOperation(this.data.network, this.data.level, this.data.hash)
+      this.rpc.getOperation(this.data.network, this.data.level, this.data.hash)
         .then(res => {
           this.rawJson = res;
         })
