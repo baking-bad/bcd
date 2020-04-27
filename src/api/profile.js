@@ -132,3 +132,45 @@ export function getProfileTimeline(offset = 0) {
             throw err;
         })
 }
+
+export function vote(sn, sa, dn, da, vote) {
+    return api.post(`/vote`, {
+        src: sa,
+        src_network: sn,
+        dest: da,
+        dest_network: dn,
+        vote: vote,
+    },
+        {
+            headers: {
+                'Authorization': getJwt()
+            }
+        })
+        .then((res) => {
+            return res.data
+        })
+        .catch((err) => {
+            if (err.response !== undefined && err.response.status == 401) {
+                throw new UnauthorizedError(err);
+            }
+            throw err;
+        })
+}
+
+export function getNextVoteTask() {
+    return api.get(`/vote/task`,
+        {
+            headers: {
+                'Authorization': getJwt()
+            }
+        })
+        .then((res) => {
+            return res.data
+        })
+        .catch((err) => {
+            if (err.response !== undefined && err.response.status == 401) {
+                throw new UnauthorizedError(err);
+            }
+            throw err;
+        })
+}

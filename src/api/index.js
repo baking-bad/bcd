@@ -323,20 +323,3 @@ export function getOPG(hash) {
             return res.data
         })
 }
-
-
-export function vote(sn, sa, dn, da, vote) {
-    return api.post(`/vote`, {
-        src: sa,
-        src_network: sn,
-        dest: da,
-        dest_network: dn,
-        vote: vote,
-    })
-        .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
-            return res.data
-        })
-}
