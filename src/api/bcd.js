@@ -303,7 +303,7 @@ export class BetterCallApi {
     }
 
     vote(sn, sa, dn, da, vote) {
-        return api.post(`/vote`, {
+        return this.api.post(`/vote`, {
             src: sa,
             src_network: sn,
             dest: da,
@@ -327,7 +327,7 @@ export class BetterCallApi {
     }
     
     getNextVoteTask() {
-        return api.get(`/vote/task`,
+        return this.api.get(`/vote/task`,
             {
                 headers: {
                     'Authorization': getJwt()

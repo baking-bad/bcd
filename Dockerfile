@@ -1,9 +1,9 @@
-FROM node:latest AS base
+FROM node:latest AS build
 WORKDIR /better-call-dev
-ADD . .
-RUN npm i
-RUN npm run build
+COPY . .
+RUN npm i && npm run build
 
 
 FROM nginx:latest AS release
-COPY --from=base /better-call-dev/dist /usr/share/nginx/html/
+WORKDIR /usr/share/nginx/html/
+COPY --from=build /better-call-dev/dist ./
