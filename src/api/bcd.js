@@ -302,20 +302,45 @@ export class BetterCallApi {
             })
     }
 
-
     vote(sn, sa, dn, da, vote) {
-        return this.api.post(`/vote`, {
+        return api.post(`/vote`, {
             src: sa,
             src_network: sn,
             dest: da,
             dest_network: dn,
             vote: vote,
-        })
-            .then((res) => {
-                if (res.status != 200) {
-                    throw new RequestFailedError(res);
+        },
+            {
+                headers: {
+                    'Authorization': getJwt()
                 }
+            })
+            .then((res) => {
                 return res.data
+            })
+            .catch((err) => {
+                if (err.response !== undefined && err.response.status == 401) {
+                    throw new UnauthorizedError(err);
+                }
+                throw err;
+            })
+    }
+    
+    getNextVoteTask() {
+        return api.get(`/vote/task`,
+            {
+                headers: {
+                    'Authorization': getJwt()
+                }
+            })
+            .then((res) => {
+                return res.data
+            })
+            .catch((err) => {
+                if (err.response !== undefined && err.response.status == 401) {
+                    throw new UnauthorizedError(err);
+                }
+                throw err;
             })
     }
 

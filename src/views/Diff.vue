@@ -4,7 +4,29 @@
     <v-row v-else-if="res" no-gutters>
       <v-col cols="12">
         <template v-if="isAuthorized">
-          <v-btn fab elevation="3" right bottom fixed color="primary lighten-2" style="margin-right: 65px;" @click="upVote">
+          <v-btn
+            v-if="task"
+            fab
+            elevation="3"
+            right
+            bottom
+            fixed
+            color="grey lighten-2"
+            style="margin-right: 130px;"
+            :to="{name: 'diff', query: {addressA: task.address_1,networkA: task.network_1,addressB: task.address_2,networkB: task.network_2}}"
+          >
+            <v-icon>mdi-skip-next</v-icon>
+          </v-btn>
+          <v-btn
+            fab
+            elevation="3"
+            right
+            bottom
+            fixed
+            color="primary lighten-2"
+            style="margin-right: 65px;"
+            @click="upVote"
+          >
             <v-icon>mdi-thumb-up-outline</v-icon>
           </v-btn>
           <v-btn fab elevation="3" right bottom fixed color="red lighten-2" @click="downVote">
@@ -38,10 +60,11 @@ export default {
     res: null,
     loading: true,
     snackbar: false,
-    snacktext: ""
+    snacktext: "",
+    task: null
   }),
   created() {
-    this.getDiff();
+    this.requestData();
   },
   computed: {
     isAuthorized() {
@@ -54,18 +77,22 @@ export default {
         network: params.networkA,
         protocol: params.protocolA,
         level: parseInt(params.levelA)
-      }
+      };
       const right = {
         address: params.addressB,
         network: params.networkB,
         protocol: params.protocolB,
         level: parseInt(params.levelB)
-      }
-      return {left, right}
+      };
+      return { left, right };
     }
   },
   methods: {
     ...mapActions(["showError"]),
+    requestData() {
+      this.getDiff();
+      this.nextTask();
+    },
     getDiff() {
       this.loading = true;
       this.api.getDiff(this.query)
@@ -109,7 +136,18 @@ export default {
           console.log(err);
           this.showError(err);
         });
+    },
+    nextTask() {
+      this.api.getNextVoteTask()
+        .then(res => (this.task = res))
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        });
     }
+  },
+  watch: {
+    $route: "requestData"
   }
 };
 </script>
