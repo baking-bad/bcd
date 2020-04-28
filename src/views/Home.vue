@@ -30,6 +30,11 @@ export default {
   components: {
     SearchBox
   },
+  mounted() {
+    if (this.$route.name != this.config.HOME_PAGE) {
+      this.$router.push({ path: this.config.HOME_PAGE });
+    }
+  },
   methods: {
     ...mapActions(["showError"]),
     pickRandom() {

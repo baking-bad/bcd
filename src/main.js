@@ -65,9 +65,9 @@ const getRuntimeConfig = async () => {
 }
 
 getRuntimeConfig().then(function(config) {
-  // config.API_URI = process.env.VUE_APP_API_URI || config.API_URI;
-  // config.GA_ENABLED = process.env.VUE_APP_GA_ENABLED || config.GA_ENABLED;
-  // config.OAUTH_ENABLED = process.env.VUE_APP_OAUTH_ENABLED || config.OAUTH_ENABLED;
+  config.API_URI = process.env.VUE_APP_API_URI || config.API_URI;
+  config.GA_ENABLED = process.env.VUE_APP_GA_ENABLED || config.GA_ENABLED;
+  config.OAUTH_ENABLED = process.env.VUE_APP_OAUTH_ENABLED || config.OAUTH_ENABLED;
 
   let api = new BetterCallApi(config.API_URI);
   let rpc = new NodeRPC(config.RPC_ENDPOINTS);

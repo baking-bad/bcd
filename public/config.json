@@ -2,8 +2,8 @@
     "API_URI": "https://api.better-call.dev/v1/",
     "NETWORKS": ["mainnet", "carthagenet", "zeronet", "babylonnet"],
     "OAUTH_ENABLED": false,
-    "HOME_PAGE": "home",
     "GA_ENABLED": true,
+    "HOME_PAGE": "home",
     "RPC_ENDPOINTS": {
       "mainnet": "https://rpc.tzkt.io/mainnet",
       "carthagenet": "https://rpc.tzkt.io/carthagenet",

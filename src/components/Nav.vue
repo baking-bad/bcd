@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer app fixed touchless mini-variant permanent class="elevation-1">
     <router-link
-      :to="{name: 'home'}"
+      :to="{name: config.HOME_PAGE}"
       class="d-flex justify-center align-center"
       style="height: 63px"
     >
