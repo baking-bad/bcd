@@ -91,7 +91,9 @@ export default {
     ...mapActions(["showError"]),
     requestData() {
       this.getDiff();
-      this.nextTask();
+      if (this.isAuthorized) {
+        this.nextTask();
+      }
     },
     getDiff() {
       this.loading = true;

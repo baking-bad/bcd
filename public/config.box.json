@@ -1,10 +1,10 @@
 {
-    "BCD_API_URI": "http://api:14000/v1/",
-    "BCD_NETWORKS": ["sandboxnet"],
-    "BCD_OAUTH_ENABLED": false,
-    "BCD_GA_ENABLED": false,
-    "BCD_HOME_PAGE": "projects",
+    "API_URI": "http://localhost:14000/v1/",
+    "NETWORKS": ["sandboxnet"],
+    "OAUTH_ENABLED": false,
+    "GA_ENABLED": false,
+    "HOME_PAGE": "projects",
     "RPC_ENDPOINTS": {
-      "sandboxnet": "http://sandbox:8732"
+      "sandboxnet": "http://localhost:8732"
     }
 }

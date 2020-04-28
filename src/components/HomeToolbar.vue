@@ -17,7 +17,7 @@
         <v-list>
           <v-list-item
             class="d-flex align-center"
-            :href="`${config.API_URI}/oauth/github/login`"
+            :href="`${config.API_URI}oauth/github/login`"
           >
             <v-list-item-title>
               <v-icon class="mr-4">mdi-github</v-icon>GitHub
@@ -25,7 +25,7 @@
           </v-list-item>
           <v-list-item
             class="d-flex align-center"
-            :href="`${config.API_URI}/oauth/gitlab/login`"
+            :href="`${config.API_URI}oauth/gitlab/login`"
           >
             <v-list-item-title>
               <v-icon class="mr-4">mdi-gitlab</v-icon>GitLab
