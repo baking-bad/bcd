@@ -303,7 +303,7 @@ export class BetterCallApi {
     }
 
     vote(sn, sa, dn, da, vote) {
-        return this.api.post(`/vote`, {
+        return this.api.post(`/profile/vote`, {
             src: sa,
             src_network: sn,
             dest: da,
@@ -327,7 +327,7 @@ export class BetterCallApi {
     }
     
     getNextVoteTask() {
-        return this.api.get(`/vote/task`,
+        return this.api.get(`/profile/vote/task`,
             {
                 headers: {
                     'Authorization': getJwt()
@@ -345,7 +345,7 @@ export class BetterCallApi {
     }
 
     getProfile() {
-        return this.api.get(``,
+        return this.api.get(`/profile`,
             {
                 headers: {
                     'Authorization': getJwt()
@@ -363,7 +363,7 @@ export class BetterCallApi {
     }
 
     getProfileSubscriptions() {
-        return this.api.get(`/subscriptions`,
+        return this.api.get(`/profile/subscriptions`,
             {
                 headers: {
                     'Authorization': getJwt()
@@ -381,7 +381,7 @@ export class BetterCallApi {
     }
 
     addProfileSubscription(id, typ) {
-        return this.api.post(`/subscriptions`, {
+        return this.api.post(`/profile/subscriptions`, {
             id: id,
             type: typ
         },
@@ -402,7 +402,7 @@ export class BetterCallApi {
     }
 
     removeProfileSubscription(id, typ) {
-        return this.api.delete(`/subscriptions`,
+        return this.api.delete(`/profile/subscriptions`,
             {
                 headers: {
                     'Authorization': getJwt()
@@ -424,7 +424,7 @@ export class BetterCallApi {
     }
 
     getRecommendedSubscriptions() {
-        return this.api.get(`/subscriptions/recommended`,
+        return this.api.get(`/profile/subscriptions/recommended`,
             {
                 headers: {
                     'Authorization': getJwt()
@@ -442,7 +442,7 @@ export class BetterCallApi {
     }
 
     getProfileTimeline(offset = 0) {
-        return this.api.get(`/subscriptions/timeline`,
+        return this.api.get(`/profile/subscriptions/timeline`,
             {
                 headers: {
                     'Authorization': getJwt()
