@@ -19,3 +19,6 @@ deploy-test:
 
 latest:
 	git tag latest -f && git push origin latest -f
+
+image:
+	docker build -t bakingbad/bcdhub-gui:latest .
