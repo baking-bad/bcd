@@ -1,5 +1,5 @@
 {
-    "BCD_API_URI": "http://api:14000/",
+    "BCD_API_URI": "http://api:14000/v1/",
     "BCD_NETWORKS": ["sandboxnet"],
     "BCD_OAUTH_ENABLED": false,
     "BCD_GA_ENABLED": false,
