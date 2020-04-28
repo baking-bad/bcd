@@ -153,7 +153,7 @@ export default {
     ...mapActions(["showError"]),
     getStats() {
       this.loading = true;
-      getStats()
+      this.api.getStats()
         .then(res => {
           this.states = res;
         })

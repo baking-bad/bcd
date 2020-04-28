@@ -127,7 +127,6 @@
 <script>
 import dayjs from "dayjs";
 import { mapActions } from "vuex";
-import { getTzKTLink } from "@/utils/tzkt.js";
 
 import ContractItem from "@/components/ContractItem.vue";
 import SimilarItem from "@/components/SimilarItem.vue";
@@ -244,10 +243,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-    },
-    getTzKTLink(address) {
-      if (address.startsWith("tz"))
-        return getTzKTLink(this.contract.network, address);
     },
     subscribe() {
       this.api.addProfileSubscription(this.contract.id, "contract")

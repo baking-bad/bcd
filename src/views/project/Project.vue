@@ -54,7 +54,7 @@
 <script>
 import { mapActions } from "vuex";
 
-import { cancelRequests } from "@/api/cancellation.js";
+import { cancelRequests } from "@/utils/cancellation.js";
 import ExpandableSearch from "@/components/ExpandableSearch.vue";
 import ProjectNav from "@/views/project/Nav.vue";
 import ErrorState from "@/components/ErrorState.vue";

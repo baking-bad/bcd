@@ -4,13 +4,14 @@ export class RequestFailedError extends Error { }
 
 export class NodeRPC {
     constructor(endpoints) {
-        this.api = Object.keys(endpoints).map(function(network) {
-            return axios.create({
+        this.api = {};
+        Object.keys(endpoints).forEach(function(network) {
+            this.api[network] = axios.create({
                 baseURL: endpoints[network],
                 timeout: 30000,
                 responseType: 'json'
             });
-        })
+        }, this);
     }
 
     getApi(network) {
@@ -22,7 +23,7 @@ export class NodeRPC {
     }
 
     getOperation(network, level, hash) {
-        return this.getApi(network).get(`/${network}/chains/main/blocks/${level}/operations/3`)
+        return this.getApi(network).get(`/chains/main/blocks/${level}/operations/3`)
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);
@@ -37,7 +38,7 @@ export class NodeRPC {
     }
 
     getBigMapValue(network, level, ptr, key_hash) {
-        return this.getApi(network).get(`/${network}/chains/main/blocks/${level}/context/big_maps/${ptr}/${key_hash}`)
+        return this.getApi(network).get(`/chains/main/blocks/${level}/context/big_maps/${ptr}/${key_hash}`)
         .then((res) => {
             if (res.status != 200) {
                 throw new RequestFailedError(res);

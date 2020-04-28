@@ -201,7 +201,6 @@ import AccountBox from "@/components/AccountBox.vue"
 import VueJsonPretty from "vue-json-pretty";
 
 import { getTree } from "@/utils/diff.js";
-import { getTzKTLink } from "@/utils/tzkt.js";
 
 export default {
   props: {
@@ -435,7 +434,10 @@ export default {
       return res;
     },
     hasAddress(s) {
-      return s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s);
+      if (s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s)) {
+        return s.startsWith("KT") || this.tzkt.supports(this.data.network);
+      }
+      return false;
     },
     handleAddress(s) {
       const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
@@ -443,7 +445,7 @@ export default {
         let routeData = this.$router.resolve({ path: `/${this.data.network}/${address}` });
         window.open(routeData.href, '_blank');
       } else {
-        let href = getTzKTLink(this.data.network, address);
+        let href = this.tzkt.resolve(this.data.network, address);
         window.open(href, '_blank');
       }
     },

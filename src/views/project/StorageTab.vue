@@ -88,7 +88,6 @@
 
 <script>
 import { mapActions } from "vuex";
-import { getTzKTLink } from "@/utils/tzkt.js";
 
 import Michelson from "@/components/Michelson.vue"
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
@@ -194,7 +193,10 @@ export default {
       this.clipboard_ok = true;
     },
     hasAddress(s) {
-      return s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s);
+      if (s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s)) {
+        return s.startsWith("KT") || this.tzkt.supports(this.contract.network);
+      }
+      return false;
     },
     handleAddress(s) {
       const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
@@ -202,7 +204,7 @@ export default {
         let routeData = this.$router.resolve({ path: `/${this.contract.network}/${address}` });
         window.open(routeData.href, '_blank');
       } else {
-        let href = getTzKTLink(this.contract.network, address);
+        let href = this.tzkt.resolve(this.contract.network, address);
         window.open(href, '_blank');
       }
     },

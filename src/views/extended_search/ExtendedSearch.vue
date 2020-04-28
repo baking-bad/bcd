@@ -63,7 +63,7 @@
         class="d-flex flex-column align-center justify-center mt-12 transparent message-card"
         :elevation="0"
       >
-        <template v-if="isAddress() || isOpgHash()">
+        <template v-if="(isAddress() || isOpgHash()) && tzkt.supports(network)">
           <v-img class="img-avatar" :src="getCatavaSrc()"></v-img>
           <span class="headline grey--text">
             Mysterious <span v-if="isAddress()">address</span><span v-else>operation</span>
@@ -119,8 +119,6 @@
 
 <script>
 import { mapActions } from "vuex";
-
-import { getTzKTLink } from "@/utils/tzkt.js";
 
 import ContractItem from "@/views/extended_search/ContractItem.vue";
 import OperationItem from "@/views/extended_search/OperationItem.vue";
@@ -273,7 +271,7 @@ export default {
       return /^o[1-9A-HJ-NP-Za-km-z]{50}$/.test(this.searchText);
     },
     getTzktHref(network) {
-      return getTzKTLink(network, this.searchText);
+      return this.tzkt.resolve(network, this.searchText);
     },
     getCatavaSrc() {
       return `https://services.tzkt.io/v1/avatars/${this.searchText}`;

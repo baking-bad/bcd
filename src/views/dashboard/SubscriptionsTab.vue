@@ -119,7 +119,6 @@
 <script>
 import { mapActions } from "vuex";
 import dayjs from "dayjs";
-import { getTzKTLink } from "@/utils/tzkt.js";
 
 export default {
   name: "Subscriptions",
@@ -154,10 +153,6 @@ export default {
           console.log(err);
         })
         .finally(() => (this.recommendedLoading = false));
-    },
-    getTzKTLink(item) {
-      if (item.address.startsWith("tz"))
-        return getTzKTLink(item.network, item.address);
     },
     formatDate(value) {
       if (value) {

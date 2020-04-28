@@ -7,8 +7,9 @@ import router from './router'
 import VueAnalytics from 'vue-analytics'
 
 import { getJwt, logout } from "@/utils/auth.js";
-import { BetterCallApi, UnauthorizedError } from "@/api/index.js"
-import { NodeRPC } from "@/api/node.js"
+import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js"
+import { NodeRPC } from "@/api/rpc.js"
+import { TzKTApi } from "@/api/tzkt.js"
 
 import '@mdi/font/css/materialdesignicons.css';
 import vuetify from './plugins/vuetify';
@@ -69,10 +70,11 @@ getRuntimeConfig().then(function(config) {
   // config.OAUTH_ENABLED = process.env.VUE_APP_OAUTH_ENABLED || config.OAUTH_ENABLED;
 
   let api = new BetterCallApi(config.API_URI);
-  let rpc = new NodeRPC(config.RPC_ENDPOINTS)
+  let rpc = new NodeRPC(config.RPC_ENDPOINTS);
+  let tzkt = new TzKTApi(config.TZKT_ENDPOINTS);
 
   Vue.mixin({
-    data() { return {config, api, rpc} }
+    data() { return {config, api, rpc, tzkt} }
   });
 
   router.beforeEach((to, from, next) => {

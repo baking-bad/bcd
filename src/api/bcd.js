@@ -1,7 +1,7 @@
 const axios = require('axios').default;
 
 import { getJwt } from '@/utils/auth.js'
-import { getCancellable, postCancellable, cancelRequests } from '@/api/cancellation.js';
+import { getCancellable, postCancellable, cancelRequests } from '@/utils/cancellation.js';
 
 export class RequestFailedError extends Error { }
 
