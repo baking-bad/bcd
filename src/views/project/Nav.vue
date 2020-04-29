@@ -1,16 +1,28 @@
 <template>
   <v-navigation-drawer app fixed right touchless width="350" class="elevation-1" v-if="contract">
+    <v-snackbar color="light-green darken-1" v-model="shared">
+      Link copied to clipboard!
+      <v-btn text @click="shared = false">OK</v-btn>
+    </v-snackbar>
+
     <v-list class="pa-0">
       <v-list-item two-line class="mb-0">
         <v-list-item-content>
           <v-list-item-title class="headline" v-if="contract.alias">{{ contract.alias }}</v-list-item-title>
-          <v-list-item-subtitle class="hash" :class="contract.alias ? '' : 'subtitle-2'">{{ contract.address }}</v-list-item-subtitle>
-          <v-list-item-subtitle 
-            class="overline" 
-            :class="contract.network === 'mainnet' ? 'primary--text' : ''">
-              {{ contract.network }}
-          </v-list-item-subtitle>
+          <v-list-item-subtitle
+            class="hash"
+            :class="contract.alias ? '' : 'subtitle-2'"
+          >{{ contract.address }}</v-list-item-subtitle>
+          <v-list-item-subtitle
+            class="overline"
+            :class="contract.network === 'mainnet' ? 'primary--text' : ''"
+          >{{ contract.network }}</v-list-item-subtitle>
         </v-list-item-content>
+        <v-list-item-action>
+          <v-btn v-clipboard="getContractLink()" v-clipboard:success="onShare" small rounded icon>
+            <v-icon small>mdi-share-variant</v-icon>
+          </v-btn>
+        </v-list-item-action>
       </v-list-item>
 
       <div class="pb-3 px-4">
@@ -31,8 +43,8 @@
             outlined
           >{{ tag.replace('_', ' ') }}</v-chip>
         </template>
-      </div>  
-      
+      </div>
+
       <v-divider></v-divider>
 
       <div class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between mt-1">
@@ -49,22 +61,35 @@
         <Rating :rating="rating" />
       </div>
 
-      <InfoItem title="Was active" :subtitle="wasActive" gutters/>
-      <InfoItem v-if="contract.balance" title="Locked balance" :subtitle="contract.balance | uxtz" gutters/>
-      <InfoItem v-if="contract.total_withdrawn" title="Total withdrawn" :subtitle="contract.total_withdrawn | uxtz" gutters/>
-      <AccountBox v-if="contract.manager" 
-        title="Deployed by" 
-        :address="contract.manager" 
-        :network="contract.network" 
-        gutters />
-      <AccountBox v-if="contract.delegate"
-        title="Delegated to" 
-        :address="contract.delegate" 
+      <InfoItem title="Was active" :subtitle="wasActive" gutters />
+      <InfoItem
+        v-if="contract.balance"
+        title="Locked balance"
+        :subtitle="contract.balance | uxtz"
+        gutters
+      />
+      <InfoItem
+        v-if="contract.total_withdrawn"
+        title="Total withdrawn"
+        :subtitle="contract.total_withdrawn | uxtz"
+        gutters
+      />
+      <AccountBox
+        v-if="contract.manager"
+        title="Deployed by"
+        :address="contract.manager"
+        :network="contract.network"
+        gutters
+      />
+      <AccountBox
+        v-if="contract.delegate"
+        title="Delegated to"
+        :address="contract.delegate"
         :network="contract.network"
         :alias="contract.delegate_alias"
-        gutters />
-
-    </v-list>    
+        gutters
+      />
+    </v-list>
 
     <v-skeleton-loader
       :loading="sameLoading || similarLoading"
@@ -166,7 +191,8 @@ export default {
     sameCount: 0,
     similar: [],
     similarCount: 0,
-    rating: null
+    rating: null,
+    shared: false
   }),
   computed: {
     isAuthorized() {
@@ -225,7 +251,7 @@ export default {
           this.showError(err);
           console.log(err);
         })
-      .finally(() => (this.sameLoading = false));
+        .finally(() => (this.sameLoading = false));
 
       getSimilarContracts(this.contract.network, this.contract.address)
         .then(res => {
@@ -245,12 +271,10 @@ export default {
         .finally(() => (this.similarLoading = false));
 
       getContractRating(this.contract.network, this.contract.address)
-        .then(
-          res => {
-            if (!res) return;
-            this.rating = res;
-          }
-        )
+        .then(res => {
+          if (!res) return;
+          this.rating = res;
+        })
         .catch(err => {
           console.log(err);
         });
@@ -307,6 +331,29 @@ export default {
           console.log(err);
         })
         .finally(() => (this.isSameUpdating = false));
+    },
+    getContractLink() {
+      let routeData = {};
+      if (this.contract.slug) {
+        routeData = this.$router.resolve({
+          name: "slug",
+          params: { slug: this.contract.slug }
+        });
+      } else if (this.contract.network && this.contract.address) {
+        routeData = this.$router.resolve({
+          name: "project",
+          params: {
+            address: this.contract.address,
+            network: this.contract.network
+          }
+        });
+      } else {
+        routeData = this.$router.resolve({ name: "home" });
+      }
+      return `${window.location.protocol}//${window.location.host}${routeData.href}`;
+    },
+    onShare() {
+      this.shared = true;
     }
   },
   watch: {

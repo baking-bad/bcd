@@ -28,6 +28,8 @@ import Projects from '@/views/Projects.vue'
 import OPG from '@/views/OPG.vue'
 import Stats from '@/views/Stats.vue'
 
+import { getContractBySlug } from '@/api/index.js';
+
 Vue.use(VueRouter)
 
 const router = new Router({
@@ -69,6 +71,7 @@ const router = new Router({
         },
         {
             path: '/opg/:hash(o[0-9A-z]{50})',
+            alias: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
             components: {
                 default: OPG,
                 nav: Nav
@@ -98,13 +101,46 @@ const router = new Router({
                 nav: Nav
             },
             name: 'bigmap'
-        },{
+        }, {
             path: '/bigmap/:network/:address(KT[0-9A-z]{34})/:ptr(\\d+)/:keyhash',
             components: {
                 default: BigMapDiffViewer,
                 nav: Nav
             },
             name: 'bigmapdiff'
+        },
+        { // backward compatibility
+            path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
+            children: [
+                {
+                    path: '',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}`
+                    }
+                },
+                {
+                    path: 'operations',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}/operations`
+                    }
+                },
+                {
+                    path: 'script',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}/code`
+                    }
+                },
+                {
+                    path: 'state',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}/storage`
+                    }
+                },
+            ]
         },
         {
             path: '/:network/:address(KT[0-9A-z]{34})',
@@ -145,43 +181,6 @@ const router = new Router({
                 }
             ]
         },
-        { // backward compatibility
-            path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
-            children: [
-                {
-                    path: '',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}`
-                    }
-                },
-                {
-                    path: 'operations',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}/operations`
-                    }
-                },
-                {
-                    path: 'script',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}/code`
-                    }
-                },
-                {
-                    path: 'state',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}/storage`
-                    }
-                },
-            ]
-        },
-        { // backward compatibility
-            path: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
-            redirect: '/opg/:hash'
-        },
         {
             path: '/dashboard',
             components: {
@@ -206,9 +205,29 @@ const router = new Router({
                 }
             ]
         },
-
+        {
+            path: '/@:slug([a-zA-Z0-9_]*)',
+            name: 'slug',
+            beforeEnter: async function (to, from, next) {
+                let tagPath = await redirectByTag(to);
+                if (tagPath !== null) {
+                    return next(tagPath);
+                }
+            }
+        },
         { path: '*', redirect: '/' }
     ]
 });
+
+
+async function redirectByTag(to) {
+    return await getContractBySlug(to.params.slug)
+        .then(res => {
+            return `/${res.network}/${res.address}`
+        })
+        .catch(() => {
+            return '/';
+        })
+}
 
 export default router;
