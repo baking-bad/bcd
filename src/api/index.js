@@ -323,13 +323,3 @@ export function getOPG(hash) {
             return res.data
         })
 }
-
-export function getContractBySlug(slug) {
-    return getCancellable(api, `/slug/${slug}`, {})
-        .then((res) => {
-            if (res.status != 200) {
-                throw new RequestFailedError(res);
-            }
-            return res.data
-        })
-}
