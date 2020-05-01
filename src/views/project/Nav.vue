@@ -35,8 +35,8 @@
       
       <v-divider></v-divider>
 
-      <div class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between mt-1">
-        <div v-if="isAuthorized" class="mb-1">
+      <div v-if="isAuthorized" class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between mt-1">
+        <div class="mb-1">
           <v-btn
             small
             text
