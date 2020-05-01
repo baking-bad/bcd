@@ -22,7 +22,7 @@
         filled
         :label="label">
     </v-text-field>
-    <v-btn v-if="isKeyHash || isContract" text small link @click.prevent.stop="handleAddress(value, true)" >
+    <v-btn v-if="(isKeyHash || isContract) && tzkt.supports(network)" text small link @click.prevent.stop="handleAddress(value, true)" >
         <v-icon small class="mr-1">mdi-open-in-new</v-icon>
         <span>Open in TzKT.io</span>
     </v-btn>
@@ -39,7 +39,6 @@
 
 <script>
 import Michelson from "@/components/Michelson.vue"
-import { getTzKTLink } from "@/utils/tzkt.js";
 
 export default {
     name: "ValueInspector",
@@ -77,7 +76,7 @@ export default {
       handleAddress(s, external = false) {
         const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
         if (address.startsWith('tz') || external) {
-          let href = getTzKTLink(this.network, address);
+          let href = this.tzkt.resolve(this.network, address);
           window.open(href, '_blank');
         } else {
           const path = { path: `/${this.network}/${address}` };

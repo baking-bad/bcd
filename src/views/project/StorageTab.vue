@@ -88,13 +88,11 @@
 
 <script>
 import { mapActions } from "vuex";
-import { getTzKTLink } from "@/utils/tzkt.js";
 
 import Michelson from "@/components/Michelson.vue"
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import ErrorState from "@/components/ErrorState.vue";
 
-import { getContractStorage, getContractStorageRaw, getContractStorageRich } from "@/api/index.js";
 import { getTree } from "@/utils/diff.js";
 
 import dayjs from "dayjs";
@@ -156,7 +154,7 @@ export default {
         this.raw = false;
         return;
       }
-      getContractStorage(this.contract.network, this.contract.address)
+      this.api.getContractStorage(this.contract.network, this.contract.address)
         .then(res => {
           if (!res) return;
           this.contract.storage = res;
@@ -175,7 +173,7 @@ export default {
         this.raw = true;
         return;
       }
-      getContractStorageRaw(this.contract.network, this.contract.address)
+      this.api.getContractStorageRaw(this.contract.network, this.contract.address)
         .then(res => {
           this.contract.raw_storage = String(res);
           this.raw = true;
@@ -195,7 +193,10 @@ export default {
       this.clipboard_ok = true;
     },
     hasAddress(s) {
-      return s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s);
+      if (s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s)) {
+        return s.startsWith("KT") || this.tzkt.supports(this.contract.network);
+      }
+      return false;
     },
     handleAddress(s) {
       const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
@@ -203,13 +204,13 @@ export default {
         let routeData = this.$router.resolve({ path: `/${this.contract.network}/${address}` });
         window.open(routeData.href, '_blank');
       } else {
-        let href = getTzKTLink(this.contract.network, address);
+        let href = this.tzkt.resolve(this.contract.network, address);
         window.open(href, '_blank');
       }
     },
     downloadFile() {
       this.downloading = true;
-      getContractStorageRich(this.contract.network, this.contract.address)
+      this.api.getContractStorageRich(this.contract.network, this.contract.address)
         .then(res => {
           var element = document.createElement("a");
           element.setAttribute(

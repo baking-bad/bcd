@@ -124,11 +124,6 @@
 import { mapActions } from "vuex";
 
 import ColumnChart from "@/components/ColumnChart.vue";
-import {
-  getStats,
-  getNetworkStats,
-  getNetworkStatsSeries
-} from "@/api/index.js";
 
 export default {
   name: "Stats",
@@ -158,7 +153,7 @@ export default {
     ...mapActions(["showError"]),
     getStats() {
       this.loading = true;
-      getStats()
+      this.api.getStats()
         .then(res => {
           this.states = res;
         })
@@ -173,7 +168,7 @@ export default {
       this.contractSeriesLoading = true;
       this.operationSeriesLoading = true;
 
-      getNetworkStats(network)
+      this.api.getNetworkStats(network)
         .then(res => {
           this.details = res;
         })
@@ -183,7 +178,7 @@ export default {
         })
         .finally(() => (this.detailsLoading = false));
 
-      getNetworkStatsSeries(network, "contract", "month")
+      this.api.getNetworkStatsSeries(network, "contract", "month")
         .then(res => {
           this.contractSeries = res;
         })
@@ -193,7 +188,7 @@ export default {
           this.showError(err);
         });
 
-      getNetworkStatsSeries(network, "operation", "month")
+      this.api.getNetworkStatsSeries(network, "operation", "month")
         .then(res => {
           this.operationSeries = res;
         })

@@ -1,7 +1,7 @@
 <template>
   <v-navigation-drawer app fixed touchless mini-variant permanent class="elevation-1">
     <router-link
-      :to="{name: 'home'}"
+      :to="{name: config.HOME_PAGE}"
       class="d-flex justify-center align-center"
       style="height: 63px"
     >
@@ -106,7 +106,6 @@
 import { mapActions } from "vuex";
 
 import { logout } from "@/utils/auth.js";
-import { getRandomContract } from "@/api/index.js";
 
 export default {
   computed: {
@@ -158,7 +157,7 @@ export default {
       logout();
     },
     random() {
-      getRandomContract()
+      this.api.getRandomContract()
         .then(res => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })

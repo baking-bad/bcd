@@ -62,7 +62,6 @@
 
 <script>
 import ValueInspector from "@/components/ValueInspector.vue"
-import { getTzKTLink } from "@/utils/tzkt.js";
 
 export default {
   name: "AccountBox",
@@ -79,19 +78,7 @@ export default {
   },
   data: () => ({
     show: false
-  }),
-  methods: {
-    handleAddress(s) {
-      const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
-      if (address.startsWith('KT')) {
-        let routeData = this.$router.resolve({ path: `/${this.network}/${address}` });
-        window.open(routeData.href, '_blank');
-      } else {
-        let href = getTzKTLink(this.network, address);
-        window.open(href, '_blank');
-      }
-    },
-  }
+  })
 }
 </script>
 

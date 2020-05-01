@@ -167,11 +167,6 @@
 <script>
 import { mapActions } from "vuex";
 
-import {
-  getContractEntrypoints,
-  getContractEntrypointSchema,
-  getContractEntrypointData
-} from "@/api/index.js";
 import { getEntrypointTree } from "@/utils/tree.js";
 
 import VueJsonPretty from "vue-json-pretty";
@@ -236,12 +231,12 @@ export default {
         this.loadingSchema = false;
         return;
       }
-      getContractEntrypoints(this.contract.network, this.contract.address)
+      this.api.getContractEntrypoints(this.contract.network, this.contract.address)
         .then(res => {
           if (!res) return;
           this.contract.full_entrypoints = res;
           this.selected = 0;
-          return getContractEntrypointSchema(
+          return this.api.getContractEntrypointSchema(
             this.contract.network,
             this.contract.address,
             this.contract.full_entrypoints[0].miguel_path
@@ -268,7 +263,7 @@ export default {
         this.loadingSchema = false;
         return;
       }
-      getContractEntrypointSchema(
+      this.api.getContractEntrypointSchema(
         this.contract.network,
         this.contract.address,
         item.miguel_path
@@ -292,7 +287,7 @@ export default {
         return;
       }
 
-      getContractEntrypointData(
+      this.api.getContractEntrypointData(
         this.contract.network,
         this.contract.address,
         this.selectedItem.miguel_path,

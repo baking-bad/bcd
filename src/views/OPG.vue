@@ -34,7 +34,6 @@
 <script>
 import { mapActions } from "vuex";
 
-import { getOPG } from "@/api/index.js";
 import InternalOperation from "@/components/InternalOperation.vue";
 import ExpandableSearch from "@/components/ExpandableSearch.vue";
 import ErrorState from "@/components/ErrorState.vue";
@@ -70,7 +69,7 @@ export default {
       ];
     },
     getOPG() {
-      getOPG(this.$route.params.hash)
+      this.api.getOPG(this.$route.params.hash)
         .then(res => {
           this.prepareOperations(res);
           this.panels = [];

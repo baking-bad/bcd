@@ -1,4 +1,4 @@
-debug:
+stage:
 	npm run serve -- --mode staging
 
 deploy-prod:
@@ -16,3 +16,9 @@ deploy-test:
 	nginx -s reload
 	rm -rf dist
 	rm -f bcd.tar.gz
+
+latest:
+	git tag latest -f && git push origin latest -f
+
+image:
+	docker build -t bakingbad/bcdhub-gui:latest .

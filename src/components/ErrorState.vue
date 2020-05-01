@@ -4,7 +4,7 @@
         <div class="ml-10 pl-10 flex-column d-flex align-center justify-center">
           <span class="display-2">This wasn't planned 😓</span>
           <div class="headline font-weight-light mt-3 d-flex flex-column align-center justify-center">
-            <template v-if="code === 404 && address">
+            <template v-if="code === 404 && address && tzkt.supports(network)">
               <span>We couldn't find what you are looking for, but...</span>
               <v-btn 
                 depressed x-large class="mt-3" target="_blank" 
@@ -39,8 +39,6 @@
 </template>
 
 <script>
-import { getTzKTLink } from "@/utils/tzkt.js";
-
 export default {
   name: "ErrorState",
   props: {
@@ -49,11 +47,14 @@ export default {
   computed: {
     address() {
       return this.$route.params.address;
+    },
+    network() {
+      return this.$route.params.network;
     }
   },
   methods: {
     getTzKTLink(address) {
-      return getTzKTLink(this.$route.params.network, address);
+      return this.tzkt.resolve(this.network, address);
     }
   }
 };

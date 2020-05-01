@@ -1,0 +1,10 @@
+{
+    "API_URI": "http://localhost:14000/v1/",
+    "NETWORKS": ["sandboxnet"],
+    "OAUTH_ENABLED": false,
+    "GA_ENABLED": false,
+    "HOME_PAGE": "projects",
+    "RPC_ENDPOINTS": {
+      "sandboxnet": "http://localhost:8732"
+    }
+}

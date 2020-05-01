@@ -35,11 +35,9 @@ import ErrorSnackbar from "@/components/ErrorSnackbar.vue";
 
 export default {
   name: "App",
-
   components: {
     ErrorSnackbar
   },
-
   data: () => ({
     showToTop: false
   }),
