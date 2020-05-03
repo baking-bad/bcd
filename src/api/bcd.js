@@ -161,8 +161,8 @@ export class BetterCallApi {
             })
     }
 
-    getContractEntrypointSchema(network, address, path) {
-        return getCancellable(this.api, `/contract/${network}/${address}/entrypoints/schema?path=${path}`, {})
+    getContractEntrypointSchema(network, address, name) {
+        return getCancellable(this.api, `/contract/${network}/${address}/entrypoints/schema?name=${name}`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -172,9 +172,9 @@ export class BetterCallApi {
             })
     }
 
-    getContractEntrypointData(network, address, path, data, format = '') {
+    getContractEntrypointData(network, address, name, data, format = '') {
         return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/data`, {
-            path: path,
+            name: name,
             data: data,
             format: format
         })

@@ -1,46 +1,18 @@
 <template>
   <v-container fluid>
-    <v-skeleton-loader :loading="loading" height="300" type="image, image, image" class="ma-3">
+    <v-skeleton-loader :loading="loading" height="300" type="image, image, image">
       <v-row v-if="contract && contract.full_entrypoints && contract.full_entrypoints.length > 0">
-        <v-col cols="3">
-          <v-list elevation="2" class="py-0">
-            <v-list-item-group v-model="selected" mandatory color="primary">
-              <template v-for="(item, i) in contract.full_entrypoints">
-                <v-divider :key="`${i}-divider`" v-if="i != 0" />
-                <v-list-item :key="i">
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.miguel_name }}</v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </template>
-            </v-list-item-group>
-          </v-list>
-        </v-col>
         <v-col cols="9">
           <div v-if="selectedItem">
-            <v-card>
+            <v-card flat outlined tile>
               <v-card-text>
                 <div class="d-flex flex-column parameters">
-                  <div>
-                    <span class="overline ml-3">Parameter</span>&nbsp;
-                    <span class="primary--text">{{ selectedItem.miguel_type }}</span>
+                  <div v-for="(def, i) in selectedItem.typedef" :key="i" class="mb-2">
+                    {{ def.name }} <span class="primary--text">{{ def.type }}</span>
+                    <div v-for="(arg, j) in def.args" :key="i + j" class="pl-4">
+                      {{ arg.key }} <span class="primary--text">{{ arg.value }}</span>
+                    </div>
                   </div>
-                  <v-treeview
-                    ref="tree"
-                    :items="selectedTree"
-                    @input="openAllNodes"
-                    hoverable
-                    open-all
-                    transition
-                    open-on-click
-                  >
-                    <template v-slot:label="{ item }">
-                      <span>{{ item.name }}</span>&nbsp;
-                      <span
-                        :class="item.type === 'value' ? 'primary--text': 'grey--text'"
-                      >{{ item.value }}</span>
-                    </template>
-                  </v-treeview>
                 </div>
               </v-card-text>
             </v-card>
@@ -136,6 +108,25 @@
             </v-card>
           </div>
         </v-col>
+        <v-col cols="3">
+          <v-list class="py-0" dense elevation="1">
+            <v-list-item-group v-model="selected" mandatory color="primary">
+              <template v-for="(item, i) in contract.full_entrypoints">
+                <v-divider :key="`${i}-divider`" v-if="i != 0" />
+                <v-list-item :key="i">
+                  <v-list-item-content>
+                    <v-list-item-title class="hash">{{ item.name }}</v-list-item-title>
+                  </v-list-item-content>
+                  <v-list-item-action v-if="callStat[item.name]">
+                    <v-list-item-action-text>
+                      <v-icon small>mdi-clock-fast</v-icon>
+                    </v-list-item-action-text>
+                  </v-list-item-action>
+                </v-list-item>
+              </template>
+            </v-list-item-group>
+          </v-list>
+        </v-col>
       </v-row>
       <v-card
         v-else
@@ -143,7 +134,7 @@
         :elevation="0"
       >
         <v-icon size="100">mdi-chat-sleep-outline</v-icon>
-        <span class="headline">Entrypoints are not found</span>
+        <span class="headline">Failed to fetch entrypoints</span>
       </v-card>
 
       <v-dialog v-model="fullscreenData" fullscreen>
@@ -187,6 +178,7 @@ export default {
     loadingData: false,
     model: {},
     schema: {},
+    callStat: {},
     micheline: null,
     michelson: null,
     alertData: null,
@@ -206,41 +198,66 @@ export default {
         return null;
       }
       return this.contract.full_entrypoints[this.selected];
-    },
-    selectedTree() {
-      if (this.selectedItem == null) return [];
-      return this.tree(this.selectedItem.miguel_parameters);
     }
   },
   created() {
+    this.callStat = {};
+    this.fetchCallStat(this.contract.operations);
     this.getEntrypoints();
+    //this.getSchema(this.contract.full_entrypoints[0]);
   },
   methods: {
     ...mapActions(["showError"]),
     tree(data) {
       return getEntrypointTree(data);
     },
+    fetchCallStat(operations) {
+      if (operations) {
+        for (var i = 0; i < operations.length; i++) {
+          const entry = operations[i].entrypoint;
+          if (entry && operations[i].destination === this.contract.address) {
+            if (entry in this.callStat) {
+              this.callStat[entry] += 1;
+            } else {
+              this.callStat[entry] = 1;
+            }
+          }
+          this.fetchCallStat(operations[i].internal_operations)
+        }
+      }
+    },
+    sortEntrypoints(entrypoints) {
+      const stat = this.callStat;
+      return entrypoints.sort(function(a, b) {
+        const d = (stat[b.name] || 0) - (stat[a.name] || 0);
+        if (d === 0) {
+          return a.name.localeCompare(b.name);
+        } else {
+          return d;
+        }
+      }); 
+    },
     getEntrypoints() {
       this.loading = true;
       this.loadingSchema = true;
-      if (
-        this.contract == null ||
-        this.contract.full_entrypoints !== undefined
-      ) {
+      if (this.contract == null || this.contract.full_entrypoints !== undefined) {
         this.loading = false;
         this.loadingSchema = false;
+        if (this.contract.full_entrypoints) {
+          this.contract.full_entrypoints = this.sortEntrypoints(this.contract.full_entrypoints);
+        }
         return;
       }
       this.api.getContractEntrypoints(this.contract.network, this.contract.address)
         .then(res => {
           if (!res) return;
-          this.contract.full_entrypoints = res;
+          this.contract.full_entrypoints = this.sortEntrypoints(res);
           this.selected = 0;
-          return this.api.getContractEntrypointSchema(
-            this.contract.network,
-            this.contract.address,
-            this.contract.full_entrypoints[0].miguel_path
-          );
+          // return this.api.getContractEntrypointSchema(
+          //   this.contract.network,
+          //   this.contract.address,
+          //   this.contract.full_entrypoints[0].name
+          // );
         })
         .then(res => {
           this.schema = res;
@@ -266,7 +283,7 @@ export default {
       this.api.getContractEntrypointSchema(
         this.contract.network,
         this.contract.address,
-        item.miguel_path
+        item.name
       )
         .then(res => {
           this.schema = res;
@@ -290,7 +307,7 @@ export default {
       this.api.getContractEntrypointData(
         this.contract.network,
         this.contract.address,
-        this.selectedItem.miguel_path,
+        this.selectedItem.name,
         this.model,
         this.formatAsMichelson ? "michelson" : ""
       )
@@ -342,10 +359,7 @@ export default {
       this.micheline = null;
       this.michelson = null;
       this.alertData = null;
-      this.getSchema(newValue);
-    },
-    selectedTree() {
-      this.openAllNodes();
+      //this.getSchema(newValue);
     },
     formatAsMichelson() {
       if (
@@ -357,6 +371,12 @@ export default {
   }
 };
 </script>
+
+<style>
+.v-btn-toggle {
+  flex-direction: column;
+}
+</style>
 
 <style lang="scss" scoped>
 .parameters {
