@@ -5,10 +5,10 @@
         <InfoItem title="Time" :subtitle="formatDate(data.timestamp)" />
       </v-col>
       <v-col v-if="!address">
-        <InfoItem title="Level" :subtitle="data.level" />
+        <InfoItem title="Level" :subtitle="String(data.level)" />
       </v-col>
       <v-col v-if="!address">
-        <InfoItem title="Counter" :subtitle="data.counter" />
+        <InfoItem title="Counter" :subtitle="String(data.counter)" />
       </v-col>
       <v-col>
         <InfoItem title="Fee" :subtitle="(data.fee || 0) | uxtz" />
@@ -89,7 +89,7 @@
       <div v-show="showParams" class="px-5 pb-2">
         <v-row v-if="errors" no-gutters>
           <v-col>
-            <OperationAlert :errors="errors"/>
+            <OperationAlert :errors="errors" :operationId="data.id"/>
           </v-col>
         </v-row>
         <v-row no-gutters v-if="!data.mempool">
@@ -103,7 +103,7 @@
             <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
           </v-col>
         </v-row>
-        <v-row class="parameters pa-3 mt-2" v-if="hasParameters || hasStorageDiff" no-gutters>
+        <v-row class="my-1 parameters px-2 py-3" v-if="hasParameters || hasStorageDiff" no-gutters>
           <v-col cols="6">
             <div v-if="hasParameters">
               <span class="overline ml-3">Parameter</span>
@@ -201,8 +201,6 @@ import AccountBox from "@/components/AccountBox.vue"
 import VueJsonPretty from "vue-json-pretty";
 
 import { getTree } from "@/utils/diff.js";
-import { getTzKTLink } from "@/utils/tzkt.js";
-import { getOperation } from "@/api/node.js";
 
 export default {
   props: {
@@ -423,7 +421,7 @@ export default {
       }
       this.showRaw = true;
       this.loadingRaw = true;
-      getOperation(this.data.network, this.data.level, this.data.hash)
+      this.rpc.getOperation(this.data.network, this.data.level, this.data.hash)
         .then(res => {
           this.rawJson = res;
         })
@@ -436,7 +434,10 @@ export default {
       return res;
     },
     hasAddress(s) {
-      return s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s);
+      if (s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s)) {
+        return s.startsWith("KT") || this.tzkt.supports(this.data.network);
+      }
+      return false;
     },
     handleAddress(s) {
       const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
@@ -444,7 +445,7 @@ export default {
         let routeData = this.$router.resolve({ path: `/${this.data.network}/${address}` });
         window.open(routeData.href, '_blank');
       } else {
-        let href = getTzKTLink(this.data.network, address);
+        let href = this.tzkt.resolve(this.data.network, address);
         window.open(href, '_blank');
       }
     },
@@ -455,7 +456,7 @@ export default {
         if (d.add(1, "days").isBefore(dayjs())) return d.format("MMM D HH:mm");
         return d.fromNow();
       }
-    },
+    }
   },
   watch: {
     active(newVal) {

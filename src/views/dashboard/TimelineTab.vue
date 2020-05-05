@@ -36,8 +36,6 @@
 </template>
 
 <script>
-import { getProfileTimeline } from "@/api/profile.js";
-
 export default {
   name: "Timeline",
   created() {
@@ -53,7 +51,7 @@ export default {
       if (this.downloaded || this.loading) return;
 
       this.loading = true;
-      getProfileTimeline(this.timeline.length)
+      this.api.getProfileTimeline(this.timeline.length)
         .then(res => {
           this.timeline.push(...res)
           this.downloaded = res.length < 20

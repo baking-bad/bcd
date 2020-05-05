@@ -28,8 +28,6 @@ import Projects from '@/views/Projects.vue'
 import OPG from '@/views/OPG.vue'
 import Stats from '@/views/Stats.vue'
 
-import { getContractBySlug } from '@/api/index.js';
-
 Vue.use(VueRouter)
 
 const router = new Router({
@@ -204,30 +202,19 @@ const router = new Router({
                     component: SubscriptionsTab
                 }
             ]
-        },
-        {
-            path: '/@:slug([a-zA-Z0-9_]*)',
-            name: 'slug',
-            beforeEnter: async function (to, from, next) {
-                let tagPath = await redirectByTag(to);
-                if (tagPath !== null) {
-                    return next(tagPath);
-                }
-            }
-        },
-        { path: '*', redirect: '/' }
+        }
+        // {
+        //     path: '/@:slug([a-zA-Z0-9_]*)',
+        //     name: 'slug',
+        //     beforeEnter: async function (to, from, next) {
+        //         let tagPath = await redirectByTag(to);
+        //         if (tagPath !== null) {
+        //             return next(tagPath);
+        //         }
+        //     }
+        // },
+        // { path: '*', redirect: '/' }
     ]
 });
-
-
-async function redirectByTag(to) {
-    return await getContractBySlug(to.params.slug)
-        .then(res => {
-            return `/${res.network}/${res.address}`
-        })
-        .catch(() => {
-            return '/';
-        })
-}
 
 export default router;

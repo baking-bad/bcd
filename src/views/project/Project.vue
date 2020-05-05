@@ -54,8 +54,7 @@
 <script>
 import { mapActions } from "vuex";
 
-import { cancelRequests } from "@/api/cancellation.js";
-import * as api from "@/api/index.js";
+import { cancelRequests } from "@/utils/cancellation.js";
 import ExpandableSearch from "@/components/ExpandableSearch.vue";
 import ProjectNav from "@/views/project/Nav.vue";
 import ErrorState from "@/components/ErrorState.vue";
@@ -93,7 +92,7 @@ export default {
       )
         return;
       cancelRequests();
-      api
+      this.api
         .getContract(this.$route.params.network, this.$route.params.address)
         .then(res => {
           if (!res) return;
@@ -103,7 +102,7 @@ export default {
           const matches = err.message.match(/\d+/);
           if (matches !== null && matches.length === 1)
             this.errorCode = parseInt(matches[0]);
-          this.showError(err);
+          this.showError(err.message);
         })
         .finally(() => (this.loading = false));
     }

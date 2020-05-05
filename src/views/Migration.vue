@@ -17,7 +17,6 @@
 
 <script>
 import { mapActions } from "vuex";
-import { getContractMigration } from "@/api/index.js";
 
 import DiffViewer from "@/components/DiffViewer.vue";
 import ErrorState from "@/components/ErrorState.vue";
@@ -39,7 +38,7 @@ export default {
     ...mapActions(["showError"]),
     getMigration() {
       this.loading = true;
-      getContractMigration(
+      this.api.getContractMigration(
         this.$route.params.network,
         this.$route.params.address,
         this.$route.params.protocol

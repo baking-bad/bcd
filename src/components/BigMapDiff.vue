@@ -122,7 +122,6 @@ import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import VueJsonPretty from "vue-json-pretty";
 import { plural } from "@/utils/plural.js";
 import { getTree } from "@/utils/diff.js";
-import { getBigMapValue } from "@/api/node.js";
 
 export default {
   name: "BigMapDiff",
@@ -171,7 +170,7 @@ export default {
       }
       this.showRaw = true;
       this.loadingRaw = true;
-      getBigMapValue(this.network, this.diff.data.level, this.$route.params.ptr, this.diff.data.key_hash)
+      this.rpc.getBigMapValue(this.network, this.diff.data.level, this.$route.params.ptr, this.diff.data.key_hash)
         .then(res => {
           this.rawJson = res;
         })

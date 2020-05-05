@@ -13,7 +13,7 @@
     </v-toolbar>
 
     <v-row class="pa-8 ma-0" v-if="loading || total > 0">
-      <v-col cols="7">
+      <v-col cols="8">
         <v-skeleton-loader
           :loading="loading"
           type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
@@ -76,7 +76,7 @@
         </v-skeleton-loader>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col cols="4" class="pt-3">
+      <v-col cols="3" class="pt-3">
         <v-card tile elevation="1">
           <v-list class="ma-0 pa-0">
             <v-list-item-group v-model="selectedItem" mandatory color="primary">
@@ -89,7 +89,7 @@
                     <v-icon v-else>mdi-playlist-edit</v-icon>
                   </v-list-item-icon>
                   <v-list-item-content>
-                    <v-list-item-title class="overline">{{ formatDate(item.timestamp) }}</v-list-item-title>
+                    <v-list-item-title class="overline ml-5">{{ formatDate(item.timestamp) }}</v-list-item-title>
                   </v-list-item-content>
                   <v-list-item-action>
                     <v-list-item-action-text class="overline grey--text">
@@ -119,7 +119,6 @@ import dayjs from "dayjs";
 
 import { mapActions } from "vuex";
 
-import { getContractBigMapByKeyHash } from "@/api/index.js";
 import { getTree } from "@/utils/diff.js";
 
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
@@ -232,7 +231,7 @@ export default {
     },
     requestData() {
       this.loading = true;
-      getContractBigMapByKeyHash(
+      this.api.getContractBigMapByKeyHash(
         this.$route.params.network,
         this.$route.params.address,
         this.$route.params.ptr,

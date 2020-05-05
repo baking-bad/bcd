@@ -25,22 +25,28 @@
 import { mapActions } from "vuex";
 
 import SearchBox from "@/components/SearchBox.vue";
-import { getRandomContract } from "@/api/index.js";
 
 export default {
   components: {
     SearchBox
   },
+  mounted() {
+    if (this.$route.name != this.config.HOME_PAGE) {
+      this.$router.push({ path: this.config.HOME_PAGE });
+    }
+  },
   methods: {
     ...mapActions(["showError"]),
     pickRandom() {
-      getRandomContract()
+      this.api.getRandomContract()
         .then(res => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
         .catch(err => {
-          console.log(err);
-          this.showError(err);
+          if (err.code !== 204) {
+            console.log(err);
+            this.showError(err);
+          }
         });
     }
   }

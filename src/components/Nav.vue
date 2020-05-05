@@ -1,11 +1,11 @@
 <template>
-  <v-navigation-drawer app fixed touchless mini-variant permanent class="elevation-1">
+  <v-navigation-drawer app fixed touchless mini-variant permanent>
     <router-link
-      :to="{name: 'home'}"
+      :to="{name: config.HOME_PAGE}"
       class="d-flex justify-center align-center"
       style="height: 63px"
     >
-      <v-avatar color="primary" size="38" class="elevation-2">
+      <v-avatar color="primary" size="38" class="elevation-1">
         <span class="white--text">BCD</span>
       </v-avatar>
     </router-link>
@@ -106,7 +106,6 @@
 import { mapActions } from "vuex";
 
 import { logout } from "@/utils/auth.js";
-import { getRandomContract } from "@/api/index.js";
 
 export default {
   computed: {
@@ -140,12 +139,7 @@ export default {
         icon: "mdi-content-duplicate",
         text: "Subscriptions",
         to: "subscriptions"
-      },
-      // {
-      //   icon: "mdi-poll",
-      //   text: "Statistics",
-      //   to: "projects"
-      // }
+      }
     ]
   }),
   methods: {
@@ -158,13 +152,15 @@ export default {
       logout();
     },
     random() {
-      getRandomContract()
+      this.api.getRandomContract()
         .then(res => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
         .catch(err => {
-          console.log(err);
-          this.showError(err);
+          if (err.code !== 204) {
+            console.log(err);
+            this.showError(err);
+          }
         });
     }
   }

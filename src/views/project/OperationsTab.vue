@@ -85,7 +85,7 @@
         </v-col>
       </v-row>
       <div v-if="operations !== undefined && operations.length > 0">
-        <v-expansion-panels multiple tile>
+        <v-expansion-panels multiple tile elevation-1>
           <Operation
             :data="item"
             :key="item.hash + '_' + item.counter + '_' + key"
@@ -112,7 +112,6 @@
 import { mapActions } from "vuex";
 
 import Operation from "@/components/Operation.vue";
-import { getContractOperations, getContractMempool } from "@/api/index.js";
 import dayjs from "dayjs";
 
 export default {
@@ -132,9 +131,11 @@ export default {
       if (this.last_id !== null)
         operations = this.contract.operations;
 
-      let mempoolOperations = this.getDisplayedMempool();
-      if (mempoolOperations.length > 0)
-        operations = operations.concat(mempoolOperations).sort(this.compareOperations);
+      if (this.config.MEMPOOL_ENABLED) {
+        let mempoolOperations = this.getDisplayedMempool();
+        if (mempoolOperations.length > 0)
+          operations = operations.concat(mempoolOperations).sort(this.compareOperations);
+      }
 
       return operations;
     },
@@ -206,7 +207,7 @@ export default {
       let entries = this.entrypoints;
       let timestamps = this.getTimestamps();
 
-      getContractOperations(
+      this.api.getContractOperations(
         this.contract.network,
         this.contract.address,
         this.last_id,
@@ -232,7 +233,7 @@ export default {
       if (this.contract == null)
         return;
       
-      getContractMempool(this.contract.network, this.contract.address)
+      this.api.getContractMempool(this.contract.network, this.contract.address)
         .then(res => {
           this.contract.mempool = res;
         })
@@ -307,7 +308,7 @@ export default {
       } else {
         this.operationsLoading = false;
       }
-      if (this.contract.mempool === undefined) {
+      if (this.config.MEMPOOL_ENABLED && this.contract.mempool === undefined) {
         this.contract.mempool = [];
         this.mempoolLoading = true;
         this.getMempool();

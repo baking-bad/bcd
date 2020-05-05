@@ -77,8 +77,6 @@ import BigMapDiff from "@/components/BigMapDiff.vue"
 
 import { mapActions } from "vuex";
 
-import { getContractBigMap } from "@/api/index.js";
-
 export default {
   name: "BigMapViewer",
   components: {
@@ -147,7 +145,7 @@ export default {
       clearTimeout(this._timerId);
 
       this._timerId = setTimeout(() => {
-        getContractBigMap(
+        this.api.getContractBigMap(
           this.$route.params.network,
           this.$route.params.address,
           this.$route.params.ptr,

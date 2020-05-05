@@ -1,10 +1,9 @@
 <template>
-  <v-navigation-drawer app fixed right touchless width="350" class="elevation-1" v-if="contract">
+  <v-navigation-drawer app fixed right touchless width="350" v-if="contract">
     <v-snackbar color="light-green darken-1" v-model="shared">
       Link copied to clipboard!
       <v-btn text @click="shared = false">OK</v-btn>
     </v-snackbar>
-
     <v-list class="pa-0">
       <v-list-item two-line class="mb-0">
         <v-list-item-content>
@@ -47,8 +46,8 @@
 
       <v-divider></v-divider>
 
-      <div class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between mt-1">
-        <div v-if="isAuthorized" class="mb-1">
+      <div v-if="isAuthorized" class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between mt-1">
+        <div class="mb-1">
           <v-btn
             small
             text
@@ -153,17 +152,6 @@
 import dayjs from "dayjs";
 import { mapActions } from "vuex";
 
-import {
-  getSameContracts,
-  getSimilarContracts,
-  getContractRating
-} from "@/api/index.js";
-import {
-  addProfileSubscription,
-  removeProfileSubscription
-} from "@/api/profile.js";
-import { getTzKTLink } from "@/utils/tzkt.js";
-
 import ContractItem from "@/components/ContractItem.vue";
 import SimilarItem from "@/components/SimilarItem.vue";
 import Rating from "@/components/Rating.vue";
@@ -236,7 +224,7 @@ export default {
       this.similarLoading = true;
       this.sameLoading = true;
 
-      getSameContracts(this.contract.network, this.contract.address, 0)
+      this.api.getSameContracts(this.contract.network, this.contract.address, 0)
         .then(res => {
           if (!res) return;
           this.contract.same = res.contracts;
@@ -253,7 +241,7 @@ export default {
         })
         .finally(() => (this.sameLoading = false));
 
-      getSimilarContracts(this.contract.network, this.contract.address)
+      this.api.getSimilarContracts(this.contract.network, this.contract.address)
         .then(res => {
           if (!res) return;
           this.contract.similar = res;
@@ -270,21 +258,19 @@ export default {
         })
         .finally(() => (this.similarLoading = false));
 
-      getContractRating(this.contract.network, this.contract.address)
-        .then(res => {
-          if (!res) return;
-          this.rating = res;
-        })
+      this.api.getContractRating(this.contract.network, this.contract.address)
+        .then(
+          res => {
+            if (!res) return;
+            this.rating = res;
+          }
+        )
         .catch(err => {
           console.log(err);
         });
     },
-    getTzKTLink(address) {
-      if (address.startsWith("tz"))
-        return getTzKTLink(this.contract.network, address);
-    },
     subscribe() {
-      addProfileSubscription(this.contract.id, "contract")
+      this.api.addProfileSubscription(this.contract.id, "contract")
         .then(() => {
           this.contract.profile.subscribed = true;
           this.rating.count += 1;
@@ -298,7 +284,7 @@ export default {
         });
     },
     unsubscribe() {
-      removeProfileSubscription(this.contract.id, "contract")
+      this.api.removeProfileSubscription(this.contract.id, "contract")
         .then(() => {
           this.contract.profile.subscribed = false;
           this.rating.count -= 1;
@@ -316,7 +302,7 @@ export default {
     },
     getProjectUpdate() {
       this.isSameUpdating = true;
-      getSameContracts(
+      this.api.getSameContracts(
         this.contract.network,
         this.contract.address,
         this.contract.same.length

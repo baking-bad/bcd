@@ -25,7 +25,7 @@
             mandatory
             active-class="primary--text"
           >
-            <v-chip filter v-for="net in networkItems" :key="net">{{ net }}</v-chip>
+            <v-chip filter v-for="net in config.NETWORKS" :key="net">{{ net }}</v-chip>
           </v-chip-group>
         </v-list-item-content>
       </v-list-item>
@@ -62,8 +62,8 @@ export default {
   data: () => ({
     show: true,
     selectedTime: 0,
-    languagesSelection: [0, 1, 2, 3, 4],
-    networksSelection: [0, 1, 2, 3],
+    languagesSelection: [],
+    networksSelection: [],
     timeItems: [
       {
         name: "Any time",
@@ -90,9 +90,12 @@ export default {
         value: 5
       }
     ],
-    networkItems: ["mainnet", "carthagenet", "zeronet", "babylonnet"],
     languages: ["michelson", "ligo", "lorentz", "smartpy", "liquidity"]
-  }), 
+  }),
+  created() {
+    this.languagesSelection = [...this.languages.keys()];
+    this.networksSelection = [...this.config.NETWORKS.keys()];
+  },
   watch: {
     languagesSelection: function(newValue) {
       this.filters.languages = [];
@@ -106,7 +109,7 @@ export default {
       this.filters.networks = [];
       if (newValue.length < this.languages.length) {
         newValue.forEach(x => {
-          this.filters.networks.push(this.networkItems[x]);
+          this.filters.networks.push(this.config.NETWORKS[x]);
         });
       }
     },

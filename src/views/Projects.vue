@@ -196,8 +196,6 @@ import dayjs from "dayjs";
 var isBetween = require("dayjs/plugin/isBetween");
 dayjs.extend(isBetween);
 
-import { getProjects } from "@/api/index.js";
-
 export default {
   name: "Projects",
   computed: {
@@ -324,7 +322,7 @@ export default {
     }
   },
   mounted() {
-    getProjects()
+    this.api.getProjects()
       .then(res => {
         this.projects = res;
       })
