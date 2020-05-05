@@ -1,9 +1,18 @@
 <template>
   <v-container fluid>
-    <v-skeleton-loader v-if="loading" height="400" type="image" class="ma-3"></v-skeleton-loader>
+    <v-skeleton-loader v-if="loading" height="400" type="image" class="mt-3"></v-skeleton-loader>
     <div v-else-if="contract.storage">
       <v-toolbar flat class="mb-2 transparent storage-toolbar">
-        <v-btn 
+        <v-btn v-if="raw" @click="getStorage()" small depressed class="toolbar-btn">
+          <v-icon class="mr-1" small>mdi-file-tree</v-icon>
+          <span class="overline">Switch to Tree View</span>
+        </v-btn>
+        <v-btn v-else @click="getStorageRaw()" small depressed class="toolbar-btn">
+          <v-icon class="mr-1" small>mdi-code-braces</v-icon>
+          <span class="overline">Switch to Micheline</span>
+        </v-btn>
+        <v-btn
+          v-if="!raw"
           small depressed class="toolbar-btn" 
           @click="downloadFile"
           :loading="downloading"
@@ -25,18 +34,10 @@
           v-clipboard:success="onStorageCopy"
           small depressed class="toolbar-btn">
           <v-icon class="mr-1" small>mdi-content-copy</v-icon>
-          <span class="overline">Copy one-liner</span>
-        </v-btn>
-        <v-btn v-if="raw" @click="getStorage()" small depressed class="toolbar-btn">
-          <v-icon class="mr-1" small>mdi-file-tree</v-icon>
-          <span class="overline">Switch to Tree View</span>
-        </v-btn>
-        <v-btn v-else @click="getStorageRaw()" small depressed class="toolbar-btn">
-          <v-icon class="mr-1" small>mdi-code-braces</v-icon>
-          <span class="overline">Switch to Micheline</span>
-        </v-btn>
+          <span class="overline">Copy as string</span>
+        </v-btn>       
       </v-toolbar>
-      <v-card v-if="raw" tile flat outlined class="py-4">
+      <v-card v-if="raw" tile flat outlined class="pa-3">
         <Michelson :code="contract.raw_storage"></Michelson>
       </v-card>
       <v-card v-else tile flat outlined class="py-4">
@@ -68,10 +69,11 @@
             <span :class="item.type" v-if="item.value_type !== 'big_map'">{{ item.value }}</span>
             <v-btn
               :to="{ name: 'bigmap', params: { address: contract.address, ptr: item.value, network: contract.network}}"
-              tile
+              
+              depressed
               x-small
               color="secondary"
-              class="mb-1"
+              class="px-3"
               v-else
             >
               <v-icon class="grey--text text--darken-1" x-small left>mdi-vector-link</v-icon>

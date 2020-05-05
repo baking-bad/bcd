@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-skeleton-loader v-if="loading" height="500" type="image" class="ma-3"/>
+    <v-skeleton-loader v-if="loading" height="500" type="image" class="mt-3"/>
     <div v-else-if="selectedCode">
       <v-toolbar flat class="mb-2 transparent code-toolbar">
         <v-btn small depressed class="toolbar-btn" @click="downloadFile">
@@ -38,7 +38,7 @@
           hide-details
         ></v-select>
       </v-toolbar>
-      <v-card tile flat outlined class="pa-4">
+      <v-card tile flat outlined class="pa-3">
         <Michelson :code="selectedCode"></Michelson>
       </v-card>
     </div>

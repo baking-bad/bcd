@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer app fixed right touchless width="350" class="elevation-1" v-if="contract">
+  <v-navigation-drawer app fixed right touchless width="350" v-if="contract">
     <v-list class="pa-0">
       <v-list-item two-line class="mb-0">
         <v-list-item-content>
