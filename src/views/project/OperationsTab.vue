@@ -85,7 +85,7 @@
         </v-col>
       </v-row>
       <div v-if="operations !== undefined && operations.length > 0">
-        <v-expansion-panels multiple tile>
+        <v-expansion-panels multiple tile elevation-1>
           <Operation
             :data="item"
             :key="item.hash + '_' + item.counter + '_' + key"

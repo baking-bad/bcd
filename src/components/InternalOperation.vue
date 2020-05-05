@@ -103,7 +103,7 @@
             <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
           </v-col>
         </v-row>
-        <v-row class="parameters pa-3 mt-2" v-if="hasParameters || hasStorageDiff" no-gutters>
+        <v-row class="my-1 parameters px-2 py-3" v-if="hasParameters || hasStorageDiff" no-gutters>
           <v-col cols="6">
             <div v-if="hasParameters">
               <span class="overline ml-3">Parameter</span>

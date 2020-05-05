@@ -2,130 +2,120 @@
   <v-container fluid>
     <v-skeleton-loader :loading="loading" height="300" type="image, image, image">
       <v-row v-if="contract && contract.full_entrypoints && contract.full_entrypoints.length > 0">
-        <v-col cols="9">
+        <v-col cols="8">
           <div v-if="selectedItem">
-            <v-card flat outlined tile>
-              <v-card-text>
-                <div class="d-flex flex-column parameters">
-                  <div v-for="(def, i) in selectedItem.typedef" :key="i" class="mb-2">
-                    {{ def.name }} <span class="primary--text">{{ def.type }}</span>
-                    <div v-for="(arg, j) in def.args" :key="i + j" class="pl-4">
-                      {{ arg.key }} <span class="primary--text">{{ arg.value }}</span>
-                    </div>
+            <v-card tile elevation="2">
+              <v-card-title class="builder-title py-2 px-5" primary-title>
+                <span class="hash"><span v-if="contract.alias">{{ contract.alias }}::</span>{{ selectedItem.name }}()</span>
+              </v-card-title>
+              <v-card-text class="pa-0">
+                <v-form class="pa-5 pr-3">
+                  <div v-if="selectedItem.schema">
+                    <v-jsf v-model="model" :schema="selectedItem.schema"></v-jsf>
                   </div>
-                </div>
-              </v-card-text>
-            </v-card>
-            <v-card class="mt-6">
-              <v-card-text>
-                <div class="px-3">
-                  <div class="mb-3">
-                    <span class="overline">builder</span>&nbsp;
-                  </div>
-                  <v-overlay absolute :value="loadingSchema">
-                    <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
-                  </v-overlay>
-                  <div v-if="schema">
-                    <v-form>
-                      <v-jsf v-model="model" :schema="schema"></v-jsf>
-                      <div class="d-flex justify-space-between">
-                        <v-btn
-                          outlined
-                          color="primary"
-                          @click="loadData(selectedItem)"
-                          :loading="loadingData"
-                        >
-                          <v-icon small left>mdi-code-braces</v-icon>build
-                        </v-btn>
-                        <div v-if="micheline">
-                          <v-snackbar color="light-green darken-1" v-model="clipboard_ok">
-                            Copied to clipboard!
-                            <v-btn text @click="clipboard_ok = false">OK</v-btn>
-                          </v-snackbar>
-                          <v-btn
-                            v-if="micheline"
-                            v-clipboard="JSON.stringify(micheline)"
-                            v-clipboard:success="onmichelineCopy"
-                            small
-                            depressed
-                            class="toolbar-btn"
-                          >
-                            <v-icon class="mr-1" small>mdi-content-copy</v-icon>
-                            <span class="overline">Copy one-liner</span>
-                          </v-btn>
-                          <v-btn small depressed class="toolbar-btn" @click="fullscreenData = true">
-                            <v-icon class="mr-1" small>mdi-fullscreen</v-icon>
-                            <span class="overline">Fullscreen</span>
-                          </v-btn>
-                          <v-btn
-                            small
-                            depressed
-                            class="toolbar-btn"
-                            @click="formatAsMichelson = !formatAsMichelson"
-                          >
-                            <v-icon
-                              class="mr-1"
-                              small
-                            >{{ formatAsMichelson ? 'mdi-code-parentheses' : 'mdi-code-json' }}</v-icon>
-                            <span
-                              class="overline"
-                            >{{ formatAsMichelson ? 'michelson' : 'micheline' }}</span>
-                          </v-btn>
-                        </div>
-                      </div>
-                    </v-form>
-                    <v-expand-transition mode="out-in">
-                      <div v-show="alertData || micheline || michelson" class="my-3">
-                        <v-alert
-                          v-if="alertData"
-                          border="left"
-                          dense
-                          outlined
-                          type="error"
-                          dark
-                        >{{ alertData }}</v-alert>
-                        <vue-json-pretty
-                          class="json-viewer"
-                          v-else-if="micheline && !formatAsMichelson"
-                          :data="micheline"
-                          :highlightMouseoverNode="true"
-                        ></vue-json-pretty>
-                        <Michelson v-else-if="michelson && formatAsMichelson" :code="michelson"></Michelson>
-                      </div>
-                    </v-expand-transition>
-                  </div>
-                  <v-card
-                    v-else
-                    class="d-flex flex-column align-center justify-center my-6 transparent"
-                    outlined
-                    flat
+                  <v-btn
+                      outlined
+                      dense
+                      color="primary"
+                      @click="loadData(selectedItem)"
+                      :loading="loadingData"
+                    >
+                      Build parameters
+                  </v-btn>
+                </v-form>
+                <v-divider></v-divider>         
+                <div v-if="micheline" class="pa-5 pb-0 d-flex">
+                  <v-btn
+                    small
+                    depressed
+                    class="toolbar-btn mr-4"
+                    @click="formatAsMichelson = !formatAsMichelson"
                   >
-                    <v-icon size="50" color="grey">mdi-code-braces</v-icon>
-                    <span class="title grey--text">Void parameters</span>
-                  </v-card>
+                    <v-icon
+                      class="mr-1"
+                      small
+                    >{{ formatAsMichelson ? 'mdi-code-braces' : 'mdi-code-parentheses' }}</v-icon>
+                    <span
+                      class="overline"
+                    >switch to {{ formatAsMichelson ? 'michelson' : 'micheline' }}</span>
+                  </v-btn>
+                  <v-snackbar color="light-green darken-1" v-model="clipboard_ok" top>
+                    Copied to clipboard!
+                    <v-btn text @click="clipboard_ok = false">OK</v-btn>
+                  </v-snackbar>
+                  <v-btn
+                    v-if="micheline && formatAsMichelson"
+                    v-clipboard="JSON.stringify(micheline)"
+                    v-clipboard:success="onmichelineCopy"
+                    small
+                    depressed
+                    class="toolbar-btn"
+                  >
+                    <v-icon class="mr-1" small>mdi-content-copy</v-icon>
+                    <span class="overline">Copy as string</span>
+                  </v-btn>
+                  <v-btn v-if="!formatAsMichelson" small depressed class="toolbar-btn" @click="fullscreenData = true">
+                    <v-icon class="mr-1" small>mdi-fullscreen</v-icon>
+                    <span class="overline">Fullscreen</span>
+                  </v-btn>
                 </div>
+                <v-expand-transition mode="out-in">
+                  <div v-show="alertData || micheline || michelson" class="pa-5">
+                    <v-alert
+                      v-if="alertData"
+                      border="left"
+                      dense
+                      outlined
+                      type="error"
+                      dark
+                      class="ma-0"
+                    >{{ alertData }}</v-alert>
+                    <vue-json-pretty
+                      class="json-viewer"
+                      v-else-if="micheline && !formatAsMichelson"
+                      :data="micheline"
+                      :highlightMouseoverNode="true"
+                    ></vue-json-pretty>
+                    <v-card flat outlined tile v-else-if="michelson && formatAsMichelson" class="pa-3">
+                      <Michelson :code="michelson"></Michelson>
+                    </v-card>
+                  </div>
+                </v-expand-transition>               
               </v-card-text>
             </v-card>
           </div>
         </v-col>
-        <v-col cols="3">
-          <v-list class="py-0" dense elevation="1">
-            <v-list-item-group v-model="selected" mandatory color="primary">
-              <template v-for="(item, i) in contract.full_entrypoints">
-                <v-divider :key="`${i}-divider`" v-if="i != 0" />
-                <v-list-item :key="i">
-                  <v-list-item-content>
-                    <v-list-item-title class="hash">{{ item.name }}</v-list-item-title>
-                  </v-list-item-content>
-                  <v-list-item-action v-if="callStat[item.name]">
-                    <v-list-item-action-text>
-                      <v-icon small>mdi-clock-fast</v-icon>
-                    </v-list-item-action-text>
-                  </v-list-item-action>
-                </v-list-item>
-              </template>
-            </v-list-item-group>
-          </v-list>
+        <v-col cols="4">
+          <v-card elevation="1">
+            <v-navigation-drawer floating permanent width="500" style="max-height: 85vh;">
+              <v-expansion-panels flat accordion mandatory active-class="entrypoint-selected" v-model="selected">
+                <v-expansion-panel 
+                  v-for="(item, i) in contract.full_entrypoints" 
+                  :key="i"
+                  class="entrypoint-panel">
+                  <v-expansion-panel-header>
+                    <div class="d-flex">
+                      <span class="hash">{{ item.name }}</span>
+                      <v-icon class="ml-auto mr-4" v-if="callStat[item.name]" small>mdi-clock-fast</v-icon>
+                    </div>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <div class="d-flex flex-column parameters">
+                    <div v-for="(def, i) in item.typedef" :key="i" class="mb-2">
+                      <span v-if="i === 0">parameter&nbsp;</span>
+                      <span v-else-if="def.name">{{ def.name }}&nbsp;</span>
+                      <span class="primary--text" v-html="highlightType(def.type)"></span>
+                      <div v-for="(arg, j) in def.args" :key="i + j" class="pl-4">
+                        <span>{{ arg.key }}&nbsp;</span>
+                        <span class="primary--text" v-html="highlightType(arg.value)"></span>
+                      </div>
+                    </div>
+                </div>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-navigation-drawer>  
+          </v-card>
         </v-col>
       </v-row>
       <v-card
@@ -139,8 +129,8 @@
 
       <v-dialog v-model="fullscreenData" fullscreen>
         <v-card>
-          <v-card-title class="headline elevation-1" primary-title>
-            <span>Entrypoint data</span>
+          <v-card-title class="headline" primary-title>
+            <span>Operation parameters</span>
             <v-spacer></v-spacer>
             <v-btn icon text @click="fullscreenData = false">
               <v-icon>mdi-close</v-icon>
@@ -158,8 +148,6 @@
 <script>
 import { mapActions } from "vuex";
 
-import { getEntrypointTree } from "@/utils/tree.js";
-
 import VueJsonPretty from "vue-json-pretty";
 import Michelson from "@/components/Michelson.vue";
 
@@ -174,10 +162,8 @@ export default {
   },
   data: () => ({
     loading: true,
-    loadingSchema: true,
     loadingData: false,
     model: {},
-    schema: {},
     callStat: {},
     micheline: null,
     michelson: null,
@@ -204,13 +190,9 @@ export default {
     this.callStat = {};
     this.fetchCallStat(this.contract.operations);
     this.getEntrypoints();
-    //this.getSchema(this.contract.full_entrypoints[0]);
   },
   methods: {
     ...mapActions(["showError"]),
-    tree(data) {
-      return getEntrypointTree(data);
-    },
     fetchCallStat(operations) {
       if (operations) {
         for (var i = 0; i < operations.length; i++) {
@@ -239,10 +221,8 @@ export default {
     },
     getEntrypoints() {
       this.loading = true;
-      this.loadingSchema = true;
       if (this.contract == null || this.contract.full_entrypoints !== undefined) {
         this.loading = false;
-        this.loadingSchema = false;
         if (this.contract.full_entrypoints) {
           this.contract.full_entrypoints = this.sortEntrypoints(this.contract.full_entrypoints);
         }
@@ -253,14 +233,6 @@ export default {
           if (!res) return;
           this.contract.full_entrypoints = this.sortEntrypoints(res);
           this.selected = 0;
-          // return this.api.getContractEntrypointSchema(
-          //   this.contract.network,
-          //   this.contract.address,
-          //   this.contract.full_entrypoints[0].name
-          // );
-        })
-        .then(res => {
-          this.schema = res;
         })
         .catch(err => {
           console.log(err);
@@ -268,31 +240,7 @@ export default {
         })
         .finally(() => {
           this.loading = false;
-          this.loadingSchema = false;
         });
-    },
-    getSchema(item) {
-      this.loadingSchema = true;
-      if (
-        this.contract == null ||
-        this.contract.full_entrypoints === undefined
-      ) {
-        this.loadingSchema = false;
-        return;
-      }
-      this.api.getContractEntrypointSchema(
-        this.contract.network,
-        this.contract.address,
-        item.name
-      )
-        .then(res => {
-          this.schema = res;
-        })
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        })
-        .finally(() => (this.loadingSchema = false));
     },
     getData() {
       this.loadingData = true;
@@ -307,7 +255,7 @@ export default {
       this.api.getContractEntrypointData(
         this.contract.network,
         this.contract.address,
-        this.selectedItem.name,
+        this.selectedItem.bin_path,
         this.model,
         this.formatAsMichelson ? "michelson" : ""
       )
@@ -327,21 +275,6 @@ export default {
         })
         .finally(() => (this.loadingData = false));
     },
-    showTree(parameters) {
-      return (
-        parameters !== undefined &&
-        parameters !== null &&
-        Object.keys(parameters).length > 1
-      );
-    },
-    openAllNodes() {
-      let tree = this.$refs["tree"];
-      if (tree) {
-        this.$nextTick(() => {
-          tree.updateAll(true);
-        });
-      }
-    },
     onmichelineCopy() {
       this.clipboard_ok = true;
     },
@@ -350,6 +283,9 @@ export default {
       this.michelson = null;
       this.alertData = null;
       this.getData(item);
+    },
+    highlightType(expr) {
+      return expr.replace(/(\$\w+)/g, "<span class=\"purple--text\">$1</span>");
     }
   },
   watch: {
@@ -359,14 +295,14 @@ export default {
       this.micheline = null;
       this.michelson = null;
       this.alertData = null;
-      //this.getSchema(newValue);
     },
     formatAsMichelson() {
       if (
         (!this.formatAsMichelson && !this.micheline) ||
         (this.formatAsMichelson && !this.michelson)
-      )
+      ) {
         this.getData();
+      }
     }
   }
 };
@@ -379,6 +315,11 @@ export default {
 </style>
 
 <style lang="scss" scoped>
+.builder-title {
+  border-bottom: 1px solid #ddd;
+  background: rgb(250, 250, 250);
+}
+
 .parameters {
   font-size: 12px;
   font-family: "Roboto Mono", monospace;
@@ -394,14 +335,28 @@ export default {
 .json-viewer {
   max-height: 400px;
   overflow-y: auto;
-  border: 1px solid rgba(0, 0, 0, 0.38);
-  border-radius: 4px;
-  padding: 10px;
+  border: 1px solid #ddd;
+  padding: 15px;
 }
 
 .toolbar-btn {
   color: rgba(0, 0, 0, 0.54);
   margin-right: 10px;
+}
+
+.entrypoint-panel {
+  border-bottom: 1px solid #eee;
+}
+.v-expansion-panel.entrypoint-selected {
+  background-color: rgb(250, 250, 250);
+}
+
+.v-dialog > .v-card > .v-card__title {
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: white;
+  border-bottom: 1px solid #eee;
 }
 </style>
 
