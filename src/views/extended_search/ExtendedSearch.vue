@@ -63,7 +63,7 @@
         class="d-flex flex-column align-center justify-center mt-12 transparent message-card"
         :elevation="0"
       >
-        <template v-if="(isAddress() || isOpgHash()) && tzkt.supports(network)">
+        <template v-if="(isAddress() || isOpgHash()) && !loading && tzkt.supportsAny(filters.networks)">
           <v-img class="img-avatar" :src="getCatavaSrc()"></v-img>
           <span class="headline grey--text">
             Mysterious <span v-if="isAddress()">address</span><span v-else>operation</span>
@@ -72,8 +72,7 @@
             class="subtitle-1 grey--text"
           >We couldn't find anything, but perhaps TzKT will</span>
            <v-btn-toggle
-            class="mt-2" 
-            dense
+            class="mt-2 d-flex flex-row"
             multiple>
             <template v-for="network in filters.networks">
               <v-btn 
@@ -140,6 +139,7 @@ export default {
     elasticTime: 0,
     cold: true,
     loading: false,
+    initializing: true,
     completed: false,
     tab: 0,
     filters: {
@@ -192,6 +192,7 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
+      this.initializing = false;
       this.searchText = this.$route.query.text;
     });
   },
@@ -201,9 +202,33 @@ export default {
       return this.searchText.split(' ');
     },
     onDownloadPage(entries) {
-      if (entries[0].isIntersecting) {
+      if (entries[0].isIntersecting && !this.completed) {
         this.fetchSearchDebounced(++this.seqno, true);
       }
+    },
+    searchMempool(opgHash) {
+      this.api.getOPG(opgHash)
+        .then(res => {
+          if (res) {            
+            this.suggests = res.map(op => {
+              return {
+                type: "operation",
+                value: op.hash,
+                body: op,
+                highlights: { hash: op.hash }
+              }
+            });
+            this.total = res.length;
+          }
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
+        .finally(() => {
+          this.loading = false;
+          this.cold = false;
+        })
     },
     search(
       text,
@@ -230,14 +255,18 @@ export default {
             }
             this.total = res.count;
             this.elasticTime = res.time;
-            this.cold = false;
           })
           .catch(err => {
             console.log(err);
             this.showError(err);
           })
           .finally(() => {
-            this.loading = false;
+            if (this.suggests.length === 0 && this.isOpgHash(text)) {
+              this.searchMempool(text);
+            } else {
+              this.loading = false;
+              this.cold = false;
+            }
           });
       }
     },
@@ -279,7 +308,7 @@ export default {
   },
   watch: {
     searchText(val) {
-      if (this._locked) return;
+      if (this._locked || this.initializing) return;
       this._locked = true;
       this.searchText = val ? val.trim() : '';
       if (this.searchText) {
@@ -292,11 +321,13 @@ export default {
       this._locked = false;
     },
     indices() {
+      if (this.initializing) return;
       this.fetchSearchDebounced(++this.seqno);
     },
     filters: {
       deep: true,
       handler: function() {
+        if (this.initializing) return;
         this.fetchSearchDebounced(++this.seqno);
       }
     }

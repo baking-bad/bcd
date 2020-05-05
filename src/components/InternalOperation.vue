@@ -4,7 +4,7 @@
       <v-col v-if="!address">
         <InfoItem title="Time" :subtitle="formatDate(data.timestamp)" />
       </v-col>
-      <v-col v-if="!address">
+      <v-col v-if="!address && !data.mempool">
         <InfoItem title="Level" :subtitle="String(data.level)" />
       </v-col>
       <v-col v-if="!address">
@@ -22,17 +22,17 @@
       <v-col>
         <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
       </v-col>
-      <v-spacer v-if="address"></v-spacer>
-      <v-col cols="1" v-if="!data.mempool && address" class="py-0 d-flex justify-end align-center pr-8">
-        <v-btn small depressed class="d-flex align-center" :href="opgHref" target="_blank">
-          <v-icon x-small>mdi-open-in-new</v-icon>
-          <span class="overline ml-1">In new tab</span>
-        </v-btn>
-      </v-col>
-      <v-col cols="1" v-if="!data.mempool" class="py-0 d-flex justify-end align-center">
+      <v-spacer v-if="address"></v-spacer>      
+      <v-col cols="1" v-if="!data.mempool" class="py-0 d-flex justify-end align-center pr-10">
         <v-btn small depressed class="d-flex align-center" @click="getRawJSON">
           <v-icon x-small>mdi-code-braces</v-icon>
           <span class="overline ml-1">Raw JSON</span>
+        </v-btn>
+      </v-col>
+      <v-col cols="1" v-if="address" class="py-0 d-flex justify-end align-center">
+        <v-btn small depressed class="d-flex align-center" :href="opgHref" target="_blank">
+          <v-icon x-small>mdi-open-in-new</v-icon>
+          <span class="overline ml-1">In new tab</span>
         </v-btn>
       </v-col>
     </v-row>
