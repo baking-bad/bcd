@@ -102,7 +102,7 @@ export default {
           const matches = err.message.match(/\d+/);
           if (matches !== null && matches.length === 1)
             this.errorCode = parseInt(matches[0]);
-          this.showError(err);
+          this.showError(err.message);
         })
         .finally(() => (this.loading = false));
     }

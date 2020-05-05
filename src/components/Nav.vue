@@ -139,12 +139,7 @@ export default {
         icon: "mdi-content-duplicate",
         text: "Subscriptions",
         to: "subscriptions"
-      },
-      // {
-      //   icon: "mdi-poll",
-      //   text: "Statistics",
-      //   to: "projects"
-      // }
+      }
     ]
   }),
   methods: {
@@ -162,8 +157,10 @@ export default {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
         .catch(err => {
-          console.log(err);
-          this.showError(err);
+          if (err.code !== 204) {
+            console.log(err);
+            this.showError(err);
+          }
         });
     }
   }

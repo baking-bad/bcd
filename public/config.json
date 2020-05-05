@@ -3,6 +3,7 @@
     "NETWORKS": ["mainnet", "carthagenet", "zeronet", "babylonnet"],
     "OAUTH_ENABLED": false,
     "GA_ENABLED": true,
+    "MEMPOOL_ENABLED": true,
     "HOME_PAGE": "home",
     "RPC_ENDPOINTS": {
       "mainnet": "https://rpc.tzkt.io/mainnet",

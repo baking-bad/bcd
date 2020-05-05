@@ -131,9 +131,11 @@ export default {
       if (this.last_id !== null)
         operations = this.contract.operations;
 
-      let mempoolOperations = this.getDisplayedMempool();
-      if (mempoolOperations.length > 0)
-        operations = operations.concat(mempoolOperations).sort(this.compareOperations);
+      if (this.config.MEMPOOL_ENABLED) {
+        let mempoolOperations = this.getDisplayedMempool();
+        if (mempoolOperations.length > 0)
+          operations = operations.concat(mempoolOperations).sort(this.compareOperations);
+      }
 
       return operations;
     },
@@ -306,7 +308,7 @@ export default {
       } else {
         this.operationsLoading = false;
       }
-      if (this.contract.mempool === undefined) {
+      if (this.config.MEMPOOL_ENABLED && this.contract.mempool === undefined) {
         this.contract.mempool = [];
         this.mempoolLoading = true;
         this.getMempool();
