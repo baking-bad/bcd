@@ -494,4 +494,15 @@ export class BetterCallApi {
                 return res.data
             })
     }
+
+    getErrorLocation(operationId) {
+        return getCancellable(this.api, `/operation/${operationId}/error_location`, {})
+            .then((res) => {
+                if (!res) { return res; }
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
 }

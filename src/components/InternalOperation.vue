@@ -5,10 +5,10 @@
         <InfoItem title="Time" :subtitle="formatDate(data.timestamp)" />
       </v-col>
       <v-col v-if="!address">
-        <InfoItem title="Level" :subtitle="data.level" />
+        <InfoItem title="Level" :subtitle="String(data.level)" />
       </v-col>
       <v-col v-if="!address">
-        <InfoItem title="Counter" :subtitle="data.counter" />
+        <InfoItem title="Counter" :subtitle="String(data.counter)" />
       </v-col>
       <v-col>
         <InfoItem title="Fee" :subtitle="(data.fee || 0) | uxtz" />
@@ -89,7 +89,7 @@
       <div v-show="showParams" class="px-5 pb-2">
         <v-row v-if="errors" no-gutters>
           <v-col>
-            <OperationAlert :errors="errors"/>
+            <OperationAlert :errors="errors" :operationId="data.id"/>
           </v-col>
         </v-row>
         <v-row no-gutters v-if="!data.mempool">
@@ -456,7 +456,7 @@ export default {
         if (d.add(1, "days").isBefore(dayjs())) return d.format("MMM D HH:mm");
         return d.fromNow();
       }
-    },
+    }
   },
   watch: {
     active(newVal) {
