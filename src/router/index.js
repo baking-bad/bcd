@@ -203,17 +203,6 @@ const router = new Router({
                 }
             ]
         }
-        // {
-        //     path: '/@:slug([a-zA-Z0-9_]*)',
-        //     name: 'slug',
-        //     beforeEnter: async function (to, from, next) {
-        //         let tagPath = await redirectByTag(to);
-        //         if (tagPath !== null) {
-        //             return next(tagPath);
-        //         }
-        //     }
-        // },
-        // { path: '*', redirect: '/' }
     ]
 });
 

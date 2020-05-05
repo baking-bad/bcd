@@ -1,6 +1,6 @@
 <template>
   <v-navigation-drawer app fixed right touchless width="350" v-if="contract">
-    <v-snackbar color="light-green darken-1" v-model="shared">
+    <v-snackbar color="light-green darken-1" v-model="shared" top>
       Link copied to clipboard!
       <v-btn text @click="shared = false">OK</v-btn>
     </v-snackbar>
