@@ -3,7 +3,8 @@
     "NETWORKS": ["sandboxnet"],
     "OAUTH_ENABLED": false,
     "GA_ENABLED": false,
-    "HOME_PAGE": "projects",
+    "MEMPOOL_ENABLED": false,
+    "HOME_PAGE": "home",
     "RPC_ENDPOINTS": {
       "sandboxnet": "http://localhost:8732"
     }

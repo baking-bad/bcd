@@ -43,8 +43,10 @@ export default {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
         .catch(err => {
-          console.log(err);
-          this.showError(err);
+          if (err.code !== 204) {
+            console.log(err);
+            this.showError(err);
+          }
         });
     }
   }
