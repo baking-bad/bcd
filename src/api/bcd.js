@@ -499,4 +499,14 @@ export class BetterCallApi {
                 return res.data
             })
     }
+
+    getContractBySlug(slug) {
+        return getCancellable(this.api, `/slug/${slug}`, {})
+            .then((res) => {
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
 }

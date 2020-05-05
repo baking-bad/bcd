@@ -77,6 +77,24 @@ getRuntimeConfig().then(function(config) {
     data() { return {config, api, rpc, tzkt} }
   });
 
+  router.addRoutes([
+    {
+      path: '/@:slug([a-zA-Z0-9_]*)',
+      name: 'slug',
+      beforeEnter: async function (to, from, next) {
+        return await api.getContractBySlug(to.params.slug)
+          .then(res => next(`/${res.network}/${res.address}`))
+          .catch(() => next(`/search?text=${to.params.slug}`))
+        }
+    }, 
+    { 
+      path: '*', 
+      redirect: to => {
+        return { name: 'search', query: { text: to.path.slice(1)}}
+      }
+    }
+  ]);
+
   router.beforeEach((to, from, next) => {
     const privatePages = ['/dashboard', '/dashboard/'];
     const authRequired = privatePages.includes(to.path);

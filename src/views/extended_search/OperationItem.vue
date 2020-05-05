@@ -14,7 +14,8 @@
                 v-if="item.body.destination_alias"
                 v-html="highlight(item.body.destination_alias + ' :: ')"
               ></span>
-              <span v-html="highlight(item.body.entrypoint + '()')"></span>
+              <span v-if="item.body.entrypoint" 
+                    v-html="highlight(item.body.entrypoint + '()')"></span>
             </v-list-item-title>
             <v-list-item-title class="header opg_hash grey--text text--darken-2">
               <span v-html="highlight(item.value)"></span>

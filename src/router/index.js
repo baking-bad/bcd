@@ -69,6 +69,7 @@ const router = new Router({
         },
         {
             path: '/opg/:hash(o[0-9A-z]{50})',
+            alias: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
             components: {
                 default: OPG,
                 nav: Nav
@@ -98,13 +99,46 @@ const router = new Router({
                 nav: Nav
             },
             name: 'bigmap'
-        },{
+        }, {
             path: '/bigmap/:network/:address(KT[0-9A-z]{34})/:ptr(\\d+)/:keyhash',
             components: {
                 default: BigMapDiffViewer,
                 nav: Nav
             },
             name: 'bigmapdiff'
+        },
+        { // backward compatibility
+            path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
+            children: [
+                {
+                    path: '',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}`
+                    }
+                },
+                {
+                    path: 'operations',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}/operations`
+                    }
+                },
+                {
+                    path: 'script',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}/code`
+                    }
+                },
+                {
+                    path: 'state',
+                    redirect: to => {
+                        const { params } = to
+                        return `/${params.network}net/${params.address}/storage`
+                    }
+                },
+            ]
         },
         {
             path: '/:network/:address(KT[0-9A-z]{34})',
@@ -145,43 +179,6 @@ const router = new Router({
                 }
             ]
         },
-        { // backward compatibility
-            path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
-            children: [
-                {
-                    path: '',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}`
-                    }
-                },
-                {
-                    path: 'operations',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}/operations`
-                    }
-                },
-                {
-                    path: 'script',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}/code`
-                    }
-                },
-                {
-                    path: 'state',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}/storage`
-                    }
-                },
-            ]
-        },
-        { // backward compatibility
-            path: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
-            redirect: '/opg/:hash'
-        },
         {
             path: '/dashboard',
             components: {
@@ -205,9 +202,7 @@ const router = new Router({
                     component: SubscriptionsTab
                 }
             ]
-        },
-
-        { path: '*', redirect: '/' }
+        }
     ]
 });
 
