@@ -61,7 +61,7 @@
               <img :src="profile.avatarURL" :alt="profile.login" />
             </v-avatar>
           </template>
-          {{ profile.login }}
+          Dashboard
         </v-tooltip>
       </router-link>
       <v-list-item-group v-if="isAuthorized && profile != null">
@@ -134,13 +134,7 @@ export default {
         to: "stats"
       }
     ],
-    privateItems: [
-      {
-        icon: "mdi-content-duplicate",
-        text: "Subscriptions",
-        to: "subscriptions"
-      }
-    ]
+    privateItems: []
   }),
   methods: {
     ...mapActions({

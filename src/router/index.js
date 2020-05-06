@@ -18,8 +18,7 @@ import StorageTab from '@/views/project/StorageTab.vue'
 import MigrationsTab from '@/views/project/MigrationsTab.vue'
 
 import Dashboard from '@/views/dashboard/Dashboard.vue'
-import SubscriptionsTab from '@/views/dashboard/SubscriptionsTab.vue'
-import TimelineTab from '@/views/dashboard/TimelineTab.vue'
+import EventsTab from '@/views/dashboard/EventsTab.vue'
 
 import Diff from '@/views/Diff.vue'
 import BigMapViewer from '@/views/BigMapViewer.vue'
@@ -189,17 +188,12 @@ const router = new Router({
                 {
                     path: '',
                     name: 'dashboard',
-                    redirect: 'timeline'
+                    redirect: 'events'
                 },
                 {
-                    path: 'timeline',
-                    name: 'timeline',
-                    component: TimelineTab
-                },
-                {
-                    path: 'subscriptions',
-                    name: 'subscriptions',
-                    component: SubscriptionsTab
+                    path: 'events',
+                    name: 'events',
+                    component: EventsTab
                 }
             ]
         }

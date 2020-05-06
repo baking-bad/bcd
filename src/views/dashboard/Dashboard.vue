@@ -3,21 +3,25 @@
     <v-overlay :value="loading" absolute>
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
+    <v-toolbar flat class="dashboard-toolbar">
+      <v-tabs
+        class="ml-4"
+        center-active
+        background-color="transparent"
+        slider-color="primary"
+        v-if="contract"
+      >
+        <v-tab :to="{ name: 'subscriptions' }" replace class="overline">
+          <v-icon left small>mdi-content-duplicate</v-icon>
+          Subscriptions
+        </v-tab>
+      </v-tabs>
+      <div class="mr-4">
+        <ExpandableSearch></ExpandableSearch>
+      </div>
+    </v-toolbar>
     <v-container fluid class="py-0 my-0">
       <v-row no-gutters>
-        <v-col cols="12" style="height: 64px;" class="d-flex align-end">
-          <v-tabs background-color="transparent" slider-color="primary">
-            <v-tab :to="{ name: 'timeline' }" replace class="overline">
-              <v-icon left small>mdi-timeline-text-outline</v-icon>Timeline
-            </v-tab>
-            <v-tab :to="{ name: 'subscriptions' }" replace class="overline">
-              <v-icon left small>mdi-content-duplicate</v-icon>Subscriptions
-            </v-tab>
-            <!-- <v-tab replace class="overline">
-              <v-icon left small>mdi-poll</v-icon>Statistics
-            </v-tab> -->
-          </v-tabs>
-        </v-col>
         <v-col cols="12">
           <v-slide-x-reverse-transition mode="out-in">
             <router-view/>
@@ -36,3 +40,11 @@ export default {
   })
 };
 </script>
+
+<style>
+.dashboard-toolbar > .v-toolbar__content {
+  border-bottom: 1px solid #ddd;
+  background-color: rgb(250, 250, 250);
+  padding: 0 10px;
+}
+</style>

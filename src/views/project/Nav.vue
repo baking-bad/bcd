@@ -1,9 +1,5 @@
 <template>
   <v-navigation-drawer app fixed right touchless width="350" v-if="contract">
-    <v-snackbar color="light-green darken-1" v-model="shared" top>
-      Link copied to clipboard!
-      <v-btn text @click="shared = false">OK</v-btn>
-    </v-snackbar>
     <v-list class="pa-0">
       <v-list-item two-line class="mb-0">
         <v-list-item-content>
@@ -17,11 +13,6 @@
             :class="contract.network === 'mainnet' ? 'primary--text' : ''"
           >{{ contract.network }}</v-list-item-subtitle>
         </v-list-item-content>
-        <v-list-item-action>
-          <v-btn v-clipboard="getContractLink()" v-clipboard:success="onShare" small rounded icon>
-            <v-icon small>mdi-share-variant</v-icon>
-          </v-btn>
-        </v-list-item-action>
       </v-list-item>
 
       <div class="pb-3 px-4">
@@ -46,18 +37,38 @@
 
       <v-divider></v-divider>
 
-      <div v-if="isAuthorized" class="d-flex flex-horizontal pr-5 pl-1 align-center justify-space-between mt-1">
-        <div class="mb-1">
-          <v-btn
-            small
-            text
-            @click="subscribe"
-            v-if="contract.profile == undefined || !contract.profile.subscribed"
-            color="primary"
-          >Subscribe</v-btn>
-          <v-btn small text @click="unsubscribe" color="grey" v-else>Unsubscribe</v-btn>
+      <div class="d-flex flex-horizontal align-center mx-4 mt-4 mb-1">
+        <v-snackbar color="light-green darken-1" v-model="shared" :timeout="2000" top>
+          Link copied to clipboard!
+          <v-btn text @click="shared = false">OK</v-btn>
+        </v-snackbar>
+        <v-btn v-clipboard="getContractLink()" v-clipboard:success="onShare" small depressed class="mr-2">
+          <v-icon x-small class="mr-1">mdi-share-variant</v-icon>
+          <span class="overline">Share</span>
+        </v-btn>
+        <div v-if="isAuthorized">
+          <WatchSettings 
+            :show.sync="showWatch" 
+            :address="contract.address" 
+            :network="contract.network"
+            :alias="contract.alias" />
+          <v-btn 
+            v-if="contract.profile == undefined || !contract.profile.subscribed" 
+            small depressed class="d-flex align-center"
+            @click="showWatch = true"
+          >
+            <v-icon x-small>mdi-eye-outline</v-icon>
+            <span class="overline ml-1">Watch</span>
+          </v-btn>
+          <v-btn 
+            v-else 
+            small text class="d-flex align-center"
+            @click="showWatch = true"
+          >
+            <v-icon x-small>mdi-eye-off-outline</v-icon>
+            <span class="overline ml-1">Unwatch</span>
+          </v-btn>
         </div>
-        <Rating :rating="rating" />
       </div>
 
       <InfoItem title="Was active" :subtitle="wasActive" gutters />
@@ -154,18 +165,18 @@ import { mapActions } from "vuex";
 
 import ContractItem from "@/components/ContractItem.vue";
 import SimilarItem from "@/components/SimilarItem.vue";
-import Rating from "@/components/Rating.vue";
 import InfoItem from "@/components/InfoItem.vue";
 import AccountBox from "@/components/AccountBox.vue";
+import WatchSettings from "@/components/WatchSettings.vue"
 
 export default {
   name: "ProjectNav",
   components: {
     ContractItem,
     SimilarItem,
-    Rating,
     InfoItem,
-    AccountBox
+    AccountBox,
+    WatchSettings
   },
   props: {
     contract: Object
@@ -179,8 +190,8 @@ export default {
     sameCount: 0,
     similar: [],
     similarCount: 0,
-    rating: null,
-    shared: false
+    shared: false,
+    showWatch: false
   }),
   computed: {
     isAuthorized() {
@@ -220,7 +231,6 @@ export default {
       this.contract.similar = [];
       this.contract.similarCount = 0;
       this.contract.sameCount = 0;
-      this.rating = null;
       this.similarLoading = true;
       this.sameLoading = true;
 
@@ -257,48 +267,6 @@ export default {
           console.log(err);
         })
         .finally(() => (this.similarLoading = false));
-
-      this.api.getContractRating(this.contract.network, this.contract.address)
-        .then(
-          res => {
-            if (!res) return;
-            this.rating = res;
-          }
-        )
-        .catch(err => {
-          console.log(err);
-        });
-    },
-    subscribe() {
-      this.api.addProfileSubscription(this.contract.id, "contract")
-        .then(() => {
-          this.contract.profile.subscribed = true;
-          this.rating.count += 1;
-          if (this.rating.users.length < 5) {
-            this.rating.users.push(this.profile);
-          }
-        })
-        .catch(err => {
-          this.showError(err);
-          console.log(err);
-        });
-    },
-    unsubscribe() {
-      this.api.removeProfileSubscription(this.contract.id, "contract")
-        .then(() => {
-          this.contract.profile.subscribed = false;
-          this.rating.count -= 1;
-          for (let i = 0; i < this.rating.users.length; i++) {
-            if (this.rating.users[i].login === this.profile.login) {
-              this.rating.users.splice(i, 1);
-              break;
-            }
-          }
-        })
-        .catch(err => {
-          this.showError(err);
-          console.log(err);
-        });
     },
     getProjectUpdate() {
       this.isSameUpdating = true;

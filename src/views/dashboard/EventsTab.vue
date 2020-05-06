@@ -121,7 +121,7 @@ import { mapActions } from "vuex";
 import dayjs from "dayjs";
 
 export default {
-  name: "Subscriptions",
+  name: "Events",
   data: () => ({
     subscriptions: null,
     loading: true,
