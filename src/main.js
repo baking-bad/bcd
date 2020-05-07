@@ -64,7 +64,7 @@ const getRuntimeConfig = async () => {
   return await runtimeConfig.json();
 }
 
-getRuntimeConfig().then(function(config) {
+getRuntimeConfig().then(function (config) {
   config.API_URI = process.env.VUE_APP_API_URI || config.API_URI;
   config.GA_ENABLED = process.env.VUE_APP_GA_ENABLED || config.GA_ENABLED;
   config.OAUTH_ENABLED = process.env.VUE_APP_OAUTH_ENABLED || config.OAUTH_ENABLED;
@@ -74,7 +74,7 @@ getRuntimeConfig().then(function(config) {
   let tzkt = new TzKTApi(config.TZKT_ENDPOINTS);
 
   Vue.mixin({
-    data() { return {config, api, rpc, tzkt} }
+    data() { return { config, api, rpc, tzkt } }
   });
 
   router.addRoutes([
@@ -85,12 +85,12 @@ getRuntimeConfig().then(function(config) {
         return await api.getContractBySlug(to.params.slug)
           .then(res => next(`/${res.network}/${res.address}`))
           .catch(() => next(`/search?text=${to.params.slug}`))
-        }
-    }, 
-    { 
-      path: '*', 
+      }
+    },
+    {
+      path: '*',
       redirect: to => {
-        return { name: 'search', query: { text: to.path.slice(1)}}
+        return { name: 'search', query: { text: to.path.slice(1) } }
       }
     }
   ]);

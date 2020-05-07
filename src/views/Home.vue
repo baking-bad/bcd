@@ -3,7 +3,8 @@
     <v-row no-gutters style="height:calc(100% - 64);">
       <v-col cols="12">
         <v-row justify="center" no-gutters>
-          <img class="logo"
+          <img
+            class="logo"
             src="https://mir-s3-cdn-cf.behance.net/project_modules/disp/9bacdc23957341.5632ba9070591.jpg"
           />
         </v-row>
@@ -16,6 +17,11 @@
             <v-btn large outlined tile color="primary" @click="pickRandom">Pick Random</v-btn>
           </v-col>
         </v-row>
+        <v-row justify="center">
+          <v-col>
+            <NetworkStats />
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -25,10 +31,12 @@
 import { mapActions } from "vuex";
 
 import SearchBox from "@/components/SearchBox.vue";
+import NetworkStats from "@/components/NetworkStats.vue";
 
 export default {
   components: {
-    SearchBox
+    SearchBox,
+    NetworkStats
   },
   mounted() {
     if (this.$route.name != this.config.HOME_PAGE) {
@@ -38,7 +46,8 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     pickRandom() {
-      this.api.getRandomContract()
+      this.api
+        .getRandomContract()
         .then(res => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
