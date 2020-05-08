@@ -62,4 +62,46 @@ export default {
   src: url(/fonts/GentiumPlus-R.woff);
   font-display: swap;
 }
+
+.bt-1 {
+    border-top: 1px solid var(--v-border-base) !important;
+}
+.br-1 {
+    border-right: 1px solid var(--v-border-base) !important;
+}
+.bb-1 {
+    border-bottom: 1px solid var(--v-border-base) !important;
+}
+.bl-1{
+    border-top: 1px solid var(--v-border-base) !important;
+}
+
+.toolbar {
+  background-color: var(--v-canvas-base) !important;
+  border-bottom: 1px solid var(--v-border-base) !important;
+}
+
+.canvas {
+  background-color: var(--v-canvas-base) !important;
+  height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--v-data-base);
+  border-left: none
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--v-sidebar-base);
+  border: solid 3px var(--v-data-base);
+  border-radius: 7px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
 </style>

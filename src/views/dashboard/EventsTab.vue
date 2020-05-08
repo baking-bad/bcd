@@ -1,119 +1,50 @@
 <template>
-  <v-container fluid>
-    <v-skeleton-loader
-      :loading="loading"
-      type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
-    >
-      <div
-        v-if="!subscriptions || subscriptions.length == 0"
-        class="d-flex flex-column align-center justify-center mt-12 transparent message-card"
-      >
-        <v-card flat outlined>
-          <v-card-text class="pa-10">
-            <div class="d-flex flex-row justify-start align-center">
-              <v-icon size="50">mdi-text-box-check-outline</v-icon>
-              <span class="display-1 ml-5">Subscribe to contract</span>
-            </div>
-            <div class="d-flex flex-row mt-5">
-              <span
-                class="overline"
-              >After subcription you can easy find interesting you contracts and watch for them</span>
-            </div>
-          </v-card-text>
-        </v-card>
-      </div>
-      <v-row v-else>
-        <v-col>
-          <v-card>
-            <v-subheader>Your subscriptions</v-subheader>
-            <v-slide-y-transition class="py-0" group tag="v-list">
-              <template v-for="(item, idx) in subscriptions">
-                <v-divider :key="`${idx}-divider`" v-if="idx !== 0"></v-divider>
-                <v-list-item
-                  three-line
-                  :key="idx"
-                  :to="{ name: 'project', params: {address: item.address, network: item.network}}"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title v-if="!item.alias" class="hash card-title">{{ item.address }}</v-list-item-title>
-                    <v-list-item-title v-else class="card-title">
-                      {{ item.alias }}&nbsp;
-                      <span
-                        class="body-2 grey--text text--darken-1 hash"
-                      >{{ item.address}}</span>
-                    </v-list-item-title>
-                    <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
-                    <v-list-item-subtitle class="d-flex flex-horizontal">
-                      <div class="d-flex flex-horizontal">
-                        <v-icon small color="primary">mdi-calendar-clock</v-icon>
-                        <span class="ml-2">Last action {{ formatDate(item.last_action) }}</span>
-                      </div>
-                      <div class="d-flex flex-horizontal ml-5">
-                        <v-icon small color="primary">mdi-code-tags</v-icon>
-                        <span class="ml-2">{{ item.language }}</span>
-                      </div>
-                      <div class="d-flex flex-horizontal ml-5">
-                        <v-icon small color="primary">mdi-swap-horizontal</v-icon>
-                        <span class="ml-2">{{ item.tx_count }} operations</span>
-                      </div>
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-list-item-action-text>Subscribed {{ item.subscribed_at | fromNow }}</v-list-item-action-text>
-                    <v-btn icon text @click.prevent="unsubscribe(item)">
-                      <v-icon>mdi-bell-off</v-icon>
-                    </v-btn>
-                  </v-list-item-action>
-                </v-list-item>
-              </template>
-            </v-slide-y-transition>
-          </v-card>
-        </v-col>
-        <v-col cols="4" v-if="recommended && recommended.length > 0">
-          <v-card>
-            <v-overlay absolute :value="recommendedLoading">
-              <v-progress-circular indeterminate size="64"></v-progress-circular>
-            </v-overlay>
-            <v-subheader>Recommendations</v-subheader>
-            <v-list>
-              <template v-for="(item, idx) in recommended">
-                <v-list-item
-                  three-line
-                  :key="idx"
-                  :to="{ name: 'project', params: {address: item.address, network: item.network}}"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title class="hash card-title">{{ item.address }}</v-list-item-title>
-                    <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
-                    <v-list-item-subtitle class="d-flex flex-horizontal">
-                      <div class="d-flex flex-horizontal">
-                        <v-icon small color="primary" v-if="item.last_action">mdi-calendar-clock</v-icon>
-                        <span class="ml-2">Last call {{ formatDate(item.last_action) }}</span>
-                      </div>
-                      <div class="d-flex flex-horizontal ml-5">
-                        <v-icon small color="primary">mdi-code-tags</v-icon>
-                        <span class="ml-2">{{ item.language }}</span>
-                      </div>
-                      <div class="d-flex flex-horizontal ml-5">
-                        <v-icon small color="primary">mdi-swap-horizontal</v-icon>
-                        <span class="ml-2">{{ item.tx_count }} operations</span>
-                      </div>
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-btn icon text @click.prevent="subscribe(item)">
-                      <v-icon>mdi-bell-outline</v-icon>
-                    </v-btn>
-                  </v-list-item-action>
-                </v-list-item>
-                <v-divider :key="recommended.length + idx" v-if="idx != recommended.length - 1"></v-divider>
-              </template>
-            </v-list>
-          </v-card>
-        </v-col>
-      </v-row>
-    </v-skeleton-loader>
-  </v-container>
+  <div class="fill-height" v-if="events" >
+  <div class="d-flex mx-8 mt-8 mb-4">
+    <v-btn small text class="mr-4">
+      <v-icon small class="mr-1">mdi-refresh</v-icon>
+      <span>Refresh</span>
+    </v-btn>
+    <v-btn small text>
+      <v-icon small class="mr-1">mdi-check-all</v-icon>
+      <span>Mark all as read</span>
+    </v-btn>
+  </div>
+  <v-card flat outlined class="mx-8">
+    <v-list class="pa-0">
+      <template v-for="(item, idx) in events">
+        <v-list-item :key="idx" two-line :to="getTo(item)">
+          <v-list-item-avatar>
+            <v-icon :color="getIconColor(item)">{{ getIcon(item) }}</v-icon>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title class="hash grey--text text--darken-2" style="font-size: 0.8em;">
+              <div v-if="item.kind==='origination'">
+                <span class="grey--text">{{item.source_alias || item.source}}</span>&nbsp;deployed&nbsp;
+                <span class="grey--text">{{item.destination_alias || item.destination}}</span>
+              </div>
+              <div v-else-if="item.kind==='migration'">
+                <span class="grey--text">{{item.source_alias || item.source}}</span>&nbsp;was altered at level&nbsp;
+                <span class="grey--text">{{item.level}}</span>
+              </div>
+              <div v-else-if="item.kind==='transaction'">
+                Error occured during call&nbsp;
+                <span class="grey--text">{{item.entrypoint}}</span>&nbsp;of&nbsp;
+                <span class="grey--text">{{item.destination_alias || item.destination}}</span>
+              </div>
+            </v-list-item-title>
+            <v-list-item-subtitle class="overline">{{ item.network}}</v-list-item-subtitle>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-list-item-action-text>{{ item.timestamp | fromNow }}</v-list-item-action-text>
+          </v-list-item-action>
+        </v-list-item>
+        <v-divider v-if="idx != events.length - 1" :key="idx + events.length"></v-divider>
+      </template>
+    </v-list>
+    <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
+  </v-card>
+  </div>
 </template>
 
 <script>
@@ -123,88 +54,57 @@ import dayjs from "dayjs";
 export default {
   name: "Events",
   data: () => ({
-    subscriptions: null,
-    loading: true,
-    recommended: null,
-    recommendedLoading: true
+    events: [],
+    loading: false,
+    downloaded: false
   }),
   created() {
-    this.getData();
+    this.getEvents();
   },
   methods: {
     ...mapActions(["showError"]),
-    getData() {
-      this.api.getProfileSubscriptions()
+    getEvents() {
+      if (this.loading || this.downloaded) return;
+      this.loading = true;
+      this.api.getProfileTimeline(this.events.length)
         .then(res => {
-          this.subscriptions = res;
+          this.events.push(...res)
+          this.downloaded = res.length < 20
         })
         .catch(err => {
-          this.showError(err);
           console.log(err);
+          this.showError(err);
         })
         .finally(() => (this.loading = false));
-
-      this.api.getRecommendedSubscriptions()
-        .then(res => {
-          this.recommended = res;
-        })
-        .catch(err => {
-          this.showError(err);
-          console.log(err);
-        })
-        .finally(() => (this.recommendedLoading = false));
+    },
+    getIcon(item) {
+      if (item.kind === "migration") return "mdi-transfer";
+      if (item.kind === "origination") return "mdi-new-box";
+      if (item.kind === "transaction") return "mdi-alert-outline";
+      return "mdi-new";
+    },
+    getIconColor(item) {
+      if (item.kind === "migration") return "purple";
+      if (item.kind === "origination") return "green";
+      if (item.kind === "transaction") return "red";
+      return "grey";
+    },
+    getTo(item) {
+      if (item.hash) return { name: "opg", params: { hash: item.hash } };
+      return null;
+    },
+    onDownloadPage(entries, observer, isIntersecting) {
+      if (isIntersecting) {
+        this.getEvents();
+      }
     },
     formatDate(value) {
       if (value) {
         let val = dayjs(value);
         if (val.unix() > 0) return val.format("MMM DD, YYYY");
       }
-    },
-    unsubscribe(item) {
-      this.api.removeProfileSubscription(item.id, "contract")
-        .then(() => {
-          for (var i = 0; i < this.subscriptions.length; i++) {
-            if (this.subscriptions[i].id === item.id) {
-              this.subscriptions.splice(i, 1);
-              break;
-            }
-          }
-          this.recommendedLoading = true;
-          return this.api.getRecommendedSubscriptions();
-        })
-        .then(res => {
-          this.recommended = res;
-        })
-        .catch(err => {
-          this.showError(err);
-          console.log(err);
-        })
-        .finally(() => (this.recommendedLoading = false));
-    },
-    subscribe(item) {
-      this.api.addProfileSubscription(item.id, "contract")
-        .then(() => {
-          item.subscrebed_at = dayjs().format();
-          this.subscriptions.push(item);
-          this.recommendedLoading = true;
-          return this.api.getRecommendedSubscriptions();
-        })
-        .then(res => {
-          this.recommended = res;
-        })
-        .catch(err => {
-          this.showError(err);
-          console.log(err);
-        })
-        .finally(() => (this.recommendedLoading = false));
     }
   },
-  $route: "getData"
+  $route: "getEvents"
 };
 </script>
-
-<style scoped>
-.card-title {
-  font-size: 1rem;
-}
-</style>

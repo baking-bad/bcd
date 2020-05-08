@@ -181,8 +181,7 @@ const router = new Router({
         {
             path: '/dashboard',
             components: {
-                default: Dashboard,
-                nav: Nav
+                default: Dashboard
             },
             children: [
                 {

@@ -14,18 +14,20 @@
     clearable
     hide-selected
     :prepend-inner-icon="expandable? null : 'mdi-magnify'"
-    :outlined="!expandable"
-    :background-color="expandable ? 'grey lighten-4' : 'transparent'"
+    :filled="inplace"
+    :rounded="inplace"
+    :outlined="!expandable && !inplace"
+    :background-color="expandable ? 'grey lighten-4' : inplace ? 'sidebar' : 'transparent'"
     :hide-details="expandable"
     :solo="expandable"
-    :dense="expandable"
+    :dense="expandable || inplace"
     :class="expandable ? 'expandable-search' : ''"
   >
     <template v-slot:item="{ item }">
         <v-list-item-avatar>
-          <v-icon v-if="item.type == 'contract'">mdi-code-tags</v-icon>
+          <v-icon v-if="item.type == 'contract'">mdi-code-json</v-icon>
           <v-icon v-else-if="item.type == 'operation'">mdi-swap-horizontal</v-icon>
-          <v-icon v-else>mdi-alphabetical</v-icon>
+          <v-icon v-else>mdi-key-arrow-right</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title v-if="item.body.alias">
@@ -70,7 +72,8 @@ import dayjs from "dayjs";
 
 export default {
   props: {
-    expandable: Boolean
+    expandable: Boolean,
+    inplace: Boolean
   },
   computed: {
     background() {

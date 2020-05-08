@@ -48,7 +48,8 @@
         </v-btn>
         <div v-if="isAuthorized">
           <WatchSettings 
-            :show.sync="showWatch" 
+            :show.sync="showWatch"
+            :id="contract.id"
             :address="contract.address" 
             :network="contract.network"
             :alias="contract.alias" />

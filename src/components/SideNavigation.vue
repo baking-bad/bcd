@@ -1,8 +1,8 @@
 <template>
-  <v-navigation-drawer app fixed touchless mini-variant permanent>
+  <v-navigation-drawer dark mini-variant permanent floating color="sidenav">
     <router-link
       :to="{name: 'dashboard'}"
-      class="d-flex justify-center align-center"
+      class="d-flex justify-center align-center mt-1"
       style="height: 63px"
       v-if="isAuthorized && profile != null"
     >
@@ -18,7 +18,7 @@
     <router-link
       v-else
       :to="{name: config.HOME_PAGE}"
-      class="d-flex justify-center align-center"
+      class="d-flex justify-center align-center mt-1"
       style="height: 63px"
     >
       <v-avatar color="primary" size="38" class="elevation-1">
@@ -28,14 +28,14 @@
 
     <v-list nav>
       <v-list-item-group>
-        <template v-for="(item, idx) in publicItems">
-          <v-tooltip :key="idx" right>
+        <template v-for="(item, idx) in items">
+          <v-tooltip v-if="!item.private || (isAuthorized && profile != null)" :key="idx" right>
             <template v-slot:activator="{ on }">
               <v-list-item :to="{name: item.to}" v-on="on" active-class="primary--text">
                 <template v-slot:default="{ active }">
                   <v-list-item-icon>
                     <v-icon v-if="active" color="primary">{{ item.icon }}</v-icon>
-                    <v-icon v-else color="grey">{{ item.icon }}</v-icon>
+                    <v-icon v-else color="grey lighten-2">{{ item.icon }}</v-icon>
                   </v-list-item-icon>
 
                   <v-list-item-content>
@@ -52,7 +52,7 @@
           <template v-slot:activator="{ on }">
             <v-list-item @click="random" v-on="on" active-class="white--text">
               <v-list-item-icon>
-                <v-icon color="grey">mdi-dice-3-outline</v-icon>
+                <v-icon color="grey lighten-2">mdi-dice-3-outline</v-icon>
               </v-list-item-icon>
 
               <v-list-item-content>
@@ -63,28 +63,6 @@
           <span>Pick random</span>
         </v-tooltip>
       </v-list-item-group>
-
-      <v-list-item-group v-if="isAuthorized && profile != null">
-        <template v-for="(item, idx) in privateItems">
-          <v-tooltip :key="idx" right>
-            <template v-slot:activator="{ on }">
-              <v-list-item :to="{name: item.to}" v-on="on" active-class="primary--text">
-                <template v-slot:default="{ active }">
-                  <v-list-item-icon>
-                    <v-icon v-if="active" color="primary">{{ item.icon }}</v-icon>
-                    <v-icon v-else color="grey">{{ item.icon }}</v-icon>
-                  </v-list-item-icon>
-
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.text }}</v-list-item-title>
-                  </v-list-item-content>
-                </template>
-              </v-list-item>
-            </template>
-            <span>{{ item.text }}</span>
-          </v-tooltip>
-        </template>
-      </v-list-item-group>
     </v-list>
 
     <template v-slot:append>
@@ -92,7 +70,7 @@
         <v-tooltip right>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text icon @click="clickLogout">
-              <v-icon>mdi-logout</v-icon>
+              <v-icon color="grey lighten-2">mdi-logout</v-icon>
             </v-btn>
           </template>
           Logout
@@ -104,10 +82,10 @@
 
 <script>
 import { mapActions } from "vuex";
-
 import { logout } from "@/utils/auth.js";
 
 export default {
+  name: "SideNavigation",
   computed: {
     isAuthorized() {
       return this.$store.state.isAuthorized;
@@ -117,7 +95,13 @@ export default {
     }
   },
   data: () => ({
-    publicItems: [
+    items: [
+      // {
+      //   icon: "mdi-home",
+      //   text: "Home page",
+      //   to: "home",
+      //   private: true
+      // },
       {
         icon: "mdi-cloud-search-outline",
         text: "Advanced search",
@@ -133,13 +117,6 @@ export default {
         text: "Statistics",
         to: "stats"
       }
-    ],
-    privateItems: [
-      // {
-      //   icon: "mdi-home",
-      //   text: "Home page",
-      //   to: "home"
-      // }
     ]
   }),
   methods: {
@@ -152,7 +129,8 @@ export default {
       logout();
     },
     random() {
-      this.api.getRandomContract()
+      this.api
+        .getRandomContract()
         .then(res => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })

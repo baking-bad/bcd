@@ -23,3 +23,16 @@ export function checkKeyHash(keyhash) {
     if (bs58check.decode(keyhash) === undefined) return false;
     return true;
 }
+
+export function shortcut(value, tail=4) {
+    let head = 0;
+    if (value.startsWith('tz') || value.startsWith('KT')) {
+        head = 3
+    } else if (value.startsWith('op')) {
+        head = 2;
+    }
+    return `<span class="font-weight-light">${value.slice(0, head)}</span>` +
+        `${value.slice(head, head + tail)}` +
+        `<i class="v-icon notranslate mdi mdi-dots-horizontal" style="font-size: 16px;"></i>` +
+        `${value.slice(value.length - tail)}`
+}

@@ -1,24 +1,25 @@
 <template>
   <div>
-    <v-snackbar color="light-green darken-1" v-model="updateOk" :timeout="2000" top>
+    <v-snackbar color="primary" v-model="updateOk" :timeout="2000" top>
       Watch settings updated!
       <v-btn text @click="updateOk = false">OK</v-btn>
     </v-snackbar>
     <v-dialog max-width="525" :value="show" @click:outside="close()">
-      <v-card color="grey lighten-4">
-        <v-card-title class="px-6 d-flex flex-row justify-space-between">
+      <v-card color="canvas">
+        <v-card-title class="px-6 d-flex flex-row justify-space-between settings-card-title">
           <div class="my-1 d-flex flex-column justify-center">
-            <span class="info-item-title grey--text text--darken-3">{{ address }}</span>
+            <span class="info-item-title">{{ address }}</span>
             <span 
-              class="overline grey--text text--darken-1" 
+              class="overline" 
               :class="network === 'mainnet' ? 'primary--text' : ''">{{ network }}</span>
           </div>
         </v-card-title>
         <v-divider></v-divider>
-        <v-card-text class="px-10 pb-0 pt-6">
+        <v-card-text class="px-10 pb-0 pt-10">
           <v-text-field
               label="Alias (optional)"
               :value="alias"
+              outlined
               clearable
           ></v-text-field>
           <div class="d-flex flex-row justify-space-between">
@@ -58,6 +59,7 @@ export default {
   name: "WatchSettings",
   props: {
     show: Boolean,
+    id: String,
     settings: Array,
     address: String,
     network: String,
@@ -120,7 +122,7 @@ export default {
       this.$emit("update:show", false);
     },
     subscribe() {
-      this.api.addProfileSubscription(this.address, "contract")
+      this.api.addProfileSubscription(this.id, "contract")
         .then(() => {
           this.updateOk = true;
         })
@@ -133,7 +135,7 @@ export default {
         });
     },
     unsubscribe() {
-      this.api.removeProfileSubscription(this.address, "contract")
+      this.api.removeProfileSubscription(this.id, "contract")
         .then(() => {
           this.updateOk = true;
         })
@@ -154,5 +156,8 @@ export default {
   font-family: "Roboto Mono", monospace;
   font-size: 1.1rem;
   line-height: 1.2rem;
+}
+.settings-card-title {
+  background-color: var(--v-sidebar-base);
 }
 </style>
