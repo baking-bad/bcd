@@ -53,3 +53,9 @@ export default {
   }
 };
 </script>
+
+<style>
+.v-navigation-drawer__content {
+  overflow: hidden;
+}
+</style>

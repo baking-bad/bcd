@@ -1,23 +1,25 @@
 <template>
-  <div class="fill-height d-flex flex-column">
+  <div class="fill-height canvas">
     <v-list-item style="max-height: 74px;">
-      <v-list-item-content>
+      <v-list-item-content two-line>
         <v-list-item-title class="headline">Dashboard</v-list-item-title>
-        <v-list-item-subtitle class="overline">{{ profile.login }}</v-list-item-subtitle>
+        <v-list-item-subtitle class="overline" v-if="profile">{{ profile.login }}</v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
     <v-divider></v-divider>
 
-    <v-skeleton-loader :loading="loading" transition="fade-transition" type="list-item-three-line">
-      <v-expansion-panels flat tile multiple mandatory>
-        <v-expansion-panel class="ma-0">
-          <v-expansion-panel-header color="sidebar" class="pl-4">
+    <v-skeleton-loader 
+      :loading="loading"
+      type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line">
+      <v-expansion-panels flat tile mandatory active-class="opened-panel">
+        <v-expansion-panel class="ma-0 bb-1">
+          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase">Watch</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas">
-            <v-list class="pa-0">
+            <v-list class="sidebar-list">
               <template v-for="(contract, i) in watch">
-                <v-divider :key="'divider' + i"></v-divider>
+                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
                 <v-list-item :key="i" class="pr-1" :to="`/${contract.network}/${contract.address}`">
                   <v-list-item-content>
                     <v-list-item-title class="body-2">
@@ -43,26 +45,27 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel disabled class="ma-0 bt-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4">
+        <v-expansion-panel disabled class="ma-0 bb-1">
+          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase">Accounts</span>
           </v-expansion-panel-header>
-          <v-expansion-panel-content color="canvas"></v-expansion-panel-content>
+          <v-expansion-panel-content color="canvas">
+          </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel disabled class="ma-0 bt-1 bb-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4">
+        <v-expansion-panel disabled class="ma-0 bb-1">
+          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase">Deployments</span>
           </v-expansion-panel-header>
-          <v-expansion-panel-content color="canvas"></v-expansion-panel-content>
+          <v-expansion-panel-content color="canvas">
+          </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
     </v-skeleton-loader>
 
-    <v-spacer></v-spacer>
-    <v-footer color="transparent" bottom class="d-flex justify-center">
+    <v-footer color="transparent" absolute bottom class="d-flex justify-center ml-6" style="z-index: 0">
       <v-btn x-small text href="https://baking-bad.org/docs" target="_blank" color="border">
-        <span>Baking Bad were here</span>
+        <span>Baking Bad</span>
       </v-btn>
     </v-footer>
 
@@ -93,6 +96,9 @@ export default {
     },
     profile() {
       return this.$store.state.profile;
+    },
+    maxPanelHeight() {
+      return 500;
     }
   },
   created() {
@@ -129,8 +135,17 @@ export default {
 };
 </script>
 
-<style>
+<style scss>
 .v-expansion-panel-content > .v-expansion-panel-content__wrap {
   padding: 0;
 }
-</style>  
+.sidebar-list {
+  max-height: calc(100vh - 75px - 3 * 48px);
+  overflow-y: auto;
+  padding: 0;
+  z-index: 1;
+}
+.opened-panel > .v-expansion-panel-header {
+  min-height: 48px;
+}
+</style>
