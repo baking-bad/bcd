@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-toolbar flat class="opg-toolbar">
+    <v-toolbar flat class="opg-toolbar" v-if="!this.passedOPG">
       <v-breadcrumbs large class="px-2 hash" :items="breadcrumbs">
         <template v-slot:divider>
           <v-icon>mdi-chevron-right</v-icon>
@@ -40,13 +40,26 @@ import ErrorState from "@/components/ErrorState.vue";
 
 export default {
   name: "OPG",
+  props: {
+    newOPG: Array
+  },
+  computed: {
+    passedOPG() {
+      return this.newOPG;
+    }
+  },
   components: {
     InternalOperation,
     ExpandableSearch,
     ErrorState
   },
   created() {
-    this.getOPG();
+    if (!this.passedOPG) {
+      this.getOPG();
+    } else {
+      this.processing(this.passedOPG);
+      this.loading = false;
+    }
   },
   data: () => ({
     loading: true,
@@ -69,22 +82,29 @@ export default {
       ];
     },
     getOPG() {
-      this.api.getOPG(this.$route.params.hash)
+      if (this.opg && this.opg.length > 0) return;
+
+      this.api
+        .getOPG(this.$route.params.hash)
         .then(res => {
-          this.prepareOperations(res);
-          this.panels = [];
-          for (let i = 0; i < this.opg.length; i++) {
-            this.panels.push(i);
-          }
-          if (this.opg.length > 0) {
-            this.fillBreadcrumbs(this.opg[0]);
-          }
+          this.processing(res);
         })
         .catch(err => {
           console.log(err);
           this.showError(err);
         })
         .finally(() => (this.loading = false));
+    },
+    processing(data) {
+      this.opg = [];
+      this.prepareOperations(data);
+      this.panels = [];
+      for (let i = 0; i < this.opg.length; i++) {
+        this.panels.push(i);
+      }
+      if (this.opg.length > 0) {
+        this.fillBreadcrumbs(this.opg[0]);
+      }
     },
     prepareOperations(data) {
       data.forEach(element => {
@@ -98,7 +118,10 @@ export default {
     }
   },
   watch: {
-    $route: "getOPG"
+    $route: "getOPG",
+    passedOPG: function(newValue) {
+      if (newValue) this.processing(newValue);
+    }
   }
 };
 </script>

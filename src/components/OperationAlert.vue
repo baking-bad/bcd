@@ -23,7 +23,7 @@
             >: {{ err.balance | uxtz }} &lt; {{ err.amount | uxtz }}</span>
           </div>
         </v-col>
-        <v-col class="shrink" v-if="err.id.includes('michelson_v1.script_rejected')">
+        <v-col class="shrink" v-if="err.id.includes('michelson_v1.script_rejected') && operationId">
           <v-btn
             color="red"
             small

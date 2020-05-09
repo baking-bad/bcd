@@ -7,7 +7,7 @@
       <v-col v-if="!address">
         <InfoItem title="Level" :subtitle="String(data.level)" />
       </v-col>
-      <v-col v-if="!address">
+      <v-col v-if="!address && data.counter">
         <InfoItem title="Counter" :subtitle="String(data.counter)" />
       </v-col>
       <v-col>
@@ -23,13 +23,17 @@
         <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
       </v-col>
       <v-spacer v-if="address"></v-spacer>
-      <v-col cols="1" v-if="!data.mempool && address" class="py-0 d-flex justify-end align-center pr-8">
+      <v-col
+        cols="1"
+        v-if="!data.mempool && address"
+        class="py-0 d-flex justify-end align-center pr-8"
+      >
         <v-btn small depressed class="d-flex align-center" :href="opgHref" target="_blank">
           <v-icon x-small>mdi-open-in-new</v-icon>
           <span class="overline ml-1">In new tab</span>
         </v-btn>
       </v-col>
-      <v-col cols="1" v-if="!data.mempool" class="py-0 d-flex justify-end align-center">
+      <v-col cols="1" v-if="!data.mempool && data.id" class="py-0 d-flex justify-end align-center">
         <v-btn small depressed class="d-flex align-center" @click="getRawJSON">
           <v-icon x-small>mdi-code-braces</v-icon>
           <span class="overline ml-1">Raw JSON</span>
@@ -51,6 +55,7 @@
       </v-col>
       <v-col cols="4" class="pr-4">
         <AccountBox
+          v-if="data.source"
           :title="sourceHeader"
           :address="data.source"
           :alias="data.source_alias"
@@ -89,17 +94,17 @@
       <div v-show="showParams" class="px-5 pb-2">
         <v-row v-if="errors" no-gutters>
           <v-col>
-            <OperationAlert :errors="errors" :operationId="data.id"/>
+            <OperationAlert :errors="errors" :operationId="data.id" />
           </v-col>
         </v-row>
         <v-row no-gutters v-if="!data.mempool">
-          <v-col cols="2" v-if="data.result.consumed_gas">
+          <v-col cols="2" v-if="data.result && data.result.consumed_gas">
             <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
           </v-col>
           <v-col cols="3" v-if="data.status === 'applied'">
             <InfoItem title="Paid storage diff" :subtitle="paidStorageDiff" />
           </v-col>
-          <v-col cols="2" v-if="data.result.allocated_destination_contract">
+          <v-col cols="2" v-if="data.result && data.result.allocated_destination_contract">
             <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
           </v-col>
         </v-row>
@@ -129,7 +134,10 @@
           <v-col cols="6">
             <div v-if="hasStorageDiff">
               <span class="overline ml-3">Storage</span>&nbsp;
-              <span class="grey--text caption">{{ data.result.storage_size | bytes}}</span>
+              <span
+                class="grey--text caption"
+                v-if="data.result"
+              >{{ data.result.storage_size | bytes}}</span>
               <v-treeview
                 :items="storage.tree"
                 :open="storage.open"
@@ -141,7 +149,7 @@
                 return-object
               >
                 <template v-slot:label="{ item }">
-                  <div :class="`${item.kind} pl-1 tree-label`">                    
+                  <div :class="`${item.kind} pl-1 tree-label`">
                     <span v-if="hasAddress(item.name)">
                       <span>{{ item.name }}:</span>
                       <v-btn
@@ -156,11 +164,12 @@
                     </span>
                     <span v-else>
                       <span>{{ item.name }}:&nbsp;</span>
-                      <span v-if="item.value_type === 'big_map'" 
-                            class="purple--text">big_map&nbsp;</span>
+                      <span v-if="item.value_type === 'big_map'" class="purple--text">big_map&nbsp;</span>
                     </span>
-                    <span v-if="item.value_type === 'big_map' && item.children.length === 0"
-                          :class="item.type">0 diffs</span>
+                    <span
+                      v-if="item.value_type === 'big_map' && item.children.length === 0"
+                      :class="item.type"
+                    >0 diffs</span>
                     <span v-else :class="item.type">{{ item.value }}</span>
                   </div>
                 </template>
@@ -197,7 +206,7 @@ import dayjs from "dayjs";
 import InfoItem from "@/components/InfoItem.vue";
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import OperationAlert from "@/components/OperationAlert.vue";
-import AccountBox from "@/components/AccountBox.vue"
+import AccountBox from "@/components/AccountBox.vue";
 import VueJsonPretty from "vue-json-pretty";
 
 import { getTree } from "@/utils/diff.js";
@@ -291,7 +300,7 @@ export default {
       return this.data.storage_limit;
     },
     consumedGas() {
-      if (this.data.result.consumed_gas) {
+      if (this.data.result && this.data.result.consumed_gas) {
         let s = `${this.data.result.consumed_gas}`;
         if (this.gasLimit > 0) {
           s += ` (${(
@@ -304,13 +313,13 @@ export default {
       return "0 (0%)";
     },
     allocationFee() {
-      if (this.data.result.allocated_destination_contract) {
+      if (this.data.result && this.data.result.allocated_destination_contract) {
         return 257000;
       }
       return 0;
     },
     paidStorageDiff() {
-      if (this.data.result.paid_storage_size_diff) {
+      if (this.data.result && this.data.result.paid_storage_size_diff) {
         let s = this.$options.filters.bytes(
           this.data.result.paid_storage_size_diff
         );
@@ -421,7 +430,8 @@ export default {
       }
       this.showRaw = true;
       this.loadingRaw = true;
-      this.rpc.getOperation(this.data.network, this.data.level, this.data.hash)
+      this.rpc
+        .getOperation(this.data.network, this.data.level, this.data.hash)
         .then(res => {
           this.rawJson = res;
         })
@@ -441,12 +451,14 @@ export default {
     },
     handleAddress(s) {
       const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
-      if (address.startsWith('KT')) {
-        let routeData = this.$router.resolve({ path: `/${this.data.network}/${address}` });
-        window.open(routeData.href, '_blank');
+      if (address.startsWith("KT")) {
+        let routeData = this.$router.resolve({
+          path: `/${this.data.network}/${address}`
+        });
+        window.open(routeData.href, "_blank");
       } else {
         let href = this.tzkt.resolve(this.data.network, address);
-        window.open(href, '_blank');
+        window.open(href, "_blank");
       }
     },
     formatDate(value) {
