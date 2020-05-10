@@ -31,8 +31,8 @@
           </v-col>
         </v-row>        
       </v-card-title>
-      <v-card-text class="data">
-        <v-row no-gutters class="pt-5">
+      <v-card-text class="data py-7">
+        <v-row no-gutters>
           <v-col v-if="data.diffType === 'update'" cols="6" class="pr-5">
             <ValueInspector :prim="data.realPrim" 
                             :value="data.from"

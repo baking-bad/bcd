@@ -59,7 +59,7 @@
 </template>
 
 <script>
-import BigMapDiff from "@/views/bigmap/BigMapDiff.vue";
+import BigMapDiff from "@/views/big_map/BigMapDiff.vue";
 import { mapActions } from "vuex";
 
 export default {

@@ -47,7 +47,7 @@
             class="mr-4"
             small text
             :to="{
-              name: 'keyhash', 
+              name: 'big_map_history', 
               params: {
                 network: network,
                 address: address,
@@ -86,6 +86,7 @@
           <span class="overline ml-3">Value</span>
           <v-treeview
             :items="valueTree"
+            :open="valueOpen"
             :active.sync="activeValue"
             hoverable
             open-all
@@ -163,6 +164,9 @@ export default {
     },
     valueTree() {
       return getTree(this.diff.data.value, true);
+    },
+    valueOpen() {
+      return this.valueTree.map(x => this.getChangedItems(x), this).flat()
     }
   },
   methods: {
@@ -182,6 +186,11 @@ export default {
         })
         .catch(err => console.log(err))
         .finally(() => (this.loadingRaw = false));
+    },
+    getChangedItems(item) {
+      let res = item.children.map(x => this.getChangedItems(x), this).flat();
+      res.push(item);
+      return res;
     },
   },
   watch: {

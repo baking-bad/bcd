@@ -12,22 +12,22 @@
     </v-navigation-drawer>
 
     <v-toolbar flat class color="toolbar" height="75">
-      <v-btn small text>
+      <v-btn small text class="ml-4">
         <v-icon small class="mr-1">mdi-undo-variant</v-icon>storage
       </v-btn>
 
       <v-tabs background-color="transparent" slider-color="primary" class="ml-4">
-        <v-tab :to="{ name: 'keys' }" replace>
+        <v-tab :to="{ name: 'big_map_keys' }" replace>
           <v-icon left small>mdi-database</v-icon>keys
           <span v-if="!keyhash" class="ml-1">({{ count }})</span>
         </v-tab>
-        <v-tab v-if="keyhash" :to="{ name: 'keyhash' }" replace>
+        <v-tab v-if="keyhash" :to="{ name: 'big_map_history' }" replace>
           <v-icon left small>mdi-history</v-icon>
           <span style="text-transform: none;" v-html="helpers.shortcut(keyhash)"></span>
           <span class="ml-1">({{ count }})</span>
         </v-tab>  
       </v-tabs>
-      <div class="mr-4 mt-6" style="width: 800px;">
+      <div class="mr-6 mt-6" style="width: 800px;">
         <SearchBox :inplace="true"></SearchBox>
       </div>
     </v-toolbar>
@@ -39,7 +39,7 @@
 <script>
 import SearchBox from "@/components/SearchBox.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
-import SideBar from "@/views/bigmap/SideBar.vue";
+import SideBar from "@/views/big_map/SideBar.vue";
 
 export default {
   name: "BigMap",
