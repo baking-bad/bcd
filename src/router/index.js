@@ -17,6 +17,9 @@ import EntrypointsTab from '@/views/project/EntrypointsTab.vue'
 import StorageTab from '@/views/project/StorageTab.vue'
 import MigrationsTab from '@/views/project/MigrationsTab.vue'
 
+import BigMap from '@/views/bigmap/BigMap.vue'
+import BigMapKeys from '@/views/bigmap/KeysTab.vue'
+import BigMapHistory from '@/views/bigmap/HistoryTab.vue'
 import Dashboard from '@/views/dashboard/Dashboard.vue'
 import EventsTab from '@/views/dashboard/EventsTab.vue'
 
@@ -193,6 +196,32 @@ const router = new Router({
                     path: 'events',
                     name: 'events',
                     component: EventsTab
+                }
+            ]
+        },
+        {
+            path: '/bigmap/:network/:ptr(\\d+)',
+            components: {
+                default: BigMap
+            },
+            props: true,
+            children: [
+                {
+                    path: '',
+                    name: 'bigmap_new',
+                    redirect: 'keys'
+                },
+                {
+                    path: 'keys',
+                    name: 'keys',
+                    component: BigMapKeys,
+                    props: true
+                },
+                {
+                    path: ':keyhash',
+                    name: 'keyhash',
+                    component: BigMapHistory,
+                    props: true
                 }
             ]
         }

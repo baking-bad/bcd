@@ -16,7 +16,7 @@
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase">Watch</span>
           </v-expansion-panel-header>
-          <v-expansion-panel-content color="canvas">
+          <v-expansion-panel-content color="data">
             <v-list class="sidebar-list">
               <template v-for="(contract, i) in watch">
                 <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
@@ -24,7 +24,7 @@
                   <v-list-item-content>
                     <v-list-item-title class="body-2">
                       <span v-if="contract.alias">{{ contract.alias }}</span>
-                      <span v-else v-html="shortcut(contract.address)"></span>
+                      <span v-else v-html="helpers.shortcut(contract.address)"></span>
                     </v-list-item-title>
                     <v-list-item-subtitle class="overline">{{ contract.network }}</v-list-item-subtitle>
                   </v-list-item-content>
@@ -49,7 +49,7 @@
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase">Accounts</span>
           </v-expansion-panel-header>
-          <v-expansion-panel-content color="canvas">
+          <v-expansion-panel-content color="data">
           </v-expansion-panel-content>
         </v-expansion-panel>
 
@@ -57,7 +57,7 @@
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase">Deployments</span>
           </v-expansion-panel-header>
-          <v-expansion-panel-content color="canvas">
+          <v-expansion-panel-content color="data">
           </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
@@ -81,8 +81,6 @@
 
 <script>
 import { mapActions } from "vuex";
-import { shortcut } from "@/utils/tz.js";
-
 import WatchSettings from "@/components/WatchSettings.vue";
 
 export default {
@@ -96,9 +94,6 @@ export default {
     },
     profile() {
       return this.$store.state.profile;
-    },
-    maxPanelHeight() {
-      return 500;
     }
   },
   created() {
@@ -114,7 +109,6 @@ export default {
     ...mapActions({
       showError: "showError"
     }),
-    shortcut,
     getWatchContracts() {
       this.api
         .getProfileSubscriptions()
@@ -136,16 +130,20 @@ export default {
 </script>
 
 <style scss>
-.v-expansion-panel-content > .v-expansion-panel-content__wrap {
+.opened-panel {
+  border-bottom: none !important;
+}
+.opened-panel > .v-expansion-panel-content > .v-expansion-panel-content__wrap {
   padding: 0;
+}
+.opened-panel > .v-expansion-panel-header {
+  min-height: 48px;
 }
 .sidebar-list {
   max-height: calc(100vh - 75px - 3 * 48px);
   overflow-y: auto;
+  border-radius: 0;
   padding: 0;
   z-index: 1;
-}
-.opened-panel > .v-expansion-panel-header {
-  min-height: 48px;
 }
 </style>

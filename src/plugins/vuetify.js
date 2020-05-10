@@ -18,17 +18,19 @@ export default new Vuetify({
                 sidebar: '#e3e3e3',
                 canvas: '#f0f0f0',
                 border: '#ccc',
-                data: '#fff'
+                data: '#fafafa'
             },
             dark: {
-                primary: '#4caf50',
+                primary: '#75A34F',
                 secondary: '#327d9d',
                 accent: '#9475d2',
-                sidenav: '#404040',
-                sidebar: '#363636',
-                canvas: '#292929',
+                sidenav: '#393939',
+                sidebar: '#303030',
+                canvas: '#2d2d2d',
                 border: '#414141',
-                data: '#1E1E1F'
+                data: '#2a2a2a',
+                json_value: '#81C784',
+                json_type: '#EEEEEE',
             }
         },
     },

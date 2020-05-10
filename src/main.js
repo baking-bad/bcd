@@ -6,6 +6,7 @@ import store from './store'
 import router from './router'
 import VueAnalytics from 'vue-analytics'
 
+import { shortcut } from "@/utils/tz.js";
 import { getJwt, logout } from "@/utils/auth.js";
 import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js"
 import { NodeRPC } from "@/api/rpc.js"
@@ -72,9 +73,12 @@ getRuntimeConfig().then(function(config) {
   let api = new BetterCallApi(config.API_URI);
   let rpc = new NodeRPC(config.RPC_ENDPOINTS);
   let tzkt = new TzKTApi(config.TZKT_ENDPOINTS);
+  let helpers = { shortcut }
 
   Vue.mixin({
-    data() { return {config, api, rpc, tzkt} }
+    data() { 
+      return {config, api, rpc, tzkt, helpers} 
+    }
   });
 
   router.addRoutes([

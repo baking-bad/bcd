@@ -17,7 +17,7 @@
     :filled="inplace"
     :rounded="inplace"
     :outlined="!expandable && !inplace"
-    :background-color="expandable ? 'grey lighten-4' : inplace ? 'sidebar' : 'transparent'"
+    :background-color="expandable ? 'grey lighten-4' : inplace ? 'data' : 'transparent'"
     :hide-details="expandable"
     :solo="expandable"
     :dense="expandable || inplace"
@@ -27,7 +27,7 @@
         <v-list-item-avatar>
           <v-icon v-if="item.type == 'contract'">mdi-code-json</v-icon>
           <v-icon v-else-if="item.type == 'operation'">mdi-swap-horizontal</v-icon>
-          <v-icon v-else>mdi-key-arrow-right</v-icon>
+          <v-icon v-else>mdi-database-edit</v-icon>
         </v-list-item-avatar>
         <v-list-item-content>
           <v-list-item-title v-if="item.body.alias">

@@ -7,6 +7,9 @@ import { codemirror } from "vue-codemirror-lite";
 require("codemirror/addon/mode/simple.js");
 require("codemirror/addon/display/autorefresh.js");
 require("codemirror/addon/search/searchcursor.js");
+require("codemirror/theme/material-darker.css");
+require("codemirror/theme/pastel-on-dark.css");
+require("codemirror/theme/darcula.css");
 require("codemirror/theme/neo.css");
 
 import { create } from "@/utils/codemirror.js";
@@ -29,7 +32,7 @@ export default {
   data: () => ({
     cmOptions: {
       mode: "michelson",
-      theme: "neo",
+      theme: "darcula",
       lineWrapping: true,
       lineNumbers: true,
       viewportMargin: Infinity,
@@ -57,13 +60,13 @@ export default {
 
 <style>
 .CodeMirror {
-  background-color: #fbfbfb;
+  /* background-color: #fbfbfb; */
   height: auto;
   margin-top: 2px;
   font-size: 0.9rem;
 }
 .error-mark {
-  background-color: #ffdce0;
+  /* background-color: #ffdce0; */
   color: red !important;
 }
 </style>

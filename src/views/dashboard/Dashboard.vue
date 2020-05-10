@@ -1,6 +1,6 @@
 <template>
   <div class="fill-height">
-    <v-navigation-drawer floating app permanent width="336" color="canvas">
+    <v-navigation-drawer floating app permanent width="336" color="canvas" class="main-navigation">
       <v-row class="fill-height br-1" no-gutters>
         <v-col cols="2">
           <SideNavigation />
@@ -12,7 +12,7 @@
     </v-navigation-drawer>
 
     <v-toolbar flat class="pl-8" color="toolbar" height="75">
-      <v-tabs center-active background-color="transparent" slider-color="primary">
+      <v-tabs background-color="transparent" slider-color="primary">
         <v-tab :to="{ name: 'events' }" exact-active-class="active-tab" replace>
           <v-badge color="primary" content="6" inline>
             <v-icon left small>mdi-message-text-clock-outline</v-icon>Events
@@ -55,7 +55,7 @@ export default {
 </script>
 
 <style>
-.v-navigation-drawer__content {
+.main-navigation > .v-navigation-drawer__content {
   overflow: hidden;
 }
 </style>

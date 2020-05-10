@@ -1,6 +1,6 @@
 <template>
   <v-expansion-panel class="bl-1 br-1 bt-1 bmd-panel" active-class="bmd-active-panel">
-    <v-expansion-panel-header class="px-4 pb-0 pt-1" ripple>
+    <v-expansion-panel-header v-if="!single" class="px-4 pb-0 pt-1" ripple>
       <v-row no-gutters>
         <v-col cols="8" class="d-flex align-center justify-start text-truncate">
           <v-list-item>
@@ -43,14 +43,16 @@
         </v-col>
          <v-col cols="4" class="d-flex align-center justify-end">
           <v-btn
+            v-if="!single"
             class="mr-4"
             small text
-            :to="{name: 'bigmapdiff', 
-            params: {
-              network: $route.params.network,
-              address: $route.params.address,
-              ptr: $route.params.ptr,
-              keyhash: diff.data.key_hash
+            :to="{
+              name: 'keyhash', 
+              params: {
+                network: network,
+                address: address,
+                ptr: ptr,
+                keyhash: diff.data.key_hash
               }
             }"
           >
@@ -132,9 +134,11 @@ export default {
     VueJsonPretty
   },
   props: {
+    ptr: String,
     diff: Object,
     network: String,
-    address: String
+    address: String,
+    single: Boolean
   },
   data: () => ({
     showTreeNodeDetails: false,

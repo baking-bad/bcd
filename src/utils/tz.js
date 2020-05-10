@@ -30,6 +30,8 @@ export function shortcut(value, tail=4) {
         head = 3
     } else if (value.startsWith('op')) {
         head = 2;
+    } else if (value.startsWith('expr')) {
+        head = 4;
     }
     return `<span class="font-weight-light">${value.slice(0, head)}</span>` +
         `${value.slice(head, head + tail)}` +

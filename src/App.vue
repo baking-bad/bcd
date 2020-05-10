@@ -64,16 +64,19 @@ export default {
 }
 
 .bt-1 {
-    border-top: 1px solid var(--v-border-base) !important;
+  border-top: 1px solid var(--v-border-base) !important;
 }
 .br-1 {
-    border-right: 1px solid var(--v-border-base) !important;
+  border-right: 1px solid var(--v-border-base) !important;
 }
 .bb-1 {
-    border-bottom: 1px solid var(--v-border-base) !important;
+  border-bottom: 1px solid var(--v-border-base) !important;
 }
-.bl-1{
-    border-top: 1px solid var(--v-border-base) !important;
+.bl-1 {
+  border-left: 1px solid var(--v-border-base) !important;
+}
+.ba-1 {
+  border: 1px solid var(--v-border-base) !important;
 }
 
 .toolbar {
@@ -86,8 +89,12 @@ export default {
   height: 100%;
 }
 
+.data {
+  background-color: var(--v-data-base) !important;
+}
+
 ::-webkit-scrollbar {
-  width: 15px;
+  width: 12px;
 }
 
 ::-webkit-scrollbar-track {
@@ -96,7 +103,7 @@ export default {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--v-sidebar-base);
+  background: var(--v-sidenav-base);
   border: solid 3px var(--v-data-base);
   border-radius: 7px;
 }

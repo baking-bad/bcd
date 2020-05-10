@@ -14,7 +14,7 @@
       </v-btn>
     </div>
     <v-card flat outlined class="mx-8" v-if="!loading && events.length > 0">
-      <v-list class="pa-0">
+      <v-list class="pa-0" color="data">
         <template v-for="(item, idx) in events">
           <v-list-item :key="idx" two-line :to="getTo(item)">
             <v-list-item-avatar>

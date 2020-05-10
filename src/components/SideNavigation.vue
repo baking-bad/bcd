@@ -66,10 +66,18 @@
     </v-list>
 
     <template v-slot:append>
-      <div class="d-flex align-center justify-center pa-5" v-if="isAuthorized">
+      <div class="d-flex flex-column align-center justify-center pa-5">
         <v-tooltip right>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text icon @click="clickLogout">
+              <v-icon color="grey lighten-2">mdi-theme-light-dark</v-icon>
+            </v-btn>
+          </template>
+          Toggle theme
+        </v-tooltip>
+        <v-tooltip right v-if="isAuthorized">
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text icon @click="clickLogout" class="mt-6">
               <v-icon color="grey lighten-2">mdi-logout</v-icon>
             </v-btn>
           </template>

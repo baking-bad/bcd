@@ -5,21 +5,19 @@
       <v-btn text @click="updateOk = false">OK</v-btn>
     </v-snackbar>
     <v-dialog max-width="525" :value="show" @click:outside="close()">
-      <v-card color="canvas">
-        <v-card-title class="px-6 d-flex flex-row justify-space-between settings-card-title">
+      <v-card class="data">
+        <v-card-title class="px-6 d-flex flex-row justify-space-between settings-card-title sidebar">
           <div class="my-1 d-flex flex-column justify-center">
-            <span class="info-item-title">{{ address }}</span>
+            <span class="info-item-title font-weight-light">{{ address }}</span>
             <span 
               class="overline" 
               :class="network === 'mainnet' ? 'primary--text' : ''">{{ network }}</span>
           </div>
         </v-card-title>
-        <v-divider></v-divider>
         <v-card-text class="px-10 pb-0 pt-10">
           <v-text-field
               label="Alias (optional)"
-              :value="alias"
-              outlined
+              :value="alias"              
               clearable
           ></v-text-field>
           <div class="d-flex flex-row justify-space-between">
@@ -37,14 +35,14 @@
           </div>
         </v-card-text>
         <v-card-actions class="d-flex flex-row align-center justify-end pa-6">
-          <v-btn small text class="px-4 mr-auto red--text">
+          <v-btn small text class="px-4 mr-auto error--text">
             <v-icon small class="mr-1" @click="unsubscribe">mdi-eye-off-outline</v-icon>
             <span>Unwatch</span>
           </v-btn>
-          <v-btn small text class="px-4" @click="close()">
+          <v-btn small text class="px-4 text--secondary" @click="close()">
             <span>Cancel</span>
           </v-btn>
-          <v-btn small outlined class="px-4" color="primary" @click="subscribe">
+          <v-btn small text class="px-4" @click="subscribe">
             <v-icon small class="mr-1">mdi-eye-outline</v-icon>
             <span>Watch</span>
           </v-btn>
@@ -156,8 +154,5 @@ export default {
   font-family: "Roboto Mono", monospace;
   font-size: 1.1rem;
   line-height: 1.2rem;
-}
-.settings-card-title {
-  background-color: var(--v-sidebar-base);
 }
 </style>

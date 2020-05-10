@@ -2,7 +2,7 @@
   <v-list-item :class="gutters ? '' : 'pa-0 ma-0'" selectable>
     <v-list-item-content>
       <v-list-item-subtitle class="overline">{{ title }}</v-list-item-subtitle>
-      <v-list-item-title class="info-item-title grey--text text--darken-4">
+      <v-list-item-title class="info-item-title text--lighten-4">
         <span>{{ subtitle }}</span>
       </v-list-item-title>
     </v-list-item-content>
