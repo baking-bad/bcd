@@ -14,7 +14,7 @@
       <v-expansion-panels flat tile mandatory active-class="opened-panel">
         <v-expansion-panel class="ma-0 bb-1">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase">Watch</span>
+            <span class="caption font-weight-bold text-uppercase text--secondary">Watch</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="data">
             <v-list class="sidebar-list">
@@ -30,8 +30,8 @@
                   </v-list-item-content>
                   <v-list-item-action>
                     <v-list-item-action-text class="d-flex flex-column">
-                      <v-chip x-small outlined class="mb-1 grey--text text--darken-1">same</v-chip>
-                      <v-chip x-small outlined class="grey--text text--darken-1">similar</v-chip>
+                      <v-chip x-small outlined class="mb-1 text--secondary">same</v-chip>
+                      <v-chip x-small outlined class="text--secondary">similar</v-chip>
                     </v-list-item-action-text>
                   </v-list-item-action>
                   <v-list-item-icon>

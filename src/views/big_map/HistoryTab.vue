@@ -43,7 +43,8 @@
                     <v-list-item-action>
                       <v-list-item-action-text>
                         <v-list-item-subtitle class="body-2">
-                          <v-icon small class="mb-1 text--secondary">mdi-cube-outline</v-icon>
+                          <v-icon v-if="!item.value" small class="mb-1 error--text">mdi-trash-can-outline</v-icon>
+                          <v-icon v-else small class="mb-1 text--secondary">mdi-cube-outline</v-icon>
                           {{ item.level }}
                         </v-list-item-subtitle>
                       </v-list-item-action-text>

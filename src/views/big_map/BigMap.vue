@@ -6,7 +6,7 @@
           <SideNavigation />
         </v-col>
         <v-col cols="10">
-          <SideBar />
+          <SideBar :ptr="ptr" :network="network" />
         </v-col>
       </v-row>
     </v-navigation-drawer>

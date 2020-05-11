@@ -17,18 +17,22 @@ import EntrypointsTab from '@/views/project/EntrypointsTab.vue'
 import StorageTab from '@/views/project/StorageTab.vue'
 import MigrationsTab from '@/views/project/MigrationsTab.vue'
 
-import BigMap from '@/views/big_map/BigMap.vue'
-import BigMapKeys from '@/views/big_map/KeysTab.vue'
-import BigMapHistory from '@/views/big_map/HistoryTab.vue'
-import Dashboard from '@/views/dashboard/Dashboard.vue'
-import EventsTab from '@/views/dashboard/EventsTab.vue'
-
 import Diff from '@/views/Diff.vue'
 import BigMapViewer from '@/views/BigMapViewer.vue'
 import BigMapDiffViewer from '@/views/BigMapDiffViewer.vue'
 import Projects from '@/views/Projects.vue'
 import OPG from '@/views/OPG.vue'
 import Stats from '@/views/Stats.vue'
+
+import OperationGroup from '@/views/opg/OperationGroup.vue'
+import OpgContents from '@/views/opg/ContentsTab.vue'
+
+import BigMap from '@/views/big_map/BigMap.vue'
+import BigMapKeys from '@/views/big_map/KeysTab.vue'
+import BigMapHistory from '@/views/big_map/HistoryTab.vue'
+
+import Dashboard from '@/views/dashboard/Dashboard.vue'
+import EventsTab from '@/views/dashboard/EventsTab.vue'
 
 Vue.use(VueRouter)
 
@@ -204,11 +208,11 @@ const router = new Router({
             components: {
                 default: BigMap
             },
-            props: true,
+            props: { default: true },
             children: [
                 {
                     path: '',
-                    name: 'big_map_new',
+                    name: 'big_map',
                     redirect: 'keys'
                 },
                 {
@@ -221,6 +225,27 @@ const router = new Router({
                     path: ':keyhash',
                     name: 'big_map_history',
                     component: BigMapHistory,
+                    props: true
+                }
+            ]
+        },
+        {
+            path: '/:network/opg/:hash(o[0-9A-z]{50})',
+            alias: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
+            components: {
+                default: OperationGroup
+            },
+            props: { default: true },
+            children: [
+                {
+                    path: '',
+                    name: 'operation_group',
+                    redirect: 'contents'
+                },
+                {
+                    path: 'contents',
+                    name: 'opg_contents',
+                    component: OpgContents,
                     props: true
                 }
             ]

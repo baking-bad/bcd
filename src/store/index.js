@@ -38,6 +38,6 @@ export default new Vuex.Store({
         logout({ commit }) {
             commit('setProfile', null);
             commit('setIsAuthorized', false);
-        },
+        }
     }
 });

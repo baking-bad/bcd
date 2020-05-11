@@ -1,6 +1,6 @@
 <template>
   <div class="fill-height canvas">
-    <v-list-item style="max-height: 74px;">
+    <v-list-item style="  height: 74px;">
       <v-list-item-content two-line>
         <v-list-item-title class="headline">Big Map {{ ptr }}</v-list-item-title>
         <v-list-item-subtitle class="overline">{{ network }}</v-list-item-subtitle>
@@ -14,7 +14,7 @@
       <v-expansion-panels flat tile mandatory multiple active-class="opened-panel">
         <v-expansion-panel class="ma-0 bb-1">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase">Details</span>
+            <span class="caption font-weight-bold text-uppercase text--secondary">Details</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas">
             <v-list class="sidebar-list">
@@ -48,7 +48,7 @@
 
         <v-expansion-panel class="ma-0 bb-1">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase">Type</span>
+            <span class="caption font-weight-bold text-uppercase text--secondary">Type</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas">
            
@@ -71,15 +71,9 @@ import { mapActions } from "vuex";
 
 export default {
   name: "SideBar",
-  components: {
-  },
-  computed: {  
-    ptr() {
-      return this.$route.params.ptr;
-    },
-    network() {
-      return this.$route.params.network;
-    }  
+  props: {  
+    ptr: String,
+    network: String  
   },
   created() {
   },

@@ -69,7 +69,7 @@
       <div class="d-flex flex-column align-center justify-center pa-5">
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text icon @click="clickLogout">
+            <v-btn v-on="on" text icon @click="toggleTheme">
               <v-icon color="grey lighten-2">mdi-theme-light-dark</v-icon>
             </v-btn>
           </template>
@@ -148,6 +148,10 @@ export default {
             this.showError(err);
           }
         });
+    },
+    toggleTheme() {
+      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
+      localStorage.setItem('dark', this.$vuetify.theme.dark);
     }
   }
 };

@@ -1,55 +1,56 @@
 <template>
-  <div class="pb-2">
-    <v-row v-if="!data.internal" no-gutters class="pl-4 pr-6 py-1 mb-1 operation-info">
-      <v-col v-if="!address">
-        <InfoItem title="Time" :subtitle="formatDate(data.timestamp)" />
-      </v-col>
-      <v-col v-if="!address && !data.mempool">
-        <InfoItem title="Level" :subtitle="String(data.level)" />
-      </v-col>
-      <v-col v-if="!address">
+  <div class="pb-2 data">
+    <v-row v-if="!data.internal" no-gutters class="px-4 py-1 sidebar">
+      <v-col cols="2" v-if="!address">
         <InfoItem title="Counter" :subtitle="String(data.counter)" />
       </v-col>
-      <v-col>
-        <InfoItem title="Fee" :subtitle="(data.fee || 0) | uxtz" />
-      </v-col>
-      <v-col>
+      <v-col cols="2">
         <InfoItem title="Burned" :subtitle="(burned || 0) | uxtz" />
       </v-col>
-      <v-col>
+      <v-col cols="2">
+        <InfoItem title="Fee" :subtitle="(data.fee || 0) | uxtz" />
+      </v-col>
+      <v-col cols="2">
         <InfoItem title="Gas limit" :subtitle="String(data.gas_limit || 0)" />
       </v-col>
-      <v-col>
+      <v-col cols="2">
         <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
       </v-col>
-      <v-spacer v-if="address"></v-spacer>      
-      <v-col cols="1" v-if="!data.mempool" class="py-0 d-flex justify-end align-center pr-10">
-        <v-btn small depressed class="d-flex align-center" @click="getRawJSON">
+      <v-col cols="2" v-if="address" class="py-0 d-flex justify-end align-center">
+        <v-btn v-if="!data.mempool" small depressed class="d-flex align-center" @click="getRawJSON">
           <v-icon x-small>mdi-code-braces</v-icon>
           <span class="overline ml-1">Raw JSON</span>
         </v-btn>
-      </v-col>
-      <v-col cols="1" v-if="address" class="py-0 d-flex justify-end align-center">
         <v-btn small depressed class="d-flex align-center" :href="opgHref" target="_blank">
           <v-icon x-small>mdi-open-in-new</v-icon>
           <span class="overline ml-1">In new tab</span>
         </v-btn>
       </v-col>
     </v-row>
-    <v-row no-gutters class="px-5">
-      <v-col cols="12" class="title">
-        <span :class="headerClass">{{ header }}</span>
+    <v-row no-gutters class="px-4 pt-4">
+      <v-col cols="11">
+        <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
+        <span class="hash secondary--text">{{ header }}</span>
         <v-chip
-          class="ml-3"
+          class="ml-3 overline"
           :color="statusColor"
+          small
           outlined
-          x-small
           label
-          dense
-          tile
         >{{ data.status }}</v-chip>
       </v-col>
-      <v-col cols="4" class="pr-4">
+      <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="hasDetails">
+        <v-btn
+          text
+          :class="showParams ? 'text--secondary' : ''"
+          small
+          @click="showParams = !showParams"
+          class="d-flex align-center"
+        >
+          <v-icon small class="mr-1">mdi-file-tree</v-icon><span>{{btnText}} details</span>
+        </v-btn>
+      </v-col>
+      <v-col cols="2">
         <AccountBox
           :title="sourceHeader"
           :address="data.source"
@@ -58,7 +59,7 @@
           :network="data.network"
         />
       </v-col>
-      <v-col cols="4" class="pr-4">
+      <v-col cols="2">
         <AccountBox
           :title="destinationHeader"
           :address="data.destination"
@@ -67,43 +68,37 @@
           :network="data.network"
         />
       </v-col>
-      <v-col cols="2" class="pr-4">
+      <v-col cols="2">
         <InfoItem title="Amount" :subtitle="amount | uxtz" />
       </v-col>
-      <v-spacer></v-spacer>
-      <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="hasDetails">
-        <v-btn
-          :text="showParams"
-          :depressed="!showParams"
-          :color="showParams ? 'grey' : ''"
-          small
-          @click="showParams = !showParams"
-          class="d-flex align-center"
-        >
-          <span class="overline">{{btnText}} details</span>
-        </v-btn>
+      <v-col cols="2" v-if="data.delegate">
+        <AccountBox
+          title="Delegate"
+          :address="data.delegate"
+          :alias="data.delegate_alias"
+          :highlighted="false"
+          :network="data.network"
+        />
       </v-col>
+      <v-col cols="2" v-if="!data.mempool && data.result.consumed_gas">
+        <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
+      </v-col>
+      <v-col cols="2" v-if="!data.mempool && data.status === 'applied'">
+        <InfoItem title="Paid storage diff" :subtitle="paidStorageDiff" />
+      </v-col>
+      <v-col cols="2" v-if="!data.mempool && data.result.allocated_destination_contract">
+        <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
+      </v-col>      
     </v-row>
 
     <v-expand-transition>
-      <div v-show="showParams" class="px-5 pb-2">
+      <div v-show="showParams" class="px-4 pb-2">
         <v-row v-if="errors" no-gutters>
           <v-col>
             <OperationAlert :errors="errors" :operationId="data.id"/>
           </v-col>
         </v-row>
-        <v-row no-gutters v-if="!data.mempool">
-          <v-col cols="2" v-if="data.result.consumed_gas">
-            <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
-          </v-col>
-          <v-col cols="3" v-if="data.status === 'applied'">
-            <InfoItem title="Paid storage diff" :subtitle="paidStorageDiff" />
-          </v-col>
-          <v-col cols="2" v-if="data.result.allocated_destination_contract">
-            <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
-          </v-col>
-        </v-row>
-        <v-row class="my-1 parameters px-2 py-3" v-if="hasParameters || hasStorageDiff" no-gutters>
+        <v-row class="my-1 parameters px-2 py-3 canvas" v-if="hasParameters || hasStorageDiff" no-gutters>
           <v-col cols="6">
             <div v-if="hasParameters">
               <span class="overline ml-3">Parameter</span>
@@ -329,16 +324,11 @@ export default {
       return this.data.amount;
     },
     header() {
-      if (this.data.internal) {
-        if (this.data.entrypoint) {
-          return `Internal call ${this.data.entrypoint}`;
-        }
-        return `Internal ${this.data.kind}`;
-      }
       if (this.data.entrypoint) {
-        return `Call ${this.data.entrypoint}`;
+        return this.data.entrypoint;
+      } else {
+        return this.data.kind
       }
-      return this.data.kind;
     },
     btnText() {
       if (this.showParams) {
@@ -392,8 +382,8 @@ export default {
       return "grey";
     },
     headerClass() {
-      if (this.data.entrypoint) return "overline call";
-      return `overline ${this.data.kind}`;
+      if (this.data.entrypoint) return "call";
+      return this.data.kind;
     },
     burned() {
       let val = this.data.burned || 0;
@@ -474,53 +464,37 @@ export default {
 
 
 <style lang="scss" scoped>
-.operation-info {
-  background: rgb(250, 250, 250);
-  border-left: 4px solid rgb(230, 230, 230);
-}
-
 .address {
   font-size: 13px;
 }
 
-.internal {
-  border-left: 1px solid lightgrey;
-}
-.operation-body {
-  .operation-title {
-    font-size: 13px;
-    text-transform: uppercase;
-  }
-}
-
 .parameters {
-  border: 1px solid #ddd;
-  font-size: 12px;
+  font-size: 14px;
   font-family: "Roboto Mono", monospace;
 
   .value {
-    color: #6ba13b;
+    color: var(--v-json_value-base);
   }
   .object {
-    color: #bbb;
+    color: var(--v-json_type-base);
   }
 }
 
-.added-tree-item {
-  background-color: #dcedc8;
-}
-.removed-tree-item {
-  background-color: #ffedef;
-  color: #721c24;
-}
-.edited-tree-item {
-  background-color: #fff3cd;
-  color: #856404;
+// .added-tree-item {
+//   background-color: #dcedc8;
+// }
+// .removed-tree-item {
+//   background-color: #ffedef;
+//   color: #721c24;
+// }
+// .edited-tree-item {
+//   background-color: #fff3cd;
+//   color: #856404;
 
-  .value {
-    color: black;
-  }
-}
+//   .value {
+//     color: black;
+//   }
+// }
 
 .title {
   .call {
@@ -532,6 +506,7 @@ export default {
   }
   color: #76a34e;
 }
+
 .v-dialog > .v-card > .v-card__title {
   position: sticky;
   top: 0;
@@ -549,6 +524,6 @@ export default {
   min-height: 20px !important;
 }
 .vjs-tree .vjs-value__string {
-  color: green;
+  color: var(--v-json_value-base);
 }
 </style>

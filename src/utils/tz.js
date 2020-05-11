@@ -1,4 +1,5 @@
 var bs58check = require("bs58check");
+var dayjs = require("dayjs");
 
 export function checkAddress(address) {
     if (address === undefined && address == null) return false;
@@ -25,11 +26,13 @@ export function checkKeyHash(keyhash) {
 }
 
 export function shortcut(value, tail=4) {
+    if (!value) return '';
+
     let head = 0;
     if (value.startsWith('tz') || value.startsWith('KT')) {
         head = 3
-    } else if (value.startsWith('op')) {
-        head = 2;
+    } else if (value.startsWith('o')) {
+        head = 1;
     } else if (value.startsWith('expr')) {
         head = 4;
     }
@@ -37,4 +40,13 @@ export function shortcut(value, tail=4) {
         `${value.slice(head, head + tail)}` +
         `<i class="v-icon notranslate mdi mdi-dots-horizontal" style="font-size: 16px;"></i>` +
         `${value.slice(value.length - tail)}`
+}
+
+export function formatDatetime(timestamp) {
+    let d = dayjs(timestamp);
+    if (timestamp) {
+        if (d.year() < dayjs().year()) return d.format("MMM D HH:mm, YYYY");
+        if (d.add(1, "days").isBefore(dayjs())) return d.format("MMM D HH:mm");
+        return d.fromNow();
+    }
 }
