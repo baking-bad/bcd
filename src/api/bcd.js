@@ -181,6 +181,20 @@ export class BetterCallApi {
             })
     }
 
+    getContractEntrypointTrace(network, address, bin_path, data) {
+        return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/trace`, {
+            bin_path: bin_path,
+            data: data
+        })
+            .then((res) => {
+                if (!res) { return res; }
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
+
     getContractStorage(network, address) {
         return getCancellable(this.api, `/contract/${network}/${address}/storage`, {})
             .then((res) => {
@@ -319,7 +333,7 @@ export class BetterCallApi {
                 throw err;
             })
     }
-    
+
     getNextVoteTask() {
         return this.api.get(`/profile/vote/task`,
             {
@@ -466,7 +480,7 @@ export class BetterCallApi {
                 return res.data
             })
     }
-    
+
     getNetworkStats(network) {
         return getCancellable(this.api, `/stats/${network}`, {})
             .then((res) => {
@@ -477,7 +491,7 @@ export class BetterCallApi {
                 return res.data
             })
     }
-    
+
     getNetworkStatsSeries(network, index, period) {
         return getCancellable(this.api, `/stats/${network}/series?index=${index}&period=${period}`, {})
             .then((res) => {
