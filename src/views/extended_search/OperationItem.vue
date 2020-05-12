@@ -14,8 +14,7 @@
                 v-if="item.body.destination_alias"
                 v-html="highlight(item.body.destination_alias + ' :: ')"
               ></span>
-              <span v-if="item.body.entrypoint" 
-                    v-html="highlight(item.body.entrypoint + '()')"></span>
+              <span v-if="item.body.entrypoint" v-html="highlight(item.body.entrypoint + '()')"></span>
             </v-list-item-title>
             <v-list-item-title class="header opg_hash grey--text text--darken-2">
               <span v-html="highlight(item.value)"></span>
@@ -70,19 +69,22 @@
           </v-list-item-action>
         </v-list-item>
 
-        <div class="d-flex flex-wrap flex-row mx-6">
-          <div v-for="(values, key) in item.highlights" :key="key">
-            <div
-              class="d-flex flex-column mr-6 pt-2 pb-4"
-              v-if="!['hash', 'entrypoint'].includes(key)"
-            >
-              <span class="overline">{{ key }}</span>
-              <span v-for="(value, i) in values" :key="key + i">
-                <span v-html="highlight(value)" class="caption"></span>
-              </span>
-            </div>
+        <template v-for="(values, key) in item.highlights">
+          <div
+            :key="key"
+            class="d-flex flex-column mr-12 ml-6 pt-2 pb-4"
+            v-if="!['hash', 'entrypoint'].includes(key)"
+          >
+            <span class="overline">{{ key }}</span>
+            <span
+              v-for="(value, i) in values"
+              :key="key + i"
+              v-html="highlight(value)"
+              class="d-inline-block caption text-wrap"
+              style="max-width: 100%;"
+            ></span>
           </div>
-        </div>
+        </template>
       </v-card>
     </v-hover>
   </div>
