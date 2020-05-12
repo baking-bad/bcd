@@ -5,7 +5,7 @@ import VueRouter from 'vue-router'
 import HomeToolbar from '@/components/HomeToolbar.vue';
 import Nav from '@/components/Nav.vue';
 
-import Home from '@/views/Home.vue'
+// import Home from '@/views/Home.vue'
 import Welcome from '@/views/Welcome.vue'
 
 import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
@@ -33,6 +33,8 @@ import BigMapHistory from '@/views/big_map/HistoryTab.vue'
 
 import Dashboard from '@/views/dashboard/Dashboard.vue'
 import EventsTab from '@/views/dashboard/EventsTab.vue'
+
+import Home from '@/views/home/Home.vue'
 
 Vue.use(VueRouter)
 

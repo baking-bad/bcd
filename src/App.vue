@@ -11,22 +11,6 @@
         </v-btn>
       </v-fab-transition>
     </v-content>
-
-    <v-footer v-if="$route.name === 'home'" padless absolute app>
-      <v-card flat tile class="text-center" width="100%">
-        <v-card-text class="py-1">
-          Created by <a
-            href="https://baking-bad.org/"
-            target="_blank"
-          >Baking Bad</a> |
-          Pictures by
-          <a
-            href="https://www.behance.net/gallery/23957341/href"
-            target="_blank"
-          >Guillermo Prestegui</a>
-        </v-card-text>
-      </v-card>
-    </v-footer>
   </v-app>
 </template>
 
