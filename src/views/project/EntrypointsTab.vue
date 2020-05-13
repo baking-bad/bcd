@@ -385,6 +385,7 @@ export default {
       this.micheline = null;
       this.michelson = null;
       this.alertData = null;
+      this.model = Object.assign({}, newValue.default_model)
     },
     formatAsMichelson() {
       if (
