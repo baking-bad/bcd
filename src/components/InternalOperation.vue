@@ -1,7 +1,7 @@
 <template>
   <div class="pb-2 data">
     <v-row v-if="!data.internal" no-gutters class="px-4 py-1 sidebar">
-      <v-col cols="2" v-if="!address">
+      <v-col cols="2">
         <InfoItem title="Counter" :subtitle="String(data.counter)" />
       </v-col>
       <v-col cols="2">
@@ -17,20 +17,37 @@
         <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
       </v-col>
       <v-col cols="2" v-if="address" class="py-0 d-flex justify-end align-center">
-        <v-btn v-if="!data.mempool" small depressed class="d-flex align-center" @click="getRawJSON">
-          <v-icon x-small>mdi-code-braces</v-icon>
-          <span class="overline ml-1">Raw JSON</span>
-        </v-btn>
-        <v-btn small depressed class="d-flex align-center" :href="opgHref" target="_blank">
-          <v-icon x-small>mdi-open-in-new</v-icon>
-          <span class="overline ml-1">In new tab</span>
-        </v-btn>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" v-if="!data.mempool" icon class="mr-2 text--secondary" @click="getRawJSON">
+              <v-icon>mdi-code-json</v-icon>
+            </v-btn>
+          </template>
+          <span>View raw JSON</span>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" icon class="mr-2 text--secondary" @click="getRawJSON">
+              <v-icon>mdi-content-copy</v-icon>
+            </v-btn>
+          </template>
+          <span>Copy operation hash</span>
+        </v-tooltip>
+        <v-tooltip top>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" :href="`/${data.network}/opg/${data.hash}`" target="_blank" icon class="mr-2 text--secondary">
+              <v-icon>mdi-open-in-new</v-icon>
+            </v-btn>
+          </template>
+          <span>View operation group</span>
+        </v-tooltip>
       </v-col>
     </v-row>
     <v-row no-gutters class="px-4 pt-4">
       <v-col cols="11">
         <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
-        <span class="hash secondary--text">{{ header }}</span>
+        <span v-if="data.entrypoint" class="hash secondary--text">{{ data.entrypoint }}</span>
+        <span v-else class="hash accent--text">{{ data.kind }}</span>
         <v-chip
           class="ml-3 overline"
           :color="statusColor"
@@ -39,16 +56,13 @@
           label
         >{{ data.status }}</v-chip>
       </v-col>
-      <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="hasDetails">
-        <v-btn
-          text
-          :class="showParams ? 'text--secondary' : ''"
-          small
-          @click="showParams = !showParams"
-          class="d-flex align-center"
-        >
-          <v-icon small class="mr-1">mdi-file-tree</v-icon><span>{{btnText}} details</span>
+      <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="hasParameters || hasStorageDiff">
+        <v-btn v-if="showParams" text small @click="showParams = !showParams" class="text--secondary">
+          <v-icon small class="mr-1">mdi-file-tree</v-icon><span>Hide details</span>
         </v-btn>
+        <v-btn v-else text small @click="showParams = !showParams">
+          <v-icon small class="mr-1">mdi-file-tree</v-icon><span>Show details</span>
+        </v-btn>      
       </v-col>
       <v-col cols="2">
         <AccountBox
@@ -69,7 +83,7 @@
         />
       </v-col>
       <v-col cols="2">
-        <InfoItem title="Amount" :subtitle="amount | uxtz" />
+        <InfoItem title="Amount" :subtitle="(isNaN(data.amount) ? 0 : data.amount) | uxtz" />
       </v-col>
       <v-col cols="2" v-if="data.delegate">
         <AccountBox
@@ -114,7 +128,7 @@
               >
                 <template v-slot:label="{ item }">
                   <div class="tree-label">
-                    <span :class="item.name.startsWith('@') ? 'purple--text' : ''">{{ item.name }}:</span>&nbsp;
+                    <span :class="item.name.startsWith('@') ? 'accent--text' : ''">{{ item.name }}:</span>&nbsp;
                     <span :class="item.type">{{ item.value }}</span>
                   </div>
                 </template>
@@ -146,13 +160,13 @@
                         x-small
                         text
                       >
-                        <v-icon class="purple--text" x-small>mdi-open-in-new</v-icon>
+                        <v-icon class="accent--text" x-small>mdi-open-in-new</v-icon>
                       </v-btn>
                     </span>
                     <span v-else>
-                      <span>{{ item.name }}:&nbsp;</span>
+                      <span class="key">{{ item.name }}:&nbsp;</span>
                       <span v-if="item.value_type === 'big_map'" 
-                            class="purple--text">big_map&nbsp;</span>
+                            class="accent--text">big_map&nbsp;</span>
                     </span>
                     <span v-if="item.value_type === 'big_map' && item.children.length === 0"
                           :class="item.type">0 diffs</span>
@@ -187,8 +201,6 @@
 </template>
 
 <script>
-import dayjs from "dayjs";
-
 import InfoItem from "@/components/InfoItem.vue";
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import OperationAlert from "@/components/OperationAlert.vue";
@@ -319,23 +331,6 @@ export default {
       }
       return this.$options.filters.bytes(0) + " (0%)";
     },
-    amount() {
-      if (isNaN(this.data.amount)) return 0;
-      return this.data.amount;
-    },
-    header() {
-      if (this.data.entrypoint) {
-        return this.data.entrypoint;
-      } else {
-        return this.data.kind
-      }
-    },
-    btnText() {
-      if (this.showParams) {
-        return "hide";
-      }
-      return "show";
-    },
     parameters() {
       return getTree(this.data.parameters, true);
     },
@@ -343,17 +338,6 @@ export default {
       let tree = getTree(this.data.storage_diff, true);
       let open = tree.map(x => this.getChangedItems(x), this).flat();
       return { tree, open };
-    },
-    hasDetails() {
-      return (
-        this.hasParameters ||
-        this.hasStorageDiff ||
-        (this.data.result &&
-          (this.data.result.errors ||
-            this.data.result.consumed_gas ||
-            this.data.result.paid_storage_size_diff ||
-            this.data.result.allocated_destination_contract))
-      );
     },
     hasParameters() {
       return (
@@ -372,18 +356,14 @@ export default {
       );
     },
     statusColor() {
-      if (this.data.status === "applied") return "green";
-      if (this.data.status === "backtracked") return "orange";
-      if (this.data.status === "failed") return "red";
-      if (this.data.status === "pending") return "grey";
-      if (this.data.status === "lost") return "black";
-      if (this.data.status === "branch_refused") return "red";
-      if (this.data.status === "refused") return "red";
-      return "grey";
-    },
-    headerClass() {
-      if (this.data.entrypoint) return "call";
-      return this.data.kind;
+      if (this.data.status === "applied") return "success";
+      if (this.data.status === "backtracked") return "warning";
+      if (this.data.status === "failed") return "error";
+      if (this.data.status === "pending") return "secondary";
+      if (this.data.status === "lost") return "secondary";
+      if (this.data.status === "branch_refused") return "error";
+      if (this.data.status === "refused") return "error";
+      return "secondary";
     },
     burned() {
       let val = this.data.burned || 0;
@@ -392,16 +372,8 @@ export default {
           val += this.data.internal_operations[i].burned || 0;
         }
       }
-
       return val;
     },
-    opgHref() {
-      let routeData = this.$router.resolve({
-        name: "opg",
-        params: { hash: this.data.hash }
-      });
-      return routeData.href;
-    }
   },
   methods: {
     getRawJSON() {
@@ -438,14 +410,6 @@ export default {
         let href = this.tzkt.resolve(this.data.network, address);
         window.open(href, '_blank');
       }
-    },
-    formatDate(value) {
-      let d = dayjs(value);
-      if (value) {
-        if (d.year() < dayjs().year()) return d.format("MMM D HH:mm, YYYY");
-        if (d.add(1, "days").isBefore(dayjs())) return d.format("MMM D HH:mm");
-        return d.fromNow();
-      }
     }
   },
   watch: {
@@ -480,39 +444,29 @@ export default {
   }
 }
 
-// .added-tree-item {
-//   background-color: #dcedc8;
-// }
-// .removed-tree-item {
-//   background-color: #ffedef;
-//   color: #721c24;
-// }
-// .edited-tree-item {
-//   background-color: #fff3cd;
-//   color: #856404;
-
-//   .value {
-//     color: black;
-//   }
-// }
-
-.title {
-  .call {
-    color: #8b008b;
+.added-tree-item {
+  background-color: #4CAF5025;
+  .value {
+    color: var(--v-success-base);
   }
-  .delegation,
-  .origination {
-    color: navy;
+}
+.removed-tree-item {
+  background-color: #F4433625;
+  .value {
+    color: var(--v-error-base);
   }
-  color: #76a34e;
+}
+.edited-tree-item {
+  background-color: #FFC10725;
+  .value {
+    color: var(--v-warning-base);
+  }
 }
 
 .v-dialog > .v-card > .v-card__title {
   position: sticky;
   top: 0;
   z-index: 999;
-  background: white;
-  border-bottom: 1px solid #eee;
 }
 </style>
 

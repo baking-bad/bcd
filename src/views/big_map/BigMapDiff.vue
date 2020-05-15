@@ -5,7 +5,7 @@
         <v-col cols="8" class="d-flex align-center justify-start text-truncate">
           <v-list-item>
             <v-list-item-content>
-              <v-list-item-title class="key-string font-weight-regular">{{ diff.data.key_string }}</v-list-item-title>
+              <v-list-item-title class="hash">{{ diff.data.key_string }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <span class="key-string"></span>
@@ -13,9 +13,9 @@
         <v-col cols="2" class="d-flex align-center">
           <v-list-item>
             <v-list-item-content>
-              <v-list-item-title class="overline">{{ plural(diff.count, 'update') }}</v-list-item-title>
+              <v-list-item-title class="hash font-weight-light">{{ plural(diff.count, 'update') }}</v-list-item-title>
               <v-list-item-subtitle              
-                class="overline error--text"
+                class="hash error--text"
                 v-if="!diff.data.value"
               >removed</v-list-item-subtitle>
             </v-list-item-content>
@@ -24,8 +24,8 @@
         <v-col cols="2" class="d-flex align-center">
           <v-list-item>
             <v-list-item-content>
-              <v-list-item-title class="overline">{{ diff.data.timestamp | formatDate }}</v-list-item-title>
-              <v-list-item-subtitle class="overline">{{ diff.data.level }}</v-list-item-subtitle>
+              <v-list-item-title class="hash font-weight-light">{{ diff.data.timestamp | formatDate }}</v-list-item-title>
+              <v-list-item-subtitle class="hash font-weight-light">level {{ diff.data.level }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
@@ -245,6 +245,7 @@ export default {
 
 .bmd-active-panel > .v-expansion-panel-header {
   background: var(--v-sidebar-base);
+  opacity: .8;
 }
 
 .bmd-active-panel, .bmd-panel.v-expansion-panel--next-active {

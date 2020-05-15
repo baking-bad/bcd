@@ -6,39 +6,42 @@
           <SideNavigation />
         </v-col>
         <v-col cols="10">
-          <SideBar :loading="loading" :network="network" :hash="hash" :contents="contents" />
+          <SideBar :loading="loading" :address="address" :network="network" :contract="contract" />
         </v-col>
       </v-row>
     </v-navigation-drawer>
 
     <v-toolbar flat class color="toolbar" height="75">
-      <v-btn small text class="ml-4">
-        <v-icon small class="mr-1">mdi-undo-variant</v-icon>source
-      </v-btn>
-
       <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
         <v-tab active>
-          <v-icon left small>mdi-format-list-bulleted</v-icon>contents
-          <span class="ml-1">({{ contents.length }})</span>
-        </v-tab>        
+          <v-icon left small>mdi-swap-horizontal</v-icon>operations
+          <span v-if="contract.tx_count" class="ml-1">({{ contract.tx_count }})</span>
+        </v-tab>
       </v-tabs>
       <div class="mr-6 mt-6" style="width: 800px;">
         <SearchBox :inplace="true"></SearchBox>
       </div>
     </v-toolbar>
 
-    <router-view :loading="loading" :contents="contents"></router-view>
+    <router-view 
+      :contractLoading="loading" 
+      :address="address" 
+      :network="network"
+      :contract="contract">
+    </router-view>
   </div>
 </template>
 
 <script>
 import SearchBox from "@/components/SearchBox.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
-import SideBar from "@/views/opg/SideBar.vue";
+import SideBar from "@/views/contract/SideBar.vue";
+
 import { mapActions } from "vuex";
+import { cancelRequests } from "@/utils/cancellation.js";
 
 export default {
-  name: "OperationGroup",
+  name: "Contract",
   components: {
     SearchBox,
     SideNavigation,
@@ -46,39 +49,43 @@ export default {
   },
   props: {
     network: String,
-    hash: String,
+    address: String
   },
   data: () => ({
-      loading: true,
-      contents: []
+    loading: true,
+    contract: {}
   }),
   created() {
-      this.getOPG();
+    this.getContract();
   },
   methods: {
     ...mapActions({
       showError: "showError"
     }),
-    getOPG() {
-      this.api.getOPG(this.hash)
+    getContract() {
+      if (
+        this.contract.network === this.network &&
+        this.contract.address === this.address
+      ) {
+        return;
+      }
+      cancelRequests();
+      this.api
+        .getContract(this.network, this.address)
         .then(res => {
-          this.prepareOperations(res);
+          if (!res) return;
+          this.contract = res;
         })
         .catch(err => {
-          console.log(err);
-          this.showError(err);
+          const matches = err.message.match(/\d+/);
+          if (matches !== null && matches.length === 1)
+            this.errorCode = parseInt(matches[0]);
+          this.showError(err.message);
         })
         .finally(() => (this.loading = false));
     },
-    prepareOperations(data) {
-      data.forEach(element => {
-        if (element.internal) {
-          this.contents[this.contents.length - 1].internal_operations.push(element);
-        } else {
-          element.internal_operations = [];
-          this.contents.push(element);
-        }
-      });
+    watch: {
+      $route: "getContract"
     }
   }
 };

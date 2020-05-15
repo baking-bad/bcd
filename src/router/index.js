@@ -10,8 +10,8 @@ import Welcome from '@/views/Welcome.vue'
 
 import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
-import Project from '@/views/project/Project.vue'
-import OperationsTab from '@/views/project/OperationsTab.vue'
+//import Project from '@/views/project/Project.vue'
+// import OperationsTab from '@/views/project/OperationsTab.vue'
 import CodeTab from '@/views/project/CodeTab.vue'
 import EntrypointsTab from '@/views/project/EntrypointsTab.vue'
 import StorageTab from '@/views/project/StorageTab.vue'
@@ -23,6 +23,9 @@ import BigMapDiffViewer from '@/views/BigMapDiffViewer.vue'
 import Projects from '@/views/Projects.vue'
 import OPG from '@/views/OPG.vue'
 import Stats from '@/views/Stats.vue'
+
+import Contract from '@/views/contract/Contract.vue'
+import OperationsTab from '@/views/contract/OperationsTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
 import OpgContents from '@/views/opg/ContentsTab.vue'
@@ -151,19 +154,20 @@ const router = new Router({
         {
             path: '/:network/:address(KT[0-9A-z]{34})',
             components: {
-                default: Project,
-                nav: Nav
+                default: Contract,
             },
+            props: { default: true },
             children: [
                 {
                     path: '',
-                    name: 'project',
+                    name: 'contract',
                     redirect: 'operations'
                 },
                 {
                     path: 'operations',
                     name: 'operations',
-                    component: OperationsTab
+                    component: OperationsTab,
+                    props: true
                 },
                 {
                     path: 'code',
@@ -192,6 +196,7 @@ const router = new Router({
             components: {
                 default: Dashboard
             },
+            props: { default: true },
             children: [
                 {
                     path: '',
@@ -201,7 +206,8 @@ const router = new Router({
                 {
                     path: 'events',
                     name: 'events',
-                    component: EventsTab
+                    component: EventsTab,
+                    props: true
                 }
             ]
         },

@@ -13,8 +13,8 @@ export function makeVuetify(dark) {
             themes: {
                 light: {
                     primary: '#5b942a',
-                    secondary: '#327d9d',
-                    accent: "#FFAB40",
+                    secondary: '#246100',
+                    accent: "#7B1FA2",
                     sidenav: '#404040',
                     sidebar: '#e3e3e3',
                     canvas: '#f0f0f0',
@@ -26,7 +26,8 @@ export function makeVuetify(dark) {
                 dark: {
                     primary: '#75A34F',
                     secondary: '#abda82',
-                    accent: '#9475d2',
+                    accent: '#BA68C8',
+                    anchor: '#64B5F6',
                     sidenav: '#393939',
                     sidebar: '#303030',
                     canvas: '#2d2d2d',

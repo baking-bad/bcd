@@ -16,7 +16,7 @@
         <v-icon small class="mr-1">mdi-undo-variant</v-icon>storage
       </v-btn>
 
-      <v-tabs background-color="transparent" slider-color="primary" class="ml-4">
+      <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
         <v-tab :to="{ name: 'big_map_keys' }" replace>
           <v-icon left small>mdi-database</v-icon>keys
           <span v-if="!keyhash" class="ml-1">({{ count }})</span>

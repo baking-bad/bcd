@@ -7,13 +7,14 @@
       <template v-for="(op, idx) in contents">
         <v-card flat outlined :key="idx" class="mb-8">
           <InternalOperation :data="op" />
-          <v-divider></v-divider>
-          <InternalOperation
-            v-for="(intop, intid) in op.internal_operations"
-            :data="intop"
-            :mainOperation="op"
-            :key="intid"
-          />
+          <template v-for="(intop, intid) in op.internal_operations">
+            <v-divider :key="'divider' + intid"></v-divider>
+            <InternalOperation            
+              :data="intop"
+              :mainOperation="op"
+              :key="intid"
+            />
+          </template>
         </v-card>
       </template>
     </v-container>

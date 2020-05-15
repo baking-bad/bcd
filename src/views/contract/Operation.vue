@@ -1,76 +1,85 @@
 <template>
-  <v-expansion-panel>
-    <v-expansion-panel-header class="pa-0 pr-4" ripple :class="statusHeaderClass">
-      <v-row no-gutters class="py-2">
-        <v-col cols="2" class="d-flex align-center">
-          <v-list-item>
+  <v-expansion-panel class="bl-1 br-1 bt-1 op-panel" active-class="op-active-panel">
+    <v-expansion-panel-header class="py-0 px-4" ripple :class="statusHeaderClass">
+      <template v-slot:default="{ open }">
+      <v-row no-gutters class="py-1">
+        <v-col cols="2">
+          <v-list-item class="fill-height pa-0">
             <v-list-item-content>
-              <v-list-item-title class="overline">{{ formatDate(value.timestamp) }}</v-list-item-title>
-              <v-list-item-subtitle
-                class="overline grey--text"
-              >{{ value.mempool ? 'mempool' : value.level }}</v-list-item-subtitle>
+              <v-list-item-title class="hash">{{ helpers.formatDatetime(value.timestamp) }}</v-list-item-title>
+              <v-list-item-subtitle class="font-weight-light hash text--secondary">
+                <span v-if="value.mempool">mempool</span>
+                <span v-else>level {{ value.level }}</span>
+              </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
-        <v-col cols="2" class="d-flex align-center">
-          <v-list-item>
+        <v-col cols="2">
+          <v-list-item class="fill-height pa-0">
             <v-list-item-content>
-              <v-list-item-title class="overline">{{ text }}</v-list-item-title>
+              <v-list-item-title class="hash">
+                <span v-if="open">{{ value.kind }}</span>
+                <span v-else :class="text === value.kind ? 'accent--text' : 'secondary--text'">{{ text }}</span>
+              </v-list-item-title>
               <v-list-item-subtitle
-                class="overline grey--text"
+                class="font-weight-light hash text--secondary"
                 v-if="value && !value.mempool && value.internal_operations.length"
               >{{ value.internal_operations.length }} internal</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
-        <v-col cols="2" class="d-flex align-center">
-          <v-list-item v-if="totalLockedWithdrawn !== 0">
+        <v-col cols="2">
+          <v-list-item class="fill-height pl-1" v-if="!open && totalLockedWithdrawn !== 0">
             <v-list-item-content>
-              <v-list-item-title class="overline">{{ uxtz(totalLockedWithdrawn) }}</v-list-item-title>
-              <v-list-item-subtitle class="overline grey--text">
+              <v-list-item-title class="hash">{{ totalLockedWithdrawn | uxtz }}</v-list-item-title>
+              <v-list-item-subtitle class="font-weight-light hash text--secondary">
                 <span v-if="totalLockedWithdrawn > 0">locked</span>
                 <span v-else>withdrawn</span>
               </v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
-        <v-col cols="2" class="d-flex align-center">
-          <v-list-item>
+        <v-col cols="2">
+          <v-list-item class="fill-height pl-2">
             <v-list-item-content>
-              <v-list-item-title class="overline">{{ uxtz(totalCost) }}</v-list-item-title>
-              <v-list-item-subtitle class="overline grey--text">costs</v-list-item-subtitle>
+              <v-list-item-title class="hash">{{ totalCost | uxtz }}</v-list-item-title>
+              <v-list-item-subtitle class="font-weight-light hash text--secondary">total cost</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
-        <v-col cols="2" class="d-flex flex-horizontal align-center justify-space-between">
-          <v-list-item class="d-inline-block text-truncate">
+        <v-col cols="2">
+          <v-list-item class="fill-height pl-3">
             <v-list-item-content>
-              <v-list-item-title class="hash line">
-                {{ shortcut(value.hash) }}
+              <v-list-item-title>
+                <span v-html="helpers.shortcut(value.hash)"></span>
               </v-list-item-title>
-              <v-list-item-subtitle class="overline">
-                <span class="grey--text">counter</span> {{ value.counter }}
-              </v-list-item-subtitle>
+              <v-list-item-subtitle class="font-weight-light hash text--secondary">content 1/1</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
-        <v-col cols="2" class="d-flex align-center">          
-          <span class="d-inline-block text-truncate hash line" v-if="invoker">
-            <span class="grey--text">by</span> {{ shortcut(invoker) }}
-          </span>
-        </v-col>
+        <v-col cols="2">          
+          <v-list-item class="fill-height pa-0" v-if="!open && invoker">
+            <v-list-item-content>
+              <v-list-item-title>
+                <span class="font-weight-light">by</span><span class="ml-1" v-html="helpers.shortcut(invoker)"></span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>          
+        </v-col>     
       </v-row>
+      </template>
     </v-expansion-panel-header>
     <v-expansion-panel-content class="opg-content">
       <InternalOperation :data="value" :address="address" />
-
-      <InternalOperation
-        :data="item"
-        :mainOperation="value"
-        :address="address"
-        v-for="(item, idx) in value.internal_operations"
-        :key="idx"
-      />
+      <template v-for="(item, idx) in value.internal_operations">
+        <v-divider :key="'divider' + idx"></v-divider>
+        <InternalOperation
+          :data="item"
+          :mainOperation="value"
+          :address="address"
+          :key="idx"
+        />
+      </template>
     </v-expansion-panel-content>
   </v-expansion-panel>
 </template>
@@ -90,7 +99,7 @@ export default {
     address: String
   },
   components: {
-    InternalOperation
+    InternalOperation,
   },
   created() {
     this.value = Object.assign({}, this.data);
@@ -130,17 +139,6 @@ export default {
       }
       return null;
     },
-    color() {
-      if (this.value.status === "pending") return "grey";
-      if (this.value.status === "applied") return "primary";
-      if (this.value.status === "failed") return "red";
-      if (this.value.status === "backtracked") return "orange";
-      if (this.value.status === "skipped") return "blue";
-      if (this.value.status === "lost") return "black";
-      if (this.value.status === "branch_refused") return "red";
-      if (this.value.status === "refused") return "red";
-      return "grey";
-    },
     statusHeaderClass() {
       if (this.value.status === "skipped") return "backtracked";
       if (this.value.status === "backtracked") return "backtracked";
@@ -148,18 +146,6 @@ export default {
       if (this.value.status === "lost") return "mempool";
       if (this.value.status !== "applied") return "failed";
       return this.value.status;
-    },  
-    statusIcon() {
-      if (this.value == null) return "";
-      if (this.value.status === "pending") return "mdi-timelapse";
-      if (this.value.status === "applied") return "mdi-check";
-      if (this.value.status === "failed") return "mdi-close";
-      if (this.value.status === "lost") return "mdi-eye-off-outline";
-      if (this.value.status === "branch_refused") return "mdi-cancel";
-      if (this.value.status === "refused") return "mdi-cancel";
-      if (this.value.status === "backtracked") return "mdi-alert-outline";
-      if (this.value.status === "skipped") return "mdi-crosshairs-question";
-      return "";
     },
     totalLockedWithdrawn() {
       return this.getTotalAmount(1) - this.getTotalAmount(-1);
@@ -192,28 +178,6 @@ export default {
     value: null
   }),
   methods: {
-    formatDate(value) {
-      let d = dayjs(value);
-      if (value) {
-        if (d.year() < dayjs().year()) return d.format("MMM D HH:mm, YYYY");
-        if (d.add(1, "days").isBefore(dayjs())) return d.format("MMM D HH:mm");
-        return d.fromNow();
-      }
-    },
-    uxtz(value) {
-      let xtz = (value / 1000000).toLocaleString(undefined, {
-        maximumFractionDigits: 6
-      });
-      return `${xtz} \uA729`;
-    },
-    shortcut(value, size=7) {
-      if (value !== undefined 
-        && (value.startsWith('KT') || value.startsWith('tz') || value.startsWith('o'))) {
-        return value.substr(0, size) + `\u2026\u202F` + value.substr(value.length - size, size);
-      } else {
-        return value;
-      }
-    },
     getOrientedAmount(data, sign) {
       if (this.address !== undefined && !isNaN(data.amount)) { 
         if (data.source === this.address && sign < 0) {
@@ -253,43 +217,32 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-.line {
-  font-size: 0.8rem !important;
-  line-height: 0.9rem;
-}
-
-.v-expansion-panel-header--active.applied {
-  background-color: #eaf4de;
-}
-
-.v-expansion-panel-header--active.failed {
-  background-color: rgb(255, 238, 238);
-}
-
-.v-expansion-panel-header--active.mempool {
-  background-color: rgb(231, 231, 231);
-}
-.v-expansion-panel-header--active.backtracked {
-  background-color: rgb(253, 244, 228);
-}
-
-.v-expansion-panel-header {
-  padding: 8px 24px;
-}
-
 .applied {
-  border-left: 4px solid #6ac21f;
+  border-left: 3px solid var(--v-success-base);
 }
 
 .backtracked {
-  border-left: 4px solid orange;
+  border-left: 3px solid var(--v-warning-base);
 }
 
 .failed {
-  border-left: 4px solid red;
+  border-left: 3px solid var(--v-error-base);
 }
 
 .mempool {
-  border-left: 4px solid grey;
+  border-left: 3px solid var(--v-border-base);
+}
+
+.op-panel {
+  background-color: var(--v-sidebar-base) !important;
+}
+
+.op-active-panel > .v-expansion-panel-header {
+  opacity: .8;
+  background-color: var(--v-border-base) !important;
+}
+
+.op-active-panel, .op-panel.v-expansion-panel--next-active {
+  border-bottom: 1px solid var(--v-border-base);
 }
 </style>

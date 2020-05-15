@@ -6,11 +6,12 @@
           <v-list-item-subtitle class="overline">
             <span>{{ title }}</span>
           </v-list-item-subtitle>
-          <v-list-item-title class="body-1">
-            <span :class="[highlighted ? 'accent' : '']">
+          <v-list-item-title :class="highlighted ? 'text--disabled' : ''">
+            <span class="body-1">
               <span v-if="alias">{{ alias }}</span>
               <span v-else v-html="helpers.shortcut(address)"></span>
             </span>
+            <v-icon v-if="highlighted" class="ml-1 text--disabled" small>mdi-bookmark-outline</v-icon>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
@@ -30,7 +31,7 @@
               </v-col>
               <v-col cols="2" class="my-1 d-flex flex-column justify-center">
                 <span class="overline">Network</span>
-                <span class="info-item-title  text--secondary">{{ network }}</span>
+                <span class="info-item-title text--secondary">{{ network }}</span>
               </v-col>
             </v-row>
           </v-col>
@@ -85,17 +86,16 @@ export default {
 <style scoped>
 .info-item-title {
   font-family: "Roboto Mono", monospace;
-  font-size: 0.9rem;
+  font-size: 14px;
   line-height: 1.2rem;
 }
 .link.v-list-item--link:hover::before, .link.v-list-item--link:focus::before {
   opacity: 0;
 }
 .link.v-list-item--link:hover > .v-list-item__content {
-  color: var(--v-secondary-base);
+  color: var(--v-accent-base);
 }
 .link.v-list-item--link > .v-list-item__content > .v-list-item__title > span {
   border-bottom: 1px solid var(--v-border-base);
-
 }
 </style>

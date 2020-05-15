@@ -37,7 +37,7 @@
           type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
         >
           <div v-if="bigmap.length > 0">
-            <v-expansion-panels multiple flat class="bb-1" color="data">
+            <v-expansion-panels multiple hover flat class="bb-1" color="data">
               <template v-for="(diff, idx) in bigmap">
                 <BigMapDiff :diff="diff" :network="network" :address="address" :ptr="ptr" :key="idx" />
               </template>
