@@ -1,18 +1,20 @@
 <template>
   <v-container fluid class="pa-0 ma-0 canvas">
-    <v-row class="px-12">
-      <v-col cols="5" class="mr-4">
+    <v-row class="px-8 pt-8" no-gutters>
+      <v-col cols="7">
         <v-text-field
           v-model="search"
           label="Filter by"
           placeholder="Start typing a key or paste a key hash"
           prepend-inner-icon="mdi-filter-outline"
           clearable
+          filled
+          background-color="data"
           single-line
           hide-details
         ></v-text-field>
       </v-col>
-      <v-col cols="2" class="mr-4">
+      <!-- <v-col cols="2" class="mr-4">
         <v-select
           :items="['Last updated', 'Key']"
           v-model="orderBy"
@@ -27,32 +29,28 @@
             <span>Show removed</span>
           </template>
         </v-checkbox>
-      </v-col>
+      </v-col> -->
     </v-row>
 
-    <v-row>
-      <v-col cols="12" class="px-12">
-        <v-skeleton-loader
-          :loading="loading"
-          type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
+    <v-row class="px-8 pt-6" no-gutters>
+      <v-col>
+        <v-overlay v-if="loading" :value="loading" color="data" absolute>
+          <v-progress-circular indeterminate color="primary" size="64" />
+        </v-overlay>
+        <v-card
+          v-else-if="bigmap.length === 0"
+          class="d-flex flex-column align-center justify-center transparent pa-8 mt-12"
+          flat
         >
-          <div v-if="bigmap.length > 0">
-            <v-expansion-panels multiple hover flat class="bb-1" color="data">
-              <template v-for="(diff, idx) in bigmap">
-                <BigMapDiff :diff="diff" :network="network" :address="address" :ptr="ptr" :key="idx" />
-              </template>
-            </v-expansion-panels>
-            <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
-          </div>
-          <v-card
-            v-else
-            class="d-flex flex-column align-center justify-center mt-12 transparent"
-            :elevation="0"
-          >
-            <v-icon size="100" color="grey">mdi-package-variant</v-icon>
-            <span class="title grey--text">Nothing found for your request</span>
-          </v-card>
-        </v-skeleton-loader>
+          <v-icon size="100" class="text--secondary">mdi-package-variant</v-icon>
+          <span class="title text--secondary">No results were found for your request</span>
+        </v-card>
+        <v-expansion-panels v-if="bigmap.length > 0" multiple hover flat class="bb-1">
+          <template v-for="(diff, idx) in bigmap">
+            <BigMapDiff :diff="diff" :network="network" :address="address" :ptr="ptr" :key="idx" />
+          </template>
+        </v-expansion-panels>
+        <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
       </v-col>
     </v-row>
   </v-container>
@@ -86,12 +84,22 @@ export default {
   created() {
     this.fetchSearchDebounced(this.search);
   },
+  computed: {
+    searchText() {
+      const searchText = this.search ? this.search.trim() : "";
+      if (searchText.length > 2) {
+        return searchText;
+      }
+      return "";
+    }
+  },
   methods: {
     ...mapActions(["showError"]),
     requestData() {
-      this.fetchSearchDebounced(this.search);
+      this.fetchSearchDebounced(this.searchText);
     },
     fetchSearchDebounced(text) {
+      console.log(text, "AZAZAZA")
       clearTimeout(this._timerId);
 
       this._timerId = setTimeout(() => {
@@ -120,18 +128,18 @@ export default {
     },
     onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
-        this.fetchSearchDebounced(this.search);
+        this.fetchSearchDebounced(this.searchText);
       }
     }
   },
   watch: {
-    $route: "requestData",
+    ptr: "requestData",
     search(val) {
       if (this._locked) return;
       this._locked = true;
       this.downloaded = false;
       let searchText = val ? val.trim() : "";
-      if (searchText.length > 2 || searchText.length == 0) {
+      if (searchText.length > 2 || searchText.length === 0) {
         this.bigmap = [];
         this.loading = true;
         this.fetchSearchDebounced(searchText);

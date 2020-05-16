@@ -12,10 +12,6 @@
     </v-navigation-drawer>
 
     <v-toolbar flat class color="toolbar" height="75">
-      <v-btn small text class="ml-4">
-        <v-icon small class="mr-1">mdi-undo-variant</v-icon>source
-      </v-btn>
-
       <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
         <v-tab active>
           <v-icon left small>mdi-format-list-bulleted</v-icon>contents

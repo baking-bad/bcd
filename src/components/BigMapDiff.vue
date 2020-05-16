@@ -75,7 +75,7 @@
             return-object
           >
             <template v-slot:label="{ item }">
-              <span class="tree-key">{{ item.name }}</span>&nbsp;
+              <span>{{ item.name }}</span>&nbsp;
               <span :class="item.type">{{ item.value }}</span>
             </template>
           </v-treeview>
@@ -93,7 +93,7 @@
             return-object
           >
             <template v-slot:label="{ item }">
-              <span class="tree-key">{{ item.name }}</span>&nbsp;
+              <span>{{ item.name }}</span>&nbsp;
               <span :class="item.type">{{ item.value }}</span>
             </template>
           </v-treeview>
@@ -207,10 +207,7 @@ export default {
   border: none !important;
 
   .value {
-    color: var(--v-json_value-base);
-  }
-  .tree-key {
-    color: var(--v-json_type-base);
+    color: var(--v-tree-base);
   }
 }
 

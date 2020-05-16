@@ -13,9 +13,18 @@
 
     <v-toolbar flat class color="toolbar" height="75">
       <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
-        <v-tab active>
+        <v-tab>
           <v-icon left small>mdi-swap-horizontal</v-icon>operations
-          <span v-if="contract.tx_count" class="ml-1">({{ contract.tx_count }})</span>
+          <span class="ml-1">({{ contract.tx_count || 0 }})</span>
+        </v-tab>
+        <v-tab>
+          <v-icon left small>mdi-database</v-icon>Storage
+        </v-tab>
+        <v-tab>
+          <v-icon left small>mdi-code-braces</v-icon>Code
+        </v-tab>
+        <v-tab>
+          <v-icon left small>mdi-play-box-outline</v-icon>Interact
         </v-tab>
       </v-tabs>
       <div class="mr-6 mt-6" style="width: 800px;">
@@ -23,11 +32,9 @@
       </div>
     </v-toolbar>
 
-    <router-view 
-      :contractLoading="loading" 
+    <router-view
       :address="address" 
-      :network="network"
-      :contract="contract">
+      :network="network">
     </router-view>
   </div>
 </template>
@@ -85,7 +92,7 @@ export default {
         .finally(() => (this.loading = false));
     },
     watch: {
-      $route: "getContract"
+      address: "getContract"
     }
   }
 };

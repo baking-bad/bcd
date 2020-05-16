@@ -39,7 +39,7 @@
       </v-tooltip>
     </div>
     <v-divider></v-divider>
-
+      
     <v-skeleton-loader
       :loading="loading"
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
@@ -56,16 +56,20 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="ma-0 bb-1" disabled>
+        <v-expansion-panel class="ma-0 bb-1" v-if="sameCount > 0">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase text--secondary">Same contracts</span>
+            <span class="caption font-weight-bold text-uppercase text--secondary">
+              Same contracts ({{ sameCount }})
+            </span>            
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas"></v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="ma-0 bb-1" disabled>
+        <v-expansion-panel class="ma-0 bb-1" v-if="similarCount > 0">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase text--secondary">Similar contracts</span>
+            <span class="caption font-weight-bold text-uppercase text--secondary">
+              Similar contracts ({{ similarCount }})
+            </span>            
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas"></v-expansion-panel-content>
         </v-expansion-panel>
@@ -95,6 +99,50 @@ export default {
     network: String,
     loading: Boolean
   },
-  methods: {}
+  data: () => ({
+    sameLoading: true,
+    similarLoading: true,
+    same: [],
+    sameCount: 0,
+    similar: [],
+    similarCount: 0
+  }),
+  created() {
+    this.requestSameSimilar()
+  },
+  methods: {
+    requestSameSimilar() {
+      this.contract.same = [];
+      this.contract.similar = [];
+      this.contract.sameCount = 0;
+      this.contract.similarCount = 0;
+      this.sameLoading = true;
+      this.similarLoading = true;
+
+      this.api.getSameContracts(this.network, this.address, 0)
+        .then(res => {
+          if (!res) return;
+          this.same = res.contracts;
+          this.sameCount = res.count;
+        })
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        })
+        .finally(() => (this.sameLoading = false));
+
+      this.api.getSimilarContracts(this.network, this.address)
+        .then(res => {
+          if (!res) return;
+          this.similar = res;
+          this.similarCount = res.length;
+        })
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        })
+        .finally(() => (this.similarLoading = false));
+    },
+  }
 };
 </script>

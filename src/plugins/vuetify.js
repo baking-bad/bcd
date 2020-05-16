@@ -20,8 +20,7 @@ export function makeVuetify(dark) {
                     canvas: '#f0f0f0',
                     border: '#ddd',
                     data: '#f7f7f7',
-                    json_value: '#388E3C',
-                    json_type: '#222222',
+                    tree: '#388E3C',
                 },
                 dark: {
                     primary: '#75A34F',
@@ -33,8 +32,7 @@ export function makeVuetify(dark) {
                     canvas: '#2d2d2d',
                     border: '#414141',
                     data: '#2a2a2a',
-                    json_value: '#81C784',
-                    json_type: '#EEEEEE',
+                    tree: '#81C784'
                 }
             },
         },

@@ -109,7 +109,8 @@ export default {
 <style scoped>
 .info-item-title {
   font-family: "Roboto Mono", monospace;
-  font-size: 0.9rem;
+  font-weight: 400;
+  font-size: 14px;
   line-height: 1.2rem;
 }
 .v-dialog > .v-card > .v-card__title {

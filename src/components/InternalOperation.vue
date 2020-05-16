@@ -169,7 +169,7 @@
                             class="accent--text">big_map&nbsp;</span>
                     </span>
                     <span v-if="item.value_type === 'big_map' && item.children.length === 0"
-                          :class="item.type">0 diffs</span>
+                          class="text--secondary">0 diffs</span>
                     <span v-else :class="item.type">{{ item.value }}</span>
                   </div>
                 </template>
@@ -437,10 +437,10 @@ export default {
   font-family: "Roboto Mono", monospace;
 
   .value {
-    color: var(--v-json_value-base);
+    color: var(--v-tree-base);
   }
   .object {
-    color: var(--v-json_type-base);
+    opacity: .7;
   }
 }
 
@@ -478,6 +478,6 @@ export default {
   min-height: 20px !important;
 }
 .vjs-tree .vjs-value__string {
-  color: var(--v-json_value-base);
+  color: var(--v-tree-base);
 }
 </style>

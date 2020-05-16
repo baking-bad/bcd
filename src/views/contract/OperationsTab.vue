@@ -1,119 +1,116 @@
 <template>
-  <div class="fill-height canvas">
-    <v-overlay v-if="loading" :value="loading" color="data" absolute>
-      <v-progress-circular indeterminate color="primary" size="64" />
-    </v-overlay>
-    <v-container fluid v-else-if="operations && operations.length > 0" class="pa-8">
-      <v-row>
-        <v-col cols="3">
-          <v-select
-            v-model="status"
-            :items="['applied', 'failed', 'backtracked', 'skipped', 'pending', 'lost', 'refused', 'branch_refused']"
-            chips
-            small-chips
-            filled
-            label="Status"
-            placeholder="Any"
-            multiple
-            background-color="data"
-            hide-details
-          >
-            <template v-slot:selection="{ item, index }">
-              <v-chip x-small v-if="index < 1">
-                <span>{{ item }}</span>
-              </v-chip>&nbsp;
-              <span
-                v-if="index === 1 "
-                class="grey--text caption"
-              >+{{ status.length - 1 }} others</span>
-            </template>
-          </v-select>
-        </v-col>
-        <v-col cols="3">
-          <v-select
-            v-model="entrypoints"
-            :items="contract.entrypoints"
-            chips
-            small-chips
-            filled
-            background-color="data"
-            label="Entrypoint"
-            placeholder="Any"
-            multiple
-            hide-details
-          >
-            <template v-slot:selection="{ item, index }">
-              <v-chip x-small v-if="index < 1">
-                <span>{{ shortestEntrypoint }}</span>
-              </v-chip>&nbsp;
-              <span
-                v-if="index === 1 "
-                class="grey--text caption"
-              >+{{ entrypoints.length - 1 }} others</span>
-            </template>
-          </v-select>
-        </v-col>
+  <v-container fluid class="pa-8 canvas">
+    <v-row>
+      <v-col cols="3">
+        <v-select
+          v-model="status"
+          :items="['applied', 'failed', 'backtracked', 'skipped', 'pending', 'lost', 'refused', 'branch_refused']"
+          chips
+          small-chips
+          filled
+          label="Status"
+          placeholder="Any"
+          multiple
+          background-color="data"
+          hide-details
+        >
+          <template v-slot:selection="{ item, index }">
+            <v-chip x-small v-if="index < 1">
+              <span>{{ item }}</span>
+            </v-chip>&nbsp;
+            <span
+              v-if="index === 1 "
+              class="grey--text caption"
+            >+{{ status.length - 1 }} others</span>
+          </template>
+        </v-select>
+      </v-col>
+      <v-col cols="3">
+        <v-select
+          v-model="entrypoints"
+          :items="[]"
+          chips
+          small-chips
+          filled
+          background-color="data"
+          label="Entrypoint"
+          placeholder="Any"
+          multiple
+          hide-details
+        >
+          <template v-slot:selection="{ item, index }">
+            <v-chip x-small v-if="index < 1">
+              <span>{{ shortestEntrypoint }}</span>
+            </v-chip>&nbsp;
+            <span
+              v-if="index === 1 "
+              class="grey--text caption"
+            >+{{ entrypoints.length - 1 }} others</span>
+          </template>
+        </v-select>
+      </v-col>
 
-        <v-col cols="3">
-          <v-menu
-            ref="menu"
-            v-model="datesModal"
-            :close-on-content-click="false"
-            :return-value.sync="dates"
-            transition="scale-transition"
-            offset-y
-            min-width="290px"
-          >
-            <template v-slot:activator="{ on }">
-              <v-text-field
-                v-model="dateRangeText"
-                label="Date range"
-                placeholder="All time"
-                readonly
-                filled
-                background-color="data"
-                hide-details
-                v-on="on"
-              ></v-text-field>
-            </template>
-            <v-date-picker v-model="datesBuf" scrollable range show-current>
-              <v-spacer></v-spacer>
-              <v-btn text color="primary" @click="datesModal = false">Cancel</v-btn>
-              <v-btn text color="primary" @click="$refs.menu.save(datesBuf)">OK</v-btn>
-            </v-date-picker>
-          </v-menu>
-        </v-col>
-        <v-col class="d-flex align-center justify-end" cols="3">
-          <v-btn small text @click="clearFilters">
-            <v-icon small class="mr-1">mdi-trash-can</v-icon>
-            <span>clear filters</span>
-          </v-btn>
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-expansion-panels multiple hover flat class="bb-1">
-            <Operation
-              :data="item"
-              :key="item.hash + '_' + item.counter + '_' + key"
-              :address="address"
-              v-for="(item, key) in operations"
-            />
-          </v-expansion-panels>
-          <span v-intersect="onDownloadPage" v-if="!contract.downloadedOperations"></span>
-        </v-col>
-      </v-row>
-    </v-container>
-  
-    <v-card
-      v-else
-      class="d-flex flex-column align-center justify-center mt-12 transparent"
-      :elevation="0"
-    >
-      <v-icon size="100" color="grey">mdi-package-variant</v-icon>
-      <span class="title grey--text">Nothing found for your request</span>
-    </v-card>
-  </div>
+      <v-col cols="3">
+        <v-menu
+          ref="menu"
+          v-model="datesModal"
+          :close-on-content-click="false"
+          :return-value.sync="dates"
+          transition="scale-transition"
+          offset-y
+          min-width="290px"
+        >
+          <template v-slot:activator="{ on }">
+            <v-text-field
+              v-model="dateRangeText"
+              label="Date range"
+              placeholder="All time"
+              readonly
+              filled
+              background-color="data"
+              hide-details
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-date-picker v-model="datesBuf" scrollable range show-current>
+            <v-spacer></v-spacer>
+            <v-btn text color="primary" @click="datesModal = false">Cancel</v-btn>
+            <v-btn text color="primary" @click="$refs.menu.save(datesBuf)">OK</v-btn>
+          </v-date-picker>
+        </v-menu>
+      </v-col>
+      <v-col class="d-flex align-center justify-end" cols="3">
+        <v-btn small text @click="fetchOperations">
+          <v-icon small class="mr-1">mdi-trash-can</v-icon>
+          <span>clear filters</span>
+        </v-btn>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-overlay v-if="loading" :value="loading" color="data" absolute>
+          <v-progress-circular indeterminate color="primary" size="64" />
+        </v-overlay>
+        <v-card
+          v-else-if="items.length === 0"
+          class="d-flex flex-column align-center justify-center transparent pa-8 mt-12"
+          flat
+        >
+          <v-icon size="100" class="text--secondary">mdi-package-variant</v-icon>
+          <span class="title text--secondary">No results were found for your request</span>
+        </v-card>
+        <v-expansion-panels v-if="items.length > 0" multiple hover flat class="bb-1">
+          <Operation
+            :data="item"
+            :key="item.hash + '_' + item.counter + '_' + key"
+            :address="address"
+            v-for="(item, key) in items"
+          />
+        </v-expansion-panels>       
+        <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
+      </v-col>
+    </v-row>
+  </v-container>
 </template>
 
 <script>
@@ -125,21 +122,35 @@ import dayjs from "dayjs";
 export default {
   name: "OperationsTab",
   props: {
-    contract: Object,
-    contractLoading: Boolean,
     address: String,
     network: String
   },
   components: {
     Operation
   },
+  data: () => ({
+    operations: [],
+    mempool: [],
+    downloaded: false,
+    operationsLoading: false,
+    mempoolLoading: false,
+    last_id: null,
+    status: [],
+    dates: [],
+    datesBuf: [],
+    datesModal: false,
+    entrypoints: []
+  }),
+  created() {
+    this.fetchOperations();
+  },
   computed: {
     loading() {
-      return this.contractLoading || this.operationsLoading || this.mempoolLoading;
+      return this.operationsLoading || this.mempoolLoading;
     },
-    operations() {
+    items() {
       let operations = [];
-      if (this.last_id !== null) operations = this.contract.operations;
+      if (this.last_id !== null) operations = this.operations;
 
       if (this.config.MEMPOOL_ENABLED) {
         let mempoolOperations = this.getDisplayedMempool();
@@ -171,20 +182,6 @@ export default {
       return s;
     }
   },
-  data: () => ({
-    operationsLoading: true,
-    mempoolLoading: true,
-    last_id: "",
-    status: [],
-    dates: [],
-    datesBuf: [],
-    datesModal: false,
-    entrypoints: [],
-    operationsSeqNo: 0
-  }),
-  created() {
-    this.fetchOperations();
-  },
   methods: {
     ...mapActions(["showError"]),
     compareOperations(a, b) {
@@ -206,8 +203,22 @@ export default {
         return [0, 0];
       }
     },
-    getOperations(seqno) {
-      if (this.contract == null || this.contract.downloadedOperations) return;
+    getOperations(clearData = false, resetFilters = false) {
+      if (this.operationsLoading || (this.downloaded && !clearData)) return;
+      this.operationsLoading = true;
+
+      if (clearData) {
+        this.operations = [];
+        this.downloaded = false;
+        this.last_id = null;
+      }
+      if (resetFilters) {
+        this.status = [];
+        this.dates = [];
+        this.datesBuf = [];
+        this.datesModal = false;
+        this.entrypoints = [];
+      }
 
       const onChainStatuses = ["applied", "failed", "skipped", "backtracked"];
       let status = this.status.filter(s => onChainStatuses.includes(s));
@@ -230,24 +241,24 @@ export default {
         )
         .then(res => {
           if (!res) return;
-          if (seqno !== this.operationsSeqNo) return;
-          this.prepareOperations(res.operations);
-          this.contract.downloadedOperations = res.operations.length == 0;
+          this.pushOperations(res.operations);
+          this.downloaded = res.operations.length == 0;
           this.last_id = res.last_id;
         })
         .catch(err => {
           console.log(err);
           this.showError(err);
         })
-        .finally(() => (this.operationsLoading = false));
+        .finally(() => { this.operationsLoading = false; });
     },
     getMempool() {
-      if (this.contract == null) return;
+      if (this.mempoolLoading) return;
+      this.mempoolLoading = true;
 
       this.api
         .getContractMempool(this.network, this.address)
         .then(res => {
-          this.contract.mempool = res;
+          this.mempool = res;
         })
         .catch(err => {
           console.log(err);
@@ -256,9 +267,8 @@ export default {
         .finally(() => (this.mempoolLoading = false));
     },
     getDisplayedMempool() {
-      if (this.contract.mempool == null) return [];
-
-      let mempoolOperations = this.contract.mempool;
+      if (this.mempool.length === 0) return [];
+      let mempoolOperations = this.mempool;
 
       // Apply operation filters
       if (this.status.length > 0) {
@@ -280,13 +290,10 @@ export default {
       }
 
       // Ensure no duplicates (tune the number if needed) and proper cut
-      if (this.contract.operations.length > 0) {
-        const lastTimestamp = this.contract.operations[
-          this.contract.operations.length - 1
-        ].timestamp;
-        const lastHashes = this.contract.operations
-          .slice(0, 15)
-          .map(o => o.hash);
+      if (this.operations.length > 0) {
+        const lastTimestamp = this.operations[this.operations.length - 1]
+          .timestamp;
+        const lastHashes = this.operations.slice(0, 15).map(o => o.hash);
         mempoolOperations = mempoolOperations.filter(
           o => o.timestamp >= lastTimestamp && !lastHashes.includes(o.hash)
         );
@@ -294,70 +301,38 @@ export default {
 
       return mempoolOperations;
     },
-    prepareOperations(data) {
+    pushOperations(data) {
       data.forEach(element => {
         if (element.internal) {
-          this.contract.operations[
-            this.contract.operations.length - 1
-          ].internal_operations.push(element);
+          this.operations[this.operations.length - 1].internal_operations.push(
+            element
+          );
         } else {
           element.internal_operations = [];
-          this.contract.operations.push(element);
+          this.operations.push(element);
         }
       });
     },
     onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
-        this.getOperations(++this.operationsSeqNo);
+        this.getOperations();
       }
-    },
-    clearFilters() {
-      this.status = [];
-      this.dates = [];
-      this.datesBuf = [];
-      this.datesModal = false;
-      this.entrypoints = [];
-      this.last_id = null;
     },
     fetchOperations() {
-      this.clearFilters();
-      if (this.contract.operations === undefined) {
-        this.contract.downloadedOperations = false;
-        this.contract.operations = [];
-        this.operationsLoading = true;
-        this.getOperations(++this.operationsSeqNo);
-      } else {
-        this.operationsLoading = false;
-      }
-      if (this.config.MEMPOOL_ENABLED && this.contract.mempool === undefined) {
-        this.contract.mempool = [];
-        this.mempoolLoading = true;
+      this.getOperations(true, true);
+      if (this.config.MEMPOOL_ENABLED) {
         this.getMempool();
-      } else {
-        this.mempoolLoading = false;
       }
     },
     updateOperations() {
-      if (!this.operationsLoading) {
-        this.operationsLoading = true;
-        this.last_id = null; // trigger computed field `operations`
-        this.contract.downloadedOperations = false;
-        this.contract.operations = [];
-        this.getOperations(++this.operationsSeqNo);
-      }
+      this.getOperations(true, false);
     }
   },
   watch: {
-    contract: "fetchOperations",
+    address: "fetchOperations",
     status: "updateOperations",
     entrypoints: "updateOperations",
     dates: "updateOperations"
   }
 };
 </script>
-
-<style scoped>
-.toolbar-btn {
-  color: rgba(0, 0, 0, 0.54);
-}
-</style>

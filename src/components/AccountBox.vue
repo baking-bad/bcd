@@ -86,6 +86,7 @@ export default {
 <style scoped>
 .info-item-title {
   font-family: "Roboto Mono", monospace;
+  font-weight: 400;
   font-size: 14px;
   line-height: 1.2rem;
 }

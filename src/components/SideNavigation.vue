@@ -69,7 +69,15 @@
       <div class="d-flex flex-column align-center justify-center pa-5">
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text icon @click="toggleTheme">
+            <v-btn v-on="on" text icon>
+              <v-icon color="grey lighten-2">mdi-api</v-icon>
+            </v-btn>
+          </template>
+          API reference
+        </v-tooltip>
+        <v-tooltip right>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text icon @click="toggleTheme" class="mt-6">
               <v-icon color="grey lighten-2">mdi-theme-light-dark</v-icon>
             </v-btn>
           </template>

@@ -1,36 +1,32 @@
 <template>
   <div>
     <v-alert
-      border="left"
-      color="red lighten-2"
-      dense
       prominent
       text
-      outlined
       type="error"
       :key="idx"
       v-for="(err, idx) in errors"
+      class="my-2"
     >
       <v-row align="center" no-gutters>
-        <v-col>
-          <div class="red--text subtitle-1">{{ err.title }}</div>
-          <div class="caption">
+        <v-col class="d-flex flex-column">
+          <span class="text--primary title-1">{{ err.title }}</span>
+          <span class="text--secondary body-1">
             {{ err.descr }}
             <span v-if="err.with" style="word-break: break-all">: {{ err.with }}</span>
             <span
               v-else-if="err.id.includes('contract.balance_too_low')"
               style="word-break: break-all"
             >: {{ err.balance | uxtz }} &lt; {{ err.amount | uxtz }}</span>
-          </div>
+          </span>
         </v-col>
         <v-col class="shrink" v-if="err.id.includes('michelson_v1.script_rejected')">
           <v-btn
-            color="red"
             small
             text
             @click="getErrorLocation"
             :loading="errorLocationLoading"
-          >Show code</v-btn>
+          >Show failed code</v-btn>
         </v-col>
       </v-row>
     </v-alert>
