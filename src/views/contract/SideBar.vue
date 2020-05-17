@@ -13,12 +13,17 @@
         >{{ network }}</span>
         </v-list-item-subtitle>
       </v-list-item-content>
+      <v-list-item-action v-if="standard">
+        <v-list-item-action-text>
+          <v-chip small class="caption">{{ standard }}</v-chip>
+        </v-list-item-action-text>
+      </v-list-item-action>
     </v-list-item>
     <v-divider></v-divider>
     <div class="d-flex align-center px-4 sidebar" style="height: 48px;">
       <span class="caption font-weight-bold text-uppercase text--secondary">Actions</span>
       <v-spacer></v-spacer>
-      <v-tooltip top>
+      <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" icon class="mr-2">
             <v-icon class="text--secondary">mdi-eye-outline</v-icon>
@@ -26,7 +31,7 @@
         </template>
         Edit watch settings
       </v-tooltip>
-      <v-tooltip top>
+      <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" icon class="mr-2">
             <v-icon class="text--secondary">mdi-content-copy</v-icon>
@@ -34,7 +39,7 @@
         </template>
         Copy address
       </v-tooltip>
-      <v-tooltip top>
+      <v-tooltip bottom>
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" icon>
             <v-icon class="text--secondary">mdi-share-variant</v-icon>
@@ -56,6 +61,22 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas">
             <v-list class="contract-list">
+              <v-list-item v-if="contract.language !== 'michelson'">
+                <v-list-item-content>
+                  <v-list-item-subtitle class="overline">
+                    Language
+                    <v-tooltip right>
+                      <template v-slot:activator="{ on }">
+                        <v-icon x-small v-on="on" class="text--secondary">mdi-help-circle</v-icon>
+                      </template>
+                      Guessed by heuristics
+                    </v-tooltip>
+                  </v-list-item-subtitle>
+                  <v-list-item-title class="body-2">
+                    <span class="text-capitalize">{{ contract.language }}</span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle class="overline">Was active</v-list-item-subtitle>
@@ -181,6 +202,19 @@ export default {
   }),
   created() {
     this.requestSameSimilar()
+  },
+  computed: {
+    standard() {
+      const standards = {'fa12': 'FA1.2', 'fa1': 'FA1'};
+      if (this.contract.tags) {
+        for (var tag in standards) {
+          if (this.contract.tags.includes(tag)) {
+            return standards[tag];
+          }
+        }
+      }
+      return null;
+    }
   },
   methods: {
     requestSameSimilar() {

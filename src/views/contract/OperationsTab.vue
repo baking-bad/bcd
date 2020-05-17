@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-8 canvas">
+  <v-container fluid class="px-8 py-3 canvas">
     <v-row>
       <v-col cols="3">
         <v-select

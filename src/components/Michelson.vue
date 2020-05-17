@@ -62,7 +62,6 @@ export default {
 .CodeMirror {
   /* background-color: #fbfbfb; */
   height: auto;
-  margin-top: 2px;
   font-size: 0.9rem;
 }
 .error-mark {

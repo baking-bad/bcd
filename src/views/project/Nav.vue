@@ -12,7 +12,7 @@
             class="overline"
             :class="contract.network === 'mainnet' ? 'primary--text' : ''"
           >{{ contract.network }}</v-list-item-subtitle>
-        </v-list-item-content>
+        </v-list-item-content>        
       </v-list-item>
 
       <div class="pb-3 px-4">

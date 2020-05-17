@@ -12,7 +12,6 @@ import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
 //import Project from '@/views/project/Project.vue'
 // import OperationsTab from '@/views/project/OperationsTab.vue'
-import CodeTab from '@/views/project/CodeTab.vue'
 import EntrypointsTab from '@/views/project/EntrypointsTab.vue'
 import StorageTab from '@/views/project/StorageTab.vue'
 import MigrationsTab from '@/views/project/MigrationsTab.vue'
@@ -26,6 +25,7 @@ import Stats from '@/views/Stats.vue'
 
 import Contract from '@/views/contract/Contract.vue'
 import OperationsTab from '@/views/contract/OperationsTab.vue'
+import CodeTab from '@/views/contract/CodeTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
 import OpgContents from '@/views/opg/ContentsTab.vue'

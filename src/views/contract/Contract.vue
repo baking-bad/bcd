@@ -13,14 +13,14 @@
 
     <v-toolbar flat class color="toolbar" height="75">
       <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
-        <v-tab>
+        <v-tab :to="{ name: 'contract' }" replace>
           <v-icon left small>mdi-swap-horizontal</v-icon>operations
           <span class="ml-1">({{ contract.tx_count || 0 }})</span>
         </v-tab>
         <v-tab>
           <v-icon left small>mdi-database</v-icon>Storage
         </v-tab>
-        <v-tab>
+        <v-tab :to="{ name: 'code' }" replace>
           <v-icon left small>mdi-code-braces</v-icon>Code
         </v-tab>
         <v-tab>
@@ -33,6 +33,7 @@
     </v-toolbar>
 
     <router-view
+      :contract="contract"
       :address="address" 
       :network="network">
     </router-view>
