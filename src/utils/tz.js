@@ -47,8 +47,17 @@ export function shortcut(value, tail=4) {
 export function formatDatetime(timestamp) {
     let d = dayjs(timestamp);
     if (timestamp) {
-        if (d.year() < dayjs().year()) return d.format("MMM D HH:mm, YYYY");
-        if (d.add(1, "days").isBefore(dayjs())) return d.format("MMM D HH:mm");
+        if (d.year() < dayjs().year()) return d.format("D MMM'YY HH:mm");
+        if (d.add(1, "days").isBefore(dayjs())) return d.format("D MMM HH:mm");
+        return d.fromNow();
+    }
+}
+
+export function formatDate(timestamp) {
+    let d = dayjs(timestamp);
+    if (timestamp) {
+        if (d.year() < dayjs().year()) return d.format("D MMM'YY");
+        if (d.add(1, "days").isBefore(dayjs())) return d.format("D MMM");
         return d.fromNow();
     }
 }

@@ -26,7 +26,6 @@ export function makeVuetify(dark) {
                     primary: '#75A34F',
                     secondary: '#abda82',
                     accent: '#BA68C8',
-                    anchor: '#64B5F6',
                     sidenav: '#393939',
                     sidebar: '#303030',
                     canvas: '#2d2d2d',

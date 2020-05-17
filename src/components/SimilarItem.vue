@@ -1,23 +1,20 @@
 <template>
-  <v-list-item
-    :key="item.address"
-    :to="{name: 'project', params: {address: this.item.address, network: this.item.network}}"
-    class="py-2"
-  >
+  <v-list-item :to="`/${item.network}/${item.address}`" class="py-2">
     <v-list-item-content>
-      <v-list-item-title class="contract-item-address hash">
-        <span>{{ item.alias || item.address }}</span>
+      <v-list-item-title class="body-2">
+        <span v-if="item.alias">{{ item.alias }}</span>
+        <span v-else v-html="helpers.shortcut(item.address)"></span>
       </v-list-item-title>
       <v-list-item-subtitle>
         <span
           class="overline"
-          :class="item.network === 'mainnet' ? 'primary--text' : ''"
+          :class="item.network === 'mainnet' ? 'secondary--text' : ''"
         >{{ item.network }}&nbsp;</span>
         <span
           v-if="item.timestamp > basetime"
-          class="light-green--text text--darken-2 caption"
+          class="primary--text caption"
         >newer</span>
-        <span v-else-if="item.timestamp < basetime" class="grey--text caption">older</span>
+        <span v-else-if="item.timestamp < basetime" class="text--secondary caption">older</span>
       </v-list-item-subtitle>
       <v-list-item-subtitle class="overline grey--text text-lighten-5">
         <v-btn

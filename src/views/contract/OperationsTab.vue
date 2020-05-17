@@ -81,8 +81,8 @@
       </v-col>
       <v-col class="d-flex align-center justify-end" cols="3">
         <v-btn small text @click="fetchOperations">
-          <v-icon small class="mr-1">mdi-trash-can</v-icon>
-          <span>clear filters</span>
+          <v-icon small class="mr-1 text--secondary">mdi-trash-can</v-icon>
+          <span class="text--secondary">clear filters</span>
         </v-btn>
       </v-col>
     </v-row>
@@ -100,7 +100,7 @@
           <span class="title text--secondary">No results were found for your request</span>
         </v-card>
         <v-expansion-panels v-if="items.length > 0" multiple hover flat class="bb-1">
-          <Operation
+          <ContentItem
             :data="item"
             :key="item.hash + '_' + item.counter + '_' + key"
             :address="address"
@@ -116,7 +116,7 @@
 <script>
 import { mapActions } from "vuex";
 
-import Operation from "@/views/contract/Operation.vue";
+import ContentItem from "@/views/contract/ContentItem.vue";
 import dayjs from "dayjs";
 
 export default {
@@ -126,7 +126,7 @@ export default {
     network: String
   },
   components: {
-    Operation
+    ContentItem
   },
   data: () => ({
     operations: [],

@@ -5,7 +5,12 @@
         <v-list-item-title class="headline">
           <span v-html="helpers.shortcut(hash)"></span>
         </v-list-item-title>
-        <v-list-item-subtitle class="overline">{{ network }}</v-list-item-subtitle>
+        <v-list-item-subtitle>
+          <span
+          class="overline"
+          :class="network === 'mainnet' ? 'secondary--text' : ''"
+        >{{ network }}</span>
+        </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
     <v-divider></v-divider>
@@ -68,7 +73,6 @@
                   </v-list-item-action-text>
                 </v-list-item-action>
               </v-list-item>
-              <v-divider></v-divider>
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle class="overline">Total cost</v-list-item-subtitle>

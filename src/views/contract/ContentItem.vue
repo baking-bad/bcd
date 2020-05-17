@@ -93,7 +93,7 @@ import relativeTime from "dayjs/plugin/relativeTime";
 dayjs.extend(relativeTime);
 
 export default {
-  name: "Operation",
+  name: "ContentItem",
   props: {
     data: Object,
     address: String

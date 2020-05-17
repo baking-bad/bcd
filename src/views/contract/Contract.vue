@@ -76,6 +76,7 @@ export default {
       ) {
         return;
       }
+      this.loading = true;
       cancelRequests();
       this.api
         .getContract(this.network, this.address)
@@ -90,10 +91,10 @@ export default {
           this.showError(err.message);
         })
         .finally(() => (this.loading = false));
-    },
-    watch: {
-      address: "getContract"
     }
+  },
+  watch: {
+    address: 'getContract'
   }
 };
 </script>
@@ -101,5 +102,9 @@ export default {
 <style>
 .main-navigation > .v-navigation-drawer__content {
   overflow: hidden;
+}
+.v-tabs {
+  font-family: "Roboto Condensed", sans-serif;
+  font-weight: 500;
 }
 </style>

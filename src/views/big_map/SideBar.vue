@@ -3,7 +3,12 @@
     <v-list-item style="  height: 74px;">
       <v-list-item-content two-line>
         <v-list-item-title class="headline">Big Map {{ ptr }}</v-list-item-title>
-        <v-list-item-subtitle class="overline">{{ network }}</v-list-item-subtitle>
+        <v-list-item-subtitle>
+          <span
+          class="overline"
+          :class="network === 'mainnet' ? 'secondary--text' : ''"
+        >{{ network }}</span>
+        </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
     <v-divider></v-divider>
@@ -26,7 +31,6 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-              <v-divider></v-divider>
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle class="overline">Owner</v-list-item-subtitle>

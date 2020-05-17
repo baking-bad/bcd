@@ -6,7 +6,12 @@
           <span v-if="contract.alias">{{ contract.alias }}</span>
           <span v-else v-html="helpers.shortcut(address)"></span>
         </v-list-item-title>
-        <v-list-item-subtitle class="overline">{{ network }}</v-list-item-subtitle>
+        <v-list-item-subtitle>
+          <span
+          class="overline"
+          :class="network === 'mainnet' ? 'secondary--text' : ''"
+        >{{ network }}</span>
+        </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
     <v-divider></v-divider>
@@ -19,7 +24,7 @@
             <v-icon class="text--secondary">mdi-eye-outline</v-icon>
           </v-btn>
         </template>
-        Watch settings
+        Edit watch settings
       </v-tooltip>
       <v-tooltip top>
         <template v-slot:activator="{ on }">
@@ -44,14 +49,53 @@
       :loading="loading"
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
     >
-      <v-expansion-panels flat tile mandatory multiple active-class="opened-panel">
+      <v-expansion-panels flat tile mandatory active-class="opened-panel">
         <v-expansion-panel class="ma-0 bb-1">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase text--secondary">Details</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas">
-            <v-list class="sidebar-list">
-              
+            <v-list class="contract-list">
+              <v-list-item>
+                <v-list-item-content>
+                  <v-list-item-subtitle class="overline">Was active</v-list-item-subtitle>
+                  <v-list-item-title class="body-2">
+                    {{ helpers.formatDatetime(contract.timestamp) }}
+                    <span v-if="contract.last_action > contract.timestamp"> — {{ helpers.formatDatetime(contract.last_action) }}</span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item v-if="contract.balance">
+                <v-list-item-content>
+                  <v-list-item-subtitle class="overline">Locked amount</v-list-item-subtitle>
+                  <v-list-item-title class="body-2">
+                    <span>{{ contract.balance | uxtz }}</span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item v-if="contract.total_withdrawn">
+                <v-list-item-content>
+                  <v-list-item-subtitle class="overline">Total withdrawn</v-list-item-subtitle>
+                  <v-list-item-title class="body-2">
+                    <span>{{ contract.total_withdrawn | uxtz }}</span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <AccountBox
+                v-if="contract.manager"
+                title="Deployed by"
+                :address="contract.manager"
+                :network="contract.network"
+                gutters
+              />
+              <AccountBox
+                v-if="contract.delegate"
+                title="Delegated to"
+                :address="contract.delegate"
+                :network="contract.network"
+                :alias="contract.delegate_alias"
+                gutters
+              />
             </v-list>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -62,7 +106,22 @@
               Same contracts ({{ sameCount }})
             </span>            
           </v-expansion-panel-header>
-          <v-expansion-panel-content color="canvas"></v-expansion-panel-content>
+          <v-expansion-panel-content color="canvas">
+            <v-list class="contract-list">
+              <template v-for="(contract, i) in same">
+                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+                <SimilarItem :key="i" :item="contract" :address="address" :network="network" />
+              </template>
+              <v-divider></v-divider>
+              <v-list-item v-if="same.length < sameCount">
+                <v-list-item-content>
+                  <v-list-item-title class="d-flex align-center justify-center">
+                    <v-btn :loading="sameLoading" depressed small @click="requestMoreSame">Load more</v-btn>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-expansion-panel-content>
         </v-expansion-panel>
 
         <v-expansion-panel class="ma-0 bb-1" v-if="similarCount > 0">
@@ -71,7 +130,14 @@
               Similar contracts ({{ similarCount }})
             </span>            
           </v-expansion-panel-header>
-          <v-expansion-panel-content color="canvas"></v-expansion-panel-content>
+          <v-expansion-panel-content color="canvas">
+            <v-list class="contract-list">
+              <template v-for="(contract, i) in similar">
+                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+                <SimilarItem :key="i" :diff="true" :item="contract" :address="address" :network="network" />
+              </template>
+            </v-list>
+          </v-expansion-panel-content>
         </v-expansion-panel>
       </v-expansion-panels>
     </v-skeleton-loader>
@@ -91,34 +157,35 @@
 </template>
 
 <script>
+import SimilarItem from "@/views/contract/SimilarItem.vue"
+import AccountBox from "@/components/AccountBox.vue"
+
 export default {
   name: "SideBar",
   props: {
+    loading: Boolean,
     contract: Object,
     address: String,
     network: String,
-    loading: Boolean
+  },
+  components: {
+    SimilarItem,
+    AccountBox
   },
   data: () => ({
-    sameLoading: true,
-    similarLoading: true,
     same: [],
     sameCount: 0,
     similar: [],
-    similarCount: 0
+    similarCount: 0,
+    sameLoading: false
   }),
   created() {
     this.requestSameSimilar()
   },
   methods: {
     requestSameSimilar() {
-      this.contract.same = [];
-      this.contract.similar = [];
-      this.contract.sameCount = 0;
-      this.contract.similarCount = 0;
-      this.sameLoading = true;
-      this.similarLoading = true;
-
+      this.same = [];
+      this.sameCount = 0;
       this.api.getSameContracts(this.network, this.address, 0)
         .then(res => {
           if (!res) return;
@@ -129,8 +196,9 @@ export default {
           this.showError(err);
           console.log(err);
         })
-        .finally(() => (this.sameLoading = false));
 
+      this.similar = [];
+      this.similarCount = 0;
       this.api.getSimilarContracts(this.network, this.address)
         .then(res => {
           if (!res) return;
@@ -141,8 +209,46 @@ export default {
           this.showError(err);
           console.log(err);
         })
-        .finally(() => (this.similarLoading = false));
     },
+    requestMoreSame() {
+      this.sameLoading = true;
+      this.api.getSameContracts(
+        this.network,
+        this.address,
+        this.same.length
+      )
+        .then(res => {
+          if (!res) return;
+          this.same.push(...res.contracts);
+        })
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        })
+        .finally(() => (this.sameLoading = false));
+    },
+  },
+  watch: {
+    address: 'requestSameSimilar'
   }
 };
 </script>
+
+<style scss>
+.opened-panel {
+  border-bottom: none !important;
+}
+.opened-panel > .v-expansion-panel-content > .v-expansion-panel-content__wrap {
+  padding: 0;
+}
+.opened-panel > .v-expansion-panel-header {
+  min-height: 48px;
+}
+.contract-list {
+  max-height: calc(100vh - 75px - 4 * 48px);
+  overflow-y: auto;
+  border-radius: 0;
+  padding: 0;
+  z-index: 1;
+}
+</style>
