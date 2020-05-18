@@ -23,7 +23,7 @@
       </div>
     </v-toolbar>
 
-    <router-view :loading="loading" :contents="contents"></router-view>
+    <router-view :loading="loading" :operations="operations"></router-view>
   </div>
 </template>
 
@@ -46,10 +46,10 @@ export default {
   },
   data: () => ({
       loading: true,
-      contents: []
+      operations: []
   }),
   created() {
-      this.getOPG();
+    this.getOPG();
   },
   methods: {
     ...mapActions({
@@ -58,23 +58,13 @@ export default {
     getOPG() {
       this.api.getOPG(this.hash)
         .then(res => {
-          this.prepareOperations(res);
+          this.operations = res;
         })
         .catch(err => {
           console.log(err);
           this.showError(err);
         })
         .finally(() => (this.loading = false));
-    },
-    prepareOperations(data) {
-      data.forEach(element => {
-        if (element.internal) {
-          this.contents[this.contents.length - 1].internal_operations.push(element);
-        } else {
-          element.internal_operations = [];
-          this.contents.push(element);
-        }
-      });
     }
   }
 };

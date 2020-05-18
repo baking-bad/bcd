@@ -41,10 +41,8 @@ export default {
 </script>
 
 <style>
-@font-face {
-  font-family: GentiumPlusW;
-  src: url(/fonts/GentiumPlus-R.woff);
-  font-display: swap;
+html {
+  overflow-y: auto !important;
 }
 
 .bt-1 {
@@ -63,6 +61,10 @@ export default {
   border: 1px solid var(--v-border-base) !important;
 }
 
+.fill-canvas {
+  min-height: calc(100% - 75px);
+}
+
 .toolbar {
   background-color: var(--v-canvas-base) !important;
   border-bottom: 1px solid var(--v-border-base) !important;
@@ -70,7 +72,6 @@ export default {
 
 .canvas {
   background-color: var(--v-canvas-base) !important;
-  height: 100%;
 }
 
 .data {
@@ -82,17 +83,17 @@ export default {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--v-data-base);
+  background: var(--v-canvas-base);
   border-left: none
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--v-sidenav-base);
-  border: solid 3px var(--v-data-base);
+  background: #99999950;
+  border: solid 3px var(--v-canvas-base);
   border-radius: 7px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #777;
+  background: #99999990;
 }
 </style>

@@ -12,20 +12,21 @@ import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
 //import Project from '@/views/project/Project.vue'
 // import OperationsTab from '@/views/project/OperationsTab.vue'
-import EntrypointsTab from '@/views/project/EntrypointsTab.vue'
 import StorageTab from '@/views/project/StorageTab.vue'
 import MigrationsTab from '@/views/project/MigrationsTab.vue'
 
-import Diff from '@/views/Diff.vue'
 import BigMapViewer from '@/views/BigMapViewer.vue'
 import BigMapDiffViewer from '@/views/BigMapDiffViewer.vue'
 import Projects from '@/views/Projects.vue'
 import OPG from '@/views/OPG.vue'
 import Stats from '@/views/Stats.vue'
 
+import Diff from '@/views/diff/Diff.vue'
+
 import Contract from '@/views/contract/Contract.vue'
 import OperationsTab from '@/views/contract/OperationsTab.vue'
 import CodeTab from '@/views/contract/CodeTab.vue'
+import InteractTab from '@/views/contract/InteractTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
 import OpgContents from '@/views/opg/ContentsTab.vue'
@@ -91,9 +92,9 @@ const router = new Router({
             path: '/diff',
             components: {
                 default: Diff,
-                nav: Nav
             },
-            name: 'diff'
+            name: 'diff',
+            props: { default: true },
         },
         {
             path: '/projects',
@@ -172,22 +173,26 @@ const router = new Router({
                 {
                     path: 'code',
                     name: 'code',
-                    component: CodeTab
+                    component: CodeTab,
+                    props: true
                 },
                 {
-                    path: 'entrypoints',
-                    name: 'entrypoints',
-                    component: EntrypointsTab
+                    path: 'interact',
+                    name: 'interact',
+                    component: InteractTab,
+                    props: true
                 },
                 {
                     path: 'storage',
                     name: 'storage',
-                    component: StorageTab
+                    component: StorageTab,
+                    props: true
                 },
                 {
                     path: 'migrations',
                     name: 'migrations',
-                    component: MigrationsTab
+                    component: MigrationsTab,
+                    props: true
                 }
             ]
         },

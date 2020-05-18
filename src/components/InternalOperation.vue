@@ -1,6 +1,6 @@
 <template>
   <div class="pb-2 data">
-    <v-row v-if="!data.internal" no-gutters class="px-4 py-1 sidebar">
+    <v-row v-if="!data.internal && data.counter" no-gutters class="px-4 py-1 sidebar">
       <v-col cols="2">
         <InfoItem title="Counter" :subtitle="String(data.counter)" />
       </v-col>
@@ -19,7 +19,7 @@
       <v-col cols="2" v-if="address" class="py-0 d-flex justify-end align-center">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" v-if="!data.mempool" icon class="mr-2 text--secondary" @click="getRawJSON">
+            <v-btn v-on="on" v-if="!data.mempool && data.id" icon class="mr-2 text--secondary" @click="getRawJSON">
               <v-icon>mdi-code-json</v-icon>
             </v-btn>
           </template>
@@ -94,13 +94,13 @@
           :network="data.network"
         />
       </v-col>
-      <v-col cols="2" v-if="!data.mempool && data.result.consumed_gas">
+      <v-col cols="2" v-if="!data.mempool && data.result && data.result.consumed_gas">
         <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
       </v-col>
-      <v-col cols="2" v-if="!data.mempool && data.status === 'applied'">
+      <v-col cols="2" v-if="!data.mempool && data.result && data.status === 'applied'">
         <InfoItem title="Paid storage diff" :subtitle="paidStorageDiff" />
       </v-col>
-      <v-col cols="2" v-if="!data.mempool && data.result.allocated_destination_contract">
+      <v-col cols="2" v-if="!data.mempool && data.result && data.result.allocated_destination_contract">
         <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
       </v-col>      
     </v-row>
@@ -138,7 +138,7 @@
           <v-col cols="6">
             <div v-if="hasStorageDiff">
               <span class="overline ml-3">Storage</span>&nbsp;
-              <span class="grey--text caption">{{ data.result.storage_size | bytes}}</span>
+              <span class="grey--text caption" v-if="data.result">{{ data.result.storage_size | bytes}}</span>
               <v-treeview
                 :items="storage.tree"
                 :open="storage.open"
@@ -298,7 +298,7 @@ export default {
       return this.data.storage_limit;
     },
     consumedGas() {
-      if (this.data.result.consumed_gas) {
+      if (this.data.result && this.data.result.consumed_gas) {
         let s = `${this.data.result.consumed_gas}`;
         if (this.gasLimit > 0) {
           s += ` (${(
@@ -311,13 +311,13 @@ export default {
       return "0 (0%)";
     },
     allocationFee() {
-      if (this.data.result.allocated_destination_contract) {
+      if (this.data.result && this.data.result.allocated_destination_contract) {
         return 257000;
       }
       return 0;
     },
     paidStorageDiff() {
-      if (this.data.result.paid_storage_size_diff) {
+      if (this.data.result && this.data.result.paid_storage_size_diff) {
         let s = this.$options.filters.bytes(
           this.data.result.paid_storage_size_diff
         );
@@ -367,7 +367,7 @@ export default {
     },
     burned() {
       let val = this.data.burned || 0;
-      if (!this.data.internal && !this.data.mempool) {
+      if (!this.data.internal && !this.data.mempool && this.data.internal_operations) {
         for (let i = 0; i < this.data.internal_operations.length; i++) {
           val += this.data.internal_operations[i].burned || 0;
         }

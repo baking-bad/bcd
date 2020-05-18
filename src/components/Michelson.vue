@@ -32,7 +32,7 @@ export default {
   data: () => ({
     cmOptions: {
       mode: "michelson",
-      theme: "darcula",
+      theme: "neo",
       lineWrapping: true,
       lineNumbers: true,
       viewportMargin: Infinity,
@@ -43,6 +43,8 @@ export default {
   created() {
     if (this.firstLineNumber)
       this.cmOptions.firstLineNumber = this.firstLineNumber;
+    if (this.$vuetify.theme.dark)
+      this.cmOptions.theme = "darcula";
 
     create();
   },
@@ -60,12 +62,19 @@ export default {
 
 <style>
 .CodeMirror {
-  /* background-color: #fbfbfb; */
+  background-color: var(--v-data-base) !important;
   height: auto;
   font-size: 0.9rem;
 }
+.CodeMirror-linenumbers {
+  background-color: var(--v-data-base) !important;
+  border-right: none !important;
+}
+.CodeMirror-linenumber {
+  color: #99999980 !important;
+}
 .error-mark {
-  /* background-color: #ffdce0; */
-  color: red !important;
+  background-color: #F4433625;
+  color: var(--v-error-base) !important;
 }
 </style>

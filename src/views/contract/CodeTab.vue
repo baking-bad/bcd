@@ -1,6 +1,6 @@
 <template>
-  <v-container fluid class="pa-8 canvas">
-    <v-skeleton-loader v-if="loading" height="500" type="image" />
+  <v-container fluid class="pa-8 canvas fill-canvas">
+    <v-skeleton-loader v-if="loading" type="card-heading, image" />
     <div v-else-if="selectedCode">
       <v-card tile flat outlined class="pa-0">
         <v-card-title class="d-flex sidebar px-4 py-2">

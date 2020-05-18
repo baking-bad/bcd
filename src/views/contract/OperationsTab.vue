@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="px-8 py-3 canvas">
+  <v-container fluid class="px-8 py-4 canvas fill-canvas">
     <v-row>
       <v-col cols="3">
         <v-select
@@ -88,11 +88,8 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-overlay v-if="loading" :value="loading" color="data" absolute>
-          <v-progress-circular indeterminate color="primary" size="64" />
-        </v-overlay>
         <v-card
-          v-else-if="items.length === 0"
+          v-if="!loading && items.length === 0"
           class="d-flex flex-column align-center justify-center transparent pa-8 mt-12"
           flat
         >
@@ -106,7 +103,10 @@
             :address="address"
             v-for="(item, key) in items"
           />
-        </v-expansion-panels>       
+        </v-expansion-panels>
+         <v-skeleton-loader 
+          v-if="loading"
+          type="list-item-two-line, divider, list-item-two-line, divider, list-item-two-line"/>  
         <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
       </v-col>
     </v-row>

@@ -127,7 +127,7 @@
               Same contracts ({{ sameCount }})
             </span>            
           </v-expansion-panel-header>
-          <v-expansion-panel-content color="canvas">
+          <v-expansion-panel-content color="data">
             <v-list class="contract-list">
               <template v-for="(contract, i) in same">
                 <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
@@ -151,7 +151,7 @@
               Similar contracts ({{ similarCount }})
             </span>            
           </v-expansion-panel-header>
-          <v-expansion-panel-content color="canvas">
+          <v-expansion-panel-content color="data">
             <v-list class="contract-list">
               <template v-for="(contract, i) in similar">
                 <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>

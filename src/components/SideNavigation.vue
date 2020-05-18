@@ -1,5 +1,5 @@
 <template>
-  <v-navigation-drawer dark mini-variant permanent floating color="sidenav">
+  <v-navigation-drawer :app="app" dark mini-variant permanent floating color="sidenav">
     <router-link
       :to="{name: 'dashboard'}"
       class="d-flex justify-center align-center mt-1"
@@ -102,6 +102,9 @@ import { logout } from "@/utils/auth.js";
 
 export default {
   name: "SideNavigation",
+  props: {
+    app: Boolean
+  },
   computed: {
     isAuthorized() {
       return this.$store.state.isAuthorized;

@@ -1,12 +1,13 @@
 <template>
-  <v-card flat tile>
-    <v-row no-gutters class="diff-title">
-      <v-col cols="6" class="title-left">
+  <v-card flat outlined>
+    <v-card-title class="pa-0 sidebar">
+    <v-row no-gutters>
+      <v-col cols="6">
         <v-list-item class="pa-0 pl-8" :to="{ name: 'code', params: left, query: {protocol: left.protocol}}" selectable>
           <v-list-item-content>
             <v-list-item-title>
               <span class="hash">{{ left.address }}</span>
-              <span class="hash grey--text text--darken-2">::{{ left.protocol.slice(0, 8) }}</span>
+              <span class="hash text--secondary">::{{ left.protocol.slice(0, 8) }}</span>
             </v-list-item-title>
             <v-list-item-subtitle>
               <span class="overline">{{ left.network }}</span>
@@ -14,12 +15,12 @@
           </v-list-item-content>
         </v-list-item>
       </v-col>
-      <v-col cols="6">
+      <v-col cols="6" class="bl-1">
         <v-list-item class="pa-0 pl-8" :to="{ name: 'code', params: right, query: {protocol: right.protocol}}" selectable>
           <v-list-item-content>
             <v-list-item-title>
               <span class="hash">{{ right.address }}</span>
-              <span class="hash grey--text text--darken-2">::{{ right.protocol.slice(0, 8) }}</span>
+              <span class="hash text--secondary">::{{ right.protocol.slice(0, 8) }}</span>
             </v-list-item-title>
             <v-list-item-subtitle>
               <span class="overline">{{ right.network }}</span>
@@ -27,14 +28,15 @@
           </v-list-item-content>
           <v-list-item-action>
             <v-list-item-action-text class="subtitle-1 mr-6">
-              <span v-if="diff.added" class="primary--text font-weight-medium mr-1">+{{ diff.added }}</span>
-              <span v-if="diff.removed" class="red--text font-weight-medium">-{{ diff.removed }}</span>
+              <span v-if="diff.added" class="success--text font-weight-medium mr-1">+{{ diff.added }}</span>
+              <span v-if="diff.removed" class="error--text font-weight-medium">-{{ diff.removed }}</span>
             </v-list-item-action-text>
           </v-list-item-action>
         </v-list-item>
       </v-col>
     </v-row>
-    <v-card-text class="pa-0">
+    </v-card-title>
+    <v-card-text class="pa-0 data">
       <div style="overflow-x: auto;">
         <table class="diff-table">
           <tbody id="table"></tbody>
@@ -121,20 +123,13 @@ export default {
 </script>
 
 <style>
-.diff-title {
-  background: rgb(250, 250, 250);
-  border: 1px solid #eee;
-}
-
 .part {
   position: relative;
   padding-right: 10px;
   padding-left: 10px;
   line-height: 20px;
   vertical-align: top;
-  color: #24292e;
   font-size: 12px;
-  background-color: transparent;
   font-family: "Roboto Mono", monospace;
   white-space: pre-wrap;
   font-weight: normal;
@@ -142,19 +137,19 @@ export default {
 }
 
 .part-1 {
-  background-color: #fdb8c0;
+  background-color: #F4433665;
 }
 
 .part1 {
-  background-color: #acf2bd;
+  background-color: #4CAF5065;
 }
 
 .row-1 {
-  background-color: #ffeef0;
+  background-color: #F4433625;
 }
 
 .row1 {
-  background-color: #e6ffed;
+  background-color: #4CAF5025;
 }
 
 .number {
@@ -164,7 +159,6 @@ export default {
   padding-left: 10px;
   font-size: 12px;
   line-height: 20px;
-  color: rgba(27, 31, 35, 0.3);
   text-align: right;
   white-space: nowrap;
   vertical-align: top;
@@ -178,30 +172,21 @@ td {
   padding: 0;
 }
 
-td.part {
-  border-right: 1px solid #eee;
-}
-
-td.number {
-  border-left: 1px solid #eee;
+td.part:nth-child(2) {
+  border-right: 1px solid var(--v-border-base);
 }
 
 .number1 {
-  background-color: #cdffd8;
+  background-color: #4CAF5065;
 }
 
 .number-1 {
-  background-color: #ffdce0;
+  background-color: #F4433665;
 }
 
 .diff-table {
   width: 100%;
-  border-bottom: 1px solid #eee;
   border-collapse: collapse;
   table-layout: fixed;
-}
-
-.title-left {
-  border-right: 1px solid #eee;
 }
 </style>

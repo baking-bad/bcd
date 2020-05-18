@@ -181,6 +181,20 @@ export class BetterCallApi {
             })
     }
 
+    getContractEntrypointTrace(network, address, bin_path, data) {
+        return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/trace`, {
+            bin_path: bin_path,
+            data: data
+        })
+            .then((res) => {
+                if (!res) { return res; }
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
+
     getContractStorage(network, address) {
         return getCancellable(this.api, `/contract/${network}/${address}/storage`, {})
             .then((res) => {

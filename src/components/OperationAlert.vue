@@ -20,7 +20,7 @@
             >: {{ err.balance | uxtz }} &lt; {{ err.amount | uxtz }}</span>
           </span>
         </v-col>
-        <v-col class="shrink" v-if="err.id.includes('michelson_v1.script_rejected')">
+        <v-col class="shrink" v-if="err.id.includes('michelson_v1.script_rejected') && operationId">
           <v-btn
             small
             text
@@ -37,7 +37,11 @@
           <Michelson
             :code="errorLocation.text"
             :firstLineNumber="errorLocation.first_row"
-            :mark="{row: errorLocation.failed_row - errorLocation.first_row, start: errorLocation.start_col, end: errorLocation.end_col}"
+            :mark="{
+              row: errorLocation.failed_row - errorLocation.first_row, 
+              start: errorLocation.start_col, 
+              end: errorLocation.end_col
+            }"
           ></Michelson>
         </v-card-text>
       </v-card>
