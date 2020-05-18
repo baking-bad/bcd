@@ -13,15 +13,12 @@
     append-icon
     clearable
     hide-selected
-    :prepend-inner-icon="expandable? null : 'mdi-magnify'"
+    prepend-inner-icon="mdi-magnify"
     :filled="inplace"
     :rounded="inplace"
-    :outlined="!expandable && !inplace"
-    :background-color="expandable ? 'grey lighten-4' : inplace ? 'data' : 'transparent'"
-    :hide-details="expandable"
-    :solo="expandable"
-    :dense="expandable || inplace"
-    :class="expandable ? 'expandable-search' : ''"
+    :outlined="!inplace"
+    :background-color="inplace ? 'data' : 'transparent'"
+    :dense="inplace"
   >
     <template v-slot:item="{ item }">
         <v-list-item-avatar>
@@ -72,16 +69,7 @@ import dayjs from "dayjs";
 
 export default {
   props: {
-    expandable: Boolean,
     inplace: Boolean
-  },
-  computed: {
-    background() {
-      if (this.toolbar) {
-        return "rgba(255, 255, 255, 0)";
-      }
-      return "transparent";
-    }
   },
   data: () => ({
     suggests: [],
@@ -216,9 +204,5 @@ export default {
       margin-right: auto;
     }
   }
-}
-.expandable-search {
-  font-size: 12px;
-  margin-bottom: 1px;
 }
 </style>

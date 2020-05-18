@@ -1,9 +1,16 @@
 <template>
-  <div class="fill-height">
+  <div class="fill-height canvas">
     <SideNavigation :app="true" />
-    <v-container fluid class="pa-4 canvas">
-      <v-skeleton-loader v-if="loading" height="400" type="image"></v-skeleton-loader>
-      <v-row v-else-if="res" no-gutters>
+    <v-container fluid class="pa-4">
+      <v-row v-if="loading" no-gutters>
+        <v-col cols="6" class="pr-1">
+          <v-skeleton-loader v-if="loading" type="card-heading, image"></v-skeleton-loader>
+        </v-col>
+        <v-col cols="6">
+          <v-skeleton-loader v-if="loading" type="card-heading, image"></v-skeleton-loader>
+        </v-col>
+      </v-row>      
+      <v-row v-if="!loading && res" no-gutters>
         <v-col cols="12">
           <template v-if="isAuthorized">
             <v-btn
@@ -42,7 +49,7 @@
           </v-snackbar>
         </v-col>
       </v-row>
-      <ErrorState v-else />
+      <ErrorState v-if="!loading && !res" />
     </v-container>
   </div>
 </template>
@@ -109,7 +116,9 @@ export default {
           console.log(err);
           this.showError(err);
         })
-        .finally(() => (this.loading = false));
+        .finally(() => {
+          this.loading = false;
+        });
     },
     upVote() {
       this.api

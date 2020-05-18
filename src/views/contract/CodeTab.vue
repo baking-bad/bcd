@@ -58,8 +58,9 @@ import LZString from "lz-string";
 export default {
   props: {
     contract: Object,
+    migrations: Array,
     address: String,
-    network: String
+    network: String,
   },
   components: {
     ErrorState,
@@ -77,7 +78,6 @@ export default {
     } else {
       this.getCode();
     }
-    this.getMigrations();
   },
   computed: {
     selectedCode() {
@@ -88,8 +88,8 @@ export default {
     },
     codeVersions() {
       let versions = [];
-      if (this.contract.migrations) {
-        versions = this.contract.migrations
+      if (this.migrations) {
+        versions = this.migrations
           .filter(m => m.kind === "update")
           .map(function(m) {
             return {
@@ -105,10 +105,10 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     getFallbackLevel(protocol = "") {
-      if (protocol !== "" && this.contract.migrations) {
-        for (var i = 0; i < this.contract.migrations.length; i++) {
-          if (this.contract.migrations[i].prev_protocol === protocol) {
-            return Math.max(0, this.contract.migrations[i].level - 4096);
+      if (protocol !== "" && this.migrations) {
+        for (var i = 0; i < this.migrations.length; i++) {
+          if (this.migrations[i].prev_protocol === protocol) {
+            return Math.max(0, this.migrations[i].level - 4096);
           }
         }
       }
@@ -136,20 +136,6 @@ export default {
           this.loading = false;
         });
     },
-    getMigrations() {
-      if (this.contract.migrations) {
-        return;
-      }
-      this.api
-        .getContractMigrations(this.network, this.address)
-        .then(res => {
-          if (!res) return;
-          this.contract.migrations = res;
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    },
     downloadFile() {
       var element = document.createElement("a");
       element.setAttribute(
@@ -157,12 +143,10 @@ export default {
         "data:text/plain;charset=utf-8," + encodeURIComponent(this.selectedCode)
       );
       element.setAttribute("download", this.address + ".tz");
-
       element.style.display = "none";
       document.body.appendChild(element);
 
       element.click();
-
       document.body.removeChild(element);
     },
     getSmartPyLink() {
@@ -170,35 +154,31 @@ export default {
         return `https://smartpy.io/dev/explore.html?address=${this.address}`;
     },
     openTryMichelson() {
-      if (this.contract.raw_storage === undefined) {
-        this.api
-          .getContractStorageRaw(this.network, this.address)
-          .then(res => {
-            this.contract.raw_storage = String(res);
-          })
-          .catch(err => {
-            console.log(err);
-            this.showError(err);
-          });
-      }
-      let query = `source=${this.selectedCode}`;
-      if (this.contract.raw_storage !== undefined) {
-        let storage = this.contract.raw_storage.replace(/\n|\s+/gm, " ");
-        query += `&storage=${storage}`;
-      }
-      let lzQuery = LZString.compressToEncodedURIComponent(query);
-      let uri = `https://try-michelson.tzalpha.net/?${lzQuery}`;
+      this.api
+        .getContractStorageRaw(this.network, this.address)
+        .then(res => {
+          let query = `source=${this.selectedCode}`;
+          if (res) {
+            let storage = res.replace(/\n|\s+/gm, " ");
+            query += `&storage=${storage}`;
+          }
+          let lzQuery = LZString.compressToEncodedURIComponent(query);
+          let uri = `https://try-michelson.tzalpha.net/?${lzQuery}`;
 
-      var newTab = window.open(); // https://habr.com/ru/post/282880/
-      newTab.opener = null;
-      newTab.location = uri;
+          var newTab = window.open(); // https://habr.com/ru/post/282880/
+          newTab.opener = null;
+          newTab.location = uri;
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        });
     }
   },
   watch: {
     address: function() {
       this.selectedProtocol = "";
       this.getCode();
-      this.getMigrations();
     },
     selectedProtocol: function(newValue) {
       if (newValue !== "") {

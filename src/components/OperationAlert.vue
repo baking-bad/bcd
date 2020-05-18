@@ -10,8 +10,8 @@
     >
       <v-row align="center" no-gutters>
         <v-col class="d-flex flex-column">
-          <span class="text--primary title-1">{{ err.title }}</span>
-          <span class="text--secondary body-1">
+          <span class="hash">{{ err.title }}</span>
+          <span class="text--secondary hash">
             {{ err.descr }}
             <span v-if="err.with" style="word-break: break-all">: {{ err.with }}</span>
             <span
@@ -33,7 +33,7 @@
 
     <v-dialog v-if="errorLocation" v-model="showErrorLocation" width="800">
       <v-card>
-        <v-card-text class="pb-0">
+        <v-card-text class="pa-0">
           <Michelson
             :code="errorLocation.text"
             :firstLineNumber="errorLocation.first_row"

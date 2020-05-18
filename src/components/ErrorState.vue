@@ -1,7 +1,7 @@
 <template>
     <v-row no-gutters>
       <v-col cols="6" class="d-flex align-center justify-center">
-        <div class="ml-10 pl-10 flex-column d-flex align-center justify-center">
+        <div class="ml-8 pl-8 flex-column d-flex align-center justify-center">
           <span class="display-2">This wasn't planned 😓</span>
           <div class="headline font-weight-light mt-3 d-flex flex-column align-center justify-center">
             <template v-if="code === 404 && address && tzkt.supports(network)">

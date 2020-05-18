@@ -112,18 +112,18 @@ export default {
   props: {
     network: String,
     hash: String,
-    contents: Array,
+    operations: Array,
     loading: Boolean
   },
   computed: {
     content() {
-      if (this.contents.length > 0) {
-        return this.contents[0];
+      if (this.operations.length > 0) {
+        return this.operations[0];
       }
       return undefined;
     },
     totalCost() {
-      return this.contents.reduce((acc, c) => acc + (c.fee || 0) + (c.burned || 0), 0);
+      return this.operations.reduce((acc, c) => acc + (c.fee || 0) + (c.burned || 0), 0);
     }
   },
   methods: {}

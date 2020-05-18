@@ -12,7 +12,7 @@
     </v-navigation-drawer>
 
     <v-toolbar flat class color="toolbar" height="75">
-      <v-btn small text class="ml-4">
+      <v-btn small text class="ml-4" :to="{name: 'storage', params: {address, network}}">
         <v-icon small class="mr-1">mdi-undo-variant</v-icon>storage
       </v-btn>
 

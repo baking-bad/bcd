@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-0 ma-0 canvas">
+  <v-container fluid class="pa-0 ma-0 canvas fill-canvas">
     <v-row class="px-8 pt-8" no-gutters>
       <v-col cols="7">
         <v-text-field
@@ -38,7 +38,7 @@
           <v-progress-circular indeterminate color="primary" size="64" />
         </v-overlay>
         <v-card
-          v-else-if="bigmap.length === 0"
+          v-if="!loading && bigmap.length === 0"
           class="d-flex flex-column align-center justify-center transparent pa-8 mt-12"
           flat
         >
@@ -50,6 +50,9 @@
             <BigMapDiff :diff="diff" :network="network" :address="address" :ptr="ptr" :key="idx" />
           </template>
         </v-expansion-panels>
+        <v-skeleton-loader 
+          v-if="loading"
+          type="list-item-two-line, divider, list-item-two-line, divider, list-item-two-line"/> 
         <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
       </v-col>
     </v-row>
@@ -95,9 +98,6 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
-    requestData() {
-      this.fetchSearchDebounced(this.searchText);
-    },
     fetchSearchDebounced(text) {
       console.log(text, "AZAZAZA")
       clearTimeout(this._timerId);
@@ -133,7 +133,6 @@ export default {
     }
   },
   watch: {
-    ptr: "requestData",
     search(val) {
       if (this._locked) return;
       this._locked = true;

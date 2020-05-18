@@ -6,7 +6,7 @@
           <SideNavigation />
         </v-col>
         <v-col cols="10">
-          <SideBar :loading="loading" :network="network" :hash="hash" :contents="contents" />
+          <SideBar :loading="loading" :network="network" :hash="hash" :operations="operations" />
         </v-col>
       </v-row>
     </v-navigation-drawer>
@@ -15,7 +15,7 @@
       <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
         <v-tab active>
           <v-icon left small>mdi-format-list-bulleted</v-icon>contents
-          <span class="ml-1">({{ contents.length }})</span>
+          <span class="ml-1">({{ contentsLength }})</span>
         </v-tab>        
       </v-tabs>
       <div class="mr-6 mt-6" style="width: 800px;">
@@ -50,6 +50,11 @@ export default {
   }),
   created() {
     this.getOPG();
+  },
+  computed: {
+    contentsLength() {
+      return this.operations.filter(op => !op.internal).length;
+    }
   },
   methods: {
     ...mapActions({

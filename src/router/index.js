@@ -10,15 +10,6 @@ import Welcome from '@/views/Welcome.vue'
 
 import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
-//import Project from '@/views/project/Project.vue'
-// import OperationsTab from '@/views/project/OperationsTab.vue'
-import StorageTab from '@/views/project/StorageTab.vue'
-import MigrationsTab from '@/views/project/MigrationsTab.vue'
-
-import BigMapViewer from '@/views/BigMapViewer.vue'
-import BigMapDiffViewer from '@/views/BigMapDiffViewer.vue'
-import Projects from '@/views/Projects.vue'
-import OPG from '@/views/OPG.vue'
 import Stats from '@/views/Stats.vue'
 
 import Diff from '@/views/diff/Diff.vue'
@@ -27,6 +18,8 @@ import Contract from '@/views/contract/Contract.vue'
 import OperationsTab from '@/views/contract/OperationsTab.vue'
 import CodeTab from '@/views/contract/CodeTab.vue'
 import InteractTab from '@/views/contract/InteractTab.vue'
+import StorageTab from '@/views/contract/StorageTab.vue'
+import LogTab from '@/views/contract/LogTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
 import OpgContents from '@/views/opg/ContentsTab.vue'
@@ -78,16 +71,7 @@ const router = new Router({
                 nav: Nav
             },
             name: 'stats'
-        },
-        {
-            path: '/opg/:hash(o[0-9A-z]{50})',
-            alias: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
-            components: {
-                default: OPG,
-                nav: Nav
-            },
-            name: 'opg'
-        },
+        },      
         {
             path: '/diff',
             components: {
@@ -96,29 +80,14 @@ const router = new Router({
             name: 'diff',
             props: { default: true },
         },
-        {
-            path: '/projects',
-            components: {
-                default: Projects,
-                nav: Nav
-            },
-            name: 'projects'
-        },
-        {
-            path: '/bigmap/:network/:address(KT[0-9A-z]{34})/:ptr(\\d+)',
-            components: {
-                default: BigMapViewer,
-                nav: Nav
-            },
-            name: 'bigmap'
-        }, {
-            path: '/bigmap/:network/:address(KT[0-9A-z]{34})/:ptr(\\d+)/:keyhash',
-            components: {
-                default: BigMapDiffViewer,
-                nav: Nav
-            },
-            name: 'bigmapdiff'
-        },
+        // {
+        //     path: '/projects',
+        //     components: {
+        //         default: Projects,
+        //         nav: Nav
+        //     },
+        //     name: 'projects'
+        // },      
         { // backward compatibility
             path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
             children: [
@@ -189,9 +158,9 @@ const router = new Router({
                     props: true
                 },
                 {
-                    path: 'migrations',
-                    name: 'migrations',
-                    component: MigrationsTab,
+                    path: 'log',
+                    name: 'log',
+                    component: LogTab,
                     props: true
                 }
             ]

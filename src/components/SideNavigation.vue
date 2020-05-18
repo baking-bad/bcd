@@ -126,11 +126,11 @@ export default {
         text: "Advanced search",
         to: "search"
       },
-      {
-        icon: "mdi-view-dashboard-outline",
-        text: "Projects",
-        to: "projects"
-      },
+      // {
+      //   icon: "mdi-view-dashboard-outline",
+      //   text: "Projects",
+      //   to: "projects"
+      // },
       {
         icon: "mdi-poll",
         text: "Statistics",

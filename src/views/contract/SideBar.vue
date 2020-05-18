@@ -178,6 +178,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import SimilarItem from "@/views/contract/SimilarItem.vue"
 import AccountBox from "@/components/AccountBox.vue"
 
@@ -217,6 +218,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      showError: "showError"
+    }),
     requestSameSimilar() {
       this.same = [];
       this.sameCount = 0;

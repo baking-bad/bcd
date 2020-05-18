@@ -17,7 +17,7 @@
           <v-icon left small>mdi-swap-horizontal</v-icon>operations
           <span class="ml-1">({{ contract.tx_count || 0 }})</span>
         </v-tab>
-        <v-tab>
+        <v-tab :to="{ name: 'storage' }" replace>
           <v-icon left small>mdi-database</v-icon>Storage
         </v-tab>
         <v-tab :to="{ name: 'code' }" replace>
@@ -26,8 +26,9 @@
         <v-tab :to="{ name: 'interact' }" replace>
           <v-icon left small>mdi-play-box-outline</v-icon>Interact
         </v-tab>
-        <v-tab>
-          <v-icon left small>mdi-source-pull</v-icon>Migrations
+        <v-tab v-if="migrations.length > 0" :to="{ name: 'log' }" replace>
+          <v-icon left small>mdi-alert-circle-outline</v-icon>Log
+          <span class="ml-1">({{ migrations.length }})</span>
         </v-tab>
       </v-tabs>
       <div class="mr-6 mt-6" style="width: 800px;">
@@ -36,9 +37,10 @@
     </v-toolbar>
 
     <router-view
-      :contract="contract"
       :address="address" 
-      :network="network">
+      :network="network"
+      :contract="contract"
+      :migrations="migrations">
     </router-view>
   </div>
 </template>
@@ -63,11 +65,19 @@ export default {
     address: String
   },
   data: () => ({
-    loading: true,
-    contract: {}
+    contractLoading: true,
+    migrationsLoading: true,
+    contract: {},
+    migrations: []
   }),
   created() {
     this.getContract();
+    this.getMigrations();
+  },
+  computed: {
+    loading() {
+      return this.contractLoading || this.migrationsLoading;
+    }
   },
   methods: {
     ...mapActions({
@@ -80,8 +90,7 @@ export default {
       ) {
         return;
       }
-      this.loading = true;
-      cancelRequests();
+      this.contractLoading = true;
       this.api
         .getContract(this.network, this.address)
         .then(res => {
@@ -94,11 +103,28 @@ export default {
             this.errorCode = parseInt(matches[0]);
           this.showError(err.message);
         })
-        .finally(() => (this.loading = false));
-    }
+        .finally(() => (this.contractLoading = false));
+    },
+    getMigrations() {
+      this.migrationsLoading = true;
+      this.api.getContractMigrations(this.network, this.address)
+        .then(res => {
+          if (!res) return;
+          this.migrations = res;
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
+        .finally(() => (this.migrationsLoading = false));
+    },
   },
   watch: {
-    address: 'getContract'
+    address() {
+      cancelRequests();
+      this.getContract();
+      this.getMigrations();
+    }
   }
 };
 </script>

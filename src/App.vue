@@ -83,13 +83,13 @@ html {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--v-canvas-base);
+  background: var(--v-data-base);
   border-left: none
 }
 
 ::-webkit-scrollbar-thumb {
   background: #99999950;
-  border: solid 3px var(--v-canvas-base);
+  border: solid 3px var(--v-data-base);
   border-radius: 7px;
 }
 
