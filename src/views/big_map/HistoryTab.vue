@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-0 ma-0 canvas">
+  <v-container fluid class="pa-0 ma-0 canvas fill-canvas">
     <v-row class="pa-8 ma-0" v-if="loading || total > 0">
       <v-col cols="9">
         <v-skeleton-loader

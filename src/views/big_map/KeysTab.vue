@@ -35,7 +35,7 @@
     <v-row class="px-8 pt-6" no-gutters>
       <v-col>
         <v-overlay v-if="loading" :value="loading" color="data" absolute>
-          <v-progress-circular indeterminate color="primary" size="64" />
+          <v-progress-circular v-if="bigmap.length === 0" indeterminate color="primary" size="64" />
         </v-overlay>
         <v-card
           v-if="!loading && bigmap.length === 0"
@@ -50,9 +50,6 @@
             <BigMapDiff :diff="diff" :network="network" :address="address" :ptr="ptr" :key="idx" />
           </template>
         </v-expansion-panels>
-        <v-skeleton-loader 
-          v-if="loading"
-          type="list-item-two-line, divider, list-item-two-line, divider, list-item-two-line"/> 
         <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
       </v-col>
     </v-row>
@@ -99,7 +96,7 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     fetchSearchDebounced(text) {
-      console.log(text, "AZAZAZA")
+      this.loading = true;
       clearTimeout(this._timerId);
 
       this._timerId = setTimeout(() => {

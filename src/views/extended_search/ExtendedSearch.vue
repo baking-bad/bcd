@@ -1,117 +1,146 @@
 <template>
-  <div>
-    <v-app-bar extended fixed app elevation="1" class="white">
-      <v-combobox
-        dense
-        class="ml-6"
-        :search-input.sync="searchText"
-        prepend-inner-icon="mdi-magnify"
-        placeholder="Search anything"
-        autocomplete="off"
-        no-filter
-        append-icon
-        clearable
-        hide-selected
-        hide-details
-        outlined
-      ></v-combobox>
-      <v-spacer class="hidden-sm-and-down"></v-spacer>
-      <v-btn icon color="primary" href="https://twitter.com/TezosBakingBad" target="_blank">
-        <v-icon>mdi-twitter</v-icon>
-      </v-btn>
-      <v-btn icon color="primary" href="https://github.com/baking-bad" target="_blank">
-        <v-icon>mdi-github</v-icon>
-      </v-btn>
+  <div class="fill-height canvas">
+    <SideNavigation :app="true" />
+    <v-app-bar extended fixed app flat class="search-bar px-4" height="75">
+      <v-toolbar-title class="headline mt-4">
+        <span class="font-weight-light">
+          BETTER CALL
+          <span class="font-weight-regular">DEV</span>
+        </span>
+      </v-toolbar-title>
+      <div style="width: 770px;" class="mt-4 ml-8">
+        <v-combobox
+          rounded
+          :search-input.sync="searchText"
+          prepend-inner-icon="mdi-magnify"
+          placeholder="Search anything"
+          autocomplete="off"
+          background-color="data"
+          no-filter
+          append-icon
+          clearable
+          hide-selected
+          hide-details
+          outlined
+          full-width
+        ></v-combobox>
+      </div>
+      <v-spacer></v-spacer>
+      <div class="d-flex align-center justify-end mt-4">
+        <v-btn
+          icon
+          href="tg://resolve?domain=baking_bad_chat"
+          target="_blank"
+          rel="nofollow noopener"
+        >
+          <v-icon>mdi-telegram</v-icon>
+        </v-btn>
+        <v-btn
+          icon
+          href="https://twitter.com/TezosBakingBad"
+          target="_blank"
+          rel="nofollow noopener"
+        >
+          <v-icon>mdi-twitter</v-icon>
+        </v-btn>
+        <v-btn icon href="https://github.com/baking-bad" target="_blank" rel="nofollow noopener">
+          <v-icon>mdi-github</v-icon>
+        </v-btn>
+      </div>
 
       <template v-slot:extension>
-        <v-tabs v-model="tab" class="ml-7">
-          <v-tabs-slider color="primary"></v-tabs-slider>
-
+        <v-tabs v-model="tab" style="margin-left: 267px;">
           <v-tab>
             <v-icon left small>mdi-auto-fix</v-icon>Everywhere
           </v-tab>
           <v-tab>
-            <v-icon left small>mdi-code-tags</v-icon>Contracts
+            <v-icon left small>mdi-code-braces</v-icon>Contracts
           </v-tab>
           <v-tab>
             <v-icon left small>mdi-swap-horizontal</v-icon>Operations
           </v-tab>
           <v-tab>
-            <v-icon left small>mdi-file-tree</v-icon>Big Maps
+            <v-icon left small>mdi-database</v-icon>Big Maps
           </v-tab>
+          <div class="d-flex ml-8" style="margin-top: 6px;">            
+            <v-btn 
+              v-model="showFilters"
+              :depressed="showFilters" 
+              @click="showFilters = !showFilters" 
+              text class="text--secondary">
+              <v-icon small class="mr-1">mdi-filter-outline</v-icon>Filters
+            </v-btn>
+          </div>
         </v-tabs>
       </template>
     </v-app-bar>
 
-    <SearchNav :filters="filters" />
-    <v-container fluid class="pl-10">
-      <div v-if="total > 0">
-        <v-overlay :value="loading" color="white" absolute></v-overlay>
-        <span
-          class="time-info"
-        >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>       
-        <template v-for="(item, idx) in suggests">
-          <ContractItem :key="idx" :item="item" :words="getSearchWords()" v-if="item.type === 'contract'" />
-          <OperationItem :key="idx" :item="item" :words="getSearchWords()" v-else-if="item.type === 'operation'" />
-          <BigMapDiffItem :key="idx" :item="item" :words="getSearchWords()" v-else-if="item.type === 'bigmapdiff'" />
-        </template>
-        <span v-intersect="onDownloadPage"></span>
-      </div>
-      <v-card
-        height="60vh"
-        v-else
-        class="d-flex flex-column align-center justify-center mt-12 transparent message-card"
-        :elevation="0"
-      >
-        <template v-if="(isAddress() || isOpgHash()) && !loading && tzkt.supportsAny(filters.networks)">
-          <v-img class="img-avatar" :src="getCatavaSrc()"></v-img>
-          <span class="headline grey--text">
-            Mysterious <span v-if="isAddress()">address</span><span v-else>operation</span>
+    <v-container fluid class="canvas fill-canvas pa-8">
+      <div style="width: 699px; margin-left: 267px">
+        <template v-if="total > 0">
+          <v-overlay :value="loading" color="data" absolute></v-overlay>
+          <span class="text--secondary caption ml-4">
+            Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)
           </span>
-          <span
-            class="subtitle-1 grey--text"
-          >We couldn't find anything, but perhaps TzKT will</span>
-           <v-btn-toggle
-            class="mt-2 d-flex flex-row"
-            multiple>
-            <template v-for="network in filters.networks">
-              <v-btn 
-                :key="searchText + network" 
-                :href="getTzktHref(network)"
-                target="_blank"
-                small>{{ network }}</v-btn>            
-            </template>
-          </v-btn-toggle>
+          <template v-for="(item, idx) in suggests">
+            <ResultItem :key="idx" :item="item" :words="getSearchWords()" />
+          </template>
+          <span v-intersect="onDownloadPage"></span>
+        </template>
+        <template
+          v-else-if="(isAddress() || isOpgHash()) && !loading && tzkt.supportsAny(filters.networks)"
+        >
+          <v-card flat outlined class="mt-8 pa-8 data">
+            <v-img class="img-avatar" :src="getCatavaSrc()"></v-img>
+            <span class="headline grey--text">
+              Mysterious
+              <span v-if="isAddress()">address</span>
+              <span v-else>operation</span>
+            </span>
+            <span class="subtitle-1 grey--text">We couldn't find anything, but perhaps TzKT will</span>
+            <v-btn-toggle class="mt-2 d-flex flex-row" multiple>
+              <template v-for="network in filters.networks">
+                <v-btn
+                  :key="searchText + network"
+                  :href="getTzktHref(network)"
+                  target="_blank"
+                  small
+                >{{ network }}</v-btn>
+              </template>
+            </v-btn-toggle>
+          </v-card>
         </template>
         <template v-else-if="searchText == '' || searchText == null">
-          <v-card flat outlined>
-            <v-card-text class="pa-10">
-              <div class="d-flex flex-row justify-start align-center">
-                <v-icon size="50">mdi-sort-ascending</v-icon>
-                <span class="display-1 ml-5">Ranking Factors</span>
+          <v-card flat outlined class="mt-8 pa-8 data">
+            <div class="d-flex flex-row justify-start align-center">
+              <v-icon size="50">mdi-sort-ascending</v-icon>
+              <span class="display-1 ml-5">Ranking Factors</span>
+            </div>
+            <div class="d-flex flex-row mt-5">
+              <div class="d-flex flex-column mr-5" v-for="(values, key) in help" :key="key">
+                <span class="title text-capitalize">{{ key }}</span>
+                <span v-for="(value, i) in values" :key="'help' + key + i" class="mt-1">
+                  <span class="overline">{{ value[0] }}</span>
+                  <span class="body-2 ml-1">{{ value[1] }}</span>
+                </span>
               </div>
-              <div class="d-flex flex-row mt-5">
-                <div class="d-flex flex-column mr-5" v-for="(values, key) in help" :key="key">
-                  <span class="title text-capitalize">{{ key }}</span>
-                  <span v-for="(value, i) in values" :key="'help' + key + i" class="mt-1">
-                    <span class="overline">{{ value[0] }}</span> <span class="body-2">{{ value[1] }}</span>
-                  </span>
-                </div>
-              </div>
-            </v-card-text>
+            </div>
           </v-card>
         </template>
         <template v-else-if="!cold">
-          <v-icon size="100" color="grey">mdi-package-variant</v-icon>
-          <span class="headline grey--text">No results found for your request</span>
-          <span
-            class="subtitle-1 grey--text"
-          >Type another address, annotation, entrypoint name or anything else</span>
+          <v-card flat outlined class="mt-8 pa-8 data d-flex flex-column align-center justify-center">
+            <v-icon size="100" color="grey">mdi-package-variant</v-icon>
+            <span class="headline grey--text">No results found for your request</span>
+            <span
+              class="subtitle-1 grey--text"
+            >Type another address, annotation, entrypoint name or anything else</span>
+          </v-card>
         </template>
-        <v-overlay v-else :value="cold" color="white" absolute>
-          <v-progress-circular indeterminate size="64" color="grey"></v-progress-circular>
+        <v-overlay v-else :value="cold" color="data" absolute>
+          <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
         </v-overlay>
-      </v-card>
+      </div>
+      <SearchFilters :show="showFilters" :filters="filters" />
     </v-container>
   </div>
 </template>
@@ -119,18 +148,16 @@
 <script>
 import { mapActions } from "vuex";
 
-import ContractItem from "@/views/extended_search/ContractItem.vue";
-import OperationItem from "@/views/extended_search/OperationItem.vue";
-import BigMapDiffItem from "@/views/extended_search/BigMapDiffItem.vue";
-import SearchNav from "@/views/extended_search/SearchNav.vue";
+import SearchFilters from "@/views/extended_search/SearchFilters.vue";
+import SideNavigation from "@/components/SideNavigation.vue";
+import ResultItem from "@/views/extended_search/ResultItem.vue";
 
 export default {
   name: "ExtendedSearch",
   components: {
-    ContractItem,
-    OperationItem,
-    BigMapDiffItem,
-    SearchNav
+    SearchFilters,
+    SideNavigation,
+    ResultItem
   },
   data: () => ({
     suggests: [],
@@ -142,6 +169,33 @@ export default {
     initializing: true,
     completed: false,
     tab: 0,
+    showFilters: false,
+    timeItems: [
+      {
+        name: "Any time",
+        value: 0
+      },
+      {
+        name: "Last hour",
+        value: 1
+      },
+      {
+        name: "Last 24 hours",
+        value: 2
+      },
+      {
+        name: "Last week",
+        value: 3
+      },
+      {
+        name: "Last month",
+        value: 4
+      },
+      {
+        name: "Last year",
+        value: 5
+      }
+    ],
     filters: {
       startTime: 0,
       networks: [],
@@ -151,30 +205,30 @@ export default {
     _locked: false,
     seqno: 0,
     help: {
-      'contracts': [
-        ['alias', 'known contract name'],
-        ['tags', 'derived from the code'],
-        ['entrypoints', ''],
-        ['fail_strings', 'custom error messages'],
-        ['language', 'determined by heuristics'],
-        ['annotations', ''],
-        ['delegate', 'address'],
-        ['hardcoded', 'strings inside the code section'],
-        ['manager', '[deployer] address'],
-        ['address']
+      contracts: [
+        ["alias", "known contract name"],
+        ["tags", "derived from the code"],
+        ["entrypoints", ""],
+        ["fail_strings", "custom error messages"],
+        ["language", "determined by heuristics"],
+        ["annotations", ""],
+        ["delegate", "address"],
+        ["hardcoded", "strings inside the code section"],
+        ["manager", "[deployer] address"],
+        ["address"]
       ],
-      'operations': [
-        ['entrypoint', ''],
-        ['parameter_strings', ''],
-        ['storage_strings', ''],
-        ['error.with', 'error message [if failed]'],
-        ['error.id', 'if failed'],
-        ['hash', 'of the operation group']
+      operations: [
+        ["entrypoint", ""],
+        ["parameter_strings", ""],
+        ["storage_strings", ""],
+        ["error.with", "error message [if failed]"],
+        ["error.id", "if failed"],
+        ["hash", "of the operation group"]
       ],
-      'big maps': [
-        ['key_strings', ''],
-        ['value_strings', ''],
-        ['key_hash', '']
+      "big maps": [
+        ["key_strings", ""],
+        ["value_strings", ""],
+        ["key_hash", ""]
       ]
     }
   }),
@@ -188,7 +242,7 @@ export default {
         return ["bigmapdiff"];
       }
       return [];
-    },
+    }
   },
   mounted() {
     this.$nextTick(() => {
@@ -199,7 +253,7 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     getSearchWords() {
-      return this.searchText.split(' ');
+      return this.searchText.split(" ");
     },
     onDownloadPage(entries) {
       if (entries[0].isIntersecting && !this.completed) {
@@ -207,16 +261,17 @@ export default {
       }
     },
     searchMempool(opgHash) {
-      this.api.getOPG(opgHash)
+      this.api
+        .getOPG(opgHash)
         .then(res => {
-          if (res) {            
+          if (res) {
             this.suggests = res.map(op => {
               return {
                 type: "operation",
                 value: op.hash,
                 body: op,
                 highlights: { hash: op.hash }
-              }
+              };
             });
             this.total = res.length;
           }
@@ -228,7 +283,7 @@ export default {
         .finally(() => {
           this.loading = false;
           this.cold = false;
-        })
+        });
     },
     search(
       text,
@@ -281,14 +336,14 @@ export default {
       let indices = this.indices;
       let networks = this.filters.networks;
       let languages = this.filters.languages;
-      let time = {s : this.filters.startTime };
+      let time = { s: this.filters.startTime };
 
       // delay new call 500ms
       this._timerId = setTimeout(() => {
         if (seqno === this.seqno) {
           this.search(text, indices, push, networks, languages, time);
           if (text !== this.$route.query.text) {
-            this.$router.replace({ query: { text: text } })
+            this.$router.replace({ query: { text: text } });
           }
         }
       }, 500);
@@ -310,7 +365,7 @@ export default {
     searchText(val) {
       if (this._locked || this.initializing) return;
       this._locked = true;
-      this.searchText = val ? val.trim() : '';
+      this.searchText = val ? val.trim() : "";
       if (this.searchText) {
         this.fetchSearchDebounced(++this.seqno);
       } else {
@@ -336,47 +391,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.message-card {
-  margin-right: 30%;
+.v-toolbar.v-app-bar.v-sheet.search-bar {
+  background-color: var(--v-canvas-base);
+  border-bottom: 1px solid var(--v-border-base);
 }
 
-.toolbar-title {
-  color: inherit;
-  text-decoration: inherit;
-}
-
-.item {
-  max-width: 600px;
-}
 .item:hover {
   cursor: pointer;
-}
-
-.time-info {
-  color: grey;
-  font-size: 12px;
-}
-
-.v-tab {
-  font-size: 12px;
-}
-
-.tab-btn {
-  color: rgba(0, 0, 0, 0.54);
-}
-
-.same-link {
-  font-size: 12px;
-  color: grey;
-}
-
-.same-network {
-  font-size: 12px;
-  color: #70757a;
-}
-
-.same-link:hover {
-  color: #5b942a;
 }
 
 .img-avatar {

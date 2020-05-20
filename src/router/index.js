@@ -3,14 +3,13 @@ import Router from 'vue-router'
 import VueRouter from 'vue-router'
 
 import HomeToolbar from '@/components/HomeToolbar.vue';
-import Nav from '@/components/Nav.vue';
 
-// import Home from '@/views/Home.vue'
 import Welcome from '@/views/Welcome.vue'
 
 import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
-import Stats from '@/views/Stats.vue'
+import Stats from '@/views/stats/Stats.vue'
+import NetworkTab from '@/views/stats/NetworkTab.vue'
 
 import Diff from '@/views/diff/Diff.vue'
 
@@ -59,18 +58,26 @@ const router = new Router({
         {
             path: '/search',
             components: {
-                default: ExtendedSearch,
-                nav: Nav
+                default: ExtendedSearch
             },
-            name: 'search'
+            name: 'search',
+            props: { default: true },
         },
         {
             path: '/stats',
             components: {
                 default: Stats,
-                nav: Nav
             },
-            name: 'stats'
+            name: 'stats',
+            props: { default: true },
+            children: [
+                {
+                    path: ':network',
+                    name: 'network_stats',
+                    component: NetworkTab,
+                    props: true
+                }
+            ]
         },      
         {
             path: '/diff',

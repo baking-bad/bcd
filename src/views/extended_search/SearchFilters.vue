@@ -1,31 +1,35 @@
 <template>
-  <v-navigation-drawer v-model="show" width="400" absolute stateless hide-overlay right>
+  <v-navigation-drawer class="pt-12 pr-8 canvas" floating v-model="show" width="450" absolute stateless hide-overlay right>
     <v-list>
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-subtitle class="subtitle-1">Time period</v-list-item-subtitle>
+          <v-list-item-subtitle class="caption font-weight-medium text-uppercase">Time period</v-list-item-subtitle>
           <v-select
-            class="pt-0 mr-8"
+            class="mt-2"            
             v-model="selectedTime"
             :items="timeItems"
             hide-details
+            outlined
+            dense
+            rounded
             item-text="name"
             item-value="value"
+            style="max-width: 200px;"
           ></v-select>
         </v-list-item-content>
       </v-list-item>
 
       <v-list-item>
         <v-list-item-content>
-          <v-list-item-subtitle class="subtitle-1">Networks</v-list-item-subtitle>
+          <v-list-item-subtitle class="caption font-weight-medium text-uppercase">Networks</v-list-item-subtitle>
           <v-chip-group
             v-model="networksSelection"
             column
             multiple
             mandatory
-            active-class="primary--text"
+            active-class="secondary--text"
           >
-            <v-chip filter v-for="net in config.NETWORKS" :key="net">{{ net }}</v-chip>
+            <v-chip filter outlined v-for="net in config.NETWORKS" :key="net">{{ net }}</v-chip>
           </v-chip-group>
         </v-list-item-content>
       </v-list-item>
@@ -33,7 +37,7 @@
       <v-list-item>
         <v-list-item-content>
           <v-list-item-subtitle>
-            <span class="subtitle-1">Languages</span>
+            <span class="caption font-weight-medium text-uppercase">Languages</span>
             <span class="ml-4 overline">applied to contracts</span>
           </v-list-item-subtitle>
           <v-chip-group
@@ -41,9 +45,9 @@
             column
             multiple
             mandatory
-            active-class="primary--text"
+            active-class="secondary--text"
           >
-            <v-chip filter v-for="lang in languages" :key="lang">{{ lang }}</v-chip>
+            <v-chip filter outlined v-for="lang in languages" :key="lang">{{ lang }}</v-chip>
           </v-chip-group>
         </v-list-item-content>
       </v-list-item>
@@ -55,12 +59,12 @@
 import dayjs from "dayjs";
 
 export default {
-  name: "SearchNav",
+  name: "SearchFilters",
   props: {
-    filters: Object
+    filters: Object,
+    show: Boolean,
   },
   data: () => ({
-    show: true,
     selectedTime: 0,
     languagesSelection: [],
     networksSelection: [],
@@ -127,6 +131,13 @@ export default {
         ts = dayjs().subtract(1, "year").unix();
       }
       this.filters.startTime = ts;
+    },
+    show: function(newValue) {
+      if (newValue === false) {
+        this.selectedTime = 0;
+        this.languagesSelection = [...this.languages.keys()];
+        this.networksSelection = [...this.config.NETWORKS.keys()];
+      }
     }
   }
 };

@@ -88,6 +88,9 @@
     </v-row>
     <v-row>
       <v-col>
+        <v-overlay v-if="loading" :value="loading" color="data" absolute>
+          <v-progress-circular v-if="items.length === 0" indeterminate color="primary" size="64" />
+        </v-overlay>
         <v-card
           v-if="!loading && items.length === 0"
           class="d-flex flex-column align-center justify-center transparent pa-8 mt-12"
@@ -103,10 +106,7 @@
             :address="address"
             v-for="(item, key) in items"
           />
-        </v-expansion-panels>
-         <v-skeleton-loader 
-          v-if="loading"
-          type="list-item-two-line, divider, list-item-two-line, divider, list-item-two-line"/>  
+        </v-expansion-panels>        
         <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
       </v-col>
     </v-row>

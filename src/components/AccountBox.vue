@@ -6,12 +6,12 @@
           <v-list-item-subtitle class="overline">
             <span>{{ title }}</span>
           </v-list-item-subtitle>
-          <v-list-item-title :class="highlighted ? 'text--disabled' : ''">
-            <span class="body-1">
+          <v-list-item-title>
+            <span class="body-1" :class="highlighted ? 'text--secondary' : ''">
               <span v-if="alias">{{ alias }}</span>
               <span v-else v-html="helpers.shortcut(address)"></span>
             </span>
-            <v-icon v-if="highlighted" class="ml-1 text--disabled" small>mdi-bookmark-outline</v-icon>
+            <v-icon v-if="highlighted" class="ml-1 text--secondary" x-small>mdi-check-circle</v-icon>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>

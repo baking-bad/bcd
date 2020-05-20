@@ -22,7 +22,7 @@
             <span class="caption font-weight-bold text-uppercase text--secondary">Details</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas">
-            <v-list class="sidebar-list">
+            <v-list class="bigmap-sidebar-list">
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle class="overline">Status</v-list-item-subtitle>
@@ -102,8 +102,8 @@ export default {
 .opened-panel > .v-expansion-panel-header {
   min-height: 48px;
 }
-.sidebar-list {
-  max-height: calc(100vh - 75px - 3 * 48px);
+.bigmap-sidebar-list {
+  max-height: calc(100vh - 75px - 2 * 48px);
   overflow-y: auto;
   border-radius: 0;
   padding: 0;
