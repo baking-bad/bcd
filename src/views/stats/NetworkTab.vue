@@ -1,5 +1,3 @@
-
-
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-row no-gutters>
@@ -8,9 +6,8 @@
           <v-card-text class="data pa-0">
             <ColumnChart
               :data="contractSeries"
-              yAxisTitle="Contracts count"
-              color="#5b942a"
-              title="New deployments"
+              :title="`New deployments (total ${details.contracts_count})<br/>
+              <span class='text--secondary caption'>Excluding duplicates and manager.tz</span>`"
               name="New deployments"
             ></ColumnChart>
           </v-card-text>
@@ -21,55 +18,41 @@
           <v-card-text class="data pa-0">
             <ColumnChart
               :data="operationSeries"
-              yAxisTitle="Operations count"
-              color="#dcedc8"
-              title="Contract calls"
+              :title="`Contract calls (total ${details.operations_count})`"
               name="Contract calls"
             ></ColumnChart>
           </v-card-text>
         </v-card>
       </v-col>
+      <v-col cols="6" class="pt-8 pr-4">
+        <v-card flat outlined>
+          <v-card-title class="data d-flex align-center justify-center" style="font-size: 18px;">
+            <span style="font-family: 'Roboto Condensed'">Protocol activations</span>
+          </v-card-title>
+          <v-card-text class="pa-0 data">
+            <v-timeline>
+              <v-timeline-item
+                v-for="(protocol, idx) in details.protocols"
+                :key="idx"
+                color="primary"
+                icon="mdi-chevron-up"
+                small
+              >
+                <div style="text-align: right;" :slot="idx % 2 === 0 ? 'opposite' : 'default'">
+                  <span class="hash">level <span class="text--primary">{{ protocol.start_level }}</span></span>
+                </div>
+                <div :slot="idx % 2 === 0 ? 'default' : 'opposite'">
+                  <span class="body-1 text--primary">{{ protocol.alias }}</span>
+                  <span class="hash ml-2" v-if="!protocol.hash.startsWith(protocol.alias)">
+                    {{ protocol.hash.slice(0, 8) }}
+                  </span>
+                </div>
+              </v-timeline-item>
+            </v-timeline>
+          </v-card-text>
+        </v-card>
+      </v-col>
     </v-row>
-    <!-- <v-row no-gutters>
-      <v-col>
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title class="text-center overline">Smart contracts count</v-list-item-title>
-            <v-list-item-subtitle class="text-center display-1">{{ details.contracts_count }}</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </v-col>
-      <v-col>
-        <v-list-item>
-          <v-list-item-content>
-            <v-list-item-title class="text-center overline">Operations count</v-list-item-title>
-            <v-list-item-subtitle class="text-center display-1">{{ details.operations_count }}</v-list-item-subtitle>
-          </v-list-item-content>
-        </v-list-item>
-      </v-col>
-      <v-col>
-        <v-list>
-          <template v-for="(item, idx) in details.protocols">
-            <v-divider :key="`${idx}-protocol-divider`" v-if="idx != 0" />
-            <v-list-item :key="idx">
-              <v-list-item :key="idx" active-class="primary--text">
-                <v-list-item-content>
-                  <v-list-item-title
-                    class="hash"
-                  >{{ item.alias ? `${item.alias} (${item.hash})` : item.hash }}</v-list-item-title>
-                  <v-list-item-subtitle>{{ getProtocolLevelString(item) }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-list-item-action-text
-                    class="primary--text"
-                  >{{ item.hash == '' ? 'current' : ''}}</v-list-item-action-text>
-                </v-list-item-action>
-              </v-list-item>
-            </v-list-item>
-          </template>
-        </v-list>
-      </v-col>
-    </v-row>-->
   </v-container>
 </template>
 
@@ -92,7 +75,7 @@ export default {
   },
   data: () => ({
     loading: true,
-    details: null,
+    details: {},
     contractSeries: null,
     operationSeries: null
   }),
@@ -151,3 +134,11 @@ export default {
   }
 };
 </script>
+
+<style>
+.v-timeline-item__dot {
+  background-color: var(--v-data-base) !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+</style>

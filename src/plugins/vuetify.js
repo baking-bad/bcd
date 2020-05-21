@@ -21,6 +21,7 @@ export function makeVuetify(dark) {
                     border: '#ddd',
                     data: '#f7f7f7',
                     tree: '#388E3C',
+                    text: '#000'
                 },
                 dark: {
                     primary: '#75A34F',
@@ -31,7 +32,8 @@ export function makeVuetify(dark) {
                     canvas: '#2d2d2d',
                     border: '#414141',
                     data: '#2a2a2a',
-                    tree: '#81C784'
+                    tree: '#81C784',
+                    text: '#fff'
                 }
             },
         },

@@ -24,11 +24,12 @@
       </div>
     </v-toolbar>
 
-    <router-view :network="network"></router-view>
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import SearchBox from "@/components/SearchBox.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/stats/SideBar.vue"
@@ -40,6 +41,9 @@ export default {
     SideNavigation,
     SideBar
   },
+  props: {
+    network: String
+  },
   data: () => ({
     loading: true,
     states: []
@@ -48,6 +52,7 @@ export default {
     this.getStats();
   },
   methods: {
+    ...mapActions(["showError"]),
     getStats() {
       this.loading = true;
       this.api.getStats()
@@ -60,7 +65,9 @@ export default {
               return b.network.localeCompare(a.network);
             }
           });
-          this.$router.push({name: 'network_stats', params: {network: this.states[0].network}});
+          if (!this.network) {
+            this.$router.push({name: 'network_stats', params: {network: this.states[0].network}});
+          }
         })
         .catch(err => {
           console.log(err);

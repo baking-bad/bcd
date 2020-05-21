@@ -10,8 +10,6 @@ export default {
   props: {
     data: Array,
     title: String,
-    yAxisTitle: String,
-    color: String,
     name: String
   },
   components: {
@@ -22,15 +20,73 @@ export default {
       if (this.data == null) return {};
       return {
         xAxis: {
-          type: "datetime"
+          type: "datetime",
+          tickmarkPlacement: "off",
+          title: {
+            enabled: false
+          },
+          tickWidth: 0,
+          lineWidth: 0,
+          endOfTick: false,
+          gridLineWidth: 0,
+          tickPixelInterval: 65,
+          dateTimeLabelFormats: {
+            millisecond: "%H:%M:%S.%L",
+            second: "%H:%M:%S",
+            minute: "%H:%M",
+            hour: "%H:%M",
+            day: "%e %b",
+            week: "%e %b",
+            month: "%b '%y",
+            year: "%Y"
+          },
+          labels: {
+            style: {
+              fontSize: "12px"
+            }
+          }
         },
         yAxis: {
+          enabled: false,
           title: {
-            text: this.yAxisTitle
+            text: ""
+          },
+          gridLineWidth: 0,
+          labels: {
+            enabled: false
+          },
+          stackLabels: {
+            enabled: true,
+            style: {
+              fontWeight: "medium",
+              color: "var(--v-secondary-base)",
+              fontSize: "12px",
+              textOutline: "none"
+            }
           }
         },
         title: {
-          text: this.title
+          text: this.title,
+          useHTML: true,
+          floating: true,
+          y: 20,
+          style: {
+            color: "var(--v-text-base)"
+          }
+        },
+        tooltip: {
+          followTouchMove: false,
+          headerFormat: '<span style="font-size: 12px">{point.key}</span><br/>',
+          backgroundColor: "var(--v-sidebar-base)",
+          shadow: false,
+          borderWidth: 0,
+          xDateFormat: "%B %Y",
+          useHTML: true,
+          style: {
+            color: "var(--v-text-base)",
+            pointerEvents: "none",
+            fontSize: '14px'
+          }
         },
         legend: {
           enabled: false
@@ -42,10 +98,25 @@ export default {
           {
             type: "column",
             data: this.data,
-            color: this.color,
-            name: this.name
+            color: "var(--v-primary-base)",
+            name: this.name,
+            borderColor: "transparent",
+            label: {}
           }
-        ]
+        ],
+        chart: {
+          backgroundColor: "transparent",
+          plotBackgroundColor: "transparent",
+          marginTop: 50,
+          style: {
+            fontFamily: "Roboto Condensed, sans-serif"
+          }
+        },
+        plotOptions: {
+          column: {
+            stacking: "normal"
+          }
+        }
       };
     }
   }
