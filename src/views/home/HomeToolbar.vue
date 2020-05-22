@@ -10,7 +10,7 @@
       <v-list class="pa-0">
         <v-list-item
           class="d-flex align-center px-4"
-          :href="`${config.API_URI}v1/oauth/github/login`"
+          :href="`${config.API_URI}oauth/github/login`"
         >
           <v-list-item-title>
             <v-icon class="mr-4">mdi-github</v-icon>GitHub
@@ -18,7 +18,7 @@
         </v-list-item>
         <v-list-item
           class="d-flex align-center px-4"
-          :href="`${config.API_URI}v1/oauth/gitlab/login`"
+          :href="`${config.API_URI}oauth/gitlab/login`"
         >
           <v-list-item-title>
             <v-icon class="mr-4">mdi-gitlab</v-icon>GitLab
@@ -48,7 +48,7 @@
       <span v-else>Enable dark theme</span>
     </v-tooltip>
 
-    <v-btn text icon class="ml-2 text--secondary" :href="`${config.API_URI}v1/docs/index.html`" target="_blank">
+    <v-btn text icon class="ml-2 text--secondary" :href="`${config.API_URI}docs/index.html`" target="_blank">
       <v-icon>mdi-api</v-icon>
     </v-btn>
 

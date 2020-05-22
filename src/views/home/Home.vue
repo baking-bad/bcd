@@ -110,7 +110,7 @@ export default {
   created() {
     var url = new URL(this.config.API_URI);
     url.protocol = 'ws:';
-    url.pathname = '/v1/ws';
+    url.pathname = '/ws';
     this.webSocket = new WebSocket(url.href);
     this.webSocket.onmessage = this.onMessage;
     this.webSocket.onopen = this.onOpen;

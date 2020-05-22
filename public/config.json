@@ -1,5 +1,5 @@
 {
-    "API_URI": "https://api.better-call.dev/",
+    "API_URI": "https://api.better-call.dev/v1/",
     "NETWORKS": ["mainnet", "carthagenet", "zeronet", "babylonnet"],
     "OAUTH_ENABLED": false,
     "GA_ENABLED": true,
