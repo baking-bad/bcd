@@ -14,10 +14,11 @@
     clearable
     hide-selected
     prepend-inner-icon="mdi-magnify"
-    :filled="inplace"
-    :rounded="inplace"
+    filled
+    rounded
+    background-color="data"
+    :autofocus="!inplace"
     :outlined="!inplace"
-    :background-color="inplace ? 'data' : 'transparent'"
     :dense="inplace"
   >
     <template v-slot:item="{ item }">

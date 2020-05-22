@@ -29,6 +29,7 @@
       <div class="d-flex align-center justify-end mt-4">
         <v-btn
           icon
+          class="text--secondary"
           href="tg://resolve?domain=baking_bad_chat"
           target="_blank"
           rel="nofollow noopener"
@@ -37,13 +38,20 @@
         </v-btn>
         <v-btn
           icon
+          class="text--secondary"
           href="https://twitter.com/TezosBakingBad"
           target="_blank"
           rel="nofollow noopener"
         >
           <v-icon>mdi-twitter</v-icon>
         </v-btn>
-        <v-btn icon href="https://github.com/baking-bad" target="_blank" rel="nofollow noopener">
+        <v-btn
+          icon
+          class="text--secondary"
+          href="https://github.com/baking-bad"
+          target="_blank"
+          rel="nofollow noopener"
+        >
           <v-icon>mdi-github</v-icon>
         </v-btn>
       </div>
@@ -62,12 +70,14 @@
           <v-tab>
             <v-icon left small>mdi-database</v-icon>Big Maps
           </v-tab>
-          <div class="d-flex ml-8" style="margin-top: 6px;">            
-            <v-btn 
+          <div class="d-flex ml-8" style="margin-top: 6px;">
+            <v-btn
               v-model="showFilters"
-              :depressed="showFilters" 
-              @click="showFilters = !showFilters" 
-              text class="text--secondary">
+              :depressed="showFilters"
+              @click="showFilters = !showFilters"
+              text
+              class="text--secondary"
+            >
               <v-icon small class="mr-1">mdi-filter-outline</v-icon>Filters
             </v-btn>
           </div>
@@ -79,9 +89,9 @@
       <div style="width: 699px; margin-left: 267px">
         <template v-if="total > 0">
           <v-overlay :value="loading" color="data" absolute></v-overlay>
-          <span class="text--secondary caption ml-4">
-            Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)
-          </span>
+          <span
+            class="text--secondary caption ml-4"
+          >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
           <template v-for="(item, idx) in suggests">
             <ResultItem :key="idx" :item="item" :words="getSearchWords()" />
           </template>
@@ -128,7 +138,11 @@
           </v-card>
         </template>
         <template v-else-if="!cold">
-          <v-card flat outlined class="mt-8 pa-8 data d-flex flex-column align-center justify-center">
+          <v-card
+            flat
+            outlined
+            class="mt-8 pa-8 data d-flex flex-column align-center justify-center"
+          >
             <v-icon size="100" color="grey">mdi-package-variant</v-icon>
             <span class="headline grey--text">No results found for your request</span>
             <span

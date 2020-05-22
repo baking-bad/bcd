@@ -66,6 +66,7 @@
       </v-col>
       <v-col cols="2">
         <AccountBox
+          v-if="data.source"
           :title="sourceHeader"
           :address="data.source"
           :alias="data.source_alias"
@@ -109,7 +110,7 @@
       <div v-show="showParams" class="px-4 pb-2">
         <v-row v-if="errors" no-gutters>
           <v-col>
-            <OperationAlert :errors="errors" :operationId="data.id"/>
+            <OperationAlert :errors="errors" :operationId="data.id" />
           </v-col>
         </v-row>
         <v-row class="my-1 parameters px-2 py-3 canvas" v-if="hasParameters || hasStorageDiff" no-gutters>
@@ -150,7 +151,7 @@
                 return-object
               >
                 <template v-slot:label="{ item }">
-                  <div :class="`${item.kind} pl-1 tree-label`">                    
+                  <div :class="`${item.kind} pl-1 tree-label`">
                     <span v-if="hasAddress(item.name)">
                       <span>{{ item.name }}:</span>
                       <v-btn
@@ -204,7 +205,7 @@
 import InfoItem from "@/components/InfoItem.vue";
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import OperationAlert from "@/components/OperationAlert.vue";
-import AccountBox from "@/components/AccountBox.vue"
+import AccountBox from "@/components/AccountBox.vue";
 import VueJsonPretty from "vue-json-pretty";
 
 import { getTree } from "@/utils/diff.js";
@@ -383,7 +384,8 @@ export default {
       }
       this.showRaw = true;
       this.loadingRaw = true;
-      this.rpc.getOperation(this.data.network, this.data.level, this.data.hash)
+      this.rpc
+        .getOperation(this.data.network, this.data.level, this.data.hash)
         .then(res => {
           this.rawJson = res;
         })
@@ -403,12 +405,14 @@ export default {
     },
     handleAddress(s) {
       const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
-      if (address.startsWith('KT')) {
-        let routeData = this.$router.resolve({ path: `/${this.data.network}/${address}` });
-        window.open(routeData.href, '_blank');
+      if (address.startsWith("KT")) {
+        let routeData = this.$router.resolve({
+          path: `/${this.data.network}/${address}`
+        });
+        window.open(routeData.href, "_blank");
       } else {
         let href = this.tzkt.resolve(this.data.network, address);
-        window.open(href, '_blank');
+        window.open(href, "_blank");
       }
     }
   },

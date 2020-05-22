@@ -46,7 +46,7 @@ export class BetterCallApi {
             params.g = 1
         }
         params = Object.assign(params, time)
-        return this.api.get(`/search`, {
+        return this.api.get(`/v1/search`, {
             params: params
         })
             .then((res) => {
@@ -58,7 +58,7 @@ export class BetterCallApi {
     }
 
     getContract(network, address) {
-        return getCancellable(this.api, `/contract/${network}/${address}`, {})
+        return getCancellable(this.api, `/v1/contract/${network}/${address}`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -72,7 +72,7 @@ export class BetterCallApi {
     getSameContracts(network, address, offset = 0) {
         let params = {}
         if (offset > 0) params.offset = offset;
-        return getCancellable(this.api, `/contract/${network}/${address}/same`, {
+        return getCancellable(this.api, `/v1/contract/${network}/${address}/same`, {
             params: params
         })
             .then((res) => {
@@ -85,7 +85,7 @@ export class BetterCallApi {
     }
 
     getSimilarContracts(network, address) {
-        return getCancellable(this.api, `/contract/${network}/${address}/similar`, {})
+        return getCancellable(this.api, `/v1/contract/${network}/${address}/similar`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -113,7 +113,7 @@ export class BetterCallApi {
             params.entrypoints = entrypoints.join(',')
         }
 
-        return getCancellable(this.api, `/contract/${network}/${address}/operations`, {
+        return getCancellable(this.api, `/v1/contract/${network}/${address}/operations`, {
             params: params,
         })
             .then((res) => {
@@ -133,7 +133,7 @@ export class BetterCallApi {
         if (level > 0) {
             params.level = level;
         }
-        return getCancellable(this.api, `/contract/${network}/${address}/code`, {
+        return getCancellable(this.api, `/v1/contract/${network}/${address}/code`, {
             params: params
         })
             .then((res) => {
@@ -145,7 +145,7 @@ export class BetterCallApi {
     }
 
     getContractMigrations(network, address) {
-        return getCancellable(this.api, `/contract/${network}/${address}/migrations`, {})
+        return getCancellable(this.api, `/v1/contract/${network}/${address}/migrations`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -156,7 +156,7 @@ export class BetterCallApi {
     }
 
     getContractEntrypoints(network, address) {
-        return getCancellable(this.api, `/contract/${network}/${address}/entrypoints`, {})
+        return getCancellable(this.api, `/v1/contract/${network}/${address}/entrypoints`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -167,7 +167,7 @@ export class BetterCallApi {
     }
 
     getContractEntrypointData(network, address, bin_path, data, format = '') {
-        return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/data`, {
+        return postCancellable(this.api, `/v1/contract/${network}/${address}/entrypoints/data`, {
             bin_path: bin_path,
             data: data,
             format: format
@@ -182,7 +182,7 @@ export class BetterCallApi {
     }
 
     getContractEntrypointTrace(network, address, bin_path, data) {
-        return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/trace`, {
+        return postCancellable(this.api, `/v1/contract/${network}/${address}/entrypoints/trace`, {
             bin_path: bin_path,
             data: data
         })
@@ -196,7 +196,7 @@ export class BetterCallApi {
     }
 
     getContractStorage(network, address) {
-        return getCancellable(this.api, `/contract/${network}/${address}/storage`, {})
+        return getCancellable(this.api, `/v1/contract/${network}/${address}/storage`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -207,7 +207,7 @@ export class BetterCallApi {
     }
 
     getContractStorageRaw(network, address) {
-        return this.api.get(`/contract/${network}/${address}/raw_storage`)
+        return this.api.get(`/v1/contract/${network}/${address}/raw_storage`)
             .then((res) => {
                 if (res.status != 200) {
                     throw new RequestFailedError(res);
@@ -217,7 +217,7 @@ export class BetterCallApi {
     }
 
     getContractStorageRich(network, address) {
-        return this.api.get(`/contract/${network}/${address}/rich_storage`)
+        return this.api.get(`/v1/contract/${network}/${address}/rich_storage`)
             .then((res) => {
                 if (res.status != 200) {
                     throw new RequestFailedError(res);
@@ -227,7 +227,7 @@ export class BetterCallApi {
     }
 
     getContractMempool(network, address) {
-        return getCancellable(this.api, `/contract/${network}/${address}/mempool`, {})
+        return getCancellable(this.api, `/v1/contract/${network}/${address}/mempool`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -238,7 +238,7 @@ export class BetterCallApi {
     }
 
     getContractRating(network, address) {
-        return getCancellable(this.api, `/contract/${network}/${address}/rating`, {})
+        return getCancellable(this.api, `/v1/contract/${network}/${address}/rating`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -249,7 +249,7 @@ export class BetterCallApi {
     }
 
     getContractBigMap(network, address, ptr, q = '', offset = 0) {
-        return getCancellable(this.api, `/contract/${network}/${address}/bigmap/${ptr}?q=${q}&offset=${offset}`, {})
+        return getCancellable(this.api, `/v1/contract/${network}/${address}/bigmap/${ptr}?q=${q}&offset=${offset}`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -260,7 +260,7 @@ export class BetterCallApi {
     }
 
     getContractBigMapByKeyHash(network, address, ptr, keyhash, offset = 0) {
-        return getCancellable(this.api, `/contract/${network}/${address}/bigmap/${ptr}/${keyhash}?offset=${offset}`, {})
+        return getCancellable(this.api, `/v1/contract/${network}/${address}/bigmap/${ptr}/${keyhash}?offset=${offset}`, {})
             .then((res) => {
                 if (res.status != 200) {
                     throw new RequestFailedError(res);
@@ -271,7 +271,7 @@ export class BetterCallApi {
 
     getRandomContract() {
         cancelRequests();
-        return getCancellable(this.api, `/pick_random`, {})
+        return getCancellable(this.api, `/v1/pick_random`, {})
             .then((res) => {
                 if (res.status != 200) {
                     throw new RequestFailedError(res);
@@ -281,7 +281,7 @@ export class BetterCallApi {
     }
 
     getDiff(query) {
-        return this.api.post(`/diff`, query)
+        return this.api.post(`/v1/diff`, query)
             .then((res) => {
                 if (res.status != 200) {
                     throw new RequestFailedError(res);
@@ -291,7 +291,7 @@ export class BetterCallApi {
     }
 
     getProjects() {
-        return getCancellable(this.api, `/projects`, {})
+        return getCancellable(this.api, `/v1/projects`, {})
             .then((res) => {
                 if (res.status != 200) {
                     throw new RequestFailedError(res);
@@ -301,7 +301,7 @@ export class BetterCallApi {
     }
 
     getOPG(hash) {
-        return getCancellable(this.api, `/opg/${hash}`, {})
+        return getCancellable(this.api, `/v1/opg/${hash}`, {})
             .then((res) => {
                 if (res.status != 200) {
                     throw new RequestFailedError(res);
@@ -311,7 +311,7 @@ export class BetterCallApi {
     }
 
     vote(sn, sa, dn, da, vote) {
-        return this.api.post(`/profile/vote`, {
+        return this.api.post(`/v1/profile/vote`, {
             src: sa,
             src_network: sn,
             dest: da,
@@ -333,9 +333,9 @@ export class BetterCallApi {
                 throw err;
             })
     }
-    
+
     getNextVoteTask() {
-        return this.api.get(`/profile/vote/task`,
+        return this.api.get(`/v1/profile/vote/task`,
             {
                 headers: {
                     'Authorization': getJwt()
@@ -353,7 +353,7 @@ export class BetterCallApi {
     }
 
     getProfile() {
-        return this.api.get(`/profile`,
+        return this.api.get(`/v1/profile`,
             {
                 headers: {
                     'Authorization': getJwt()
@@ -371,7 +371,7 @@ export class BetterCallApi {
     }
 
     getProfileSubscriptions() {
-        return this.api.get(`/profile/subscriptions`,
+        return this.api.get(`/v1/profile/subscriptions`,
             {
                 headers: {
                     'Authorization': getJwt()
@@ -389,7 +389,7 @@ export class BetterCallApi {
     }
 
     addProfileSubscription(id, typ) {
-        return this.api.post(`/profile/subscriptions`, {
+        return this.api.post(`/v1/profile/subscriptions`, {
             id: id,
             type: typ
         },
@@ -410,7 +410,7 @@ export class BetterCallApi {
     }
 
     removeProfileSubscription(id, typ) {
-        return this.api.delete(`/profile/subscriptions`,
+        return this.api.delete(`/v1/profile/subscriptions`,
             {
                 headers: {
                     'Authorization': getJwt()
@@ -432,7 +432,7 @@ export class BetterCallApi {
     }
 
     getRecommendedSubscriptions() {
-        return this.api.get(`/profile/subscriptions/recommended`,
+        return this.api.get(`/v1/profile/subscriptions/recommended`,
             {
                 headers: {
                     'Authorization': getJwt()
@@ -450,7 +450,7 @@ export class BetterCallApi {
     }
 
     getProfileTimeline(offset = 0) {
-        return this.api.get(`/profile/subscriptions/timeline`,
+        return this.api.get(`/v1/profile/subscriptions/timeline`,
             {
                 headers: {
                     'Authorization': getJwt()
@@ -471,7 +471,7 @@ export class BetterCallApi {
     }
 
     getStats() {
-        return getCancellable(this.api, `/stats`, {})
+        return getCancellable(this.api, `/v1/stats`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -480,9 +480,9 @@ export class BetterCallApi {
                 return res.data
             })
     }
-    
+
     getNetworkStats(network) {
-        return getCancellable(this.api, `/stats/${network}`, {})
+        return getCancellable(this.api, `/v1/stats/${network}`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -491,9 +491,9 @@ export class BetterCallApi {
                 return res.data
             })
     }
-    
+
     getNetworkStatsSeries(network, index, period) {
-        return getCancellable(this.api, `/stats/${network}/series?index=${index}&period=${period}`, {})
+        return getCancellable(this.api, `/v1/stats/${network}/series?index=${index}&period=${period}`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -504,7 +504,7 @@ export class BetterCallApi {
     }
 
     getErrorLocation(operationId) {
-        return getCancellable(this.api, `/operation/${operationId}/error_location`, {})
+        return getCancellable(this.api, `/v1/operation/${operationId}/error_location`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -515,7 +515,7 @@ export class BetterCallApi {
     }
 
     getContractBySlug(slug) {
-        return getCancellable(this.api, `/slug/${slug}`, {})
+        return getCancellable(this.api, `/v1/slug/${slug}`, {})
             .then((res) => {
                 if (res.status != 200) {
                     throw new RequestFailedError(res);

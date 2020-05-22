@@ -78,10 +78,12 @@
         <v-tooltip right>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text icon @click="toggleTheme" class="mt-6">
-              <v-icon color="grey lighten-2">mdi-theme-light-dark</v-icon>
+              <v-icon v-if="$vuetify.theme.dark" color="grey lighten-2">mdi-white-balance-sunny</v-icon>
+              <v-icon v-else color="frey lighten-2">mdi-weather-night</v-icon>
             </v-btn>
           </template>
-          Toggle theme
+          <span v-if="$vuetify.theme.dark">Disable dark theme</span>
+          <span v-else>Enable dark theme</span>
         </v-tooltip>
         <v-tooltip right v-if="isAuthorized">
           <template v-slot:activator="{ on }">

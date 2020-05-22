@@ -7,7 +7,7 @@
             <ColumnChart
               :data="contractSeries"
               :title="`New deployments (total ${details.contracts_count})<br/>
-              <span class='text--secondary caption'>Excluding duplicates and manager.tz</span>`"
+              <div class='text--secondary caption text-center'>Excluding manager.tz</div>`"
               name="New deployments"
             ></ColumnChart>
           </v-card-text>

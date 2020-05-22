@@ -2,9 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import VueRouter from 'vue-router'
 
-import HomeToolbar from '@/components/HomeToolbar.vue';
-
-import Welcome from '@/views/Welcome.vue'
+import Home from '@/views/home/Home.vue'
+import Welcome from '@/views/home/Welcome.vue'
 
 import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
@@ -30,7 +29,6 @@ import BigMapHistory from '@/views/big_map/HistoryTab.vue'
 import Dashboard from '@/views/dashboard/Dashboard.vue'
 import EventsTab from '@/views/dashboard/EventsTab.vue'
 
-import Home from '@/views/home/Home.vue'
 
 Vue.use(VueRouter)
 
@@ -42,8 +40,7 @@ const router = new Router({
         {
             path: '/',
             components: {
-                default: Home,
-                toolbar: HomeToolbar
+                default: Home
             },
             name: 'home'
         },
