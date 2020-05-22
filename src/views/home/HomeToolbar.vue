@@ -1,6 +1,6 @@
 <template>
   <v-app-bar app clipped-left flat class="canvas pr-4">
-    <v-menu open-on-hover bottom offset-y v-if="!isAuthorized && isPrivate">
+    <v-menu open-on-hover bottom offset-y v-if="!isAuthorized && config.OAUTH_ENABLED">
       <template v-slot:activator="{ on }">
         <v-btn color="primary" text small v-on="on">
           <v-icon class="mr-1" small>mdi-login</v-icon>Sign in
@@ -8,42 +8,35 @@
       </template>
 
       <v-list class="pa-0">
-        <v-list-item class="d-flex align-center px-4" :href="`${config.API_URI}oauth/github/login`">
+        <v-list-item
+          class="d-flex align-center px-4"
+          :href="`${config.API_URI}v1/oauth/github/login`"
+        >
           <v-list-item-title>
             <v-icon class="mr-4">mdi-github</v-icon>GitHub
           </v-list-item-title>
         </v-list-item>
-        <v-list-item class="d-flex align-center px-4" :href="`${config.API_URI}oauth/gitlab/login`">
+        <v-list-item
+          class="d-flex align-center px-4"
+          :href="`${config.API_URI}v1/oauth/gitlab/login`"
+        >
           <v-list-item-title>
             <v-icon class="mr-4">mdi-gitlab</v-icon>GitLab
           </v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
-    <router-link
-      v-else-if="profile != null"
-      :to="{name: 'dashboard'}"
-      class="font-weight-light toolbar-title"
-    >
+    <router-link v-else-if="profile != null" :to="{name: 'dashboard'}">
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
-          <v-avatar size="24" v-on="on" class="mr-4">
+          <v-avatar size="48" v-on="on" class="mr-4">
             <img :src="profile.avatarURL" :alt="profile.login" />
           </v-avatar>
         </template>
-        {{ profile.login }}
+        <b>{{ profile.login }}</b> dashboard
       </v-tooltip>
     </router-link>
 
-    <v-tooltip bottom>
-      <template v-slot:activator="{ on }">
-        <v-btn v-on="on" text icon class="ml-2 text--secondary">
-          <v-icon>mdi-api</v-icon>
-        </v-btn>
-      </template>
-      API reference
-    </v-tooltip>
-    
     <v-tooltip bottom>
       <template v-slot:activator="{ on }">
         <v-btn v-on="on" text icon @click="toggleTheme" class="ml-2 text--secondary">
@@ -55,10 +48,14 @@
       <span v-else>Enable dark theme</span>
     </v-tooltip>
 
+    <v-btn text icon class="ml-2 text--secondary">
+      <v-icon>mdi-api</v-icon>
+    </v-btn>
+
     <v-spacer></v-spacer>
     <v-btn
       icon
-      class="text--secondary"
+      class="text--secondary mr-2"
       href="tg://resolve?domain=baking_bad_chat"
       target="_blank"
       rel="nofollow noopener"
@@ -67,7 +64,7 @@
     </v-btn>
     <v-btn
       icon
-      class="text--secondary"
+      class="text--secondary mr-2"
       href="https://twitter.com/TezosBakingBad"
       target="_blank"
       rel="nofollow noopener"
@@ -95,15 +92,12 @@ export default {
     },
     profile() {
       return this.$store.state.profile;
-    },
-    isPrivate() {
-      return this.config.OAUTH_ENABLED;
     }
   },
   methods: {
     toggleTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      localStorage.setItem('dark', this.$vuetify.theme.dark);
+      localStorage.setItem("dark", this.$vuetify.theme.dark);
     }
   }
 };

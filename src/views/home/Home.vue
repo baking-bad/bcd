@@ -98,7 +98,7 @@ export default {
     SearchBox
   },
   data: () => ({
-    websocket: null,
+    webSocket: null,
     stats: [],
     connecting: true
   }),
@@ -115,12 +115,14 @@ export default {
     this.webSocket.onerror = this.onError;
   },
   beforeRouteLeave(to, from, next) {
-    this.webSocket.send(
-      JSON.stringify({
-        action: "unsubscribe",
-        channel: "stats"
-      })
-    );
+    if (this.webSocket && this.webSocket.readyState === 1) {
+      this.webSocket.send(
+        JSON.stringify({
+          action: "unsubscribe",
+          channel: "stats"
+        })
+      );
+    }
     next();
   },
   methods: {

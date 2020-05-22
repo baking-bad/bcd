@@ -47,10 +47,10 @@ const router = new Router({
         {
             path: '/welcome',
             components: {
-                default: Home,
-                toolbar: Welcome
+                default: Welcome,
             },
-            name: 'welcome'
+            name: 'welcome',
+            props: { default: true }
         },
         {
             path: '/search',

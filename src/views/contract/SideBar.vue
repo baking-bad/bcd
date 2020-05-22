@@ -23,9 +23,9 @@
     <div class="d-flex align-center px-4 sidebar" style="height: 48px;">
       <span class="caption font-weight-bold text-uppercase text--secondary">Actions</span>
       <v-spacer></v-spacer>
-      <v-tooltip bottom>
+      <v-tooltip bottom v-if="isAuthorized">
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon class="mr-2">
+          <v-btn v-on="on" icon class="mr-2" @click="showWatchSettings = true">
             <v-icon class="text--secondary">mdi-eye-outline</v-icon>
           </v-btn>
         </template>
@@ -182,6 +182,14 @@
         <span>Baking Bad</span>
       </v-btn>
     </v-footer>
+
+    <!-- <WatchSettings
+      v-if="contract"
+      :show.sync="showWatchSettings"
+      :network="contract.network"
+      :address="contract.address"
+      :alias="contract.alias"
+    /> -->
   </div>
 </template>
 
@@ -189,6 +197,7 @@
 import { mapActions } from "vuex";
 import SimilarItem from "@/views/contract/SimilarItem.vue"
 import AccountBox from "@/components/AccountBox.vue"
+// import WatchSettings from "@/components/WatchSettings.vue"
 
 export default {
   name: "SideBar",
@@ -200,7 +209,8 @@ export default {
   },
   components: {
     SimilarItem,
-    AccountBox
+    AccountBox,
+    // WatchSettings
   },
   data: () => ({
     same: [],
@@ -208,6 +218,7 @@ export default {
     similar: [],
     similarCount: 0,
     sameLoading: false,
+    showWatchSettings: false
   }),
   created() {
     this.requestSameSimilar()

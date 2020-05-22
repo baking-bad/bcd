@@ -8,62 +8,62 @@
     </v-list-item>
     <v-divider></v-divider>
 
-    <v-skeleton-loader 
-      :loading="loading"
-      type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line">
-      <v-expansion-panels flat tile mandatory active-class="opened-panel">
-        <v-expansion-panel class="ma-0 bb-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase text--secondary">Watch</span>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content color="data">
-            <v-list class="sidebar-list">
-              <template v-for="(contract, i) in watch">
-                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <v-list-item :key="i" class="pr-1" :to="`/${contract.network}/${contract.address}`">
-                  <v-list-item-content>
-                    <v-list-item-title class="body-2">
-                      <span v-if="contract.alias">{{ contract.alias }}</span>
-                      <span v-else v-html="helpers.shortcut(contract.address)"></span>
-                    </v-list-item-title>
-                    <v-list-item-subtitle class="overline">{{ contract.network }}</v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-list-item-action-text class="d-flex flex-column">
-                      <v-chip x-small outlined class="mb-1 text--secondary">same</v-chip>
-                      <v-chip x-small outlined class="text--secondary">similar</v-chip>
-                    </v-list-item-action-text>
-                  </v-list-item-action>
-                  <v-list-item-icon>
-                    <v-btn small icon @click.prevent.stop="editSettings(contract)">
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                  </v-list-item-icon>
-                </v-list-item>
-              </template>
-            </v-list>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
+    <v-expansion-panels flat tile mandatory active-class="opened-panel">
+      <v-expansion-panel class="ma-0 bb-1" v-if="profile">
+        <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+          <span class="caption font-weight-bold text-uppercase text--secondary">Watch</span>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content color="data">
+          <v-list class="sidebar-list">
+            <template v-for="(contract, i) in profile.subscriptions">
+              <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+              <v-list-item :key="i" class="pr-1" :to="`/${contract.network}/${contract.address}`">
+                <v-list-item-content>
+                  <v-list-item-title class="body-2">
+                    <span v-if="contract.alias">{{ contract.alias }}</span>
+                    <span v-else v-html="helpers.shortcut(contract.address)"></span>
+                  </v-list-item-title>
+                  <v-list-item-subtitle class="overline">{{ contract.network }}</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action>
+                  <v-list-item-action-text class="d-flex flex-column">
+                    <v-chip x-small outlined class="mb-1 text--secondary">same</v-chip>
+                    <v-chip x-small outlined class="text--secondary">similar</v-chip>
+                  </v-list-item-action-text>
+                </v-list-item-action>
+                <v-list-item-icon>
+                  <v-btn small icon @click.prevent.stop="editSettings(contract)">
+                    <v-icon>mdi-dots-vertical</v-icon>
+                  </v-btn>
+                </v-list-item-icon>
+              </v-list-item>
+            </template>
+          </v-list>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
 
-        <v-expansion-panel disabled class="ma-0 bb-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase">Accounts</span>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content color="data">
-          </v-expansion-panel-content>
-        </v-expansion-panel>
+      <v-expansion-panel disabled class="ma-0 bb-1">
+        <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+          <span class="caption font-weight-bold text-uppercase">Accounts</span>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content color="data"></v-expansion-panel-content>
+      </v-expansion-panel>
 
-        <v-expansion-panel disabled class="ma-0 bb-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase">Deployments</span>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content color="data">
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </v-skeleton-loader>
+      <v-expansion-panel disabled class="ma-0 bb-1">
+        <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+          <span class="caption font-weight-bold text-uppercase">Deployments</span>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content color="data"></v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
 
-    <v-footer color="transparent" absolute bottom class="d-flex justify-center ml-6" style="z-index: 0">
+    <v-footer
+      color="transparent"
+      absolute
+      bottom
+      class="d-flex justify-center ml-6"
+      style="z-index: 0"
+    >
       <v-btn x-small text href="https://baking-bad.org/docs" target="_blank" color="border">
         <span>Baking Bad</span>
       </v-btn>
@@ -96,31 +96,14 @@ export default {
       return this.$store.state.profile;
     }
   },
-  created() {
-    this.getWatchContracts();
-  },
   data: () => ({
-    loading: true,
     showWatchSettings: false,
-    editedContract: null,
-    watch: []
+    editedContract: null
   }),
   methods: {
     ...mapActions({
       showError: "showError"
     }),
-    getWatchContracts() {
-      this.api
-        .getProfileSubscriptions()
-        .then(res => {
-          this.watch = res;
-        })
-        .catch(err => {
-          this.showError(err);
-          console.log(err);
-        })
-        .finally(() => (this.loading = false));
-    },
     editSettings(contract) {
       this.editedContract = contract;
       this.showWatchSettings = true;
