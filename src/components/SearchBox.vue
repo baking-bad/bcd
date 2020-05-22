@@ -22,43 +22,69 @@
     :dense="inplace"
   >
     <template v-slot:item="{ item }">
-        <v-list-item-avatar>
-          <v-icon v-if="item.type == 'contract'">mdi-code-json</v-icon>
-          <v-icon v-else-if="item.type == 'operation'">mdi-swap-horizontal</v-icon>
-          <v-icon v-else>mdi-database-edit</v-icon>
-        </v-list-item-avatar>
-        <v-list-item-content>
-          <v-list-item-title v-if="item.body.alias">
-            <span>{{ shortcut(item.body.alias) }}</span>
-          </v-list-item-title>
-          <v-list-item-title v-else-if="item.body.key">
-            <span>{{ shortcut(item.body.key) }}</span>
-          </v-list-item-title>
-          <v-list-item-title v-else-if="item.body.entrypoint">
-            <span>{{ shortcut(item.body.entrypoint) }}()</span>
-          </v-list-item-title>
-          <v-list-item-title v-else>
-            <span>{{ shortcut(item.value) }}</span>
-          </v-list-item-title>
-          <v-list-item-subtitle>
-            <span class="overline" :class="item.body.network === 'mainnet' ? 'primary--text' : ''">
-              {{ item.body.network }},
-            </span>
-            <span class="overline">
-              {{ formatDate(item.body.timestamp) }}<span v-if="item.body.last_action"> — {{ formatDate(item.body.last_action) }}</span>
-            </span>
-          </v-list-item-subtitle>
-        </v-list-item-content>
-        <v-list-item-action>
-          <v-list-item-action-text>
-            <span class="body-2"
-              v-if="!['alias', 'address', 'key_strings', 'entrypoint'].includes(item.body.found_by) && item.highlights[item.body.found_by]" 
-              v-html="item.highlights[item.body.found_by][0]"></span>
-          </v-list-item-action-text>
-          <v-list-item-action-text>
-            <span class="overline grey--text">{{ item.body.found_by }}</span>
-          </v-list-item-action-text>
-        </v-list-item-action>
+      <v-list-item-avatar>
+        <v-icon v-if="item.type == 'contract'">mdi-code-json</v-icon>
+        <v-icon v-else-if="item.type == 'operation'">mdi-swap-horizontal</v-icon>
+        <v-icon v-else-if="item.type == 'bigmapdiff'">mdi-database-edit</v-icon>
+      </v-list-item-avatar>
+      <v-list-item-content>
+        <v-list-item-title>
+          <template v-if="item.type == 'contract'">
+            <span v-if="item.body.alias">{{ item.body.alias }}</span>
+            <span v-else v-html="helpers.shortcut(item.value)"></span>
+          </template>
+          <template v-else-if="item.type == 'operation'">
+            <template v-if="item.body.destination.startsWith('KT')">
+              <span
+                v-if="item.body.destination_alias"
+                class="text--secondary"
+              >{{ item.body.destination_alias}}</span>
+              <span v-else v-html="helpers.shortcut(item.body.destination)" class="text--secondary"></span>
+              <span class="text--secondary" style="font-size: 20px;">→</span>
+            </template>
+            <span v-if="item.body.entrypoint" class="hash">{{ item.body.entrypoint}}()</span>
+            <span v-else-if="item.body.kind === 'origination'">origination</span>
+            <span v-else v-html="helpers.shortcut(item.value)"></span>
+          </template>
+          <template v-else-if="item.type == 'bigmapdiff'">
+            <span class="text--secondary">{{ item.body.ptr }}</span>
+            <span class="text--secondary" style="font-size: 20px;">→</span>
+            <span>{{ item.body.key }}</span>
+          </template>
+        </v-list-item-title>
+
+        <v-list-item-subtitle class="overline">
+          <span :class="item.body.network === 'mainnet' ? 'secondary--text' : ''">
+            {{ item.body.network }}&nbsp;|&nbsp;
+          </span>
+          <span v-if="item.type === 'contract'">
+            {{ helpers.plural(item.body.tx_count - 1, 'tx') }}&nbsp;|&nbsp;
+          </span>
+          <span v-else-if="item.type === 'operation'">
+            {{ item.body.status }}&nbsp;|&nbsp;
+          </span>
+          <span v-else-if="item.type === 'bigmapdiff' && item.group">
+            {{ helpers.plural(item.group.count, "update") }}&nbsp;|&nbsp;
+          </span>
+          <span class="overline text--primary">
+            {{ helpers.formatDate(item.body.timestamp) }}
+            <span v-if="item.body.last_action">— {{ helpers.formatDate(item.body.last_action) }}</span>
+          </span>
+        </v-list-item-subtitle>
+      </v-list-item-content>
+      <v-list-item-action>
+        <v-list-item-action-text>
+          <span
+            class="body-2"
+            v-if="!['alias', 'key_strings', 'entrypoint'].includes(item.body.found_by) 
+                && item.highlights[item.body.found_by]"
+            v-html="item.highlights[item.body.found_by][0]"
+          ></span>
+        </v-list-item-action-text>
+        <v-list-item-action-text>
+          <span class="overline grey--text">{{ item.body.found_by }}</span>
+        </v-list-item-action-text>
+      </v-list-item-action>
     </template>
   </v-combobox>
 </template>
@@ -66,7 +92,6 @@
 <script>
 import { mapActions } from "vuex";
 import { checkAddress, checkOperation, checkKeyHash } from "@/utils/tz.js";
-import dayjs from "dayjs";
 
 export default {
   props: {
@@ -84,38 +109,32 @@ export default {
     ...mapActions(["showError"]),
     onSearch() {
       if (!this.model) return;
-      let value = this.model.value || this.model;
+      const value = this.model.value || this.model;
+      const network = this.model.body.network;
+
       if (this.model.type == "operation" && checkOperation(value)) {
         this.$nextTick(() => {
           this.model = null;
-        })
-        this.$router.push({ path: `/opg/${value}` });
+        });
+        this.$router.push({ path: `/${network}/opg/${value}` });
       }
       if (this.model.type == "contract" && checkAddress(value)) {
-        let network = this.model.body.network;
         this.$nextTick(() => {
           this.model = null;
-        })
+        });
         this.$router.push({ path: `/${network}/${value}` });
       }
       if (this.model.type == "bigmapdiff" && checkKeyHash(value)) {
-        let network = this.model.body.network;
-        let address = this.model.body.address;
-        let bigmap = this.model.body.ptr; 
+        const ptr = this.model.body.ptr;
         this.$nextTick(() => {
           this.model = null;
-        })
-        this.$router.push({ path: `/bigmap/${network}/${address}/${bigmap}/${value}` });
+        });
+        this.$router.push({ path: `/${network}/big_map/${ptr}/${value}` });
       }
     },
     onEnter(searchText) {
       if (searchText !== null && searchText.length > 2) {
         this.$router.push({ name: "search", query: { text: searchText } });
-      }
-    },
-    formatDate(value) {
-      if (value) {
-        return dayjs(value).format("MMM D, YYYY");
       }
     },
     fetchSearchDebounced(text, seqno) {
@@ -136,24 +155,13 @@ export default {
             this.showError(err);
           });
       }, 100);
-    },
-    shortcut(value, size=18) {
-      if (value !== undefined && value.length > 2 * size + 2) {
-        if (value.startsWith('KT') || value.startsWith('tz') || value.startsWith('o') || value.startsWith('expr')) {
-          return value.substr(0, size) + `\u2026\u202F` + value.substr(value.length - size, size);
-        } else {
-          return value.slice(0, 2 * size + 2) + `\u2026\u202F`;
-        }
-      } else {
-        return value;
-      }
-    },
+    }
   },
   watch: {
     searchText(val) {
       if (this._locked) return;
       this._locked = true;
-      this.searchText = val ? val.trim() : '';
+      this.searchText = val ? val.trim() : "";
       if (this.searchText) {
         this.fetchSearchDebounced(this.searchText, ++this.seqno);
       } else {
@@ -172,7 +180,7 @@ export default {
     font-size: 13px;
   }
   input {
-    color: #ff5252 !important;
+    color: var(--v-error-base);
   }
 }
 .v-autocomplete__content {

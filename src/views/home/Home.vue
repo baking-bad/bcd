@@ -15,7 +15,7 @@
             <SearchBox />
           </v-col>
           <v-col cols="12" align="center">
-            <v-btn large depressed color="border" class="text--secondary mr-5" to="/search">
+            <v-btn large depressed color="border" class="text--secondary mr-5" href="/search">
               Advanced Search
             </v-btn>
             <v-btn large depressed color="border" class="text--secondary" @click="pickRandom">
@@ -26,31 +26,33 @@
       </v-col>
     </v-row>
     <v-row justify="center">
-      <!-- <v-col>
-        <NetworkStats />
-      </v-col> -->
       <v-col cols="6">
-        <v-row class="caption font-weight-medium text-uppercase text-center secondary--text" no-gutters>
-          <v-col></v-col>
+        <v-row class="caption font-weight-medium text-uppercase text-right text--secondary" no-gutters>
+          <v-col class="pl-12"></v-col>
           <v-col>Unique contracts</v-col>
-          <v-col>Contract calls</v-col>
           <v-col>FA tokens</v-col>
-          <v-col>Total locked</v-col>
-          <v-col>Total volume</v-col>
+          <v-col>Contract calls</v-col>
+          <v-col class="text-left pl-12">Synced</v-col>
         </v-row>
-        <v-row class="caption font-weight-medium text-uppercase text-center secondary--text" no-gutters>
-          <v-col>Mainnet</v-col>
-          <v-col>203</v-col>
-          <v-col>12324</v-col>
-          <v-col>12</v-col>
-          <v-col>123,131,232.123456</v-col>
-          <v-col>123,131,232.123456</v-col>
+        <v-row v-for="(item, idx) in stats" :key="idx" 
+          class="text-right my-2" justify="center" align="center" no-gutters>
+          <v-col class="text-left pl-12">
+            <v-btn small text :href="`/stats/${item.network}`" :class="item.network === 'mainnet' ? 'secondary--text' : 'text--primary'">
+              <span>{{ item.network }}</span>
+            </v-btn>
+          </v-col>
+          <v-col>{{ item.unique_contracts }}</v-col>
+          <v-col>{{ item.fa_count }}</v-col>
+          <v-col>{{ item.contract_calls }}</v-col>
+          <v-col class="body-2 text-left pl-12">
+            {{ helpers.formatDatetime(item.time) }}
+          </v-col>
         </v-row>
       </v-col>      
     </v-row>
 
     <v-footer color="transparent" absolute bottom class="d-flex justify-center ml-6" style="z-index: 0">
-      <v-btn x-small text href="https://baking-bad.org/docs" target="_blank" class="text--secondary">
+      <v-btn x-small text href="https://baking-bad.org/docs" target="_blank" color="border">
         <span>Baking Bad</span>
       </v-btn>
     </v-footer>
@@ -59,16 +61,34 @@
 
 <script>
 import { mapActions } from "vuex";
-
 import HomeToolbar from "@/views/home/HomeToolbar.vue"
 import SearchBox from "@/components/SearchBox.vue";
-// import NetworkStats from "@/components/NetworkStats.vue";
 
 export default {
+  name: "Home",
   components: {
     HomeToolbar,
-    SearchBox,
-    // NetworkStats
+    SearchBox
+  },
+  data: () => ({
+    websocket: null,
+    stats: [],
+    connecting: true
+  }),
+  created() {
+    this.webSocket = new WebSocket("ws://127.0.0.1:14000/ws");
+    this.webSocket.onmessage = this.onMessage;
+    this.webSocket.onopen = this.onOpen;
+    this.webSocket.onclose = this.onClose;
+    this.webSocket.onerror = this.onError;
+  },
+  beforeRouteLeave() {
+    this.webSocket.send(
+      JSON.stringify({
+        action: "unsubscribe",
+        channel: "stats"
+      })
+    );
   },
   mounted() {
     if (this.$route.name != this.config.HOME_PAGE) {
@@ -88,6 +108,35 @@ export default {
             this.showError(err);
           }
         });
+    },
+    onMessage(event) {
+      let data = JSON.parse(event.data);
+      if (data.body) {
+        this.stats = data.body.sort(function(a, b) {
+          if (a.network === 'mainnet' || b.network === 'zeronet') {
+            return -1;
+          } else if(b.network === 'mainnet' || a.network === 'zeronet') {
+            return 1;
+          } else {
+            return b.network.localeCompare(a.network);
+          }
+        });
+      }
+    },
+    onError(event) {
+      console.log("error: ", event.data);
+    },
+    onOpen() {
+      this.webSocket.send(
+        JSON.stringify({
+          action: "subscribe",
+          channel: "stats"
+        })
+      );
+      this.connecting = false;
+    },
+    onClose(event) {
+      console.log("close: ", event.data);
     }
   }
 };
@@ -97,23 +146,5 @@ export default {
 @font-face {
   font-family: "Script1-Casual";
   src: url("/fonts/script1-script-casual-normal.ttf");
-}
-
-@font-face {
-  font-family: "Dancing-Script";
-  src: url("/fonts/DancingScript-Regular.otf");
-}
-
-#home {
-  height: 100%;
-  background-color: white;
-}
-
-.hash {
-  font-family: "Roboto Mono", monospace;
-}
-
-.logo {
-  max-height: 350px;
 }
 </style>

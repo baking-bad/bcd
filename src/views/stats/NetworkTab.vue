@@ -2,18 +2,21 @@
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-row no-gutters>
       <v-col cols="6" class="pr-4">
+          <v-skeleton-loader :loading="!contractSeries" type="image">
         <v-card flat outlined>
-          <v-card-text class="data pa-0">
-            <ColumnChart
-              :data="contractSeries"
-              :title="`New deployments (total ${details.contracts_count})<br/>
-              <div class='text--secondary caption text-center'>Excluding manager.tz</div>`"
-              name="New deployments"
-            ></ColumnChart>
-          </v-card-text>
+            <v-card-text class="data pa-0">
+              <ColumnChart
+                :data="contractSeries"
+                :title="`New deployments (total ${details.contracts_count})<br/>
+                <div class='text--secondary caption text-center'>Excluding manager.tz</div>`"
+                name="New deployments"
+              ></ColumnChart>
+            </v-card-text>
         </v-card>
+          </v-skeleton-loader>
       </v-col>
       <v-col cols="6" class="pl-4">
+          <v-skeleton-loader :loading="!operationSeries" type="image">
         <v-card flat outlined>
           <v-card-text class="data pa-0">
             <ColumnChart
@@ -23,11 +26,13 @@
             ></ColumnChart>
           </v-card-text>
         </v-card>
+          </v-skeleton-loader>
       </v-col>
       <v-col cols="6" class="pt-8 pr-4">
+          <v-skeleton-loader :loading="loading" type="image">
         <v-card flat outlined>
           <v-card-title class="data d-flex align-center justify-center" style="font-size: 18px;">
-            <span style="font-family: 'Roboto Condensed'">Protocol activations</span>
+            <span style="font-family: 'Roboto Condensed'">Activated protocols</span>
           </v-card-title>
           <v-card-text class="pa-0 data">
             <v-timeline>
@@ -51,6 +56,7 @@
             </v-timeline>
           </v-card-text>
         </v-card>
+          </v-skeleton-loader>
       </v-col>
     </v-row>
   </v-container>

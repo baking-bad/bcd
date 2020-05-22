@@ -43,6 +43,10 @@ html {
   overflow-y: auto !important;
 }
 
+.hash {
+  font-family: "Roboto Mono", monospace;
+}
+
 .bt-1 {
   border-top: 1px solid var(--v-border-base) !important;
 }

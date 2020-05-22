@@ -59,8 +59,10 @@ export default {
         .then(res => {
           if (!res) return;
           this.states = res.sort(function(a, b) {
-            if (a.network === 'mainnet') {
+            if (a.network === 'mainnet' || b.network === 'zeronet') {
               return -1;
+            } else if(b.network === 'mainnet' || a.network === 'zeronet') {
+              return 1;
             } else {
               return b.network.localeCompare(a.network);
             }
