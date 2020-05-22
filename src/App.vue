@@ -2,6 +2,7 @@
   <v-app>
     <v-content>
       <ErrorSnackbar v-if="!!$store.state.error" />
+      <ClipboardSnackbar v-if="$store.state.clipboardOK" />
       <router-view></router-view>
       <v-fab-transition v-if="$vuetify.breakpoint.smAndUp">
         <v-btn color="primary" fab fixed bottom right v-show="showToTop" @click="scrollToTop">
@@ -14,11 +15,13 @@
 
 <script>
 import ErrorSnackbar from "@/components/ErrorSnackbar.vue";
+import ClipboardSnackbar from "@/components/ClipboardSnackbar.vue";
 
 export default {
   name: "App",
   components: {
-    ErrorSnackbar
+    ErrorSnackbar,
+    ClipboardSnackbar
   },
   data: () => ({
     showToTop: false

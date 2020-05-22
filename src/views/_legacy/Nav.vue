@@ -104,7 +104,6 @@
 
     <v-skeleton-loader
       :loading="sameLoading || similarLoading"
-      transition="fade-transition"
       type="list-item-three-line"
     >
       <div>

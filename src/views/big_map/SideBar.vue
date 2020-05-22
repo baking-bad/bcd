@@ -14,7 +14,7 @@
     <v-divider></v-divider>
 
     <v-skeleton-loader 
-      :loading="loading"
+      :loading="!bigmap.address"
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line">
       <v-expansion-panels flat tile mandatory multiple active-class="opened-panel">
         <v-expansion-panel class="ma-0 bb-1">
@@ -25,9 +25,9 @@
             <v-list class="bigmap-sidebar-list">
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-subtitle class="overline">Status</v-list-item-subtitle>
+                  <v-list-item-subtitle class="overline">Active keys</v-list-item-subtitle>
                   <v-list-item-title class="body-2">
-                    <span>Allocated</span>
+                    <span>{{ bigmap.active_keys }}</span>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -35,12 +35,12 @@
                 <v-list-item-content>
                   <v-list-item-subtitle class="overline">Owner</v-list-item-subtitle>
                   <v-list-item-title class="body-2">
-                    <span v-html="helpers.shortcut('KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn')"></span>
+                    <span v-html="helpers.shortcut(bigmap.address)"></span>
                   </v-list-item-title>
                 </v-list-item-content>
                 <v-list-item-action>
                   <v-list-item-action-text>
-                    <v-btn icon :to="`/${network}/KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn`">
+                    <v-btn icon :to="`/${network}/${bigmap.address}`">
                       <v-icon small>mdi-vector-link</v-icon>
                     </v-btn>
                   </v-list-item-action-text>
@@ -71,23 +71,12 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-
 export default {
   name: "SideBar",
   props: {  
     ptr: String,
-    network: String  
-  },
-  created() {
-  },
-  data: () => ({
-    loading: false,
-  }),
-  methods: {
-    ...mapActions({
-      showError: "showError"
-    })
+    network: String,
+    bigmap: Object
   }
 };
 </script>

@@ -234,7 +234,7 @@ export default {
 }
 
 .op-panel {
-  background-color: var(--v-sidebar-base) !important;
+  background-color: var(--v-data-base) !important;
 }
 
 .op-active-panel > .v-expansion-panel-header {

@@ -101,9 +101,8 @@ export default {
 
       this._timerId = setTimeout(() => {
         this.api
-          .getContractBigMap(
+          .getContractBigMapKeys(
             this.network,
-            this.address,
             this.ptr,
             text,
             this.bigmap.length

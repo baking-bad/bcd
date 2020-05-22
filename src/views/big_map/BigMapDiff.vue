@@ -241,10 +241,11 @@ export default {
 }
 
 .bmd-panel > .v-expansion-panel-header {
-  background: var(--v-sidebar-base);
+  background: var(--v-data-base);
 }
 
 .bmd-active-panel > .v-expansion-panel-header {
+  background: var(--v-sidebar-base);
   opacity: .8;
 }
 

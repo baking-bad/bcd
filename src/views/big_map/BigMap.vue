@@ -6,13 +6,13 @@
           <SideNavigation />
         </v-col>
         <v-col cols="10">
-          <SideBar :ptr="ptr" :network="network" />
+          <SideBar :ptr="ptr" :bigmap="bigmap" :network="network" />
         </v-col>
       </v-row>
     </v-navigation-drawer>
 
     <v-toolbar flat class color="toolbar" height="75">
-      <v-btn small text class="ml-4" :to="{name: 'storage', params: {address, network}}">
+      <v-btn v-if="address" small text class="ml-4" :to="{name: 'storage', params: {address: address, network}}">
         <v-icon small class="mr-1">mdi-undo-variant</v-icon>storage
       </v-btn>
 
@@ -40,6 +40,7 @@
 import SearchBox from "@/components/SearchBox.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/big_map/SideBar.vue";
+import { mapActions } from "vuex";
 
 export default {
   name: "BigMap",
@@ -55,12 +56,33 @@ export default {
   computed: {
     keyhash() {
       return this.$route.params.keyhash;
+    },
+    address() {
+      return this.bigmap.address;
     }
   },
   data: () => ({
-    address: 'KT1PWx2mnDueood7fEmfbBDKx1D9BAnnXitn',
+    bigmap: {},
     count: 0
-  })
+  }),
+  created() {
+    this.getBigMap();
+  },
+  methods: {
+    ...mapActions(["showError"]),
+    getBigMap() {
+      this.api
+        .getContractBigMap(this.network, this.ptr)
+        .then(res => {
+          if (!res) return;
+          this.bigmap = res;
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        });
+    }
+  }
 };
 </script>
 

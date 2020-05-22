@@ -28,7 +28,7 @@
             <v-icon class="mr-1" small>mdi-download-outline</v-icon>
             <span class="text--secondary">Download as .json</span>
           </v-btn>
-          <v-snackbar color="light-green darken-1" v-model="clipboard_ok">
+          <v-snackbar top color="light-green darken-1" v-model="clipboard_ok">
             Copied to clipboard!
             <v-btn text @click="clipboard_ok = false">OK</v-btn>
           </v-snackbar>

@@ -33,7 +33,11 @@
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon class="mr-2">
+          <v-btn v-on="on" icon class="mr-2" 
+            @click="() => {
+              $clipboard(address); 
+              showClipboardOK();
+            }">
             <v-icon class="text--secondary">mdi-content-copy</v-icon>
           </v-btn>
         </template>
@@ -41,12 +45,16 @@
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon>
+          <v-btn v-on="on" icon
+            @click="() => {
+              $clipboard(contractLink); 
+              showClipboardOK();
+            }">
             <v-icon class="text--secondary">mdi-share-variant</v-icon>
           </v-btn>
         </template>
         Share link
-      </v-tooltip>
+      </v-tooltip>     
     </div>
     <v-divider></v-divider>
       
@@ -199,7 +207,7 @@ export default {
     sameCount: 0,
     similar: [],
     similarCount: 0,
-    sameLoading: false
+    sameLoading: false,
   }),
   created() {
     this.requestSameSimilar()
@@ -215,12 +223,34 @@ export default {
         }
       }
       return null;
-    }
+    },
+    isAuthorized() {
+      return this.$store.state.isAuthorized;
+    },
+    profile() {
+      return this.$store.state.profile;
+    },
+    contractLink() {
+      let routeData = {};
+      if (this.contract.slug) {
+        routeData = this.$router.resolve({
+          name: "slug",
+          params: { slug: this.contract.slug }
+        });
+      } else {
+        routeData = this.$router.resolve({
+          name: "contract",
+          params: {
+            address: this.address,
+            network: this.network
+          }
+        });
+      }
+      return `${window.location.protocol}//${window.location.host}${routeData.href}`;
+    },
   },
   methods: {
-    ...mapActions({
-      showError: "showError"
-    }),
+    ...mapActions(["showError", "showClipboardOK"]),
     requestSameSimilar() {
       this.same = [];
       this.sameCount = 0;
@@ -264,7 +294,7 @@ export default {
           console.log(err);
         })
         .finally(() => (this.sameLoading = false));
-    },
+    }
   },
   watch: {
     address: 'requestSameSimilar'

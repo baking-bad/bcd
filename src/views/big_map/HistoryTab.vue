@@ -38,7 +38,7 @@
                     <v-list-item-content>
                       <v-list-item-title
                         class="body-2 text--primary"
-                      >{{ formatDate(item.timestamp) }}</v-list-item-title>
+                      >{{ helpers.formatDate(item.timestamp) }}</v-list-item-title>
                     </v-list-item-content>
                     <v-list-item-action>
                       <v-list-item-action-text>
@@ -72,7 +72,6 @@
 import BigMapDiff from "@/views/big_map/BigMapDiff.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import { mapActions } from "vuex";
-import dayjs from "dayjs";
 
 export default {
   name: "BigMapHistory",
@@ -117,9 +116,8 @@ export default {
     requestData() {
       this.loading = true;
       this.api
-        .getContractBigMapByKeyHash(
+        .getContractBigMapHistory(
           this.network,
-          this.address,
           this.ptr,
           this.keyhash,
           (this.page - 1) * this.diffsPerPage
@@ -137,14 +135,6 @@ export default {
           this.loading = false;
           this.$emit("update:count", this.total);
         });
-    },
-    formatDate(value) {
-      let d = dayjs(value);
-      if (value) {
-        if (d.year() < dayjs().year()) return d.format("MMM D HH:mm, YYYY");
-        if (d.add(1, "days").isBefore(dayjs())) return d.format("MMM D HH:mm");
-        return d.fromNow();
-      }
     }
   },
   watch: {

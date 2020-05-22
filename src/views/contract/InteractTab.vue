@@ -79,7 +79,7 @@
                     class="text--secondary"
                     @click="() => {
                       $clipboard(formatAsMichelson ? paramsMichelson : JSON.stringify(paramsMicheline)); 
-                      showClipboardOk = true
+                      showClipboardOK();
                     }"
                     small
                     text
@@ -159,10 +159,6 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-snackbar color="light-green darken-1" v-model="showClipboardOk" :timeout="2000" top>
-      Copied to clipboard!
-      <v-btn text @click="showClipboardOk = false">OK</v-btn>
-    </v-snackbar>
     <v-dialog v-model="showResultOPG" width="1200">
       <v-card flat outlined>
         <v-card-title class="sidebar d-flex justify-center pa-4">
@@ -214,7 +210,6 @@ export default {
     paramsMichelson: null,
     simulatedOperation: {},
     alertData: null,
-    showClipboardOk: false,
     showResultOPG: false,
     showSimulationSettings: false
   }),
@@ -229,7 +224,7 @@ export default {
     this.getEntrypoints();
   },
   methods: {
-    ...mapActions(["showError"]),
+    ...mapActions(["showError", "showClipboardOK"]),
     getEntrypoints() {
       this.loading = true;
       this.api

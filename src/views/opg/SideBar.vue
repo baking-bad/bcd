@@ -27,7 +27,11 @@
       </v-tooltip>
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon class="mr-2">
+          <v-btn v-on="on" icon class="mr-2"
+            @click="() => {
+              $clipboard(hash); 
+              showClipboardOK();
+            }">
             <v-icon class="text--secondary">mdi-content-copy</v-icon>
           </v-btn>
         </template>
@@ -35,7 +39,11 @@
       </v-tooltip>
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon>
+          <v-btn v-on="on" icon
+            @click="() => {
+              $clipboard(opgLink); 
+              showClipboardOK();
+            }">
             <v-icon class="text--secondary">mdi-share-variant</v-icon>
           </v-btn>
         </template>
@@ -107,6 +115,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   name: "SideBar",
   props: {
@@ -124,8 +134,20 @@ export default {
     },
     totalCost() {
       return this.operations.reduce((acc, c) => acc + (c.fee || 0) + (c.burned || 0), 0);
+    },
+    opgLink() {
+      var routeData = this.$router.resolve({
+        name: "operation_group",
+        params: {
+          hash: this.hash,
+          network: this.network
+        }
+      });
+      return `${window.location.protocol}//${window.location.host}${routeData.href}`;
     }
   },
-  methods: {}
+  methods: {
+    ...mapActions(["showClipboardOK"]),
+  }
 };
 </script>

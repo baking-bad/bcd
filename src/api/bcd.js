@@ -248,8 +248,8 @@ export class BetterCallApi {
             })
     }
 
-    getContractBigMap(network, address, ptr, q = '', offset = 0) {
-        return getCancellable(this.api, `/v1/contract/${network}/${address}/bigmap/${ptr}?q=${q}&offset=${offset}`, {})
+    getContractBigMap(network, ptr) {
+        return getCancellable(this.api, `/v1/bigmap/${network}/${ptr}`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -259,8 +259,19 @@ export class BetterCallApi {
             })
     }
 
-    getContractBigMapByKeyHash(network, address, ptr, keyhash, offset = 0) {
-        return getCancellable(this.api, `/v1/contract/${network}/${address}/bigmap/${ptr}/${keyhash}?offset=${offset}`, {})
+    getContractBigMapKeys(network, ptr, q = '', offset = 0) {
+        return getCancellable(this.api, `/v1/bigmap/${network}/${ptr}/keys?q=${q}&offset=${offset}`, {})
+            .then((res) => {
+                if (!res) { return res; }
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
+
+    getContractBigMapHistory(network, ptr, keyhash, offset = 0) {
+        return getCancellable(this.api, `/v1/bigmap/${network}/${ptr}/keys/${keyhash}?offset=${offset}`, {})
             .then((res) => {
                 if (res.status != 200) {
                     throw new RequestFailedError(res);

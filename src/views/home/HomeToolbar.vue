@@ -37,6 +37,15 @@
 
     <v-tooltip bottom>
       <template v-slot:activator="{ on }">
+        <v-btn v-on="on" text icon class="ml-2 text--secondary">
+          <v-icon>mdi-api</v-icon>
+        </v-btn>
+      </template>
+      API reference
+    </v-tooltip>
+    
+    <v-tooltip bottom>
+      <template v-slot:activator="{ on }">
         <v-btn v-on="on" text icon @click="toggleTheme" class="ml-2 text--secondary">
           <v-icon v-if="$vuetify.theme.dark">mdi-white-balance-sunny</v-icon>
           <v-icon v-else>mdi-weather-night</v-icon>
