@@ -48,7 +48,7 @@
       <span v-else>Enable dark theme</span>
     </v-tooltip>
 
-    <v-btn text icon class="ml-2 text--secondary" :href="`${config.API_URI}docs/index.html`" target="_blank">
+    <v-btn text icon class="ml-2 text--secondary" :href="apiDocsUrl" target="_blank">
       <v-icon>mdi-api</v-icon>
     </v-btn>
 
@@ -92,6 +92,9 @@ export default {
     },
     profile() {
       return this.$store.state.profile;
+    },
+    apiDocsUrl() {
+      return `${this.config.API_URI}docs/index.html`;
     }
   },
   methods: {

@@ -67,6 +67,7 @@ const getRuntimeConfig = async () => {
 
 getRuntimeConfig().then(function (config) {
   config.API_URI = process.env.VUE_APP_API_URI || config.API_URI;
+  config.WS_URI = process.env.VUE_APP_WS_URI || config.WS_URI;
   config.GA_ENABLED = process.env.VUE_APP_GA_ENABLED || config.GA_ENABLED;
   config.OAUTH_ENABLED = process.env.VUE_APP_OAUTH_ENABLED || config.OAUTH_ENABLED;
 
