@@ -22,5 +22,6 @@ deploy:
   file: bcd.tar.gz
   api_key: $GITHUB_TOKEN 
   on:
-    branch: master
-    tags: true
+    all_branches: true
+    tag: true
+    condition: "$TRAVIS_TAG =~ ^[0-9\.]+$"

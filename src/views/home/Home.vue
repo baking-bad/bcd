@@ -108,7 +108,10 @@ export default {
     }
   },
   created() {
-    this.webSocket = new WebSocket("ws://127.0.0.1:14000/ws");
+    var url = new URL(this.config.API_URI);
+    url.protocol = 'ws:';
+    url.pathname = '/v1/ws';
+    this.webSocket = new WebSocket(url.href);
     this.webSocket.onmessage = this.onMessage;
     this.webSocket.onopen = this.onOpen;
     this.webSocket.onclose = this.onClose;

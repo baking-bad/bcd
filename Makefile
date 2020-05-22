@@ -22,3 +22,7 @@ latest:
 
 image:
 	docker build -t bakingbad/bcdhub-gui:latest .
+
+release:
+	BCD_VERSION=$$(cat package.json | grep version | awk -F\" '{ print $$4 }')
+	git tag $$BCD_VERSION && git push origin $$BCD_VERSION
