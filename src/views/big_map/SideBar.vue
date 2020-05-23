@@ -31,21 +31,12 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle class="overline">Owner</v-list-item-subtitle>
-                  <v-list-item-title class="body-2">
-                    <span v-html="helpers.shortcut(bigmap.address)"></span>
-                  </v-list-item-title>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-list-item-action-text>
-                    <v-btn icon :to="`/${network}/${bigmap.address}`">
-                      <v-icon small>mdi-vector-link</v-icon>
-                    </v-btn>
-                  </v-list-item-action-text>
-                </v-list-item-action>
-              </v-list-item>
+              <AccountBox
+                title="Owner contract"
+                :address="bigmap.address"
+                :network="network"
+                gutters
+              />
             </v-list>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -71,8 +62,13 @@
 </template>
 
 <script>
+import AccountBox from "@/components/AccountBox.vue"
+
 export default {
   name: "SideBar",
+  components: {
+    AccountBox
+  },
   props: {  
     ptr: String,
     network: String,
