@@ -25,14 +25,28 @@
                 </v-btn>
                 <div v-show="showSimulationSettings">
                   <div class="d-flex flex-column pr-2">
-                    <v-text-field outlined dense label="Source" placeholder="Tz address"></v-text-field>
                     <v-text-field
+                      v-model="settings.source"
+                      outlined
+                      dense
+                      label="Source"
+                      placeholder="Tz address"
+                    ></v-text-field>
+                    <v-text-field
+                      v-model="settings.sender"
                       outlined
                       dense
                       label="Sender"
                       placeholder="Any address, equals to source by default"
                     ></v-text-field>
-                    <v-text-field outlined dense label="Amount" placeholder="In mutez (10^-6 tez)"></v-text-field>
+                    <v-text-field
+                      v-model="settings.amount"
+                      outlined
+                      dense
+                      label="Amount"
+                      type="number"
+                      placeholder="In mutez (10^-6 tez)"
+                    ></v-text-field>
                   </div>
                 </div>
                 <div class="d-flex">
@@ -121,7 +135,7 @@
           type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
         ></v-skeleton-loader>
         <v-card v-else flat outlined>
-          <v-navigation-drawer floating permanent width="500" style="max-height: 80vh;">            
+          <v-navigation-drawer floating permanent width="500" style="max-height: 80vh;">
             <v-expansion-panels
               flat
               accordion
@@ -205,6 +219,11 @@ export default {
     generating: false,
     simulating: false,
     model: {},
+    settings: {
+      source: null,
+      sender: null,
+      amount: null
+    },
     formatAsMichelson: false,
     paramsMicheline: null,
     paramsMichelson: null,
@@ -282,7 +301,10 @@ export default {
           this.network,
           this.address,
           this.selectedItem.bin_path,
-          this.model
+          this.model,
+          this.settings.source,
+          this.settings.sender,
+          this.settings.amount
         )
         .then(res => {
           if (res) {

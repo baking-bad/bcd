@@ -53,6 +53,11 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    navigate() {
+      if (!this.network && this.states.length > 0) {
+        this.$router.push({name: 'network_stats', params: {network: this.states[0].network}});
+      }
+    },
     getStats() {
       this.loading = true;
       this.api.getStats()
@@ -67,9 +72,7 @@ export default {
               return b.network.localeCompare(a.network);
             }
           });
-          if (!this.network) {
-            this.$router.push({name: 'network_stats', params: {network: this.states[0].network}});
-          }
+          this.navigate();
         })
         .catch(err => {
           console.log(err);
@@ -77,6 +80,9 @@ export default {
         })
         .finally(() => (this.loading = false));
     },
+  },
+  watch: {
+    $route: 'navigate'
   }
 };
 </script>

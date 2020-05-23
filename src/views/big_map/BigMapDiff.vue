@@ -13,7 +13,7 @@
         <v-col cols="2" class="d-flex align-center">
           <v-list-item>
             <v-list-item-content>
-              <v-list-item-title class="hash font-weight-light">{{ plural(diff.count, 'update') }}</v-list-item-title>
+              <v-list-item-title class="hash font-weight-light">{{ helpers.plural(diff.count, 'update') }}</v-list-item-title>
               <v-list-item-subtitle              
                 class="hash error--text"
                 v-if="!diff.data.value"
@@ -125,7 +125,6 @@
 <script>
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import VueJsonPretty from "vue-json-pretty";
-import { plural } from "@/utils/plural.js";
 import { getTree } from "@/utils/diff.js";
 
 export default {
@@ -170,9 +169,6 @@ export default {
     }
   },
   methods: {
-    plural(count, word) {
-      return plural(count, word);
-    },
     getRawJSON() {
       if (this.rawJson != null) {
         this.showRaw = true;
