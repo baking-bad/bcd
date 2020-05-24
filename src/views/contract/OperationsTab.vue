@@ -115,7 +115,6 @@
 
 <script>
 import { mapActions } from "vuex";
-
 import ContentItem from "@/views/contract/ContentItem.vue";
 import dayjs from "dayjs";
 

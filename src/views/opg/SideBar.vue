@@ -19,7 +19,7 @@
       <v-spacer></v-spacer>
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon class="mr-2">
+          <v-btn v-on="on" icon class="mr-2" @click="showRaw = true">
             <v-icon class="text--secondary">mdi-code-json</v-icon>
           </v-btn>
         </template>
@@ -100,6 +100,8 @@
       </v-expansion-panels>
     </v-skeleton-loader>
 
+    <RawJsonViewer v-if="content" :show.sync="showRaw" type="operation" :network="network" :level="content.level" :hash="hash" />
+
     <v-footer
       color="transparent"
       absolute
@@ -116,6 +118,7 @@
 
 <script>
 import { mapActions } from "vuex";
+import RawJsonViewer from "@/components/RawJsonViewer.vue"
 
 export default {
   name: "SideBar",
@@ -125,6 +128,12 @@ export default {
     operations: Array,
     loading: Boolean
   },
+  components: {
+    RawJsonViewer
+  },
+  data: () => ({
+    showRaw: false
+  }),
   computed: {
     content() {
       if (this.operations.length > 0) {

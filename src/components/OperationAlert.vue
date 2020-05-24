@@ -9,9 +9,9 @@
       class="my-2"
     >
       <v-row align="center" no-gutters>
-        <v-col class="d-flex flex-column">
+        <v-col class="d-flex flex-column px-4">
           <span class="hash">{{ err.title }}</span>
-          <span class="text--secondary hash">
+          <span class="text--secondary body-1">
             {{ err.descr }}
             <span v-if="err.with" style="word-break: break-all">: {{ err.with }}</span>
             <span

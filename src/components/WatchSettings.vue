@@ -53,6 +53,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   name: "WatchSettings",
   props: {
@@ -116,6 +118,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["showError"]),
     close() {
       this.$emit("update:show", false);
     },

@@ -8,14 +8,13 @@
       <template v-if="item.kind == 'bootstrap'">
         <v-alert :key="idx" prominent text type="info">
           <v-row no-gutters align="center">
-            <v-col cols="2" class="pl-4">
-              <span class="hash text--secondary">{{ item.timestamp | formatDate }}</span>
-            </v-col>
-            <v-col cols="3">
+            <v-col cols="6" class="d-flex flex-column pl-4">
               <span class="hash">Vesting contract</span>
+              <span class="text--secondary body-1">Contract was originated during the <b class="hash">{{ item.protocol.slice(0, 8) }}</b> activation</span>
             </v-col>
-            <v-col cols="6">
-              <span class="hash text--secondary">Contract was originated during the <b>{{ item.protocol.slice(0, 8) }}</b> activation</span>
+            <v-spacer></v-spacer>
+            <v-col cols="2" class="text-right pr-4">
+              <span class="body-1 text--secondary">{{ item.timestamp | formatDate }}</span>
             </v-col>
           </v-row>
         </v-alert>
@@ -23,20 +22,19 @@
       <template v-else-if="item.kind == 'lambda'">
         <v-alert :key="idx" prominent text type="warning">
           <v-row no-gutters align="center">
-            <v-col cols="2" class="pl-4">
-              <span class="hash text--secondary">{{ item.timestamp | formatDate }}</span>
-            </v-col>
-            <v-col cols="3">
+            <v-col cols="6" class="d-flex flex-column pl-4">
               <span class="hash">Potential change in logic</span>
+              <span class="text--secondary body-1">One or more stored lambda expressions were altered</span>
             </v-col>
-            <v-col cols="6">
-              <span class="hash text--secondary">One or more stored lambda expressions were altered</span>
-            </v-col>
-            <v-col cols="1">
+            <v-spacer></v-spacer>
+            <v-col>
               <v-btn text small class="text--secondary" target="_blank"
                 :to="{name: 'operation_group', params: {network, hash: item.hash}}">
-                <v-icon small class="mr-1">mdi-open-in-new</v-icon>view
+                <v-icon small class="mr-2">mdi-open-in-new</v-icon>view operation
                 </v-btn>
+            </v-col>
+            <v-col cols="2" class="text-right pr-4">
+              <span class="body-1 text--secondary">{{ item.timestamp | formatDate }}</span>
             </v-col>
           </v-row>
         </v-alert>
@@ -44,16 +42,12 @@
       <template v-else-if="item.kind == 'update'">
         <v-alert :key="idx" prominent text type="warning">
           <v-row no-gutters align="center">
-            <v-col cols="2" class="pl-4">
-              <span class="hash text--secondary">{{ item.timestamp | formatDate }}</span>
-            </v-col>
-            <v-col cols="3">
+            <v-col cols="6" class="d-flex flex-column pl-4">
               <span class="hash">Potential change in logic</span>
+              <span class="text--secondary body-1">Contract code was altered during the <b>{{ item.protocol.slice(0, 8) }}</b> update</span>
             </v-col>
-            <v-col cols="6">
-              <span class="hash text--secondary">Contract code was altered during the <b>{{ item.protocol.slice(0, 8) }}</b> update</span>
-            </v-col>
-            <v-col cols="1">
+            <v-spacer></v-spacer>
+            <v-col>
               <v-btn text small class="text--secondary" target="_blank"
                 :to="{name: 'diff', query: {
                   addressA: address, 
@@ -65,8 +59,11 @@
                   protocolB: item.protocol,
                   levelB: item.level
                 }}">
-                <v-icon small class="mr-1">mdi-directions-fork</v-icon>diff
-                </v-btn>
+                <v-icon small class="mr-1">mdi-directions-fork</v-icon>view code diff
+              </v-btn>
+            </v-col>
+            <v-col cols="2" class="text-right pr-4">
+              <span class="body-1 text--secondary">{{ item.timestamp | formatDate }}</span>
             </v-col>
           </v-row>
         </v-alert>        

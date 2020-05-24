@@ -380,7 +380,4 @@ export default {
 .v-treeview-node__root {
   min-height: 20px !important;
 }
-.vjs-tree.is-mouseover {
-  background-color: #99999930;
-}
 </style>

@@ -19,7 +19,7 @@
       <v-col cols="2" v-if="address" class="py-0 d-flex justify-end align-center">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" v-if="!data.mempool && data.id" icon class="mr-2 text--secondary" @click="getRawJSON">
+            <v-btn v-on="on" v-if="!data.mempool && data.id" icon class="mr-2 text--secondary" @click="showRaw = true">
               <v-icon>mdi-code-json</v-icon>
             </v-btn>
           </template>
@@ -27,7 +27,11 @@
         </v-tooltip>
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" icon class="mr-2 text--secondary" @click="getRawJSON">
+            <v-btn v-on="on" icon class="mr-2 text--secondary"
+              @click="() => {
+                $clipboard(data.hash); 
+                showClipboardOK();
+              }">
               <v-icon>mdi-content-copy</v-icon>
             </v-btn>
           </template>
@@ -95,13 +99,13 @@
           :network="data.network"
         />
       </v-col>
-      <v-col cols="2" v-if="!data.mempool && data.result && data.result.consumed_gas">
+      <v-col cols="2" v-if="consumedGas">
         <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
       </v-col>
-      <v-col cols="2" v-if="!data.mempool && data.result && data.status === 'applied'">
+      <v-col cols="2" v-if="paidStorageDiff">
         <InfoItem title="Paid storage diff" :subtitle="paidStorageDiff" />
       </v-col>
-      <v-col cols="2" v-if="!data.mempool && data.result && data.result.allocated_destination_contract">
+      <v-col cols="2" v-if="allocationFee">
         <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
       </v-col>      
     </v-row>
@@ -181,23 +185,8 @@
       </div>
     </v-expand-transition>
 
-    <v-dialog v-model="showRaw" fullscreen>
-      <v-card>
-        <v-card-title class="headline" primary-title>
-          <span>Raw JSON viewer</span>
-          <v-spacer></v-spacer>
-          <v-btn icon text @click="showRaw = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-progress-linear v-if="loadingRaw" indeterminate color="primary"></v-progress-linear>
-        <v-card-text class="mt-5">
-          <vue-json-pretty v-if="!loadingRaw" :data="rawJson" :highlightMouseoverNode="true"></vue-json-pretty>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
     <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" :network="data.network" />
+    <RawJsonViewer :show.sync="showRaw" type="operation" :network="data.network" :level="data.level" :hash="data.hash" />
   </div>
 </template>
 
@@ -206,8 +195,8 @@ import InfoItem from "@/components/InfoItem.vue";
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import OperationAlert from "@/components/OperationAlert.vue";
 import AccountBox from "@/components/AccountBox.vue";
-import VueJsonPretty from "vue-json-pretty";
-
+import RawJsonViewer from "@/components/RawJsonViewer.vue";
+import { mapActions } from "vuex";
 import { getTree } from "@/utils/diff.js";
 
 export default {
@@ -219,7 +208,7 @@ export default {
   components: {
     InfoItem,
     TreeNodeDetails,
-    VueJsonPretty,
+    RawJsonViewer,
     OperationAlert,
     AccountBox
   },
@@ -228,9 +217,7 @@ export default {
     activeParameter: [],
     showParams: false,
     showTreeNodeDetails: false,
-    showRaw: false,
-    rawJson: null,
-    loadingRaw: false
+    showRaw: false
   }),
   created() {
     this.showParams =
@@ -377,21 +364,7 @@ export default {
     },
   },
   methods: {
-    getRawJSON() {
-      if (this.rawJson != null) {
-        this.showRaw = true;
-        return;
-      }
-      this.showRaw = true;
-      this.loadingRaw = true;
-      this.rpc
-        .getOperation(this.data.network, this.data.level, this.data.hash)
-        .then(res => {
-          this.rawJson = res;
-        })
-        .catch(err => console.log(err))
-        .finally(() => (this.loadingRaw = false));
-    },
+    ...mapActions(["showError", "showClipboardOK"]),
     getChangedItems(item) {
       let res = item.children.map(x => this.getChangedItems(x), this).flat();
       if (item.kind || res.length > 0) res.push(item);
@@ -432,10 +405,6 @@ export default {
 
 
 <style lang="scss" scoped>
-.address {
-  font-size: 13px;
-}
-
 .parameters {
   font-size: 14px;
   font-family: "Roboto Mono", monospace;
@@ -466,12 +435,6 @@ export default {
     color: var(--v-warning-base);
   }
 }
-
-.v-dialog > .v-card > .v-card__title {
-  position: sticky;
-  top: 0;
-  z-index: 999;
-}
 </style>
 
 <style>
@@ -480,8 +443,5 @@ export default {
 }
 .v-treeview-node__root {
   min-height: 20px !important;
-}
-.vjs-tree .vjs-value__string {
-  color: var(--v-tree-base);
 }
 </style>
