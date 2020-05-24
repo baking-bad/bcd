@@ -15,7 +15,7 @@
         <div :class="`${item.kind} pl-1`">
           <span
             class="key"
-            :class="item.name.startsWith('@') ? 'text--text' : ''"
+            :class="item.name.startsWith('@') ? 'text--secondary' : ''"
           >{{ item.name }}:</span>
 
           <v-btn

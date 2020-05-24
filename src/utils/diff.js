@@ -36,7 +36,7 @@ function formatValue(val, typ) {
 
 function getValue(x) {
     if (x.diff_type === 'update') {
-        return `${formatValue(x.from, x.type)} -> ${formatValue(x.value, x.type)}`
+        return `${formatValue(x.from, x.type)} 🡒 ${formatValue(x.value, x.type)}`
     }
     return formatValue(x.value, x.type)
 }
