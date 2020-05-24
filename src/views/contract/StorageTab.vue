@@ -8,34 +8,41 @@
             Latest
           </span>
           <v-spacer></v-spacer>
-          <v-btn v-if="raw" @click="getStorage()" small text>
+          <v-btn @click="showRaw = true" small text>
+            <v-icon class="mr-1" small>mdi-code-json</v-icon>
+            <span class="text--secondary">Raw JSON</span>
+          </v-btn>
+          <v-btn v-if="raw" @click="getStorage()" class="ml-2" small text>
             <v-icon class="mr-1" small>mdi-file-tree</v-icon>
             <span class="text--secondary">Switch to Tree View</span>
           </v-btn>
-          <v-btn v-else @click="getStorageRaw()" small text>
+          <v-btn v-else @click="getStorageRaw()" class="ml-2" small text>
             <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
             <span class="text--secondary">Switch to Micheline</span>
           </v-btn>
-          <v-btn
-            v-if="!raw"
-            small
-            text
-            class="ml-2"
-            @click="downloadFile"
-            :loading="downloading"
-            :disabled="downloading"
-          >
-            <v-icon class="mr-1" small>mdi-download-outline</v-icon>
-            <span class="text--secondary">Download as .json</span>
-          </v-btn>
-          <v-snackbar top color="light-green darken-1" v-model="clipboard_ok">
-            Copied to clipboard!
-            <v-btn text @click="clipboard_ok = false">OK</v-btn>
-          </v-snackbar>
+          <v-tooltip v-if="!raw" top>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                small
+                text
+                class="ml-2"
+                @click="downloadFile"
+                :loading="downloading"
+                :disabled="downloading"
+              >
+                <v-icon class="mr-1" small>mdi-download-outline</v-icon>
+                <span class="text--secondary">Download as .json</span>
+              </v-btn>
+            </template>
+            Raw snapshot with all big map data
+          </v-tooltip>
           <v-btn
             v-if="rawStorage && raw"
-            v-clipboard="getStorageString()"
-            v-clipboard:success="onStorageCopy"
+            @click="{
+              $clipboard(getStorageString());
+              showClipboardOK();
+            }"
             class="ml-2"
             small
             text
@@ -96,6 +103,11 @@
       :network="network"
       :address="address"
     />
+    <RawJsonViewer
+      :show.sync="showRaw"
+      type="storage"
+      :network="network"
+      :address="address" />
   </v-container>
 </template>
 
@@ -105,6 +117,7 @@ import { mapActions } from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import ErrorState from "@/components/ErrorState.vue";
+import RawJsonViewer from "@/components/RawJsonViewer.vue"
 
 import { getTree } from "@/utils/diff.js";
 
@@ -113,6 +126,7 @@ import dayjs from "dayjs";
 export default {
   name: "StorageTab",
   components: {
+    RawJsonViewer,
     TreeNodeDetails,
     ErrorState,
     Michelson
@@ -136,6 +150,7 @@ export default {
     panel: 0,
     loading: true,
     storage: null,
+    showRaw: false,
     rawStorage: null,
     downloading: false,
     showTreeNodeDetails: false,
@@ -147,7 +162,7 @@ export default {
     this.getStorage(true);
   },
   methods: {
-    ...mapActions(["showError"]),
+    ...mapActions(["showError", "showClipboardOK"]),
     getValue(item) {
       if (item.type === undefined || item.value === undefined) {
         return item;

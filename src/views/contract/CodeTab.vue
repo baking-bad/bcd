@@ -19,6 +19,10 @@
             hide-details
           ></v-select>
           <v-spacer></v-spacer>
+          <v-btn @click="showRaw = true" small text>
+            <v-icon class="mr-1" small>mdi-code-json</v-icon>
+            <span class="text--secondary">Raw JSON</span>
+          </v-btn>
           <v-btn small text @click="downloadFile">
             <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
             <span class="text--secondary">Download as .tz</span>
@@ -46,6 +50,12 @@
       </v-card>
     </div>
     <ErrorState v-else />
+    <RawJsonViewer
+      :show.sync="showRaw"
+      type="code"
+      :network="network"
+      :address="address"
+      :level="getFallbackLevel(selectedProtocol)" />
   </v-container>
 </template>
 
@@ -53,6 +63,7 @@
 import { mapActions } from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
+import RawJsonViewer from "@/components/RawJsonViewer.vue"
 import LZString from "lz-string";
 
 export default {
@@ -64,12 +75,14 @@ export default {
   },
   components: {
     ErrorState,
-    Michelson
+    Michelson,
+    RawJsonViewer
   },
   data: () => ({
     code: {},
     loading: true,
-    selectedProtocol: ""
+    selectedProtocol: "",
+    showRaw: false
   }),
   created() {
     if (this.$route.query.protocol) {

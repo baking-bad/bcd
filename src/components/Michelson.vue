@@ -64,7 +64,12 @@ export default {
 .CodeMirror {
   background-color: var(--v-data-base) !important;
   height: auto;
-  font-size: 0.9rem;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+}
+.CodeMirror-gutters {
+  border-right: none !important;
 }
 .CodeMirror-linenumbers {
   background-color: var(--v-data-base) !important;
@@ -72,6 +77,9 @@ export default {
 }
 .CodeMirror-linenumber {
   color: #99999980 !important;
+}
+.CodeMirror-line {
+  padding-left: 15px !important;
 }
 .error-mark {
   background-color: #F4433625;

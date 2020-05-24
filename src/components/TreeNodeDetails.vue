@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-if="data" v-model="show" width="800" :fullscreen="data.realPrim === 'lambda' && data.diffType === 'update'">
+  <v-dialog v-if="data" v-model="show" width="800" :fullscreen="data.realPrim === 'lambda' && data.diffType === 'update'" scrollable>
     <v-card>
       <v-card-title class="sidebar">
         <v-row no-gutters>
@@ -31,7 +31,7 @@
           </v-col>
         </v-row>        
       </v-card-title>
-      <v-card-text class="data py-7">
+      <v-card-text class="data pa-0">
         <v-row no-gutters>
           <v-col v-if="data.diffType === 'update'" cols="6" class="pr-5">
             <ValueInspector :prim="data.realPrim" 

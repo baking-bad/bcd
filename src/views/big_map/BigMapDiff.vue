@@ -114,7 +114,7 @@
     <RawJsonViewer
       v-if="diff"
       :show.sync="showRaw"
-      type="big_map_value"
+      type="big_map"
       :network="network"
       :level="diff.data.level"
       :address="address"
