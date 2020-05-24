@@ -19,7 +19,13 @@
       <v-col cols="2" v-if="address" class="py-0 d-flex justify-end align-center">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" v-if="!data.mempool && data.id" icon class="mr-2 text--secondary" @click="showRaw = true">
+            <v-btn
+              v-on="on"
+              v-if="!data.mempool && data.id"
+              icon
+              class="mr-2 text--secondary"
+              @click="showRaw = true"
+            >
               <v-icon>mdi-code-json</v-icon>
             </v-btn>
           </template>
@@ -27,11 +33,15 @@
         </v-tooltip>
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" icon class="mr-2 text--secondary"
+            <v-btn
+              v-on="on"
+              icon
+              class="mr-2 text--secondary"
               @click="() => {
                 $clipboard(data.hash); 
                 showClipboardOK();
-              }">
+              }"
+            >
               <v-icon>mdi-content-copy</v-icon>
             </v-btn>
           </template>
@@ -39,7 +49,13 @@
         </v-tooltip>
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" :href="`/${data.network}/opg/${data.hash}`" target="_blank" icon class="mr-2 text--secondary">
+            <v-btn
+              v-on="on"
+              :href="`/${data.network}/opg/${data.hash}`"
+              target="_blank"
+              icon
+              class="mr-2 text--secondary"
+            >
               <v-icon>mdi-open-in-new</v-icon>
             </v-btn>
           </template>
@@ -52,21 +68,27 @@
         <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
         <span v-if="data.entrypoint" class="hash secondary--text">{{ data.entrypoint }}</span>
         <span v-else class="hash accent--text">{{ data.kind }}</span>
-        <v-chip
-          class="ml-3 overline"
-          :color="statusColor"
-          small
-          outlined
-          label
-        >{{ data.status }}</v-chip>
+        <v-chip class="ml-3 overline" :color="statusColor" small outlined label>{{ data.status }}</v-chip>
       </v-col>
-      <v-col cols="1" class="py-0 d-flex justify-end align-center" v-if="hasParameters || hasStorageDiff">
-        <v-btn v-if="showParams" text small @click="showParams = !showParams" class="text--secondary">
-          <v-icon small class="mr-1">mdi-file-tree</v-icon><span>Hide details</span>
+      <v-col
+        cols="1"
+        class="py-0 d-flex justify-end align-center"
+        v-if="hasParameters || hasStorageDiff"
+      >
+        <v-btn
+          v-if="showParams"
+          text
+          small
+          @click="showParams = !showParams"
+          class="text--secondary"
+        >
+          <v-icon small class="mr-1">mdi-file-tree</v-icon>
+          <span>Hide details</span>
         </v-btn>
         <v-btn v-else text small @click="showParams = !showParams">
-          <v-icon small class="mr-1">mdi-file-tree</v-icon><span>Show details</span>
-        </v-btn>      
+          <v-icon small class="mr-1">mdi-file-tree</v-icon>
+          <span>Show details</span>
+        </v-btn>
       </v-col>
       <v-col cols="2">
         <AccountBox
@@ -107,97 +129,57 @@
       </v-col>
       <v-col cols="2" v-if="allocationFee">
         <InfoItem title="Allocation fee" :subtitle="allocationFee | uxtz" />
-      </v-col>      
+      </v-col>
     </v-row>
 
     <v-expand-transition>
       <div v-show="showParams" class="px-4 pb-2">
-        <v-row v-if="errors" no-gutters>
+        <v-row v-if="data.errors" no-gutters>
           <v-col>
-            <OperationAlert :errors="errors" :operationId="data.id" />
+            <OperationAlert :errors="data.errors" :operationId="data.id" />
           </v-col>
         </v-row>
-        <v-row class="my-1 parameters px-2 py-3 canvas" v-if="hasParameters || hasStorageDiff" no-gutters>
+        <v-row
+          class="my-1 parameters px-2 py-3 canvas"
+          v-if="hasParameters || hasStorageDiff"
+          no-gutters
+        >
           <v-col cols="6">
-            <div v-if="hasParameters">
-              <span class="overline ml-3">Parameter</span>
-              <v-treeview
-                :items="parameters"
-                :active.sync="activeParameter"
-                hoverable
-                open-all
-                transition
-                activatable
-                open-on-click
-                return-object
-              >
-                <template v-slot:label="{ item }">
-                  <div class="tree-label">
-                    <span :class="item.name.startsWith('@') ? 'accent--text' : ''">{{ item.name }}:</span>&nbsp;
-                    <span :class="item.type">{{ item.value }}</span>
-                  </div>
-                </template>
-              </v-treeview>
-            </div>
+            <template v-if="hasParameters">
+              <span class="overline ml-3">Parameters</span>
+              <MiguelTreeView :miguel="data.parameters" :network="data.network" openAll />            
+            </template>
           </v-col>
           <v-col cols="6">
-            <div v-if="hasStorageDiff">
+            <template v-if="hasStorageDiff">
               <span class="overline ml-3">Storage</span>&nbsp;
-              <span class="grey--text caption" v-if="data.result">{{ data.result.storage_size | bytes}}</span>
-              <v-treeview
-                :items="storage.tree"
-                :open="storage.open"
-                :active.sync="activeStorage"
-                hoverable
-                transition
-                activatable
-                open-on-click
-                return-object
-              >
-                <template v-slot:label="{ item }">
-                  <div :class="`${item.kind} pl-1 tree-label`">
-                    <span v-if="hasAddress(item.name)">
-                      <span>{{ item.name }}:</span>
-                      <v-btn
-                        @click.prevent.stop="handleAddress(item.name)"
-                        target="_blank"
-                        tile
-                        x-small
-                        text
-                      >
-                        <v-icon class="accent--text" x-small>mdi-open-in-new</v-icon>
-                      </v-btn>
-                    </span>
-                    <span v-else>
-                      <span class="key">{{ item.name }}:&nbsp;</span>
-                      <span v-if="item.value_type === 'big_map'" 
-                            class="accent--text">big_map&nbsp;</span>
-                    </span>
-                    <span v-if="item.value_type === 'big_map' && item.children.length === 0"
-                          class="text--secondary">0 diffs</span>
-                    <span v-else :class="item.type">{{ item.value }}</span>
-                  </div>
-                </template>
-              </v-treeview>
-            </div>
+              <span
+                class="text--secondary caption"
+                v-if="data.result"
+              >{{ data.result.storage_size | bytes}}</span>
+              <MiguelTreeView :miguel="data.storage_diff" :network="data.network" />  
+            </template>
           </v-col>
         </v-row>
       </div>
     </v-expand-transition>
-
-    <TreeNodeDetails v-model="showTreeNodeDetails" :data="active" :network="data.network" />
-    <RawJsonViewer :show.sync="showRaw" type="operation" :network="data.network" :level="data.level" :hash="data.hash" />
+    <RawJsonViewer
+      :show.sync="showRaw"
+      type="operation"
+      :network="data.network"
+      :level="data.level"
+      :hash="data.hash"
+    />
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import InfoItem from "@/components/InfoItem.vue";
-import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import OperationAlert from "@/components/OperationAlert.vue";
 import AccountBox from "@/components/AccountBox.vue";
 import RawJsonViewer from "@/components/RawJsonViewer.vue";
-import { mapActions } from "vuex";
-import { getTree } from "@/utils/diff.js";
+import MiguelTreeView from "@/components/MiguelTreeView.vue";
 
 export default {
   props: {
@@ -207,17 +189,14 @@ export default {
   },
   components: {
     InfoItem,
-    TreeNodeDetails,
     RawJsonViewer,
     OperationAlert,
-    AccountBox
+    AccountBox,
+    MiguelTreeView
   },
   data: () => ({
-    activeStorage: [],
-    activeParameter: [],
-    showParams: false,
-    showTreeNodeDetails: false,
-    showRaw: false
+    showRaw: false,
+    showParams: false
   }),
   created() {
     this.showParams =
@@ -226,19 +205,6 @@ export default {
       this.address === undefined;
   },
   computed: {
-    active() {
-      if (this.activeStorage.length > 0) {
-        return this.activeStorage[0];
-      }
-      if (this.activeParameter.length > 0) {
-        return this.activeParameter[0];
-      }
-      return null;
-    },
-    errors() {
-      if (!this.data.errors) return [];
-      return this.data.errors;
-    },
     source() {
       if (this.data.source_alias) {
         return this.data.source_alias;
@@ -319,14 +285,6 @@ export default {
       }
       return this.$options.filters.bytes(0) + " (0%)";
     },
-    parameters() {
-      return getTree(this.data.parameters, true);
-    },
-    storage() {
-      let tree = getTree(this.data.storage_diff, true);
-      let open = tree.map(x => this.getChangedItems(x), this).flat();
-      return { tree, open };
-    },
     hasParameters() {
       return (
         this.data != null &&
@@ -355,93 +313,20 @@ export default {
     },
     burned() {
       let val = this.data.burned || 0;
-      if (!this.data.internal && !this.data.mempool && this.data.internal_operations) {
+      if (
+        !this.data.internal &&
+        !this.data.mempool &&
+        this.data.internal_operations
+      ) {
         for (let i = 0; i < this.data.internal_operations.length; i++) {
           val += this.data.internal_operations[i].burned || 0;
         }
       }
       return val;
-    },
+    }
   },
   methods: {
-    ...mapActions(["showError", "showClipboardOK"]),
-    getChangedItems(item) {
-      let res = item.children.map(x => this.getChangedItems(x), this).flat();
-      if (item.kind || res.length > 0) res.push(item);
-      return res;
-    },
-    hasAddress(s) {
-      if (s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s)) {
-        return s.startsWith("KT") || this.tzkt.supports(this.data.network);
-      }
-      return false;
-    },
-    handleAddress(s) {
-      const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
-      if (address.startsWith("KT")) {
-        let routeData = this.$router.resolve({
-          path: `/${this.data.network}/${address}`
-        });
-        window.open(routeData.href, "_blank");
-      } else {
-        let href = this.tzkt.resolve(this.data.network, address);
-        window.open(href, "_blank");
-      }
-    }
-  },
-  watch: {
-    active(newVal) {
-      if (newVal !== null) this.showTreeNodeDetails = true;
-    },
-    showTreeNodeDetails(newVal) {
-      if (!newVal) {
-        this.activeStorage = [];
-        this.activeParameter = [];
-      }
-    }
+    ...mapActions(["showClipboardOK"])
   }
 };
 </script>
-
-
-<style lang="scss" scoped>
-.parameters {
-  font-size: 14px;
-  font-family: "Roboto Mono", monospace;
-
-  .value {
-    color: var(--v-tree-base);
-  }
-  .object {
-    opacity: .7;
-  }
-}
-
-.added-tree-item {
-  background-color: #4CAF5025;
-  .value {
-    color: var(--v-success-base);
-  }
-}
-.removed-tree-item {
-  background-color: #F4433625;
-  .value {
-    color: var(--v-error-base);
-  }
-}
-.edited-tree-item {
-  background-color: #FFC10725;
-  .value {
-    color: var(--v-warning-base);
-  }
-}
-</style>
-
-<style>
-.tree-label {
-  font-size: 95% !important;
-}
-.v-treeview-node__root {
-  min-height: 20px !important;
-}
-</style>

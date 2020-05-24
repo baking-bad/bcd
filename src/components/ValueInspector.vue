@@ -1,46 +1,44 @@
 <template>
   <div>
     <Michelson v-if="prim === 'lambda'" :code="value"></Michelson>
-    <div v-else class="px-5 pt-7">
-      <pre v-if="isPreFormatted">{{ value }}</pre>
-      <v-textarea
-        v-else-if="prim === 'string' || prim === 'bytes'"
-        auto-grow
-        rows="1"
-        filled
-        readonly
-        :label="label"
-        :value="value"
-      ></v-textarea>
-      <v-text-field v-else :value="value" :suffix="suffix" readonly filled :label="label"></v-text-field>
-      <v-btn
-        v-if="(isKeyHash || isContract) && tzkt.supports(network)"
-        text
-        small
-        link
-        @click.prevent.stop="handleAddress(value, true)"
-      >
-        <v-icon small class="mr-1">mdi-open-in-new</v-icon>
-        <span>Open in TzKT.io</span>
-      </v-btn>
-      <v-btn
-        v-if="isContract && value !== $route.params.address"
-        text
-        small
-        link
-        @click.prevent.stop="handleAddress(value)"
-      >
-        <v-icon small class="mr-1" v-if="!sameTab">mdi-open-in-new</v-icon>
-        <span>View contract</span>
-      </v-btn>
-      <v-btn
-        v-else-if="prim === 'big_map'"
-        text
-        small
-        link
-        :to="{ name: 'bigmap', params: { address: address, ptr: value, network: network}}"
-      >View Big Map</v-btn>
-    </div>
+    <pre v-else-if="isPreFormatted">{{ value }}</pre>
+    <v-textarea
+      v-else-if="prim === 'string' || prim === 'bytes'"
+      auto-grow
+      rows="1"
+      filled
+      readonly
+      :label="label"
+      :value="value"
+    ></v-textarea>
+    <v-text-field v-else :value="value" :suffix="suffix" readonly filled :label="label"></v-text-field>
+    <v-btn
+      v-if="(isKeyHash || isContract) && tzkt.supports(network)"
+      text
+      small
+      link
+      @click.prevent.stop="handleAddress(value, true)"
+    >
+      <v-icon small class="mr-1">mdi-open-in-new</v-icon>
+      <span>Open in TzKT.io</span>
+    </v-btn>
+    <v-btn
+      v-if="isContract && value !== $route.params.address"
+      text
+      small
+      link
+      @click.prevent.stop="handleAddress(value)"
+    >
+      <v-icon small class="mr-1" v-if="!sameTab">mdi-open-in-new</v-icon>
+      <span>View contract</span>
+    </v-btn>
+    <v-btn
+      v-else-if="prim === 'big_map'"
+      text
+      small
+      link
+      :to="{ path: `/${network}/big_map/${value}` }"
+    >View Big Map</v-btn>
   </div>
 </template>
 
@@ -54,7 +52,6 @@ export default {
     prim: String,
     label: String,
     network: String,
-    address: String,
     sameTab: Boolean
   },
   components: {

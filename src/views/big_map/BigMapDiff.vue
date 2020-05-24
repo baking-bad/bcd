@@ -8,7 +8,6 @@
               <v-list-item-title class="hash">{{ diff.data.key_string }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <span class="key-string"></span>
         </v-col>
         <v-col cols="2" class="d-flex align-center">
           <v-list-item>
@@ -68,49 +67,14 @@
         </v-col>
         <v-col cols="12" class="bmd px-2 py-4 my-2 ba-1">
           <span class="overline ml-3">Key</span>
-          <v-treeview
-            :items="keyTree"
-            :active.sync="activeKey"
-            hoverable
-            open-all
-            transition
-            activatable
-            open-on-click
-            return-object
-          >
-            <template v-slot:label="{ item }">
-              <span>{{ item.name }}</span>&nbsp;
-              <span :class="item.type">{{ item.value }}</span>
-            </template>
-          </v-treeview>
+          <MiguelTreeView :miguel="diff.data.key" :network="network" openAll />   
         </v-col>
         <v-col cols="12" class="bmd px-2 py-4 my-2 ba-1" v-if="diff.data.value">
           <span class="overline ml-3">Value</span>
-          <v-treeview
-            :items="valueTree"
-            :open="valueOpen"
-            :active.sync="activeValue"
-            hoverable
-            open-all
-            transition
-            activatable
-            open-on-click
-            return-object
-          >
-            <template v-slot:label="{ item }">
-              <span>{{ item.name }}</span>&nbsp;
-              <span :class="item.type">{{ item.value }}</span>
-            </template>
-          </v-treeview>
+          <MiguelTreeView :miguel="diff.data.value" :network="network" openAll />         
         </v-col>
       </v-row>
     </v-expansion-panel-content>
-    <TreeNodeDetails
-      v-model="showTreeNodeDetails"
-      :data="active"
-      :network="network"
-      :address="address"
-    />
     <RawJsonViewer
       v-if="diff"
       :show.sync="showRaw"
@@ -125,14 +89,13 @@
 </template>
 
 <script>
-import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import RawJsonViewer from "@/components/RawJsonViewer.vue"
-import { getTree } from "@/utils/diff.js";
+import MiguelTreeView from "@/components/MiguelTreeView.vue";
 
 export default {
   name: "BigMapDiff",
   components: {
-    TreeNodeDetails,
+    MiguelTreeView,
     RawJsonViewer
   },
   props: {
@@ -143,69 +106,12 @@ export default {
     single: Boolean
   },
   data: () => ({
-    showTreeNodeDetails: false,
-    activeKey: [],
-    activeValue: [],
     showRaw: false
-  }),
-  computed: {
-    active() {
-      if (this.activeKey.length > 0) {
-        return this.activeKey[0];
-      }
-      if (this.activeValue.length > 0) {
-        return this.activeValue[0];
-      }
-      return null;
-    },
-    keyTree() {
-      return getTree(this.diff.data.key, true);
-    },
-    valueTree() {
-      return getTree(this.diff.data.value, true);
-    },
-    valueOpen() {
-      return this.valueTree.map(x => this.getChangedItems(x), this).flat();
-    }
-  },
-  methods: {
-    getChangedItems(item) {
-      let res = item.children.map(x => this.getChangedItems(x), this).flat();
-      res.push(item);
-      return res;
-    }
-  },
-  watch: {
-    active(newVal) {
-      if (newVal !== null) this.showTreeNodeDetails = true;
-    },
-    showTreeNodeDetails(newVal) {
-      if (!newVal) {
-        this.activeKey = [];
-        this.activeValue = [];
-      }
-    }
-  }
+  })
 };
 </script>
 
 <style lang="scss" scoped>
-.key-string {
-  font-family: "Roboto Mono", monospace;
-  font-size: 14px;
-}
-
-.bmd {
-  font-size: 14px;
-  font-family: "Roboto Mono", monospace;
-  background: var(--v-canvas-base);
-  border: none !important;
-
-  .value {
-    color: var(--v-tree-base);
-  }
-}
-
 .key-hash {
   font-size: 14px;
   font-family: "Roboto Mono", monospace;

@@ -44,13 +44,12 @@
         </v-row>        
       </v-card-title>
       <v-divider></v-divider>
-      <v-card-text>
-        <v-row no-gutters class="mt-5">
+      <v-card-text class="pt-7">
+        <v-row no-gutters>
           <v-col cols="12">
             <ValueInspector prim="address"
                             :value="address"
                             :network="network"
-                            :address="address"
                             :label="title"
                             :sameTab="true">
             </ValueInspector>

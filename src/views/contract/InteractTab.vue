@@ -75,7 +75,7 @@
               <template v-if="paramsMicheline || paramsMichelson">
                 <v-divider></v-divider>
                 <div class="py-4 px-6 d-flex align-center">
-                  <span class="title font-weight-regular">Parameters</span>
+                  <span class="body-1 font-weight-medium text-uppercase text--secondary">Parameters</span>
                   <v-spacer></v-spacer>
                   <v-btn
                     small
@@ -173,10 +173,10 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-dialog v-model="showResultOPG" width="1200">
+    <v-dialog v-model="showResultOPG" width="1200" scrollable>
       <v-card flat outlined>
         <v-card-title class="sidebar d-flex justify-center pa-4">
-          <span class="title text--secondary">Simulation result</span>
+          <span class="body-1 font-weight-medium text-uppercase text--secondary">Simulation result</span>
           <v-spacer></v-spacer>
           <v-btn icon small @click="showResultOPG = false">
             <v-icon>mdi-close</v-icon>

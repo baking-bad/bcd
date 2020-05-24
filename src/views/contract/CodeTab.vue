@@ -19,29 +19,29 @@
             hide-details
           ></v-select>
           <v-spacer></v-spacer>
-          <v-btn @click="showRaw = true" small text>
+          <v-btn @click="showRaw = true" small text class="text--secondary">
             <v-icon class="mr-1" small>mdi-code-json</v-icon>
-            <span class="text--secondary">Raw JSON</span>
+            <span>Raw JSON</span>
           </v-btn>
-          <v-btn small text @click="downloadFile">
+          <v-btn small text @click="downloadFile" class="text--secondary ml-2">
             <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
-            <span class="text--secondary">Download as .tz</span>
+            <span>Download as .tz</span>
           </v-btn>
-          <v-btn small text @click="openTryMichelson" class="ml-2">
+          <v-btn small text @click="openTryMichelson" class="text--secondary ml-2">
             <v-icon class="mr-1 text--secondary" small>mdi-play-circle-outline</v-icon>
-            <span class="text--secondary">Run in sandbox</span>
+            <span>Run in sandbox</span>
           </v-btn>
           <v-btn
             v-if="contract.language === 'smartpy'"
             small
             text
-            class="ml-2"
+            class="ml-2 text--secondary"
             :href="getSmartPyLink()"
             rel="nofollow noopener"
             target="_blank"
           >
-            <v-icon class="mr-1 text--secondary" small>mdi-link</v-icon>
-            <span class="text--secondary">View on SmartPy.io</span>
+            <v-icon class="mr-1" small>mdi-link</v-icon>
+            <span>View on SmartPy.io</span>
           </v-btn>
         </v-card-title>
         <v-card-text class="pa-0">

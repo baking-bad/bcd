@@ -8,17 +8,17 @@
             Latest
           </span>
           <v-spacer></v-spacer>
-          <v-btn @click="showRaw = true" small text>
+          <v-btn @click="showRaw = true" small text class="text--secondary">
             <v-icon class="mr-1" small>mdi-code-json</v-icon>
-            <span class="text--secondary">Raw JSON</span>
+            <span>Raw JSON</span>
           </v-btn>
-          <v-btn v-if="raw" @click="getStorage()" class="ml-2" small text>
+          <v-btn v-if="raw" @click="getStorage()" class="ml-2 text--secondary" small text>
             <v-icon class="mr-1" small>mdi-file-tree</v-icon>
-            <span class="text--secondary">Switch to Tree View</span>
+            <span>Switch to Tree View</span>
           </v-btn>
-          <v-btn v-else @click="getStorageRaw()" class="ml-2" small text>
+          <v-btn v-else @click="getStorageRaw()" class="ml-2 text--secondary" small text>
             <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
-            <span class="text--secondary">Switch to Micheline</span>
+            <span>Switch to Micheline</span>
           </v-btn>
           <v-tooltip v-if="!raw" top>
             <template v-slot:activator="{ on }">
@@ -26,13 +26,13 @@
                 v-on="on"
                 small
                 text
-                class="ml-2"
+                class="ml-2 text--secondary"
                 @click="downloadFile"
                 :loading="downloading"
                 :disabled="downloading"
               >
                 <v-icon class="mr-1" small>mdi-download-outline</v-icon>
-                <span class="text--secondary">Download as .json</span>
+                <span>Download as .json</span>
               </v-btn>
             </template>
             Raw snapshot with all big map data
@@ -53,56 +53,13 @@
         </v-card-title>
         <v-card-text class="pa-0">
           <Michelson v-if="raw" :code="rawStorage"></Michelson>
-          <v-treeview
-            v-else
-            :items="items"
-            hoverable
-            open-all
-            transition
-            activatable
-            open-on-click
-            return-object
-            class="storage pr-4 pt-6 pb-4"
-            :active.sync="activeField"
-          >
-            <template v-slot:label="{ item }">
-              <span v-if="hasAddress(item.name)">
-                <span>{{ item.name }}:</span>
-                <v-btn
-                  @click.prevent.stop="handleAddress(item.name)"
-                  target="_blank"
-                  tile
-                  x-small
-                  text
-                >
-                  <v-icon class="accent--text" x-small>mdi-open-in-new</v-icon>
-                </v-btn>
-              </span>
-              <span v-else>{{ item.name }}:&nbsp;</span>
-              <span :class="item.type" v-if="item.value_type !== 'big_map'">{{ item.value }}</span>
-              <v-btn
-                :to="{ name: 'big_map', params: { address: address, ptr: item.value, network: network}}"
-                outlined
-                small
-                color="accent"
-                class="px-3 mb-1"
-                v-else
-              >
-                <v-icon class x-small left>mdi-vector-link</v-icon>
-                <span class>Big Map {{ item.value }}</span>
-              </v-btn>
-            </template>
-          </v-treeview>
+          <div v-else class="py-4">
+            <MiguelTreeView :miguel="storage" :network="network" openAll />     
+          </div>    
         </v-card-text>
       </v-card>
     </div>
     <ErrorState v-else />
-    <TreeNodeDetails
-      v-model="showTreeNodeDetails"
-      :data="active"
-      :network="network"
-      :address="address"
-    />
     <RawJsonViewer
       :show.sync="showRaw"
       type="storage"
@@ -113,21 +70,16 @@
 
 <script>
 import { mapActions } from "vuex";
-
 import Michelson from "@/components/Michelson.vue";
-import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/RawJsonViewer.vue"
-
-import { getTree } from "@/utils/diff.js";
-
-import dayjs from "dayjs";
+import MiguelTreeView from "@/components/MiguelTreeView.vue";
 
 export default {
   name: "StorageTab",
   components: {
     RawJsonViewer,
-    TreeNodeDetails,
+    MiguelTreeView,
     ErrorState,
     Michelson
   },
@@ -135,49 +87,19 @@ export default {
     address: String,
     network: String
   },
-  computed: {
-    items() {
-      return getTree(this.storage, true);
-    },
-    active() {
-      if (this.activeField.length > 0) {
-        return this.activeField[0];
-      }
-      return null;
-    }
-  },
   data: () => ({
-    panel: 0,
     loading: true,
     storage: null,
     showRaw: false,
     rawStorage: null,
     downloading: false,
-    showTreeNodeDetails: false,
-    activeField: [],
     raw: false,
-    clipboard_ok: false
   }),
   created() {
     this.getStorage(true);
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
-    getValue(item) {
-      if (item.type === undefined || item.value === undefined) {
-        return item;
-      }
-      if (item.type === "mutez") {
-        return this.$options.filters.uxtz(item.value);
-      } else if (item.type === "timestamp") {
-        if (isNaN(parseInt(item.value, 10))) {
-          return dayjs(item.value).format("D MMMM YYYY");
-        } else {
-          return dayjs(item.value * 1000).format("D MMMM YYYY HH:mm");
-        }
-      }
-      return item.value;
-    },
     getStorage(force = false) {
       if (this.storage) {
         this.raw = false;
@@ -220,27 +142,6 @@ export default {
         return this.rawStorage.replace(/\n|\s+/gm, " ");
       }
     },
-    onStorageCopy() {
-      this.clipboard_ok = true;
-    },
-    hasAddress(s) {
-      if (s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s)) {
-        return s.startsWith("KT") || this.tzkt.supports(this.network);
-      }
-      return false;
-    },
-    handleAddress(s) {
-      const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
-      if (address.startsWith("KT")) {
-        let routeData = this.$router.resolve({
-          path: `/${this.network}/${address}`
-        });
-        window.open(routeData.href, "_blank");
-      } else {
-        let href = this.tzkt.resolve(this.network, address);
-        window.open(href, "_blank");
-      }
-    },
     downloadFile() {
       this.downloading = true;
       this.api
@@ -268,41 +169,7 @@ export default {
   watch: {
     address() {
       this.getStorage(true);
-    },
-    active(newVal) {
-      if (newVal !== null) this.showTreeNodeDetails = true;
-    },
-    showTreeNodeDetails(newVal) {
-      if (!newVal) this.activeField = [];
     }
   }
 };
 </script>
-
-
-<style lang="scss" scoped>
-.storage {
-  font-size: 14px;
-  font-family: "Roboto Mono", monospace;
-  background-color: var(--v-data-base);
-
-  .value {
-    color: var(--v-tree-base);
-  }
-  .object {
-    opacity: .7;
-  }
-}
-</style>
-
-<style>
-.tree-label {
-  font-size: 95% !important;
-}
-.v-treeview-node__root {
-  min-height: 20px !important;
-}
-.vjs-tree .vjs-value__string {
-  color: var(--v-tree-base);
-}
-</style>

@@ -31,7 +31,7 @@
           </v-col>
         </v-row>        
       </v-card-title>
-      <v-card-text class="data pa-0">
+      <v-card-text class="data" :class="data.realPrim === 'lambda' ? 'pa-0' : 'pt-7'">
         <v-row no-gutters>
           <v-col v-if="data.diffType === 'update'" cols="6" class="pr-5">
             <ValueInspector :prim="data.realPrim" 
@@ -44,7 +44,6 @@
             <ValueInspector :prim="data.realPrim" 
                             :value="data.val"
                             :network="network"
-                            :address="address"
                             :label="data.diffType === 'update' ? 'After' : 'Value'">
             </ValueInspector>
           </v-col>
@@ -65,8 +64,7 @@ export default {
   props: {
     value: Boolean,
     data: Object,
-    network: String,
-    address: String
+    network: String
   },
   data: () => ({
     show: false
@@ -112,10 +110,5 @@ export default {
   font-weight: 400;
   font-size: 14px;
   line-height: 1.2rem;
-}
-.v-dialog > .v-card > .v-card__title {
-  position: sticky;
-  top: 0;
-  z-index: 999;
 }
 </style>
