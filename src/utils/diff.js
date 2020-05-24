@@ -36,7 +36,7 @@ function formatValue(val, typ) {
 
 function getValue(x) {
     if (x.diff_type === 'update') {
-        return `${formatValue(x.from, x.type)} -> ${formatValue(x.value, x.type)}`
+        return `${formatValue(x.from, x.type)} 🡒 ${formatValue(x.value, x.type)}`
     }
     return formatValue(x.value, x.type)
 }
@@ -110,7 +110,7 @@ function parseMap(x) {
         value_type: x.type,
         prim: x.prim,
         realPrim: x.prim,
-        val: x.prim === 'big_map' ? String(x.value) : undefined,
+        val: x.prim === 'big_map' && x.value !== undefined && x.value !== null ? String(x.value) : undefined,
         id: getId(),
         kind: parseDiffType(x.diff_type)
     }

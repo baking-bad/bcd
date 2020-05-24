@@ -181,11 +181,22 @@ export class BetterCallApi {
             })
     }
 
-    getContractEntrypointTrace(network, address, bin_path, data) {
-        return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/trace`, {
+    getContractEntrypointTrace(network, address, bin_path, data, source=null, sender=null, amount=null) {
+        var body = {
             bin_path: bin_path,
             data: data
-        })
+        }
+        if (source !== null) {
+            body.source = source;
+        }
+        if (sender !== null) {
+            body.sender = sender;
+        }
+        if (amount !== null) {
+            body.amount = parseInt(amount);   
+        }
+
+        return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/trace`, body)
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -248,8 +259,8 @@ export class BetterCallApi {
             })
     }
 
-    getContractBigMap(network, address, ptr, q = '', offset = 0) {
-        return getCancellable(this.api, `/contract/${network}/${address}/bigmap/${ptr}?q=${q}&offset=${offset}`, {})
+    getContractBigMap(network, ptr) {
+        return getCancellable(this.api, `/bigmap/${network}/${ptr}`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {
@@ -259,8 +270,19 @@ export class BetterCallApi {
             })
     }
 
-    getContractBigMapByKeyHash(network, address, ptr, keyhash, offset = 0) {
-        return getCancellable(this.api, `/contract/${network}/${address}/bigmap/${ptr}/${keyhash}?offset=${offset}`, {})
+    getContractBigMapKeys(network, ptr, q = '', offset = 0) {
+        return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys?q=${q}&offset=${offset}`, {})
+            .then((res) => {
+                if (!res) { return res; }
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
+
+    getContractBigMapHistory(network, ptr, keyhash, offset = 0) {
+        return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys/${keyhash}?offset=${offset}`, {})
             .then((res) => {
                 if (res.status != 200) {
                     throw new RequestFailedError(res);

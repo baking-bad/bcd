@@ -1,14 +1,14 @@
 <template>
     <v-row no-gutters>
       <v-col cols="6" class="d-flex align-center justify-center">
-        <div class="ml-10 pl-10 flex-column d-flex align-center justify-center">
+        <div class="ml-8 pl-8 flex-column d-flex align-center justify-center">
           <span class="display-2">This wasn't planned 😓</span>
           <div class="headline font-weight-light mt-3 d-flex flex-column align-center justify-center">
             <template v-if="code === 404 && address && tzkt.supports(network)">
               <span>We couldn't find what you are looking for, but...</span>
               <v-btn 
                 depressed x-large class="mt-3" target="_blank" 
-                :href="getTzKTLink(address)">
+                :href="tzkt.resolve(network, address)">
                 <span>Try tzkt</span>
                 <v-img 
                   class="img-catava" 
@@ -18,11 +18,17 @@
             <template v-else>
               <span>If this error continues to appear, please contact us:</span>
               <div class="mt-3">
-                  <a class="mr-3" href="https://github.com/baking-bad" target="_blank" rel="nofollow noopener"><i class="mdi mdi-github" style="font-size:36px;"></i></a>
-                  <a class="mr-3" href="https://twitter.com/TezosBakingBad" target="_blank" rel="nofollow noopener"><i class="mdi mdi-twitter" style="font-size:36px;"></i></a>
-                  <a class="mr-4" href="tg://resolve?domain=baking_bad_chat"><i class="mdi mdi-telegram" style="font-size:36px;"></i></a>
-                  <a class="mr-4" href="https://tezos-dev.slack.com/archives/CV5NX7F2L" target="_blank" rel="nofollow noopener"><i class="mdi mdi-slack" style="font-size:36px;"></i></a>
-                  <a href="mailto:hello@baking-bad.org"><i class="mdi mdi-email" style="font-size:36px;"></i></a>
+                <v-btn 
+                  v-for="(link, i) in links" 
+                  :key="i"
+                  icon
+                  x-large
+                  color="primary"
+                  :href="link.href"
+                  target="_blank"
+                  rel="nofollow noopener">
+                  <v-icon x-large>{{ link.icon }}</v-icon>
+                </v-btn>
               </div>
             </template>
           </div>
@@ -42,8 +48,32 @@
 export default {
   name: "ErrorState",
   props: {
-    code: Number
+    code: Number,
   },
+  data: () => ({
+    links: [
+      {
+        'href': 'https://github.com/baking-bad/bcd/issues',
+        'icon': 'mdi-github'
+      },
+      {
+        'href': 'https://twitter.com/TezosBakingBad',
+        'icon': 'mdi-twitter'
+      },
+      {
+        'href': 'tg://resolve?domain=baking_bad_chat',
+        'icon': 'mdi-telegram'
+      },
+      {
+        'href': 'https://tezos-dev.slack.com/archives/CV5NX7F2L',
+        'icon': 'mdi-slack'
+      },
+      {
+        'href': 'mailto:hello@baking-bad.org',
+        'icon': 'mdi-email'
+      }
+    ]
+  }),
   computed: {
     address() {
       return this.$route.params.address;
@@ -52,11 +82,6 @@ export default {
       return this.$route.params.network;
     }
   },
-  methods: {
-    getTzKTLink(address) {
-      return this.tzkt.resolve(this.network, address);
-    }
-  }
 };
 </script>
 

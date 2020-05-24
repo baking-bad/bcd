@@ -1,5 +1,6 @@
 {
     "API_URI": "http://localhost:42000/v1/",
+    "WS_URI": "ws://localhost:42000/v1/ws",
     "NETWORKS": ["sandboxnet"],
     "OAUTH_ENABLED": false,
     "GA_ENABLED": false,

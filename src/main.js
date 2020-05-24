@@ -2,17 +2,18 @@ import Vue from 'vue'
 import Clipboard from 'v-clipboard'
 import App from './App.vue'
 
-import store from './store'
-import router from './router'
+import store from '@/store'
+import router from '@/router'
 import VueAnalytics from 'vue-analytics'
 
-import { getJwt, logout } from "@/utils/auth.js";
+import { shortcut, formatDatetime, formatDate, plural } from "@/utils/tz.js";
+import { getJwt, logout, getBool } from "@/utils/auth.js";
 import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js"
 import { NodeRPC } from "@/api/rpc.js"
 import { TzKTApi } from "@/api/tzkt.js"
 
 import '@mdi/font/css/materialdesignicons.css';
-import vuetify from './plugins/vuetify';
+import { makeVuetify } from '@/plugins/vuetify';
 
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -66,15 +67,19 @@ const getRuntimeConfig = async () => {
 
 getRuntimeConfig().then(function (config) {
   config.API_URI = process.env.VUE_APP_API_URI || config.API_URI;
+  config.WS_URI = process.env.VUE_APP_WS_URI || config.WS_URI;
   config.GA_ENABLED = process.env.VUE_APP_GA_ENABLED || config.GA_ENABLED;
   config.OAUTH_ENABLED = process.env.VUE_APP_OAUTH_ENABLED || config.OAUTH_ENABLED;
 
   let api = new BetterCallApi(config.API_URI);
   let rpc = new NodeRPC(config.RPC_ENDPOINTS);
   let tzkt = new TzKTApi(config.TZKT_ENDPOINTS);
+  let helpers = { shortcut, formatDatetime, formatDate, plural }
 
   Vue.mixin({
-    data() { return { config, api, rpc, tzkt } }
+    data() { 
+      return {config, api, rpc, tzkt, helpers} 
+    }
   });
 
   router.addRoutes([
@@ -146,6 +151,8 @@ getRuntimeConfig().then(function (config) {
       }
     });
   }
+
+  let vuetify = makeVuetify(getBool('dark', true));
 
   new Vue({
     router,

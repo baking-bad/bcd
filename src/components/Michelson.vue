@@ -7,6 +7,9 @@ import { codemirror } from "vue-codemirror-lite";
 require("codemirror/addon/mode/simple.js");
 require("codemirror/addon/display/autorefresh.js");
 require("codemirror/addon/search/searchcursor.js");
+require("codemirror/theme/material-darker.css");
+require("codemirror/theme/pastel-on-dark.css");
+require("codemirror/theme/darcula.css");
 require("codemirror/theme/neo.css");
 
 import { create } from "@/utils/codemirror.js";
@@ -40,6 +43,8 @@ export default {
   created() {
     if (this.firstLineNumber)
       this.cmOptions.firstLineNumber = this.firstLineNumber;
+    if (this.$vuetify.theme.dark)
+      this.cmOptions.theme = "darcula";
 
     create();
   },
@@ -57,13 +62,27 @@ export default {
 
 <style>
 .CodeMirror {
-  background-color: #fbfbfb;
+  background-color: var(--v-data-base) !important;
   height: auto;
-  margin-top: 2px;
-  font-size: 0.9rem;
+  padding-top: 10px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+}
+.CodeMirror-gutters {
+  border-right: none !important;
+}
+.CodeMirror-linenumbers {
+  background-color: var(--v-data-base) !important;
+  border-right: none !important;
+}
+.CodeMirror-linenumber {
+  color: #99999980 !important;
+}
+.CodeMirror-line {
+  padding-left: 15px !important;
 }
 .error-mark {
-  background-color: #ffdce0;
-  color: red !important;
+  background-color: #F4433625;
+  color: var(--v-error-base) !important;
 }
 </style>

@@ -7,7 +7,8 @@ export default new Vuex.Store({
     state: {
         error: null,
         isAuthorized: false,
-        profile: null
+        profile: null,
+        clipboardOK: false
     },
     mutations: {
         setError(state, value) {
@@ -18,6 +19,9 @@ export default new Vuex.Store({
         },
         setProfile(state, value) {
             state.profile = value
+        },
+        setClipboardOK(state, value) {
+            state.clipboardOK = value;
         }
     },
     actions: {
@@ -29,6 +33,12 @@ export default new Vuex.Store({
         hideError({ commit }) {
             commit('setError', null)
         },
+        showClipboardOK({ commit }) {
+            commit('setClipboardOK',  true)
+        },
+        hideClipboardOK({ commit }) {
+            commit('setClipboardOK',  false)
+        },
         setIsAuthorized({ commit }, value) {
             commit('setIsAuthorized', value)
         },
@@ -38,6 +48,6 @@ export default new Vuex.Store({
         logout({ commit }) {
             commit('setProfile', null);
             commit('setIsAuthorized', false);
-        },
+        }
     }
 });

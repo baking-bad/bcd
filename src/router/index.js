@@ -2,31 +2,33 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import VueRouter from 'vue-router'
 
-import HomeToolbar from '@/components/HomeToolbar.vue';
-import Nav from '@/components/Nav.vue';
-
-import Home from '@/views/Home.vue'
-import Welcome from '@/views/Welcome.vue'
+import Home from '@/views/home/Home.vue'
+import Welcome from '@/views/home/Welcome.vue'
 
 import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
-import Project from '@/views/project/Project.vue'
-import OperationsTab from '@/views/project/OperationsTab.vue'
-import CodeTab from '@/views/project/CodeTab.vue'
-import EntrypointsTab from '@/views/project/EntrypointsTab.vue'
-import StorageTab from '@/views/project/StorageTab.vue'
-import MigrationsTab from '@/views/project/MigrationsTab.vue'
+import Stats from '@/views/stats/Stats.vue'
+import NetworkTab from '@/views/stats/NetworkTab.vue'
+
+import Diff from '@/views/diff/Diff.vue'
+
+import Contract from '@/views/contract/Contract.vue'
+import OperationsTab from '@/views/contract/OperationsTab.vue'
+import CodeTab from '@/views/contract/CodeTab.vue'
+import InteractTab from '@/views/contract/InteractTab.vue'
+import StorageTab from '@/views/contract/StorageTab.vue'
+import LogTab from '@/views/contract/LogTab.vue'
+
+import OperationGroup from '@/views/opg/OperationGroup.vue'
+import OpgContents from '@/views/opg/ContentsTab.vue'
+
+import BigMap from '@/views/big_map/BigMap.vue'
+import BigMapKeys from '@/views/big_map/KeysTab.vue'
+import BigMapHistory from '@/views/big_map/HistoryTab.vue'
 
 import Dashboard from '@/views/dashboard/Dashboard.vue'
-import SubscriptionsTab from '@/views/dashboard/SubscriptionsTab.vue'
-import TimelineTab from '@/views/dashboard/TimelineTab.vue'
+import EventsTab from '@/views/dashboard/EventsTab.vue'
 
-import Diff from '@/views/Diff.vue'
-import BigMapViewer from '@/views/BigMapViewer.vue'
-import BigMapDiffViewer from '@/views/BigMapDiffViewer.vue'
-import Projects from '@/views/Projects.vue'
-import OPG from '@/views/OPG.vue'
-import Stats from '@/views/Stats.vue'
 
 Vue.use(VueRouter)
 
@@ -38,75 +40,58 @@ const router = new Router({
         {
             path: '/',
             components: {
-                default: Home,
-                toolbar: HomeToolbar
+                default: Home
             },
             name: 'home'
         },
         {
             path: '/welcome',
             components: {
-                default: Home,
-                toolbar: Welcome
+                default: Welcome,
             },
-            name: 'welcome'
+            name: 'welcome',
+            props: { default: true }
         },
         {
             path: '/search',
             components: {
-                default: ExtendedSearch,
-                nav: Nav
+                default: ExtendedSearch
             },
-            name: 'search'
+            name: 'search',
+            props: { default: true },
         },
         {
             path: '/stats',
             components: {
                 default: Stats,
-                nav: Nav
             },
-            name: 'stats'
-        },
-        {
-            path: '/opg/:hash(o[0-9A-z]{50})',
-            alias: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
-            components: {
-                default: OPG,
-                nav: Nav
-            },
-            name: 'opg'
-        },
+            name: 'stats',
+            props: { default: true },
+            children: [
+                {
+                    path: ':network',
+                    name: 'network_stats',
+                    component: NetworkTab,
+                    props: true
+                }
+            ]
+        },      
         {
             path: '/diff',
             components: {
                 default: Diff,
-                nav: Nav
             },
-            name: 'diff'
+            name: 'diff',
+            props: { default: true },
         },
-        {
-            path: '/projects',
-            components: {
-                default: Projects,
-                nav: Nav
-            },
-            name: 'projects'
-        },
-        {
-            path: '/bigmap/:network/:address(KT[0-9A-z]{34})/:ptr(\\d+)',
-            components: {
-                default: BigMapViewer,
-                nav: Nav
-            },
-            name: 'bigmap'
-        }, {
-            path: '/bigmap/:network/:address(KT[0-9A-z]{34})/:ptr(\\d+)/:keyhash',
-            components: {
-                default: BigMapDiffViewer,
-                nav: Nav
-            },
-            name: 'bigmapdiff'
-        },
+        // {
+        //     path: '/projects',
+        //     components: {
+        //         default: Projects,
+        //         nav: Nav
+        //     },
+        //     name: 'projects'
+        // },      
         { // backward compatibility
             path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
             children: [
@@ -143,63 +128,111 @@ const router = new Router({
         {
             path: '/:network/:address(KT[0-9A-z]{34})',
             components: {
-                default: Project,
-                nav: Nav
+                default: Contract,
             },
+            props: { default: true },
             children: [
                 {
                     path: '',
-                    name: 'project',
+                    name: 'contract',
                     redirect: 'operations'
                 },
                 {
                     path: 'operations',
                     name: 'operations',
-                    component: OperationsTab
+                    component: OperationsTab,
+                    props: true
                 },
                 {
                     path: 'code',
                     name: 'code',
-                    component: CodeTab
+                    component: CodeTab,
+                    props: true
                 },
                 {
-                    path: 'entrypoints',
-                    name: 'entrypoints',
-                    component: EntrypointsTab
+                    path: 'interact',
+                    name: 'interact',
+                    component: InteractTab,
+                    props: true
                 },
                 {
                     path: 'storage',
                     name: 'storage',
-                    component: StorageTab
+                    component: StorageTab,
+                    props: true
                 },
                 {
-                    path: 'migrations',
-                    name: 'migrations',
-                    component: MigrationsTab
+                    path: 'log',
+                    name: 'log',
+                    component: LogTab,
+                    props: true
                 }
             ]
         },
         {
             path: '/dashboard',
             components: {
-                default: Dashboard,
-                nav: Nav
+                default: Dashboard
             },
+            props: { default: true },
             children: [
                 {
                     path: '',
                     name: 'dashboard',
-                    redirect: 'timeline'
+                    redirect: 'events'
                 },
                 {
-                    path: 'timeline',
-                    name: 'timeline',
-                    component: TimelineTab
+                    path: 'events',
+                    name: 'events',
+                    component: EventsTab,
+                    props: true
+                }
+            ]
+        },
+        {
+            path: '/:network/big_map/:ptr(\\d+)',
+            components: {
+                default: BigMap
+            },
+            props: { default: true },
+            children: [
+                {
+                    path: '',
+                    name: 'big_map',
+                    redirect: 'keys'
                 },
                 {
-                    path: 'subscriptions',
-                    name: 'subscriptions',
-                    component: SubscriptionsTab
+                    path: 'keys',
+                    name: 'big_map_keys',
+                    component: BigMapKeys,
+                    props: true
+                },
+                {
+                    path: ':keyhash',
+                    name: 'big_map_history',
+                    component: BigMapHistory,
+                    props: true
+                }
+            ]
+        },
+        {
+            path: '/:network/opg/:hash(o[0-9A-z]{50})',
+            alias: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
+            components: {
+                default: OperationGroup
+            },
+            props: { default: true },
+            children: [
+                {
+                    path: '',
+                    name: 'operation_group',
+                    redirect: 'contents'
+                },
+                {
+                    path: 'contents',
+                    name: 'opg_contents',
+                    component: OpgContents,
+                    props: true
                 }
             ]
         }
