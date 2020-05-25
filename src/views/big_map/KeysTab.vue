@@ -48,7 +48,7 @@
             <BigMapDiff :diff="diff" :network="network" :address="address" :ptr="ptr" :key="idx" />
           </template>
         </v-expansion-panels>
-        <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
+        <span v-intersect="onDownloadPage" v-if="!loading && !downloaded"></span>
       </v-col>
     </v-row>
   </v-container>

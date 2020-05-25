@@ -58,7 +58,7 @@
           </div>    
         </v-card-text>
       </v-card>
-    </div>
+    </div>  
     <ErrorState v-else />
     <RawJsonViewer
       :show.sync="showRaw"

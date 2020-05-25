@@ -95,7 +95,7 @@
           <template v-for="(item, idx) in suggests">
             <ResultItem :key="idx" :item="item" :words="getSearchWords()" />
           </template>
-          <span v-intersect="onDownloadPage"></span>
+          <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
         </template>
         <template
           v-else-if="(isAddress() || isOpgHash()) && !loading && tzkt.supportsAny(filters.networks)"

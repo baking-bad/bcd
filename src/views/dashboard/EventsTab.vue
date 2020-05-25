@@ -49,7 +49,7 @@
           <v-divider v-if="idx != events.length - 1" :key="idx + events.length"></v-divider>
         </template>
       </v-list>
-      <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
+      <span v-intersect="onDownloadPage" v-if="!loading && !downloaded"></span>
     </v-card>
     <EmptyState 
       v-if="!loading && events.length === 0"

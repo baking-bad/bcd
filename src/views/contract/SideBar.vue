@@ -172,14 +172,14 @@
     </v-skeleton-loader>
 
     <BakingBadFooter />
-
+<!-- 
     <WatchSettings
       v-if="contract"
       :show.sync="showWatchSettings"
       :network="contract.network"
       :address="contract.address"
       :alias="contract.alias"
-    />
+    /> -->
   </div>
 </template>
 

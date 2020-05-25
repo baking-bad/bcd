@@ -105,7 +105,7 @@
             v-for="(item, key) in items"
           />
         </v-expansion-panels>        
-        <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
+        <span v-intersect="onDownloadPage" v-if="!loading && !downloaded"></span>
       </v-col>
     </v-row>
   </v-container>
@@ -248,7 +248,7 @@ export default {
           console.log(err);
           this.showError(err);
         })
-        .finally(() => { this.operationsLoading = false; });
+        .finally(() => (this.operationsLoading = false));
     },
     getMempool() {
       if (this.mempoolLoading) return;
