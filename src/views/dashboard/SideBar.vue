@@ -38,6 +38,10 @@
                 </v-list-item-icon>
               </v-list-item>
             </template>
+            <div v-if="profile.subscriptions.length === 0" class="pa-4 text--secondary body-2">
+              Press <v-icon small class="text--disabled">mdi-eye-outline</v-icon> button on a contract page<br/>
+              to receive notifications
+            </div>
           </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
@@ -57,17 +61,7 @@
       </v-expansion-panel>
     </v-expansion-panels>
 
-    <v-footer
-      color="transparent"
-      absolute
-      bottom
-      class="d-flex justify-center ml-6"
-      style="z-index: 0"
-    >
-      <v-btn x-small text href="https://baking-bad.org/docs" target="_blank" color="border">
-        <span>Baking Bad</span>
-      </v-btn>
-    </v-footer>
+    <BakingBadFooter />
 
     <WatchSettings
       v-if="editedContract"
@@ -82,11 +76,13 @@
 <script>
 import { mapActions } from "vuex";
 import WatchSettings from "@/components/WatchSettings.vue";
+import BakingBadFooter from "@/components/BakingBadFooter.vue";
 
 export default {
   name: "SideBar",
   components: {
-    WatchSettings
+    WatchSettings,
+    BakingBadFooter
   },
   computed: {
     isAuthorized() {

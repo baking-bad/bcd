@@ -171,25 +171,15 @@
       </v-expansion-panels>
     </v-skeleton-loader>
 
-    <v-footer
-      color="transparent"
-      absolute
-      bottom
-      class="d-flex justify-center ml-6"
-      style="z-index: 0"
-    >
-      <v-btn x-small text href="https://baking-bad.org/docs" target="_blank" color="border">
-        <span>Baking Bad</span>
-      </v-btn>
-    </v-footer>
+    <BakingBadFooter />
 
-    <!-- <WatchSettings
+    <WatchSettings
       v-if="contract"
       :show.sync="showWatchSettings"
       :network="contract.network"
       :address="contract.address"
       :alias="contract.alias"
-    /> -->
+    />
   </div>
 </template>
 
@@ -197,6 +187,7 @@
 import { mapActions } from "vuex";
 import SimilarItem from "@/views/contract/SimilarItem.vue"
 import AccountBox from "@/components/AccountBox.vue"
+import BakingBadFooter from "@/components/BakingBadFooter.vue";
 // import WatchSettings from "@/components/WatchSettings.vue"
 
 export default {
@@ -210,6 +201,7 @@ export default {
   components: {
     SimilarItem,
     AccountBox,
+    BakingBadFooter,
     // WatchSettings
   },
   data: () => ({

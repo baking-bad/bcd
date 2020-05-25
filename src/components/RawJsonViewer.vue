@@ -117,7 +117,7 @@ export default {
 .vjs-tree .vjs-tree__content.has-line {
   border-color: var(--v-border-base) !important;
 }
-.vjs-tree.is-mouseover {
-  background-color: #99999920;
+.vjs-tree .is-mouseover {
+  background-color: #99999920 !important;
 }
 </style>

@@ -37,14 +37,12 @@
         <v-overlay v-if="loading" :value="loading" color="data" absolute>
           <v-progress-circular v-if="bigmap.length === 0" indeterminate color="primary" size="64" />
         </v-overlay>
-        <v-card
+        <EmptyState
           v-if="!loading && bigmap.length === 0"
-          class="d-flex flex-column align-center justify-center transparent pa-8 mt-12"
-          flat
-        >
-          <v-icon size="100" class="text--secondary">mdi-package-variant</v-icon>
-          <span class="title text--secondary">No results were found for your request</span>
-        </v-card>
+          icon="mdi-code-brackets"
+          title="Nothing found"
+          text="Empty set is also a result, otherwise try a broader query"
+        />
         <v-expansion-panels v-if="bigmap.length > 0" multiple hover flat class="bb-1">
           <template v-for="(diff, idx) in bigmap">
             <BigMapDiff :diff="diff" :network="network" :address="address" :ptr="ptr" :key="idx" />
@@ -58,6 +56,7 @@
 
 <script>
 import BigMapDiff from "@/views/big_map/BigMapDiff.vue";
+import EmptyState from "@/components/EmptyState.vue"
 import { mapActions } from "vuex";
 
 export default {
@@ -69,7 +68,8 @@ export default {
     count: Number
   },
   components: {
-    BigMapDiff
+    BigMapDiff,
+    EmptyState
   },
   data: () => ({
     loading: true,

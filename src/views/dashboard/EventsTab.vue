@@ -1,19 +1,19 @@
 <template>
-  <div class="fill-height">
+  <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-overlay :value="loading" color="data" absolute>
-      <v-progress-circular indeterminate color="primary" size="64" />
+      <v-progress-circular v-if="events.length === 0" indeterminate color="primary" size="64" />
     </v-overlay>
-    <div class="d-flex mx-8 mt-8 mb-4" v-if="!loading && events.length > 0">
-      <v-btn small text class="mr-4">
+    <div class="d-flex mb-4" v-if="!loading && events.length > 0">
+      <v-btn small text class="mr-4 text--secondary">
         <v-icon small class="mr-1">mdi-refresh</v-icon>
         <span>Refresh</span>
       </v-btn>
-      <v-btn small text>
+      <v-btn small text class="text--secondary">
         <v-icon small class="mr-1">mdi-check-all</v-icon>
         <span>Mark all as read</span>
       </v-btn>
     </div>
-    <v-card flat outlined class="mx-8" v-if="!loading && events.length > 0">
+    <v-card flat outlined v-if="!loading && events.length > 0">
       <v-list class="pa-0" color="data">
         <template v-for="(item, idx) in events">
           <v-list-item :key="idx" two-line :to="getTo(item)">
@@ -51,15 +51,23 @@
       </v-list>
       <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
     </v-card>
-  </div>
+    <EmptyState 
+      v-if="!loading && events.length === 0"
+      icon="mdi-bell-sleep"
+      title="Still no events"
+      text="Check your settings, or perhaps just nothing happens" />
+  </v-container>
 </template>
 
 <script>
 import { mapActions } from "vuex";
-import dayjs from "dayjs";
+import EmptyState from "@/components/EmptyState.vue"
 
 export default {
   name: "Events",
+  components: {
+    EmptyState
+  },
   data: () => ({
     events: [],
     loading: false,
@@ -104,12 +112,6 @@ export default {
     onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
         this.getEvents();
-      }
-    },
-    formatDate(value) {
-      if (value) {
-        let val = dayjs(value);
-        if (val.unix() > 0) return val.format("MMM DD, YYYY");
       }
     }
   },

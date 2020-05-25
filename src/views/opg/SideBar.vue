@@ -7,9 +7,9 @@
         </v-list-item-title>
         <v-list-item-subtitle>
           <span
-          class="overline"
-          :class="network === 'mainnet' ? 'secondary--text' : ''"
-        >{{ network }}</span>
+            class="overline"
+            :class="network === 'mainnet' ? 'secondary--text' : ''"
+          >{{ network }}</span>
         </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
@@ -27,11 +27,15 @@
       </v-tooltip>
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon class="mr-2"
+          <v-btn
+            v-on="on"
+            icon
+            class="mr-2"
             @click="() => {
               $clipboard(hash); 
               showClipboardOK();
-            }">
+            }"
+          >
             <v-icon class="text--secondary">mdi-content-copy</v-icon>
           </v-btn>
         </template>
@@ -39,11 +43,14 @@
       </v-tooltip>
       <v-tooltip top>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon
+          <v-btn
+            v-on="on"
+            icon
             @click="() => {
               $clipboard(opgLink); 
               showClipboardOK();
-            }">
+            }"
+          >
             <v-icon class="text--secondary">mdi-share-variant</v-icon>
           </v-btn>
         </template>
@@ -73,8 +80,13 @@
                 <v-list-item-action>
                   <v-list-item-action-text class="overline">Level</v-list-item-action-text>
                   <v-list-item-action-text class="body-2">
-                    <v-btn :href="tzkt.resolve(network, content.level)" 
-                      target="_blank" icon small class="text--secondary">
+                    <v-btn
+                      :href="tzkt.resolve(network, content.level)"
+                      target="_blank"
+                      icon
+                      small
+                      class="text--secondary"
+                    >
                       <v-icon x-small>mdi-open-in-new</v-icon>
                     </v-btn>
                     <span>{{ content.level }}</span>
@@ -100,25 +112,23 @@
       </v-expansion-panels>
     </v-skeleton-loader>
 
-    <RawJsonViewer v-if="content" :show.sync="showRaw" type="operation" :network="network" :level="content.level" :hash="hash" />
+    <BakingBadFooter />
 
-    <v-footer
-      color="transparent"
-      absolute
-      bottom
-      class="d-flex justify-center ml-6"
-      style="z-index: 0"
-    >
-      <v-btn x-small text href="https://baking-bad.org/docs" target="_blank" color="border">
-        <span>Baking Bad</span>
-      </v-btn>
-    </v-footer>
+    <RawJsonViewer
+      v-if="content"
+      :show.sync="showRaw"
+      type="operation"
+      :network="network"
+      :level="content.level"
+      :hash="hash"
+    />
   </div>
 </template>
 
 <script>
 import { mapActions } from "vuex";
-import RawJsonViewer from "@/components/RawJsonViewer.vue"
+import RawJsonViewer from "@/components/RawJsonViewer.vue";
+import BakingBadFooter from "@/components/BakingBadFooter.vue";
 
 export default {
   name: "SideBar",
@@ -129,7 +139,8 @@ export default {
     loading: Boolean
   },
   components: {
-    RawJsonViewer
+    RawJsonViewer,
+    BakingBadFooter
   },
   data: () => ({
     showRaw: false
@@ -142,7 +153,10 @@ export default {
       return undefined;
     },
     totalCost() {
-      return this.operations.reduce((acc, c) => acc + (c.fee || 0) + (c.burned || 0), 0);
+      return this.operations.reduce(
+        (acc, c) => acc + (c.fee || 0) + (c.burned || 0),
+        0
+      );
     },
     opgLink() {
       var routeData = this.$router.resolve({
@@ -156,7 +170,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["showClipboardOK"]),
+    ...mapActions(["showClipboardOK"])
   }
 };
 </script>

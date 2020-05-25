@@ -53,7 +53,7 @@
         </v-card-title>
         <v-card-text class="pa-0">
           <Michelson v-if="raw" :code="rawStorage"></Michelson>
-          <div v-else class="py-4">
+          <div v-else class="py-4 data">
             <MiguelTreeView :miguel="storage" :network="network" openAll />     
           </div>    
         </v-card-text>

@@ -27,15 +27,7 @@
       </div>
     </v-toolbar>
 
-    <v-container fluid class="pa-0 ma-0 canvas">
-      <v-row no-gutters>
-        <v-col cols="12">
-          <v-slide-x-reverse-transition mode="out-in">
-            <router-view />
-          </v-slide-x-reverse-transition>
-        </v-col>
-      </v-row>
-    </v-container>
+    <router-view />
   </div>
 </template>
 

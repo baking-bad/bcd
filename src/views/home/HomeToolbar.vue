@@ -26,20 +26,21 @@
         </v-list-item>
       </v-list>
     </v-menu>
-    <router-link v-else-if="profile != null" :to="{name: 'dashboard'}">
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-avatar size="48" v-on="on" class="mr-4">
+
+    <v-tooltip bottom v-else-if="profile != null">
+      <template v-slot:activator="{ on }">
+        <v-btn v-on="on" :to="{name: 'dashboard'}" fab small class="ml-2 mr-4">
+          <v-avatar size="40">
             <img :src="profile.avatarURL" :alt="profile.login" />
           </v-avatar>
-        </template>
-        <b>{{ profile.login }}</b> dashboard
-      </v-tooltip>
-    </router-link>
+        </v-btn>
+      </template>
+      <b>{{ profile.login }}</b> dashboard
+    </v-tooltip>
 
     <v-tooltip bottom>
       <template v-slot:activator="{ on }">
-        <v-btn v-on="on" text icon @click="toggleTheme" class="ml-2 text--secondary">
+        <v-btn v-on="on" icon @click="toggleTheme" class="ml-2 text--secondary">
           <v-icon v-if="$vuetify.theme.dark">mdi-white-balance-sunny</v-icon>
           <v-icon v-else>mdi-weather-night</v-icon>
         </v-btn>
@@ -48,7 +49,7 @@
       <span v-else>Enable dark theme</span>
     </v-tooltip>
 
-    <v-btn text icon class="ml-2 text--secondary" :href="apiDocsUrl" target="_blank">
+    <v-btn icon class="ml-2 text--secondary" :href="apiDocsUrl" target="_blank">
       <v-icon>mdi-api</v-icon>
     </v-btn>
 

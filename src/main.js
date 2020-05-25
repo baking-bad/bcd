@@ -119,7 +119,7 @@ getRuntimeConfig().then(function (config) {
           if (err instanceof UnauthorizedError) {
             store.dispatch('setIsAuthorized', false);
             store.dispatch('setProfile', null);
-            store.dispatch('showError', 'Unauthorized access. Please login');
+            store.dispatch('showError', 'Unauthorized access. Please sign in');
             logout();
           } else {
             store.dispatch('showError', err);
