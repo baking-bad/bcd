@@ -58,7 +58,13 @@ export class BetterCallApi {
   }
 
   getContract(network, address) {
-    return getCancellable(this.api, `/contract/${network}/${address}`, {})
+    let params = {};
+    const token = getJwt();
+    if (token) {
+      params.headers = { 'Authorization': token }
+    }
+
+    return getCancellable(this.api, `/contract/${network}/${address}`, params)
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {
@@ -252,17 +258,6 @@ export class BetterCallApi {
       })
   }
 
-  getContractRating(network, address) {
-    return getCancellable(this.api, `/contract/${network}/${address}/rating`, {})
-      .then((res) => {
-        if (!res) { return res; }
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
-
   getContractBigMap(network, ptr) {
     return getCancellable(this.api, `/bigmap/${network}/${ptr}`, {})
       .then((res) => {
@@ -413,23 +408,8 @@ export class BetterCallApi {
       })
   }
 
-  addProfileSubscription({
-    network,
-    address,
-    alias = '',
-    watchSame = false,
-    watchSimilar = false,
-    watchDeployed = false,
-    watchMigrations = false,
-    watchDeployments = false,
-    watchCalls = false,
-    watchErrors = false
-  }) {
-    return this.api.post(`/profile/subscriptions`, {
-        network, address, alias,
-        watchSame, watchSimilar, watchDeployed,
-        watchMigrations, watchDeployments, watchCalls, watchErrors
-      },
+  addProfileSubscription(subscription) {
+    return this.api.post(`/profile/subscriptions`, subscription,
       {
         headers: {
           'Authorization': getJwt()

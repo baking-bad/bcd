@@ -8,9 +8,9 @@
         </v-list-item-title>
         <v-list-item-subtitle>
           <span
-          class="overline"
-          :class="network === 'mainnet' ? 'secondary--text' : ''"
-        >{{ network }}</span>
+            class="overline"
+            :class="network === 'mainnet' ? 'secondary--text' : ''"
+          >{{ network }}</span>
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action v-if="standard">
@@ -23,21 +23,27 @@
     <div class="d-flex align-center px-4 sidebar" style="height: 48px;">
       <span class="caption font-weight-bold text-uppercase text--secondary">Actions</span>
       <v-spacer></v-spacer>
-      <v-tooltip bottom v-if="isAuthorized">
+      <v-tooltip bottom v-if="isAuthorized && contract">
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" icon class="mr-2" @click="showWatchSettings = true">
-            <v-icon class="text--secondary">mdi-eye-outline</v-icon>
+            <v-icon v-if="contract.subscription" class="text--primary">mdi-eye-settings-outline</v-icon>
+            <v-icon v-else class="text--secondary">mdi-eye-outline</v-icon>
           </v-btn>
         </template>
-        Edit watch settings
+        <span v-if="contract.subscription">Edit watch settings</span>
+        <span v-else>Watch contract</span>
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon class="mr-2" 
+          <v-btn
+            v-on="on"
+            icon
+            class="mr-2"
             @click="() => {
               $clipboard(address); 
               showClipboardOK();
-            }">
+            }"
+          >
             <v-icon class="text--secondary">mdi-content-copy</v-icon>
           </v-btn>
         </template>
@@ -45,19 +51,22 @@
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon
+          <v-btn
+            v-on="on"
+            icon
             @click="() => {
               $clipboard(contractLink); 
               showClipboardOK();
-            }">
+            }"
+          >
             <v-icon class="text--secondary">mdi-share-variant</v-icon>
           </v-btn>
         </template>
         Share link
-      </v-tooltip>     
+      </v-tooltip>
     </div>
     <v-divider></v-divider>
-      
+
     <v-skeleton-loader
       :loading="loading"
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
@@ -90,7 +99,9 @@
                   <v-list-item-subtitle class="overline">Was active</v-list-item-subtitle>
                   <v-list-item-title class="body-2">
                     {{ helpers.formatDatetime(contract.timestamp) }}
-                    <span v-if="contract.last_action > contract.timestamp"> — {{ helpers.formatDatetime(contract.last_action) }}</span>
+                    <span
+                      v-if="contract.last_action > contract.timestamp"
+                    >— {{ helpers.formatDatetime(contract.last_action) }}</span>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -131,9 +142,9 @@
 
         <v-expansion-panel class="ma-0 bb-1" v-if="sameCount > 0">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase text--secondary">
-              Same contracts ({{ sameCount }})
-            </span>            
+            <span
+              class="caption font-weight-bold text-uppercase text--secondary"
+            >Same contracts ({{ sameCount }})</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="data">
             <v-list class="contract-list">
@@ -155,21 +166,32 @@
 
         <v-expansion-panel class="ma-0 bb-1" v-if="similarCount > 0">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase text--secondary">
-              Similar contracts ({{ similarCount }})
-            </span>            
+            <span
+              class="caption font-weight-bold text-uppercase text--secondary"
+            >Similar contracts ({{ similarCount }})</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="data">
             <v-list class="contract-list">
               <template v-for="(contract, i) in similar">
                 <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <SimilarItem :key="i" :diff="true" :item="contract" :address="address" :network="network" />
+                <SimilarItem
+                  :key="i"
+                  :diff="true"
+                  :item="contract"
+                  :address="address"
+                  :network="network"
+                />
               </template>
               <v-divider></v-divider>
               <v-list-item v-if="similar.length < similarCount">
                 <v-list-item-content>
                   <v-list-item-title class="d-flex align-center justify-center">
-                    <v-btn :loading="similarLoading" depressed small @click="requestMoreSimilar">Load more</v-btn>
+                    <v-btn
+                      :loading="similarLoading"
+                      depressed
+                      small
+                      @click="requestMoreSimilar"
+                    >Load more</v-btn>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -180,14 +202,20 @@
     </v-skeleton-loader>
 
     <BakingBadFooter />
-<!-- 
-    <WatchSettings
-      v-if="contract"
-      :show.sync="showWatchSettings"
-      :network="contract.network"
-      :address="contract.address"
-      :alias="contract.alias"
-    /> -->
+
+    <WatchSettings 
+      v-if="contract" 
+      :show.sync="showWatchSettings" 
+      :data="contract.subscription" 
+      :contract="contract"
+      :onUpdate="s => { 
+        if (contract.subscription === null) contract.total_subscribed++;
+        contract.subscription = s;
+      }"
+      :onRemove="s => { 
+        if (contract.subscription !== null) contract.total_subscribed--;
+        contract.subscription = null;
+      }" />
   </div>
 </template>
 
@@ -196,7 +224,7 @@ import { mapActions } from "vuex";
 import SimilarItem from "@/views/contract/SimilarItem.vue"
 import AccountBox from "@/components/AccountBox.vue"
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
-// import WatchSettings from "@/components/WatchSettings.vue"
+import WatchSettings from "@/components/WatchSettings.vue"
 
 export default {
   name: "SideBar",
@@ -210,7 +238,7 @@ export default {
     SimilarItem,
     AccountBox,
     BakingBadFooter,
-    // WatchSettings
+    WatchSettings
   },
   data: () => ({
     same: [],

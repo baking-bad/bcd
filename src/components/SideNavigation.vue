@@ -9,7 +9,7 @@
       <v-tooltip right>
         <template v-slot:activator="{ on }">
           <v-avatar size="38" v-on="on" class="elevation-2">
-            <img :src="profile.avatarURL" :alt="profile.login" />
+            <img :src="profile.avatar_url" :alt="profile.login" />
           </v-avatar>
         </template>
         Dashboard

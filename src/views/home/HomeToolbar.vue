@@ -31,7 +31,7 @@
       <template v-slot:activator="{ on }">
         <v-btn v-on="on" :to="{name: 'dashboard'}" fab small class="ml-2 mr-4">
           <v-avatar size="40">
-            <img :src="profile.avatarURL" :alt="profile.login" />
+            <img :src="profile.avatar_url" :alt="profile.login" />
           </v-avatar>
         </v-btn>
       </template>
