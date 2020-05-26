@@ -73,8 +73,8 @@ export class BetterCallApi {
     let params = {}
     if (offset > 0) params.offset = offset;
     return getCancellable(this.api, `/contract/${network}/${address}/same`, {
-      params: params
-    })
+        params: params
+      })
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {
@@ -84,8 +84,12 @@ export class BetterCallApi {
       })
   }
 
-  getSimilarContracts(network, address) {
-    return getCancellable(this.api, `/contract/${network}/${address}/similar`, {})
+  getSimilarContracts(network, address, offset = 0) {
+    let params = {}
+    if (offset > 0) params.offset = offset;
+    return getCancellable(this.api, `/contract/${network}/${address}/similar`, {
+        params: params
+      })
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {

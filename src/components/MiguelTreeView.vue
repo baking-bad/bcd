@@ -28,11 +28,11 @@
           >
             <v-icon class="accent--text" small>mdi-open-in-new</v-icon>
           </v-btn>
-          <span class="ml-1" v-else></span>
+          <span class="ml-2" v-else></span>
 
           <template v-if="item.value_type === 'big_map'">
             <v-btn
-              v-if="item.val"
+              v-if="item.val && !diffMode"
               :to="{ path: `/${network}/big_map/${item.value}` }"
               outlined
               small
@@ -44,7 +44,7 @@
             </v-btn>
             <template v-else>
               <span class="accent--text">big_map&nbsp;</span>
-              <span v-if="item.children.length === 0" class="text--secondary">0 diffs</span>
+              <span v-if="item.children.length === 0" class="text--disabled">0 diffs</span>
               <span v-else :class="item.type">{{ item.value }}</span>
             </template>
           </template>
@@ -69,7 +69,8 @@ export default {
   props: {
     miguel: Object,
     network: String,
-    openAll: Boolean
+    openAll: Boolean,
+    diffMode: Boolean
   },
   data: () => ({
     showTreeNodeDetails: false,

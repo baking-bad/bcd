@@ -10,6 +10,7 @@ export default {
   props: {
     data: Array,
     title: String,
+    subtitle: String,
     name: String
   },
   components: {
@@ -28,11 +29,21 @@ export default {
             color: "var(--v-text-base)"
           }
         },
+        subtitle: {
+          text: this.subtitle,
+          useHTML: true,
+          verticalAlign: "middle",
+          y: 40,
+          style: {
+            color: "var(--v-text-darken4)",
+            fontSize: "14px"
+          }
+        },
         chart: {
           type: "pie",
           backgroundColor: "transparent",
           plotBackgroundColor: "transparent",
-          marginTop: 50,
+          marginTop: 70,
           style: {
             fontFamily: "Roboto Condensed, sans-serif"
           }
@@ -49,7 +60,15 @@ export default {
         plotOptions: {
           pie: {
             dataLabels: {
-              enabled: false
+              enabled: true,
+              distance: 30,
+              softConnector: false,
+              style: {
+                fontWeight: "400",
+                color: "var(--v-text-darken2)",
+                fontSize: "16px",
+                textOutline: "none"
+              }
             },
             shadow: false,
             center: ["50%", "50%"],
@@ -74,16 +93,21 @@ export default {
           enabled: false
         },
         tooltip: {
-          split: false,
+          followTouchMove: false,
+          headerFormat: '<span style="font-size: 12px">{point.key}</span><br/>',
+          backgroundColor: "var(--v-sidebar-base)",
+          shadow: false,
+          borderWidth: 0,
+          useHTML: true,
           style: {
-            color: "#000",
-            fontSize: "12px",
-            pointerEvents: "none"
-          },
-          followTouchMove: false
+            color: "var(--v-text-base)",
+            pointerEvents: "none",
+            fontSize: '14px'
+          }
         },
         series: [{
           type: 'pie',
+          innerSize: '90%',
           name: this.name,
           data: this.data
         }]

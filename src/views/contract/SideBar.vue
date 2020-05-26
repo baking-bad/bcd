@@ -165,6 +165,14 @@
                 <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
                 <SimilarItem :key="i" :diff="true" :item="contract" :address="address" :network="network" />
               </template>
+              <v-divider></v-divider>
+              <v-list-item v-if="similar.length < similarCount">
+                <v-list-item-content>
+                  <v-list-item-title class="d-flex align-center justify-center">
+                    <v-btn :loading="similarLoading" depressed small @click="requestMoreSimilar">Load more</v-btn>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
             </v-list>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -209,6 +217,7 @@ export default {
     sameCount: 0,
     similar: [],
     similarCount: 0,
+    similarLoading: false,
     sameLoading: false,
     showWatchSettings: false
   }),
@@ -270,11 +279,11 @@ export default {
 
       this.similar = [];
       this.similarCount = 0;
-      this.api.getSimilarContracts(this.network, this.address)
+      this.api.getSimilarContracts(this.network, this.address, 0)
         .then(res => {
           if (!res) return;
-          this.similar = res;
-          this.similarCount = res.length;
+          this.similar = res.contracts;
+          this.similarCount = res.count;
         })
         .catch(err => {
           this.showError(err);
@@ -297,6 +306,23 @@ export default {
           console.log(err);
         })
         .finally(() => (this.sameLoading = false));
+    },
+    requestMoreSimilar() {
+      this.similarLoading = true;
+      this.api.getSimilarContracts(
+        this.network,
+        this.address,
+        this.similar.length
+      )
+        .then(res => {
+          if (!res) return;
+          this.similar.push(...res.contracts);
+        })
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        })
+        .finally(() => (this.similarLoading = false));
     }
   },
   watch: {

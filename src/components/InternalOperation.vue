@@ -157,7 +157,7 @@
                 class="text--secondary caption"
                 v-if="data.result"
               >{{ data.result.storage_size | bytes}}</span>
-              <MiguelTreeView :miguel="data.storage_diff" :network="data.network" />  
+              <MiguelTreeView :miguel="data.storage_diff" :network="data.network" diffMode />  
             </template>
           </v-col>
         </v-row>

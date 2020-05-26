@@ -31,7 +31,7 @@
       <v-col cols="6" class="pt-8 pr-4">
         <v-skeleton-loader :loading="loading" type="image">
           <v-card flat outlined>
-            <v-card-title class="data d-flex align-center justify-center" style="font-size: 18px;">
+            <v-card-title class="data d-flex align-start justify-center pt-2" style="font-size: 18px;">
               <span style="font-family: 'Roboto Condensed'">Activated protocols</span>
             </v-card-title>
             <v-card-text class="pa-0 data">
@@ -65,11 +65,12 @@
       <v-col cols="6" class="pl-4 pt-8">
         <v-skeleton-loader :loading="loading" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0">
+            <v-card-text class="data pa-0 pb-8">
               <DonutChart
                 :data="languages"
-                title="High-level languages"
-                name="High-level languages"
+                title="Contract languages"
+                subtitle="Determined using heuristics, can be inaccurate"
+                name="Contract languages"
               ></DonutChart>
             </v-card-text>
           </v-card>
@@ -107,7 +108,9 @@ export default {
   computed: {
     languages() {
       if (!this.loading && this.details.languages) {
-        let res = Object.keys(this.details.languages).map(lang => [lang, this.details.languages[lang]]);
+        let res = Object.keys(this.details.languages)
+          .map(lang => [`${lang[0].toUpperCase()}${lang.slice(1)}`, this.details.languages[lang]]);
+
         res.push({
           name: 'Others',
           y: this.details.contracts_count - res.reduce((acc, x) => acc + x[1], 0),
