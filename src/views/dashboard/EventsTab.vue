@@ -3,65 +3,167 @@
     <v-overlay :value="loading" color="data" absolute>
       <v-progress-circular v-if="events.length === 0" indeterminate color="primary" size="64" />
     </v-overlay>
-    <div class="d-flex mb-4" v-if="!loading && events.length > 0">
-      <v-btn small text class="mr-4 text--secondary">
+    <div class="d-flex mb-4" v-if="events.length > 0">
+      <v-btn :disabled="loading" @click="getEvents(true)" small text class="mr-4 text--secondary">
         <v-icon small class="mr-1">mdi-refresh</v-icon>
         <span>Refresh</span>
       </v-btn>
-      <v-btn small text class="text--secondary">
+      <v-btn :disabled="loading" small text class="text--secondary" @click="markAllRead">
         <v-icon small class="mr-1">mdi-check-all</v-icon>
         <span>Mark all as read</span>
       </v-btn>
     </div>
-    <v-card flat outlined v-if="!loading && events.length > 0">
+    <v-card flat outlined v-if="events.length > 0">
       <v-list class="pa-0" color="data">
         <template v-for="(item, idx) in events">
-          <v-list-item :key="idx" two-line :to="getTo(item)">
-            <v-list-item-avatar>
-              <v-icon :color="getIconColor(item)">{{ getIcon(item) }}</v-icon>
-            </v-list-item-avatar>
-            <v-list-item-content>
-              <v-list-item-title class="hash grey--text text--darken-2" style="font-size: 0.8em;">
-                <div v-if="item.kind==='origination'">
-                  <span class="grey--text">{{item.source_alias || item.source}}</span>&nbsp;deployed&nbsp;
-                  <span
-                    class="grey--text"
-                  >{{item.destination_alias || item.destination}}</span>
-                </div>
-                <div v-else-if="item.kind==='migration'">
-                  <span class="grey--text">{{item.source_alias || item.source}}</span>&nbsp;was altered at level&nbsp;
-                  <span class="grey--text">{{item.level}}</span>
-                </div>
-                <div v-else-if="item.kind==='transaction'">
-                  Error occured during call&nbsp;
-                  <span class="grey--text">{{item.entrypoint}}</span>&nbsp;of&nbsp;
-                  <span
-                    class="grey--text"
-                  >{{item.destination_alias || item.destination}}</span>
-                </div>
-              </v-list-item-title>
-              <v-list-item-subtitle class="overline">{{ item.network}}</v-list-item-subtitle>
-            </v-list-item-content>
-            <v-list-item-action>
-              <v-list-item-action-text>{{ item.timestamp | fromNow }}</v-list-item-action-text>
-            </v-list-item-action>
+          <v-list-item :key="idx" :class="isMarkedRead(item) ? 'read-item' : 'unread-item'">
+            <v-row no-gutters align="center">
+              <v-col cols="2" class="d-flex align-center justify-space-between pl-2 pr-4">
+                <v-icon :color="getIconColor(item.type)">{{ getIcon(item.type) }}</v-icon>
+                <span class="body-1">{{ helpers.formatDatetime(item.body.timestamp) }}</span>
+              </v-col>
+              <v-col cols="3">
+                <v-btn
+                  text
+                  style="text-transform: none;"
+                  class="ml-4"
+                  :to="`/${item.network}/${item.address}`"
+                  target="_blank"
+                >
+                  <span class="body-1" v-if="item.alias">{{ item.alias }}</span>
+                  <span v-else v-html="helpers.shortcut(item.address)"></span>
+                </v-btn>
+              </v-col>
+              <v-col cols="5">
+                <template v-if="item.type === 'error'">
+                  <span v-if="item.body.internal" class="hash font-weight-thin mr-1">internal</span>
+                  <span class="hash mr-1">{{ item.body.entrypoint }}</span>
+                  <span class="text--secondary" style="font-size: 20px;">→</span>
+                  <span class="body-1 error--text ml-1">{{ item.body.errors[0].title }}</span>
+                </template>
+                <template v-else-if="item.type === 'call' || item.type === 'invoke'">
+                  <span v-if="item.body.internal" class="hash font-weight-thin mr-1">internal</span>
+                  <span class="hash secondary--text mr-1">{{ item.body.entrypoint }}</span>
+                  <span class="text--secondary" style="font-size: 20px;">←</span>
+                  <span class="body-1 font-weight-light ml-1">
+                    <span class="font-weight-regular" v-if="item.body.source_alias">{{ item.body.source_alias }}</span>
+                    <span v-else v-html="helpers.shortcut(item.body.source)"></span>
+                  </span>
+                </template>
+                <template v-else-if="item.type === 'migration'">
+                  <span class="font-weight-light body-1">
+                    <span v-if="item.body.kind === 'lambda'">
+                      One or more stored
+                      <span
+                        class="font-weight-regular warning--text"
+                      >lambda</span>
+                      expressions were
+                      <span
+                        class="font-weight-regular warning--text"
+                      >altered</span>
+                    </span>
+                    <span v-else-if="item.body.kind === 'update'">
+                      Contract code was altered during the <span
+                        class="hash font-weight-regular warning--text"
+                      >{{ item.body.protocol.slice(0, 8) }}</span> update
+                    </span>
+                    <span v-else-if="item.body.kind === 'bootstrap'">
+                      Contract was originated during the <span
+                        class="hash font-weight-regular warning--text"
+                      >{{ item.body.protocol.slice(0, 8) }}</span> activation
+                    </span>
+                  </span>
+                </template>
+                <template v-else-if="item.type === 'same' || item.type === 'similar'">
+                  <span class="font-weight-light body-1">
+                    <span
+                      class="caption text-uppercase font-weight-regular accent--text"
+                    >{{ item.type }}</span> contract was deployed to
+                    <span
+                      class="caption text-uppercase font-weight-regular"
+                    >{{ item.body.network }}</span>
+                  </span>
+                </template>
+                <template v-else-if="item.type === 'deployment'">
+                  <span class="font-weight-light body-1">
+                    New contract was
+                    <span
+                      class="caption text-uppercase font-weight-regular accent--text"
+                    >originated</span>
+                  </span>
+                </template>
+              </v-col>
+              <v-col cols="2" class="d-flex justify-end">
+                <template v-if="item.type === 'same' || item.type === 'similar'">
+                  <v-btn
+                    class="text--secondary hash"
+                    target="_blank"
+                    text
+                    style="text-transform: none;"
+                    :to="`/${item.body.network}/${item.body.address}`"
+                  >
+                    <span v-html="helpers.shortcut(item.body.address)"></span>
+                  </v-btn>
+                </template>
+                <template
+                  v-else-if="item.type === 'error' 
+                  || item.type === 'call' 
+                  || item.type === 'invoke'
+                  || (item.type === 'migration' && item.body.kind === 'lambda')"
+                >
+                  <v-btn
+                    class="text--secondary hash"
+                    target="_blank"
+                    :to="`/${item.body.network}/opg/${item.body.hash}`"
+                    style="text-transform: none;"
+                    text
+                  >
+                    <span v-html="helpers.shortcut(item.body.hash)"></span>
+                  </v-btn>
+                </template>
+                <template
+                  v-else-if="(item.type === 'migration' && item.body.kind === 'update')"
+                >
+                  <v-btn
+                    class="text--secondary hash"
+                    target="_blank"
+                    :to="{name: 'diff', query: {
+                      addressA: item.body.address, 
+                      networkA: item.body.network, 
+                      protocolA: item.body.prev_protocol,
+                      levelA: Math.max(0, item.body.level - 4096),
+                      addressB: item.body.address,
+                      networkB: item.body.network,
+                      protocolB: item.body.protocol,
+                      levelB: item.body.level
+                    }}"
+                    text
+                  >
+                    <span>code diff</span>
+                  </v-btn>
+                </template>
+              </v-col>
+            </v-row>
           </v-list-item>
           <v-divider v-if="idx != events.length - 1" :key="idx + events.length"></v-divider>
         </template>
       </v-list>
       <span v-intersect="onDownloadPage" v-if="!loading && !downloaded"></span>
     </v-card>
-    <EmptyState 
+    <EmptyState
       v-if="!loading && events.length === 0"
       icon="mdi-bell-sleep"
       title="Still no events"
-      text="Check your settings, or perhaps just nothing happens" />
+      text="Check your settings, or perhaps just nothing happens"
+    />
   </v-container>
 </template>
 
 <script>
+import dayjs from "dayjs";
 import { mapActions } from "vuex";
-import EmptyState from "@/components/EmptyState.vue"
+import { cancelRequests } from "@/utils/cancellation.js";
+import EmptyState from "@/components/EmptyState.vue";
 
 export default {
   name: "Events",
@@ -76,16 +178,27 @@ export default {
   created() {
     this.getEvents();
   },
+  computed: {
+    profile() {
+      return this.$store.state.profile;
+    }
+  },
   methods: {
-    ...mapActions(["showError"]),
-    getEvents() {
-      if (this.loading || this.downloaded) return;
+    ...mapActions(["showError", "showSuccess"]),
+    getEvents(force = false) {
+      if (!force && (this.loading || this.downloaded)) return;
       this.loading = true;
+
+      if (force) {
+        cancelRequests();
+        this.events = [];
+      }
+
       this.api
-        .getProfileTimeline(this.events.length)
+        .getProfileEvents(this.events.length)
         .then(res => {
           this.events.push(...res);
-          this.downloaded = res.length < 20;
+          this.downloaded = res.length == 0;
         })
         .catch(err => {
           console.log(err);
@@ -93,21 +206,48 @@ export default {
         })
         .finally(() => (this.loading = false));
     },
-    getIcon(item) {
-      if (item.kind === "migration") return "mdi-transfer";
-      if (item.kind === "origination") return "mdi-new-box";
-      if (item.kind === "transaction") return "mdi-alert-outline";
-      return "mdi-new";
+    markAllRead() {
+      if (this.events.length === 0) return;
+      const ts = this.events[0].body.timestamp;
+
+      this.api.profileMarkAllRead(dayjs(ts).unix())
+        .then(() => {
+          this.showSuccess("All events marked as read");
+          this.$store.state.profile.mark_read_at = ts;
+        })
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
     },
-    getIconColor(item) {
-      if (item.kind === "migration") return "purple";
-      if (item.kind === "origination") return "green";
-      if (item.kind === "transaction") return "red";
-      return "grey";
+    isMarkedRead(item) {
+      return dayjs(item.body.timestamp).unix() <= dayjs(this.profile.mark_read_at).unix()
     },
-    getTo(item) {
-      if (item.hash) return { name: "opg", params: { hash: item.hash } };
-      return null;
+    getIcon(itemType) {
+      const icons = {
+        error: "mdi-alert-outline",
+        deployment: "mdi-shape-square-plus",
+        same: "mdi-shape-square-plus",
+        similar: "mdi-shape-square-plus",
+        call: "mdi-swap-horizontal",
+        invoke: "mdi-swap-horizontal",
+        migration: "mdi-source-pull",
+        mempool: "mdi-history"
+      };
+      return icons[itemType];
+    },
+    getIconColor(itemType) {
+      const colors = {
+        error: "error",
+        deployment: "accent",
+        same: "accent",
+        similar: "accent",
+        call: "secondary",
+        invoke: "secondary",
+        migration: "warning",
+        mempool: "info"
+      };
+      return colors[itemType];
     },
     onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
@@ -115,6 +255,17 @@ export default {
       }
     }
   },
-  $route: "getEvents"
+  watch: {
+    "$store.state.subscriptionChanged": function() {
+      this.getEvents(true);
+    }
+  }
 };
 </script>
+
+<style scoped>
+.read-item {
+  background-color: var(--v-canvas-base);
+  opacity: .8;
+}
+</style>

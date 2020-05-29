@@ -14,9 +14,7 @@
     <v-toolbar flat class="pl-8" color="toolbar" height="75">
       <v-tabs center-active background-color="transparent" slider-color="primary">
         <v-tab :to="{ name: 'events' }" exact-active-class="active-tab" replace>
-          <v-badge color="primary" content="6" inline>
-            <v-icon left small>mdi-message-text-clock-outline</v-icon>Events
-          </v-badge>
+          <v-icon left small>mdi-message-text-clock-outline</v-icon>Events
         </v-tab>
         <v-tab disabled>
           <v-icon left small>mdi-file-code-outline</v-icon>Deploy

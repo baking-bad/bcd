@@ -9,6 +9,7 @@ export default new Vuex.Store({
     success: null,
     isAuthorized: false,
     profile: null,
+    subscriptionChanged: null
   },
   mutations: {
     setError(state, value) {
@@ -22,6 +23,9 @@ export default new Vuex.Store({
     },
     setSuccess(state, value) {
       state.success = value;
+    },
+    setSubscriptionChanged(state, value) {
+      state.subscriptionChanged = value;
     }
   },
   actions: {
@@ -47,6 +51,9 @@ export default new Vuex.Store({
     },
     setProfile({ commit }, value) {
       commit('setProfile', value)
+    },
+    setSubscriptionChanged({ commit }, value) {
+      commit('setSubscriptionChanged', value)
     },
     logout({ commit }) {
       commit('setProfile', null);

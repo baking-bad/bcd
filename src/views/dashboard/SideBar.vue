@@ -21,46 +21,31 @@
             <v-list class="sidebar-list">
               <template v-for="(item, i) in subscriptions">
                 <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <v-list-item :key="i" class="pr-1" :to="`/${item.network}/${item.address}`">
+                <v-list-item :key="i" class="pr-2" :to="`/${item.network}/${item.address}`">
                   <v-list-item-content>
                     <v-list-item-title class="body-2">
                       <span v-if="item.alias">{{ item.alias }}</span>
                       <span v-else v-html="helpers.shortcut(item.address)"></span>
                     </v-list-item-title>
-                    <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
+                    <v-list-item-subtitle class="overline">
+                      <span :class="item.network === 'mainnet' ? 'secondary--text' : ''">{{ item.network }}</span>
+                    </v-list-item-subtitle>
                   </v-list-item-content>
                   <v-list-item-action>
-                    <v-list-item-action-text class="d-flex flex-column">
-                      <v-chip
-                        v-if="item.watch_same"
-                        x-small
-                        outlined
-                        class="mb-1 text--secondary"
-                      >same</v-chip>
-                      <v-chip
-                        v-if="item.watch_similar"
-                        x-small
-                        outlined
-                        class="text--secondary"
-                      >similar</v-chip>
-                      <v-chip
-                        v-if="item.watch_deployed"
-                        x-small
-                        outlined
-                        class="text--secondary"
-                      >deployed</v-chip>
+                    <v-list-item-action-text class="d-flex">
+                      <v-btn small text @click.prevent.stop="watchSettings(item)" class="settings-button pl-1 pr-0">
+                        <v-icon v-if="item.watch_errors" color="error" class="mr-1" small>mdi-alert-outline</v-icon>
+                        <v-icon v-if="item.watch_migrations" color="warning" class="mr-1" small>mdi-source-pull</v-icon>
+                        <v-icon v-if="item.watch_calls" color="secondary" class="mr-1" small>mdi-swap-horizontal</v-icon>
+                        <v-icon v-if="item.watch_mempool" color="info" class="mr-1" small>mdi-history</v-icon>
+                        <v-icon v-if="item.watch_deployments || item.watch_same || item.watch_similar" color="accent" class="mr-1" small>mdi-shape-square-plus</v-icon>
+                      </v-btn>
                     </v-list-item-action-text>
                   </v-list-item-action>
-                  <v-list-item-icon>
-                    <v-btn small icon @click.prevent.stop="watchSettings(item)">
-                      <v-icon>mdi-dots-vertical</v-icon>
-                    </v-btn>
-                  </v-list-item-icon>
                 </v-list-item>
               </template>
               <div v-if="subscriptions.length === 0" class="pa-4 text--secondary body-2">
-                Press
-                <v-icon small class="text--disabled">mdi-eye-outline</v-icon>button on a contract page
+                Press<v-icon small class="text--disabled mx-1">mdi-eye-outline</v-icon>button on a contract page
                 <br />to receive notifications
               </div>
             </v-list>
@@ -123,12 +108,13 @@ export default {
     this.getSubscriptions();
   },
   methods: {
-    ...mapActions({
-      showError: "showError"
-    }),
+    ...mapActions(["showError", "setSubscriptionChanged"]),
     watchSettings(item) {
       this.selected = item;
       this.showWatchSettings = true;
+    },
+    setProfileUpdated() {
+      this.$store.state.profile.updated = true;
     },
     updateSubscription(item) {
       this.subscriptions = this.subscriptions.map(s => {
@@ -138,11 +124,13 @@ export default {
           return s;
         }
       });
+      this.setSubscriptionChanged(item);
     },
     removeSubscription(item) {
       this.subscriptions = this.subscriptions.filter(
         s => s.address !== item.address || s.network !== item.network
       );
+      this.setSubscriptionChanged(item);
     },
     getSubscriptions() {
       this.loading = true;
@@ -163,6 +151,12 @@ export default {
 </script>
 
 <style scss>
+.settings-button {
+  opacity: .7;
+}
+.settings-button:hover {
+  opacity: 1;
+}
 .opened-panel {
   border-bottom: none !important;
 }

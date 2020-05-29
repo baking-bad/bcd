@@ -391,6 +391,24 @@ export class BetterCallApi {
       })
   }
 
+  profileMarkAllRead(timestamp) {
+    return this.api.post(`/profile/mark_all_read`, { timestamp },
+      {
+        headers: {
+          'Authorization': getJwt()
+        }
+      })
+      .then((res) => {
+        return res.data
+      })
+      .catch((err) => {
+        if (err.response !== undefined && err.response.status == 401) {
+          throw new UnauthorizedError(err);
+        }
+        throw err;
+      })
+  }
+
   getProfileSubscriptions() {
     return this.api.get(`/profile/subscriptions`, {
         headers: {
@@ -446,8 +464,8 @@ export class BetterCallApi {
       })
   }
 
-  getProfileTimeline(offset = 0) {
-    return this.api.get(`/profile/subscriptions/timeline`,
+  getProfileEvents(offset = 0) {
+    return this.api.get(`/profile/subscriptions/events`,
       {
         headers: {
           'Authorization': getJwt()

@@ -22,7 +22,6 @@
                   flat
                   dense
                   class="ma-0"
-                  v-if="!item.prefix || subscription.address.startsWith(item.prefix)"
                   v-model="subscription[item.value]"
                   :label="item.label"
                   :key="item.value"
@@ -86,7 +85,7 @@ export default {
       watch_calls: null,
       watch_same: null,
       watch_similar: null,
-      watch_deployed: null
+      watch_mempool: false
     },
     groups: [
       {
@@ -98,42 +97,38 @@ export default {
             default: true
           },
           {
-            value: "watch_deployments",
-            label: "New deployments",
-            prefix: "tz",
-            default: true
-          },
-          {
             value: "watch_migrations",
             label: "Code modifications",
             default: true
           },
           {
             value: "watch_calls",
-            label: "Contract calls",
+            label: "Applied contract calls",
             default: false
+          },
+          {
+            value: "watch_mempool",
+            label: "Mempool operations",
+            default: true
           }
         ]
       },
       {
-        name: "Also watch",
+        name: "Also suggest",
         items: [
           {
             value: "watch_same",
             label: "Same contracts",
-            prefix: "KT",
-            default: true
+            default: false
           },
           {
             value: "watch_similar",
             label: "Similar contracts",
-            prefix: "KT",
-            default: false
+            default: true
           },
           {
-            value: "watch_deployed",
-            label: "Deployed contracts",
-            prefix: "tz",
+            value: "watch_deployments",
+            label: "Deployments",
             default: true
           }
         ]
@@ -145,17 +140,9 @@ export default {
     close() {
       this.$emit("update:show", false);
     },
-    getDefaultFlags(address) {
+    getDefaultFlags() {
       return this.groups
-        .map(g =>
-          g.items.map(item => {
-            const val =
-              !item.prefix || address.startsWith(item.prefix)
-                ? item.default
-                : false;
-            return [item.value, val];
-          })
-        )
+        .map(g => g.items.map(item => [item.value, item.default]))
         .flat()
         .reduce(function(obj, kv) {
           obj[kv[0]] = kv[1];
@@ -219,7 +206,7 @@ export default {
             network: this.contract.network,
             alias: this.contract.alias
           },
-          this.getDefaultFlags(this.contract.address)
+          this.getDefaultFlags()
         );
       } else {
         this.showError("Failed to init subscription");
