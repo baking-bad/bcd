@@ -200,6 +200,7 @@ export default {
         .catch(err => {
           console.log(err);
           this.showError(err);
+          this.downloaded = true;
         })
         .finally(() => (this.loading = false));
     },
