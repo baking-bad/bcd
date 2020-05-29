@@ -515,7 +515,7 @@ export class BetterCallApi {
     }
 
     getNetworkStatsSeries(network, index, period) {
-        return getCancellable(this.api, `/stats/${network}/series?index=${index}&period=${period}`, {})
+        return getCancellable(this.api, `/stats/${network}/series?name=${index}&period=${period}`, {})
             .then((res) => {
                 if (!res) { return res; }
                 if (res.status != 200) {

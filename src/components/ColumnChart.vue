@@ -5,17 +5,72 @@
 <script>
 import { Chart } from "highcharts-vue";
 
+function kilobyteFormatter(value, digits = 4) {
+  return (value / 1024).toLocaleString(undefined, {
+    maximumFractionDigits: digits
+  });
+}
+
+function gasFormatter(value, digits = 6) {
+  return (value / 10 ** 6).toLocaleString(undefined, {
+    maximumFractionDigits: digits
+  });
+}
+
+
+function floorFormatter(value, digits = 6) {
+  return (value).toLocaleString(undefined, {
+    maximumFractionDigits: digits
+  });
+}
+
+function defaultFormatter(value) {
+  return value;
+}
+
 export default {
   name: "ColumnChart",
   props: {
     data: Array,
     title: String,
-    name: String
+    name: String,
+    formatter: String
   },
   components: {
     highcharts: Chart
   },
   computed: {
+    labelFormatterFunction() {
+      if (this.formatter === "kilobyte") {
+        return function() {
+          return kilobyteFormatter(this.total, 0);
+        };
+      } else if (this.formatter === "gas") {
+        return function() {
+          return gasFormatter(this.total, 0);
+        };
+      }
+      return function() {
+        return defaultFormatter(this.total);
+      };
+    },
+    tooltipFormatterFunction() {
+      if (this.formatter === "kilobyte") {
+        return function() {
+          let value = kilobyteFormatter(this.y);
+          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value} kB</b><br/>`;
+        };
+      } else if (this.formatter === "gas") {
+        return function() {
+          let value = floorFormatter(this.y, 0);
+          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
+        };
+      }
+      return function() {
+        let value = defaultFormatter(this.y);
+        return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
+      };
+    },
     options() {
       if (this.data == null) return {};
       return {
@@ -62,7 +117,8 @@ export default {
               color: "var(--v-secondary-base)",
               fontSize: "12px",
               textOutline: "none"
-            }
+            },
+            formatter: this.labelFormatterFunction
           }
         },
         title: {
@@ -85,8 +141,9 @@ export default {
           style: {
             color: "var(--v-text-base)",
             pointerEvents: "none",
-            fontSize: '14px'
-          }
+            fontSize: "14px"
+          },
+          pointFormatter: this.tooltipFormatterFunction
         },
         legend: {
           enabled: false
