@@ -103,7 +103,7 @@ getRuntimeConfig().then(function (config) {
   router.beforeEach((to, from, next) => {
     const privatePages = ['/dashboard', '/dashboard/'];
     const authRequired = privatePages.includes(to.path);
-    const loggedIn = getJwt() !== null;
+    const loggedIn = config.SINGLE_USER_MODE || getJwt() !== null;
 
     store.dispatch('setIsAuthorized', loggedIn)
     if (authRequired && !loggedIn) {
