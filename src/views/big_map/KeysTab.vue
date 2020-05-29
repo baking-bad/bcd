@@ -14,19 +14,10 @@
           hide-details
         ></v-text-field>
       </v-col>
-      <!-- <v-col cols="2" class="mr-4">
-        <v-select
-          :items="['Last updated', 'Key']"
-          v-model="orderBy"
-          disabled
-          label="Order by"
-          prepend-inner-icon="mdi-sort-ascending"
-        ></v-select>
-      </v-col>
-      <v-col cols="2" class="mr-4">
-        <v-checkbox v-model="showRemoved" disabled>
+      <!-- <v-col cols="3" class="d-flex justify-center">
+        <v-checkbox v-model="showRemoved">
           <template v-slot:label>
-            <span>Show removed</span>
+            <span>Show removed keys</span>
           </template>
         </v-checkbox>
       </v-col> -->
@@ -64,8 +55,7 @@ export default {
   props: {
     network: String,
     address: String,
-    ptr: String,
-    count: Number
+    ptr: String
   },
   components: {
     BigMapDiff,
@@ -82,7 +72,7 @@ export default {
     _timerId: null
   }),
   created() {
-    this.fetchSearchDebounced(this.search);
+    this.fetchSearchDebounced(this.search, !this.showRemoved);
   },
   computed: {
     searchText() {
@@ -95,7 +85,7 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
-    fetchSearchDebounced(text) {
+    fetchSearchDebounced(text, skipRemoved = false) {
       this.loading = true;
       clearTimeout(this._timerId);
 
@@ -104,12 +94,16 @@ export default {
           .getContractBigMapKeys(
             this.network,
             this.ptr,
+            skipRemoved,
             text,
             this.bigmap.length
           )
           .then(res => {
-            if (this.bigmap.length == 0) this.bigmap = res;
-            else this.bigmap.push(...res);
+            if (this.bigmap.length == 0) {
+              this.bigmap = res;
+            } else {
+              this.bigmap.push(...res);
+            } 
             this.downloaded = res.length == 0;
           })
           .catch(err => {
@@ -118,28 +112,33 @@ export default {
           })
           .finally(() => {
             this.loading = false;
-            this.$emit("update:count", this.bigmap.length); // TODO: get total from backend
           });
       }, 100);
     },
     onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
-        this.fetchSearchDebounced(this.searchText);
+        this.fetchSearchDebounced(this.searchText, !this.showRemoved);
       }
+    },
+    onFiltersChange(searchText, skipRemoved) {
+      if (this._locked) return;
+      this._locked = true;
+      this.downloaded = false;
+      searchText = searchText ? searchText.trim() : "";
+      if (searchText.length > 2 || searchText.length === 0) {
+        this.bigmap = [];
+        this.loading = true;
+        this.fetchSearchDebounced(searchText, skipRemoved);
+      }
+      this._locked = false;
     }
   },
   watch: {
     search(val) {
-      if (this._locked) return;
-      this._locked = true;
-      this.downloaded = false;
-      let searchText = val ? val.trim() : "";
-      if (searchText.length > 2 || searchText.length === 0) {
-        this.bigmap = [];
-        this.loading = true;
-        this.fetchSearchDebounced(searchText);
-      }
-      this._locked = false;
+      this.onFiltersChange(val, !this.showRemoved);
+    },
+    showRemoved(val) {
+      this.onFiltersChange(this.searchText, !val);
     }
   }
 };
