@@ -1,9 +1,9 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
-    <v-row no-gutters>
-      <v-col cols="6" class="pr-4">
-          <v-skeleton-loader :loading="!contractSeries" type="image">
-        <v-card flat outlined>
+    <v-row>
+      <v-col cols="6">
+        <v-skeleton-loader :loading="!contractSeries" type="image">
+          <v-card flat outlined>
             <v-card-text class="data pa-0">
               <ColumnChart
                 :data="contractSeries"
@@ -12,51 +12,83 @@
                 name="New deployments"
               ></ColumnChart>
             </v-card-text>
-        </v-card>
-          </v-skeleton-loader>
+          </v-card>
+        </v-skeleton-loader>
       </v-col>
-      <v-col cols="6" class="pl-4">
-          <v-skeleton-loader :loading="!operationSeries" type="image">
-        <v-card flat outlined>
-          <v-card-text class="data pa-0">
-            <ColumnChart
-              :data="operationSeries"
-              :title="`Contract calls (total ${details.operations_count})`"
-              name="Contract calls"
-            ></ColumnChart>
-          </v-card-text>
-        </v-card>
-          </v-skeleton-loader>
+      <v-col cols="6">
+        <v-skeleton-loader :loading="!operationSeries" type="image">
+          <v-card flat outlined>
+            <v-card-text class="data pa-0">
+              <ColumnChart
+                :data="operationSeries"
+                :title="`Contract calls (total ${details.operations_count})`"
+                name="Contract calls"
+              ></ColumnChart>
+            </v-card-text>
+          </v-card>
+        </v-skeleton-loader>
       </v-col>
-      <v-col cols="6" class="pt-8 pr-4">
-          <v-skeleton-loader :loading="loading" type="image">
-        <v-card flat outlined>
-          <v-card-title class="data d-flex align-center justify-center" style="font-size: 18px;">
-            <span style="font-family: 'Roboto Condensed'">Activated protocols</span>
-          </v-card-title>
-          <v-card-text class="pa-0 data">
-            <v-timeline>
-              <v-timeline-item
-                v-for="(protocol, idx) in details.protocols"
-                :key="idx"
-                color="primary"
-                icon="mdi-chevron-up"
-                small
-              >
-                <div style="text-align: right;" :slot="idx % 2 === 0 ? 'opposite' : 'default'">
-                  <span class="hash">level <span class="text--primary">{{ protocol.start_level }}</span></span>
-                </div>
-                <div :slot="idx % 2 === 0 ? 'default' : 'opposite'">
-                  <span class="body-1 text--primary">{{ protocol.alias }}</span>
-                  <span class="hash ml-2" v-if="!protocol.hash.startsWith(protocol.alias)">
-                    {{ protocol.hash.slice(0, 8) }}
-                  </span>
-                </div>
-              </v-timeline-item>
-            </v-timeline>
-          </v-card-text>
-        </v-card>
-          </v-skeleton-loader>
+      <v-col cols="6">
+        <v-skeleton-loader :loading="!paidStorageSizeDiffSeries" type="image">
+          <v-card flat outlined>
+            <v-card-text class="data pa-0">
+              <ColumnChart
+                :data="paidStorageSizeDiffSeries"
+                formatter="kilobyte"
+                title="Paid storage size diff, kB"
+                name="Paid storage size diff"
+              ></ColumnChart>
+            </v-card-text>
+          </v-card>
+        </v-skeleton-loader>
+      </v-col>
+      <v-col cols="6">
+        <v-skeleton-loader :loading="!consumedGasSeries" type="image">
+          <v-card flat outlined>
+            <v-card-text class="data pa-0">
+              <ColumnChart
+                :data="consumedGasSeries"
+                :title="`Consumed gas × 10\u2076`"
+                formatter="gas"
+                name="Consumed gas"
+              ></ColumnChart>
+            </v-card-text>
+          </v-card>
+        </v-skeleton-loader>
+      </v-col>
+      <v-col cols="6">
+        <v-skeleton-loader :loading="loading" type="image">
+          <v-card flat outlined>
+            <v-card-title class="data d-flex align-center justify-center" style="font-size: 18px;">
+              <span style="font-family: 'Roboto Condensed'">Activated protocols</span>
+            </v-card-title>
+            <v-card-text class="pa-0 data">
+              <v-timeline>
+                <v-timeline-item
+                  v-for="(protocol, idx) in details.protocols"
+                  :key="idx"
+                  color="primary"
+                  icon="mdi-chevron-up"
+                  small
+                >
+                  <div style="text-align: right;" :slot="idx % 2 === 0 ? 'opposite' : 'default'">
+                    <span class="hash">
+                      level
+                      <span class="text--primary">{{ protocol.start_level }}</span>
+                    </span>
+                  </div>
+                  <div :slot="idx % 2 === 0 ? 'default' : 'opposite'">
+                    <span class="body-1 text--primary">{{ protocol.alias }}</span>
+                    <span
+                      class="hash ml-2"
+                      v-if="!protocol.hash.startsWith(protocol.alias)"
+                    >{{ protocol.hash.slice(0, 8) }}</span>
+                  </div>
+                </v-timeline-item>
+              </v-timeline>
+            </v-card-text>
+          </v-card>
+        </v-skeleton-loader>
       </v-col>
     </v-row>
   </v-container>
@@ -83,7 +115,9 @@ export default {
     loading: true,
     details: {},
     contractSeries: null,
-    operationSeries: null
+    operationSeries: null,
+    consumedGasSeries: null,
+    paidStorageSizeDiffSeries: null
   }),
   methods: {
     ...mapActions(["showError"]),
@@ -119,6 +153,28 @@ export default {
         })
         .catch(err => {
           this.operationSeries = [];
+          console.log(err);
+          this.showError(err);
+        });
+
+      this.api
+        .getNetworkStatsSeries(network, "paid_storage_size_diff", "month")
+        .then(res => {
+          this.paidStorageSizeDiffSeries = res;
+        })
+        .catch(err => {
+          this.paidStorageSizeDiffSeries = [];
+          console.log(err);
+          this.showError(err);
+        });
+
+      this.api
+        .getNetworkStatsSeries(network, "consumed_gas", "month")
+        .then(res => {
+          this.consumedGasSeries = res;
+        })
+        .catch(err => {
+          this.consumedGasSeries = [];
           console.log(err);
           this.showError(err);
         });
