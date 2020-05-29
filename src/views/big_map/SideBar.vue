@@ -35,9 +35,9 @@
               </v-list-item>
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-subtitle class="overline">Active keys</v-list-item-subtitle>
+                  <v-list-item-subtitle class="overline">Active / total keys</v-list-item-subtitle>
                   <v-list-item-title class="body-2">
-                    <span>{{ bigmap.active_keys }}</span>
+                    <span>{{ bigmap.active_keys }} / {{ bigmap.total_keys }}</span>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -63,14 +63,41 @@
                 <v-list-item :key="idx">
                   <v-list-item-content>
                     <v-list-item-title class="hash">
-                      <span class="text-capitalize">{{ item.action }}</span>
-                      <span class="ml-2 text--secondary" v-if="item.action === 'copy'">{{ item.source_ptr }} 🡒 {{ item.destination_ptr }}</span>
-                      <span class="ml-2 text--secondary" v-else>{{ ptr }}</span>
+                      <span class="mr-2">{{ item.action }}</span>
+                      <template v-if="item.action == 'copy'">
+                        <span
+                          class="text--secondary font-weight-light"
+                          v-if="item.source_ptr == ptr"
+                        >to</span>
+                        <span class="text--secondary font-weight-light" v-else>from</span>
+                      </template>
                     </v-list-item-title>
+                    <v-list-item-subtitle>
+                      <span class="overline">{{ helpers.formatDatetime(item.timestamp) }}</span>
+                    </v-list-item-subtitle>
                   </v-list-item-content>
                   <v-list-item-action>
-                    <v-list-item-action-text>
-                      <span class="body-2 text--primary">{{ helpers.formatDatetime(item.timestamp) }}</span>
+                    <v-list-item-action-text v-if="item.action == 'copy'">
+                      <v-btn
+                        :to="`/${network}/big_map/${item.destination_ptr}`"
+                        class="text--primary"
+                        text
+                        small
+                        v-if="item.source_ptr == ptr"
+                      >
+                        <v-icon small class="mr-1 text--secondary">mdi-link-variant</v-icon>
+                        Big Map {{ item.destination_ptr }}
+                      </v-btn>
+                      <v-btn
+                        :to="`/${network}/big_map/${item.source_ptr}`"
+                        class="text--primary"
+                        text
+                        small
+                        v-else
+                      >
+                        <v-icon small class="mr-1 text--secondary">mdi-link-variant</v-icon>
+                        Big Map {{ item.source_ptr }}
+                      </v-btn>
                     </v-list-item-action-text>
                   </v-list-item-action>
                 </v-list-item>
@@ -83,7 +110,12 @@
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase text--secondary">Type</span>
           </v-expansion-panel-header>
-          <v-expansion-panel-content v-if="bigmap" color="canvas" class="hash font-weight-light">
+          <v-expansion-panel-content
+            v-if="bigmap"
+            color="data"
+            class="hash font-weight-light"
+            style="font-size: 14px;"
+          >
             <div v-for="(def, i) in bigmap.typedef" :key="i" class="ma-4">
               <span v-if="i === 0"></span>
               <span v-else-if="def.name">{{ def.name }}&nbsp;</span>
@@ -123,7 +155,7 @@ export default {
   }),
   computed: {
     removed() {
-      return this.actions.some(item => item.action === 'remove');
+      return this.actions.some(item => item.action === "remove");
     }
   },
   created() {
@@ -146,6 +178,9 @@ export default {
     highlightType(expr) {
       return expr.replace(/(\$\w+)/g, '<span class="accent--text">$1</span>');
     }
+  },
+  watch: {
+    ptr: 'getBigMapActions'
   }
 };
 </script>
