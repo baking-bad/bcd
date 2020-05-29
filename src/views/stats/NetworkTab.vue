@@ -35,7 +35,7 @@
               <ColumnChart
                 :data="paidStorageSizeDiffSeries"
                 formatter="kilobyte"
-                title="Paid storage size diff, kB"
+                title="Paid storage size diff, KB"
                 name="Paid storage size diff"
               ></ColumnChart>
             </v-card-text>
