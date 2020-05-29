@@ -58,7 +58,7 @@ export default {
       if (this.formatter === "kilobyte") {
         return function() {
           let value = kilobyteFormatter(this.y);
-          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value} kB</b><br/>`;
+          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value} KB</b><br/>`;
         };
       } else if (this.formatter === "gas") {
         return function() {
