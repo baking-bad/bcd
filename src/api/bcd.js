@@ -471,7 +471,8 @@ export class BetterCallApi {
           'Authorization': getJwt()
         },
         params: {
-          offset: offset
+          offset: offset,
+          size: 15
         }
       })
       .then((res) => {

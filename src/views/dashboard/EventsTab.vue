@@ -45,8 +45,8 @@
                   <span v-if="item.body.internal" class="hash font-weight-thin mr-1">internal</span>
                   <span class="hash secondary--text mr-1">{{ item.body.entrypoint }}</span>
                   <span class="text--secondary" style="font-size: 20px;">←</span>
-                  <span class="body-1 font-weight-light ml-1">
-                    <span class="font-weight-regular" v-if="item.body.source_alias">{{ item.body.source_alias }}</span>
+                  <span class="body-1 ml-1">
+                    <span v-if="item.body.source_alias">{{ item.body.source_alias }}</span>
                     <span v-else v-html="helpers.shortcut(item.body.source)"></span>
                   </span>
                 </template>
@@ -162,7 +162,6 @@
 <script>
 import dayjs from "dayjs";
 import { mapActions } from "vuex";
-import { cancelRequests } from "@/utils/cancellation.js";
 import EmptyState from "@/components/EmptyState.vue";
 
 export default {
@@ -188,16 +187,14 @@ export default {
     getEvents(force = false) {
       if (!force && (this.loading || this.downloaded)) return;
       this.loading = true;
-
-      if (force) {
-        cancelRequests();
-        this.events = [];
-      }
-
       this.api
         .getProfileEvents(this.events.length)
         .then(res => {
-          this.events.push(...res);
+          if (force) {
+            this.events = res;
+          } else {
+            this.events.push(...res);
+          }
           this.downloaded = res.length == 0;
         })
         .catch(err => {
