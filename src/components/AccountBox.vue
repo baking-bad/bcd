@@ -11,7 +11,7 @@
               <span v-if="alias">{{ alias }}</span>
               <span v-else v-html="helpers.shortcut(address)"></span>
             </span>
-            <v-icon v-if="highlighted" class="ml-1 text--secondary" x-small>mdi-check-circle</v-icon>
+            <v-icon v-if="highlighted" class="ml-1 mb-1 text--disabled" small>mdi-radiobox-marked</v-icon>
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>

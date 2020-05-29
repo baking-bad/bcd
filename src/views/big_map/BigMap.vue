@@ -19,7 +19,7 @@
       <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
         <v-tab :to="{ name: 'big_map_keys' }" replace>
           <v-icon left small>mdi-database</v-icon>keys
-          <span v-if="!keyhash" class="ml-1">({{ count }})</span>
+          <span v-if="!keyhash" class="ml-1">({{ bigmap.active_keys }})</span>
         </v-tab>
         <v-tab v-if="keyhash" :to="{ name: 'big_map_history' }" replace>
           <v-icon left small>mdi-history</v-icon>

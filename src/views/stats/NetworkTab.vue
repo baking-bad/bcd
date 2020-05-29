@@ -90,6 +90,20 @@
           </v-card>
         </v-skeleton-loader>
       </v-col>
+      <v-col cols="6">
+        <v-skeleton-loader :loading="loading" type="image">
+          <v-card flat outlined>
+            <v-card-text class="data pa-0 pb-8">
+              <DonutChart
+                :data="languages"
+                title="Contract languages"
+                subtitle="Determined using heuristics, can be inaccurate"
+                name="Contract languages"
+              ></DonutChart>
+            </v-card-text>
+          </v-card>
+        </v-skeleton-loader>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -97,6 +111,7 @@
 <script>
 import { mapActions } from "vuex";
 import ColumnChart from "@/components/ColumnChart.vue";
+import DonutChart from "@/components/DonutChart.vue";
 
 export default {
   name: "NetworkTab",
@@ -104,7 +119,8 @@ export default {
     network: String
   },
   components: {
-    ColumnChart
+    ColumnChart,
+    DonutChart
   },
   created() {
     if (this.network) {
@@ -119,6 +135,24 @@ export default {
     consumedGasSeries: null,
     paidStorageSizeDiffSeries: null
   }),
+  computed: {
+    languages() {
+      if (!this.loading && this.details.languages) {
+        let res = Object.keys(this.details.languages)
+          .map(lang => [`${lang[0].toUpperCase()}${lang.slice(1)}`, this.details.languages[lang]]);
+
+        res.push({
+          name: 'Others',
+          y: this.details.contracts_count - res.reduce((acc, x) => acc + x[1], 0),
+          dataLabels: {
+            enabled: false
+          }
+        });
+        return res;
+      }
+      return [];
+    }
+  },
   methods: {
     ...mapActions(["showError"]),
     getDetails(network) {

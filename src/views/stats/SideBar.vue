@@ -44,26 +44,21 @@
       </v-expansion-panels>
     </v-skeleton-loader>
 
-    <v-footer
-      color="transparent"
-      absolute
-      bottom
-      class="d-flex justify-center ml-6"
-      style="z-index: 0"
-    >
-      <v-btn x-small text href="https://baking-bad.org/docs" target="_blank" color="border">
-        <span>Baking Bad</span>
-      </v-btn>
-    </v-footer>
+    <BakingBadFooter />
   </div>
 </template>
 
 <script>
+import BakingBadFooter from "@/components/BakingBadFooter.vue";
+
 export default {
   name: "SideBar",
   props: {
     states: Array,
     loading: Boolean
+  },
+  components: {
+    BakingBadFooter
   },
   computed: {
     apiHost() {

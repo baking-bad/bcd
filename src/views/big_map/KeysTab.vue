@@ -14,19 +14,10 @@
           hide-details
         ></v-text-field>
       </v-col>
-      <!-- <v-col cols="2" class="mr-4">
-        <v-select
-          :items="['Last updated', 'Key']"
-          v-model="orderBy"
-          disabled
-          label="Order by"
-          prepend-inner-icon="mdi-sort-ascending"
-        ></v-select>
-      </v-col>
-      <v-col cols="2" class="mr-4">
-        <v-checkbox v-model="showRemoved" disabled>
+      <!-- <v-col cols="3" class="d-flex justify-center">
+        <v-checkbox v-model="showRemoved">
           <template v-slot:label>
-            <span>Show removed</span>
+            <span>Show removed keys</span>
           </template>
         </v-checkbox>
       </v-col> -->
@@ -37,20 +28,18 @@
         <v-overlay v-if="loading" :value="loading" color="data" absolute>
           <v-progress-circular v-if="bigmap.length === 0" indeterminate color="primary" size="64" />
         </v-overlay>
-        <v-card
+        <EmptyState
           v-if="!loading && bigmap.length === 0"
-          class="d-flex flex-column align-center justify-center transparent pa-8 mt-12"
-          flat
-        >
-          <v-icon size="100" class="text--secondary">mdi-package-variant</v-icon>
-          <span class="title text--secondary">No results were found for your request</span>
-        </v-card>
+          icon="mdi-code-brackets"
+          title="Nothing found"
+          text="Empty set is also a result, otherwise try a broader query"
+        />
         <v-expansion-panels v-if="bigmap.length > 0" multiple hover flat class="bb-1">
           <template v-for="(diff, idx) in bigmap">
             <BigMapDiff :diff="diff" :network="network" :address="address" :ptr="ptr" :key="idx" />
           </template>
         </v-expansion-panels>
-        <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
+        <span v-intersect="onDownloadPage" v-if="!loading && !downloaded"></span>
       </v-col>
     </v-row>
   </v-container>
@@ -58,6 +47,7 @@
 
 <script>
 import BigMapDiff from "@/views/big_map/BigMapDiff.vue";
+import EmptyState from "@/components/EmptyState.vue"
 import { mapActions } from "vuex";
 
 export default {
@@ -65,11 +55,11 @@ export default {
   props: {
     network: String,
     address: String,
-    ptr: String,
-    count: Number
+    ptr: String
   },
   components: {
-    BigMapDiff
+    BigMapDiff,
+    EmptyState
   },
   data: () => ({
     loading: true,
@@ -82,7 +72,7 @@ export default {
     _timerId: null
   }),
   created() {
-    this.fetchSearchDebounced(this.search);
+    this.fetchSearchDebounced(this.search, !this.showRemoved);
   },
   computed: {
     searchText() {
@@ -95,7 +85,7 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
-    fetchSearchDebounced(text) {
+    fetchSearchDebounced(text, skipRemoved = false) {
       this.loading = true;
       clearTimeout(this._timerId);
 
@@ -104,12 +94,16 @@ export default {
           .getContractBigMapKeys(
             this.network,
             this.ptr,
+            skipRemoved,
             text,
             this.bigmap.length
           )
           .then(res => {
-            if (this.bigmap.length == 0) this.bigmap = res;
-            else this.bigmap.push(...res);
+            if (this.bigmap.length == 0) {
+              this.bigmap = res;
+            } else {
+              this.bigmap.push(...res);
+            } 
             this.downloaded = res.length == 0;
           })
           .catch(err => {
@@ -118,28 +112,33 @@ export default {
           })
           .finally(() => {
             this.loading = false;
-            this.$emit("update:count", this.bigmap.length); // TODO: get total from backend
           });
       }, 100);
     },
     onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
-        this.fetchSearchDebounced(this.searchText);
+        this.fetchSearchDebounced(this.searchText, !this.showRemoved);
       }
+    },
+    onFiltersChange(searchText, skipRemoved) {
+      if (this._locked) return;
+      this._locked = true;
+      this.downloaded = false;
+      searchText = searchText ? searchText.trim() : "";
+      if (searchText.length > 2 || searchText.length === 0) {
+        this.bigmap = [];
+        this.loading = true;
+        this.fetchSearchDebounced(searchText, skipRemoved);
+      }
+      this._locked = false;
     }
   },
   watch: {
     search(val) {
-      if (this._locked) return;
-      this._locked = true;
-      this.downloaded = false;
-      let searchText = val ? val.trim() : "";
-      if (searchText.length > 2 || searchText.length === 0) {
-        this.bigmap = [];
-        this.loading = true;
-        this.fetchSearchDebounced(searchText);
-      }
-      this._locked = false;
+      this.onFiltersChange(val, !this.showRemoved);
+    },
+    showRemoved(val) {
+      this.onFiltersChange(this.searchText, !val);
     }
   }
 };

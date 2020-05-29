@@ -8,73 +8,73 @@
     </v-list-item>
     <v-divider></v-divider>
 
-    <v-expansion-panels flat tile mandatory active-class="opened-panel">
-      <v-expansion-panel class="ma-0 bb-1" v-if="profile">
-        <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-          <span class="caption font-weight-bold text-uppercase text--secondary">Watch</span>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content color="data">
-          <v-list class="sidebar-list">
-            <template v-for="(contract, i) in profile.subscriptions">
-              <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-              <v-list-item :key="i" class="pr-1" :to="`/${contract.network}/${contract.address}`">
-                <v-list-item-content>
-                  <v-list-item-title class="body-2">
-                    <span v-if="contract.alias">{{ contract.alias }}</span>
-                    <span v-else v-html="helpers.shortcut(contract.address)"></span>
-                  </v-list-item-title>
-                  <v-list-item-subtitle class="overline">{{ contract.network }}</v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-list-item-action-text class="d-flex flex-column">
-                    <v-chip x-small outlined class="mb-1 text--secondary">same</v-chip>
-                    <v-chip x-small outlined class="text--secondary">similar</v-chip>
-                  </v-list-item-action-text>
-                </v-list-item-action>
-                <v-list-item-icon>
-                  <v-btn small icon @click.prevent.stop="editSettings(contract)">
-                    <v-icon>mdi-dots-vertical</v-icon>
-                  </v-btn>
-                </v-list-item-icon>
-              </v-list-item>
-            </template>
-          </v-list>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-
-      <v-expansion-panel disabled class="ma-0 bb-1">
-        <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-          <span class="caption font-weight-bold text-uppercase">Accounts</span>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content color="data"></v-expansion-panel-content>
-      </v-expansion-panel>
-
-      <v-expansion-panel disabled class="ma-0 bb-1">
-        <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-          <span class="caption font-weight-bold text-uppercase">Deployments</span>
-        </v-expansion-panel-header>
-        <v-expansion-panel-content color="data"></v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
-
-    <v-footer
-      color="transparent"
-      absolute
-      bottom
-      class="d-flex justify-center ml-6"
-      style="z-index: 0"
+    <v-skeleton-loader
+      :loading="loading"
+      type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
     >
-      <v-btn x-small text href="https://baking-bad.org/docs" target="_blank" color="border">
-        <span>Baking Bad</span>
-      </v-btn>
-    </v-footer>
+      <v-expansion-panels flat tile mandatory active-class="opened-panel">
+        <v-expansion-panel class="ma-0 bb-1">
+          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+            <span class="caption font-weight-bold text-uppercase text--secondary">Watch</span>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content color="data">
+            <v-list class="sidebar-list">
+              <template v-for="(item, i) in subscriptions">
+                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+                <v-list-item :key="i" class="pr-2" :to="`/${item.network}/${item.address}`">
+                  <v-list-item-content>
+                    <v-list-item-title class="body-2">
+                      <span v-if="item.alias">{{ item.alias }}</span>
+                      <span v-else v-html="helpers.shortcut(item.address)"></span>
+                    </v-list-item-title>
+                    <v-list-item-subtitle class="overline">
+                      <span :class="item.network === 'mainnet' ? 'secondary--text' : ''">{{ item.network }}</span>
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
+                  <v-list-item-action>
+                    <v-list-item-action-text class="d-flex">
+                      <v-btn small text @click.prevent.stop="watchSettings(item)" class="settings-button pl-1 pr-0">
+                        <v-icon v-if="item.watch_errors" color="error" class="mr-1" small>mdi-alert-outline</v-icon>
+                        <v-icon v-if="item.watch_migrations" color="warning" class="mr-1" small>mdi-source-pull</v-icon>
+                        <v-icon v-if="item.watch_calls" color="secondary" class="mr-1" small>mdi-swap-horizontal</v-icon>
+                        <v-icon v-if="item.watch_mempool" color="info" class="mr-1" small>mdi-history</v-icon>
+                        <v-icon v-if="item.watch_deployments || item.watch_same || item.watch_similar" color="accent" class="mr-1" small>mdi-shape-square-plus</v-icon>
+                      </v-btn>
+                    </v-list-item-action-text>
+                  </v-list-item-action>
+                </v-list-item>
+              </template>
+              <div v-if="subscriptions.length === 0" class="pa-4 text--secondary body-2">
+                Press<v-icon small class="text--disabled mx-1">mdi-eye-outline</v-icon>button on a contract page
+                <br />to receive notifications
+              </div>
+            </v-list>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <v-expansion-panel disabled class="ma-0 bb-1">
+          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+            <span class="caption font-weight-bold text-uppercase">Accounts</span>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content color="data"></v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <v-expansion-panel disabled class="ma-0 bb-1">
+          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+            <span class="caption font-weight-bold text-uppercase">Deployments</span>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content color="data"></v-expansion-panel-content>
+        </v-expansion-panel>
+      </v-expansion-panels>
+    </v-skeleton-loader>
+
+    <BakingBadFooter />
 
     <WatchSettings
-      v-if="editedContract"
       :show.sync="showWatchSettings"
-      :network="editedContract.network"
-      :address="editedContract.address"
-      :alias="editedContract.alias"
+      :data="selected"
+      :onUpdate="updateSubscription"
+      :onRemove="removeSubscription"
     />
   </div>
 </template>
@@ -82,11 +82,13 @@
 <script>
 import { mapActions } from "vuex";
 import WatchSettings from "@/components/WatchSettings.vue";
+import BakingBadFooter from "@/components/BakingBadFooter.vue";
 
 export default {
   name: "SideBar",
   components: {
-    WatchSettings
+    WatchSettings,
+    BakingBadFooter
   },
   computed: {
     isAuthorized() {
@@ -97,22 +99,64 @@ export default {
     }
   },
   data: () => ({
-    showWatchSettings: false,
-    editedContract: null
+    loading: true,
+    subscriptions: [],
+    selected: null,
+    showWatchSettings: false
   }),
+  created() {
+    this.getSubscriptions();
+  },
   methods: {
-    ...mapActions({
-      showError: "showError"
-    }),
-    editSettings(contract) {
-      this.editedContract = contract;
+    ...mapActions(["showError", "setSubscriptionChanged"]),
+    watchSettings(item) {
+      this.selected = item;
       this.showWatchSettings = true;
+    },
+    setProfileUpdated() {
+      this.$store.state.profile.updated = true;
+    },
+    updateSubscription(item) {
+      this.subscriptions = this.subscriptions.map(s => {
+        if (s.address === item.address && s.network === item.network) {
+          return item;
+        } else {
+          return s;
+        }
+      });
+      this.setSubscriptionChanged(item);
+    },
+    removeSubscription(item) {
+      this.subscriptions = this.subscriptions.filter(
+        s => s.address !== item.address || s.network !== item.network
+      );
+      this.setSubscriptionChanged(item);
+    },
+    getSubscriptions() {
+      this.loading = true;
+      this.api
+        .getProfileSubscriptions()
+        .then(res => {
+          if (!res) return;
+          this.subscriptions = res;
+        })
+        .catch(err => {
+          this.showError(err);
+          console.log(err);
+        })
+        .finally(() => (this.loading = false));
     }
   }
 };
 </script>
 
 <style scss>
+.settings-button {
+  opacity: .7;
+}
+.settings-button:hover {
+  opacity: 1;
+}
 .opened-panel {
   border-bottom: none !important;
 }

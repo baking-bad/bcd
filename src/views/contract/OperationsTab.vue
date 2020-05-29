@@ -91,14 +91,12 @@
         <v-overlay v-if="loading" :value="loading" color="data" absolute>
           <v-progress-circular v-if="items.length === 0" indeterminate color="primary" size="64" />
         </v-overlay>
-        <v-card
+        <EmptyState
           v-if="!loading && items.length === 0"
-          class="d-flex flex-column align-center justify-center transparent pa-8 mt-12"
-          flat
-        >
-          <v-icon size="100" class="text--secondary">mdi-package-variant</v-icon>
-          <span class="title text--secondary">No results were found for your request</span>
-        </v-card>
+          icon="mdi-code-brackets"
+          title="Nothing found"
+          text="Empty set is also a result, otherwise try a broader query"
+        />
         <v-expansion-panels v-if="items.length > 0" multiple hover flat class="bb-1">
           <ContentItem
             :data="item"
@@ -107,7 +105,7 @@
             v-for="(item, key) in items"
           />
         </v-expansion-panels>        
-        <span v-intersect="onDownloadPage" v-if="!downloaded"></span>
+        <span v-intersect="onDownloadPage" v-if="!loading && !downloaded"></span>
       </v-col>
     </v-row>
   </v-container>
@@ -116,6 +114,7 @@
 <script>
 import { mapActions } from "vuex";
 import ContentItem from "@/views/contract/ContentItem.vue";
+import EmptyState from "@/components/EmptyState.vue"
 import dayjs from "dayjs";
 
 export default {
@@ -125,7 +124,8 @@ export default {
     network: String
   },
   components: {
-    ContentItem
+    ContentItem,
+    EmptyState
   },
   data: () => ({
     operations: [],
@@ -248,7 +248,7 @@ export default {
           console.log(err);
           this.showError(err);
         })
-        .finally(() => { this.operationsLoading = false; });
+        .finally(() => (this.operationsLoading = false));
     },
     getMempool() {
       if (this.mempoolLoading) return;

@@ -5,22 +5,25 @@
       text
       type="error"
       :key="idx"
-      v-for="(err, idx) in errors"
+      v-for="(err, idx) in displayedErrors"
       class="my-2"
     >
       <v-row align="center" no-gutters>
-        <v-col class="d-flex flex-column px-4">
+        <v-col cols="10" class="d-flex flex-column px-4">
           <span class="hash">{{ err.title }}</span>
           <span class="text--secondary body-1">
-            {{ err.descr }}
-            <span v-if="err.with" style="word-break: break-all">: {{ err.with }}</span>
+            <span>{{ err.descr }}</span>
+            <span v-if="err.with" style="word-break: break-all">
+              with<span class="ml-2 hash font-weight-medium" >{{ err.with }}</span>
+            </span>
             <span
               v-else-if="err.id.includes('contract.balance_too_low')"
               style="word-break: break-all"
             >: {{ err.balance | uxtz }} &lt; {{ err.amount | uxtz }}</span>
           </span>
         </v-col>
-        <v-col class="shrink" v-if="err.id.includes('michelson_v1.script_rejected') && operationId">
+        <v-spacer></v-spacer>
+        <v-col cols="2" class="d-flex justify-end align-center" v-if="err.id.includes('michelson_v1.script_rejected') && operationId">
           <v-btn
             small
             text
@@ -66,6 +69,11 @@ export default {
     errorLocationLoading: false,
     showErrorLocation: false
   }),
+  computed: {
+    displayedErrors() {
+      return this.errors.filter(e => !e.id.includes('runtime_error'));
+    }
+  },
   methods: {
     getErrorLocation() {
       this.errorLocationLoading = true;

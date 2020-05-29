@@ -95,7 +95,7 @@
           <template v-for="(item, idx) in suggests">
             <ResultItem :key="idx" :item="item" :words="getSearchWords()" />
           </template>
-          <span v-intersect="onDownloadPage"></span>
+          <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
         </template>
         <template
           v-else-if="(isAddress() || isOpgHash()) && !loading && tzkt.supportsAny(filters.networks)"
@@ -138,17 +138,12 @@
           </v-card>
         </template>
         <template v-else-if="!cold">
-          <v-card
-            flat
-            outlined
-            class="mt-8 pa-8 data d-flex flex-column align-center justify-center"
-          >
-            <v-icon size="100" color="grey">mdi-package-variant</v-icon>
-            <span class="headline grey--text">No results found for your request</span>
-            <span
-              class="subtitle-1 grey--text"
-            >Type another address, annotation, entrypoint name or anything else</span>
-          </v-card>
+          <EmptyState
+            color="data"
+            icon="mdi-code-brackets"
+            title="Nothing found"
+            text="Empty set is also a result, otherwise try a broader query"
+          />
         </template>
         <v-overlay v-else :value="cold" color="data" absolute>
           <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
@@ -161,17 +156,18 @@
 
 <script>
 import { mapActions } from "vuex";
-
 import SearchFilters from "@/views/extended_search/SearchFilters.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import ResultItem from "@/views/extended_search/ResultItem.vue";
+import EmptyState from "@/components/EmptyState.vue"
 
 export default {
   name: "ExtendedSearch",
   components: {
     SearchFilters,
     SideNavigation,
-    ResultItem
+    ResultItem,
+    EmptyState
   },
   data: () => ({
     suggests: [],
