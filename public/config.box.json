@@ -3,9 +3,10 @@
     "WS_URI": "ws://localhost:42000/v1/ws",
     "NETWORKS": ["sandboxnet"],
     "OAUTH_ENABLED": false,
+    "SINGLE_USER_MODE": true,
     "GA_ENABLED": false,
     "MEMPOOL_ENABLED": false,
-    "HOME_PAGE": "home",
+    "HOME_PAGE": "dashboard",
     "RPC_ENDPOINTS": {
       "sandboxnet": "http://localhost:8732"
     }

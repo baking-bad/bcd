@@ -21,7 +21,7 @@
             <v-list class="sidebar-list">
               <template v-for="(item, i) in subscriptions">
                 <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <v-list-item :key="i" class="pr-2" :to="`/${item.network}/${item.address}`">
+                <v-list-item :key="i" class="pr-2" :to="item.address.startsWith('KT') ? `/${item.network}/${item.address}` : `/${item.address}`">
                   <v-list-item-content>
                     <v-list-item-title class="body-2">
                       <span v-if="item.alias">{{ item.alias }}</span>
