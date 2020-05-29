@@ -140,6 +140,10 @@ export default {
     },
     showRemoved(val) {
       this.onFiltersChange(this.searchText, !val);
+    },
+    ptr() {
+      this.search = "";
+      this.fetchSearchDebounced(this.search, !this.showRemoved);
     }
   }
 };
