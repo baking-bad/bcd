@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
-    <v-row no-gutters>
-      <v-col cols="6" class="pr-4">
+    <v-row>
+      <v-col cols="6">
         <v-skeleton-loader :loading="!contractSeries" type="image">
           <v-card flat outlined>
             <v-card-text class="data pa-0">
@@ -15,7 +15,7 @@
           </v-card>
         </v-skeleton-loader>
       </v-col>
-      <v-col cols="6" class="pl-4">
+      <v-col cols="6">
         <v-skeleton-loader :loading="!operationSeries" type="image">
           <v-card flat outlined>
             <v-card-text class="data pa-0">
@@ -28,10 +28,38 @@
           </v-card>
         </v-skeleton-loader>
       </v-col>
-      <v-col cols="6" class="pt-8 pr-4">
+      <v-col cols="6">
+        <v-skeleton-loader :loading="!paidStorageSizeDiffSeries" type="image">
+          <v-card flat outlined>
+            <v-card-text class="data pa-0">
+              <ColumnChart
+                :data="paidStorageSizeDiffSeries"
+                formatter="kilobyte"
+                title="Paid storage size diff, kB"
+                name="Paid storage size diff"
+              ></ColumnChart>
+            </v-card-text>
+          </v-card>
+        </v-skeleton-loader>
+      </v-col>
+      <v-col cols="6">
+        <v-skeleton-loader :loading="!consumedGasSeries" type="image">
+          <v-card flat outlined>
+            <v-card-text class="data pa-0">
+              <ColumnChart
+                :data="consumedGasSeries"
+                :title="`Consumed gas × 10\u2076`"
+                formatter="gas"
+                name="Consumed gas"
+              ></ColumnChart>
+            </v-card-text>
+          </v-card>
+        </v-skeleton-loader>
+      </v-col>
+      <v-col cols="6">
         <v-skeleton-loader :loading="loading" type="image">
           <v-card flat outlined>
-            <v-card-title class="data d-flex align-start justify-center pt-2" style="font-size: 18px;">
+            <v-card-title class="data d-flex align-center justify-center" style="font-size: 18px;">
               <span style="font-family: 'Roboto Condensed'">Activated protocols</span>
             </v-card-title>
             <v-card-text class="pa-0 data">
@@ -62,7 +90,7 @@
           </v-card>
         </v-skeleton-loader>
       </v-col>
-      <v-col cols="6" class="pl-4 pt-8">
+      <v-col cols="6">
         <v-skeleton-loader :loading="loading" type="image">
           <v-card flat outlined>
             <v-card-text class="data pa-0 pb-8">
@@ -103,7 +131,9 @@ export default {
     loading: true,
     details: {},
     contractSeries: null,
-    operationSeries: null
+    operationSeries: null,
+    consumedGasSeries: null,
+    paidStorageSizeDiffSeries: null
   }),
   computed: {
     languages() {
@@ -157,6 +187,28 @@ export default {
         })
         .catch(err => {
           this.operationSeries = [];
+          console.log(err);
+          this.showError(err);
+        });
+
+      this.api
+        .getNetworkStatsSeries(network, "paid_storage_size_diff", "month")
+        .then(res => {
+          this.paidStorageSizeDiffSeries = res;
+        })
+        .catch(err => {
+          this.paidStorageSizeDiffSeries = [];
+          console.log(err);
+          this.showError(err);
+        });
+
+      this.api
+        .getNetworkStatsSeries(network, "consumed_gas", "month")
+        .then(res => {
+          this.consumedGasSeries = res;
+        })
+        .catch(err => {
+          this.consumedGasSeries = [];
           console.log(err);
           this.showError(err);
         });
