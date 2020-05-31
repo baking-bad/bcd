@@ -27,7 +27,7 @@
                   text
                   style="text-transform: none;"
                   class="ml-4"
-                  :to="`/${item.network}/${item.address}`"
+                  :to="item.address.startsWith('tz') ? `/${item.address}`: `/${item.network}/${item.address}`"
                 >
                   <span class="body-1" v-if="item.alias">{{ item.alias }}</span>
                   <span v-else v-html="helpers.shortcut(item.address)"></span>
