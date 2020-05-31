@@ -28,7 +28,6 @@
                   style="text-transform: none;"
                   class="ml-4"
                   :to="`/${item.network}/${item.address}`"
-                  target="_blank"
                 >
                   <span class="body-1" v-if="item.alias">{{ item.alias }}</span>
                   <span v-else v-html="helpers.shortcut(item.address)"></span>
@@ -108,7 +107,6 @@
                 <template v-if="item.type === 'deploy'">
                   <v-btn
                     class="text--secondary hash"
-                    target="_blank"
                     text
                     style="text-transform: none;"
                     :to="`/${item.body.network}/${item.body.destination}`"
@@ -119,7 +117,6 @@
                 <template v-if="item.type === 'same' || item.type === 'similar'">
                   <v-btn
                     class="text--secondary hash"
-                    target="_blank"
                     text
                     style="text-transform: none;"
                     :to="`/${item.body.network}/${item.body.address}`"
@@ -135,7 +132,6 @@
                 >
                   <v-btn
                     class="text--secondary hash"
-                    target="_blank"
                     :to="`/${item.body.network}/opg/${item.body.hash}`"
                     style="text-transform: none;"
                     text
@@ -148,7 +144,6 @@
                 >
                   <v-btn
                     class="text--secondary hash"
-                    target="_blank"
                     :to="{name: 'diff', query: {
                       addressA: item.body.address, 
                       networkA: item.body.network, 
