@@ -4,6 +4,7 @@
     "NETWORKS": ["sandboxnet"],
     "OAUTH_ENABLED": false,
     "SINGLE_USER_MODE": true,
+    "JUPYTER_PATH": "http://localhost:8008/",
     "GA_ENABLED": false,
     "MEMPOOL_ENABLED": false,
     "HOME_PAGE": "dashboard",

@@ -1,5 +1,11 @@
-stage:
-	npm run serve -- --mode staging
+dev:
+	npm run serve
+
+you:
+	npm run serve -- --mode you
+
+box:
+	npm run serve -- --mode box
 
 deploy-prod:
 	curl -s https://api.github.com/repos/baking-bad/bcd/releases/latest | grep "browser_download_url.*bcd.tar.gz" | cut -d : -f 2,3 | tr -d \" | wget -qi -
