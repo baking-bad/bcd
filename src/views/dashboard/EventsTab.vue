@@ -35,20 +35,28 @@
                 </v-btn>
               </v-col>
               <v-col cols="5">
-                <template v-if="item.type === 'error'">
+                <template v-if="item.type === 'error' || item.type === 'call' || item.type === 'invoke'">
                   <span v-if="item.body.internal" class="hash font-weight-thin mr-1">internal</span>
-                  <span class="hash mr-1">{{ item.body.entrypoint }}</span>
-                  <span class="text--secondary" style="font-size: 20px;">→</span>
-                  <span class="body-1 error--text ml-1">{{ item.body.errors[0].title }}</span>
-                </template>
-                <template v-else-if="item.type === 'call' || item.type === 'invoke'">
-                  <span v-if="item.body.internal" class="hash font-weight-thin mr-1">internal</span>
-                  <span class="hash secondary--text mr-1">{{ item.body.entrypoint }}</span>
-                  <span class="text--secondary" style="font-size: 20px;">←</span>
-                  <span class="body-1 ml-1">
-                    <span v-if="item.body.source_alias">{{ item.body.source_alias }}</span>
-                    <span v-else v-html="helpers.shortcut(item.body.source)"></span>
-                  </span>
+                  <span :class="item.type === 'error' ? '' : 'secondary--text'" class="hash mr-1">{{ item.body.entrypoint }}</span>
+                  <template v-if="item.type === 'error'">
+                    <span class="text--secondary" style="font-size: 20px;">→</span>
+                    <span class="body-1 error--text ml-1">{{ item.body.errors[0].title }}</span>
+                  </template>
+                  <template v-else-if="item.type === 'invoke'">
+                    <span class="body-1">
+                      <span class="text--secondary font-weight-light mr-1">invoked by</span>
+                      <span v-if="item.body.source_alias">{{ item.body.source_alias }}</span>
+                      <span v-else v-html="helpers.shortcut(item.body.source)"></span>
+                    </span>
+                  </template>
+                  <template v-else-if="item.type === 'call'">
+                    <span class="body-1">
+                      <span class="text--secondary font-weight-light mr-1">of</span>
+                      <span v-if="item.body.destination_alias">{{ item.body.destination_alias }}</span>
+                      <span v-else v-html="helpers.shortcut(item.body.destination)"></span>
+                      <span class="text--secondary font-weight-light ml-1">called</span>
+                    </span>
+                  </template>
                 </template>
                 <template v-else-if="item.type === 'migration'">
                   <span class="font-weight-light body-1">
@@ -84,16 +92,30 @@
                     >{{ item.body.network }}</span>
                   </span>
                 </template>
-                <template v-else-if="item.type === 'deployment'">
+                <template v-else-if="item.type === 'deploy'">
                   <span class="font-weight-light body-1">
-                    New contract was
                     <span
                       class="caption text-uppercase font-weight-regular accent--text"
-                    >originated</span>
+                    >Deployed</span>
+                    new contract to
+                    <span
+                      class="caption text-uppercase font-weight-regular"
+                    >{{ item.body.network }}</span>
                   </span>
                 </template>
               </v-col>
               <v-col cols="2" class="d-flex justify-end">
+                <template v-if="item.type === 'deploy'">
+                  <v-btn
+                    class="text--secondary hash"
+                    target="_blank"
+                    text
+                    style="text-transform: none;"
+                    :to="`/${item.body.network}/${item.body.destination}`"
+                  >
+                    <span v-html="helpers.shortcut(item.body.destination)"></span>
+                  </v-btn>
+                </template>
                 <template v-if="item.type === 'same' || item.type === 'similar'">
                   <v-btn
                     class="text--secondary hash"
@@ -224,7 +246,7 @@ export default {
     getIcon(itemType) {
       const icons = {
         error: "mdi-alert-outline",
-        deployment: "mdi-shape-square-plus",
+        deploy: "mdi-shape-square-plus",
         same: "mdi-shape-square-plus",
         similar: "mdi-shape-square-plus",
         call: "mdi-swap-horizontal",
@@ -237,7 +259,7 @@ export default {
     getIconColor(itemType) {
       const colors = {
         error: "error",
-        deployment: "accent",
+        deploy: "accent",
         same: "accent",
         similar: "accent",
         call: "secondary",
