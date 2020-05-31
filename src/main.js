@@ -115,10 +115,10 @@ getRuntimeConfig().then(function (config) {
             store.dispatch('setIsAuthorized', false);
             store.dispatch('setProfile', null);
             store.dispatch('showError', 'Unauthorized access. Please sign in');
-            logout();
           } else {
             store.dispatch('showError', err);
           }
+          logout();
           // eslint-disable-next-line
           console.log(err)
         });
