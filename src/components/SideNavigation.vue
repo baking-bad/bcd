@@ -50,17 +50,21 @@
 
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-list-item @click="random" v-on="on" active-class="white--text">
-              <v-list-item-icon>
+            <v-btn v-on="on" icon @click="random" class="mt-3">
                 <v-icon color="grey lighten-2">mdi-dice-3-outline</v-icon>
-              </v-list-item-icon>
-
-              <v-list-item-content>
-                <v-list-item-title>Pick random</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
+            </v-btn>
           </template>
           <span>Pick random</span>
+        </v-tooltip>
+
+
+        <v-tooltip v-if="config.JUPYTER_PATH" right>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" icon :href="config.JUPYTER_PATH" target="_blank" class="mt-6">
+              <v-icon color="grey lighten-2">mdi-language-python</v-icon>
+            </v-btn>
+          </template>
+          <span>Jupyter notebooks</span>
         </v-tooltip>
       </v-list-item-group>
     </v-list>
@@ -69,7 +73,7 @@
       <div class="d-flex flex-column align-center justify-center pa-5">
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text icon :href="apiDocsUrl" target="_blank">
+            <v-btn v-on="on" icon :href="apiDocsUrl" target="_blank">
               <v-icon color="grey lighten-2">mdi-api</v-icon>
             </v-btn>
           </template>
@@ -77,7 +81,7 @@
         </v-tooltip>
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text icon @click="toggleTheme" class="mt-6">
+            <v-btn v-on="on" icon @click="toggleTheme" class="mt-6">
               <v-icon v-if="$vuetify.theme.dark" color="grey lighten-2">mdi-white-balance-sunny</v-icon>
               <v-icon v-else color="frey lighten-2">mdi-weather-night</v-icon>
             </v-btn>
@@ -87,7 +91,7 @@
         </v-tooltip>
         <v-tooltip right v-if="isAuthorized && !config.SINGLE_USER_MODE">
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text icon @click="clickLogout" class="mt-6">
+            <v-btn v-on="on" icon @click="clickLogout" class="mt-6">
               <v-icon color="grey lighten-2">mdi-logout</v-icon>
             </v-btn>
           </template>
