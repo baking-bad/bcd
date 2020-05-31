@@ -204,8 +204,9 @@ export default {
     getEvents(force = false) {
       if (!force && (this.loading || this.downloaded)) return;
       this.loading = true;
+      const offset = force ? 0 : this.events.length;
       this.api
-        .getProfileEvents(this.events.length)
+        .getProfileEvents(offset)
         .then(res => {
           if (force) {
             this.events = res;
