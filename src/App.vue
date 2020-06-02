@@ -42,6 +42,20 @@ export default {
 </script>
 
 <style>
+@media screen and (orientation: portrait)
+{
+   html {
+    transform: rotate(-90deg);
+    transform-origin: left top;
+    width: 100vh;
+    height: 100vw;
+    overflow-x: hidden;
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+}
+
 html {
   overflow-y: auto !important;
 }
