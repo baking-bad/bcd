@@ -100,7 +100,7 @@
         <template
           v-else-if="(isAddress() || isOpgHash()) && !loading && tzkt.supportsAny(filters.networks)"
         >
-          <v-card flat outlined class="mt-8 pa-8 data">
+          <v-card flat outlined class="mt-8 pa-8 data d-flex flex-column justify-center align-center">
             <v-img class="img-avatar" :src="getCatavaSrc()"></v-img>
             <span class="headline grey--text">
               Mysterious
