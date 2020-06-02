@@ -1,8 +1,10 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
-    <v-overlay :value="loading" color="data" absolute>
-      <v-progress-circular v-if="events.length === 0" indeterminate color="primary" size="64" />
-    </v-overlay>
+    <v-skeleton-loader
+      v-if="loading && events.length === 0"
+      :loading="loading"
+      type="list-item-two-line, list-item-two-line, list-item-two-line"
+    />
     <div class="d-flex mb-4" v-if="events.length > 0">
       <v-btn :disabled="loading" @click="getEvents(true)" small text class="mr-4 text--secondary">
         <v-icon small class="mr-1">mdi-refresh</v-icon>
@@ -208,12 +210,16 @@ export default {
       this.api
         .getProfileEvents(offset)
         .then(res => {
-          if (force) {
-            this.events = res;
+          if (!res) {
+            this.downloaded = true;
           } else {
-            this.events.push(...res);
+            if (force) {
+              this.events = res;
+            } else {
+              this.events.push(...res);
+            }
+            this.downloaded = res.length == 0;
           }
-          this.downloaded = res.length == 0;
         })
         .catch(err => {
           console.log(err);

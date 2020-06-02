@@ -306,10 +306,10 @@ export default {
       if (this.data.status === "backtracked") return "warning";
       if (this.data.status === "failed") return "error";
       if (this.data.status === "pending") return "secondary";
-      if (this.data.status === "lost") return "secondary";
+      if (this.data.status === "lost") return "grey";
       if (this.data.status === "branch_refused") return "error";
       if (this.data.status === "refused") return "error";
-      return "secondary";
+      return "grey";
     },
     burned() {
       let val = this.data.burned || 0;

@@ -47,27 +47,29 @@
             <span>{{ item.text }}</span>
           </v-tooltip>
         </template>
-
-        <v-tooltip right>
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" icon @click="random" class="mt-3">
-                <v-icon color="grey lighten-2">mdi-dice-3-outline</v-icon>
-            </v-btn>
-          </template>
-          <span>Pick random</span>
-        </v-tooltip>
-
-
-        <v-tooltip v-if="config.JUPYTER_PATH" right>
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" icon :href="config.JUPYTER_PATH" target="_blank" class="mt-6">
-              <v-icon color="grey lighten-2">mdi-language-python</v-icon>
-            </v-btn>
-          </template>
-          <span>Jupyter notebooks</span>
-        </v-tooltip>
       </v-list-item-group>
     </v-list>
+
+    <div class="d-flex flex-column align-center justify-center">
+      <v-tooltip right>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon @click="random" class="mt-3">
+              <v-icon color="grey lighten-2">mdi-dice-3-outline</v-icon>
+          </v-btn>
+        </template>
+        <span>Pick random</span>
+      </v-tooltip>
+
+
+      <v-tooltip v-if="config.JUPYTER_PATH" right>
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon :href="config.JUPYTER_PATH" target="_blank" class="mt-6">
+            <v-icon color="grey lighten-2">mdi-language-python</v-icon>
+          </v-btn>
+        </template>
+        <span>Jupyter notebooks</span>
+      </v-tooltip>
+    </div>
 
     <template v-slot:append>
       <div class="d-flex flex-column align-center justify-center pa-5">

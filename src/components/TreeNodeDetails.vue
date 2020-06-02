@@ -1,51 +1,53 @@
 <template>
-  <v-dialog v-if="data" v-model="show" width="800" :fullscreen="data.realPrim === 'lambda' && data.diffType === 'update'" scrollable>
+  <v-dialog
+    v-if="data"
+    v-model="show"
+    width="800"
+    :fullscreen="fullscreen"
+    scrollable
+     :retain-focus="false"
+  >
     <v-card>
-      <v-card-title class="sidebar">
-        <v-row no-gutters>
-          <v-col cols="11">
-            <v-row no-gutters>
-              <v-col cols="auto" class="mr-5 my-1 d-flex flex-column justify-center">
-                <span class="overline">Key</span>
-                <span class="info-item-title text--secondary">{{ data.name }}</span>
-              </v-col>
-              <v-col cols="2" class="my-1 d-flex flex-column justify-center">
-                <span class="overline">Primitive</span>
-                <span class="info-item-title text--secondary">{{ data.prim }}</span>
-              </v-col>
-              <v-col cols="2" v-if="data.realPrim === 'address'" class="my-1 d-flex flex-column justify-center">
-                <span class="overline">Network</span>
-                <span class="info-item-title text--secondary">{{ network }}</span>
-              </v-col>
-              <v-col cols="2" v-if="data.diffType" class="my-1 d-flex flex-column justify-center">
-                <span class="overline">Action</span>
-                <span class="info-item-title text--secondary">{{ data.diffType }}</span>
-              </v-col>
-            </v-row>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="1" class="d-flex align-center justify-end">
-            <v-btn icon text @click="show = false">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>        
+      <v-card-title class="sidebar py-3 px-6 align-center d-flex">
+        <span class="body-1 font-weight-medium text-uppercase text--secondary mr-2">
+          Inspect:
+        </span>
+        <span class="body-1">{{ data.name }}</span>
+        <v-spacer></v-spacer>
+        <template v-if="data.diffType === 'create'">
+          <v-icon color="success" small>mdi-database-plus</v-icon>
+          <span class="success--text ml-2 caption font-weight-medium text-uppercase">insert</span>
+        </template>
+        <template v-else-if="data.diffType === 'update'">
+          <v-icon color="warning" small>mdi-database-edit</v-icon>
+          <span class="warning--text ml-2 caption font-weight-medium text-uppercase">replace</span>
+        </template>
+        <template v-else-if="data.diffType === 'delete'">
+          <v-icon color="error" small>mdi-database-remove</v-icon>
+          <span class="error--text ml-2 caption font-weight-medium text-uppercase">remove</span>
+        </template>
+        <v-btn v-if="fullscreen" class="ml-6" text @click="show = false">
+          <v-icon>mdi-close</v-icon>
+          Close
+        </v-btn>
       </v-card-title>
       <v-card-text class="data" :class="data.realPrim === 'lambda' ? 'pa-0' : 'pt-7'">
         <v-row no-gutters>
           <v-col v-if="data.diffType === 'update'" cols="6" class="pr-5">
-            <ValueInspector :prim="data.realPrim" 
-                            :value="data.from"
-                            :network="network"
-                            label="Before">
-            </ValueInspector>
+            <ValueInspector
+              :prim="data.realPrim"
+              :value="data.from"
+              :network="network"
+              :label="data.realPrim"
+            ></ValueInspector>
           </v-col>
           <v-col :cols="data.diffType === 'update' ? 6 : 12">
-            <ValueInspector :prim="data.realPrim" 
-                            :value="data.val"
-                            :network="network"
-                            :label="data.diffType === 'update' ? 'After' : 'Value'">
-            </ValueInspector>
+            <ValueInspector
+              :prim="data.realPrim"
+              :value="data.val"
+              :network="network"
+              :label="data.realPrim"
+            ></ValueInspector>
           </v-col>
         </v-row>
       </v-card-text>
@@ -54,7 +56,8 @@
 </template>
 
 <script>
-import ValueInspector from "@/components/ValueInspector.vue"
+import ValueInspector from "@/components/ValueInspector.vue";
+import { delimiter } from "@/utils/diff.js";
 
 export default {
   name: "TreeNodeDetails",
@@ -70,21 +73,24 @@ export default {
     show: false
   }),
   computed: {
+    fullscreen() {
+      return this.data.realPrim === 'lambda' && this.data.diffType === 'update';
+    },
     isLambdaEdited() {
       return (
-        this.data.value_type === "lambda" && this.data.value.includes(" -> ")
+        this.data.value_type === "lambda" && this.data.value.includes(delimiter)
       );
     },
     left() {
       if (!this.isLambdaEdited) return null;
 
-      let val = this.data.value.split(" -> ");
+      let val = this.data.value.split(` ${delimiter} `);
       return val[0].replace(/\n/g, "<br/>");
     },
     right() {
       if (!this.isLambdaEdited) return null;
 
-      let val = this.data.value.split(" -> ");
+      let val = this.data.value.split(` ${delimiter} `);
       return val[1].replace(/\n/g, "<br/>");
     }
   },
@@ -103,12 +109,3 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-.info-item-title {
-  font-family: "Roboto Mono", monospace;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 1.2rem;
-}
-</style>

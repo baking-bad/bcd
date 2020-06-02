@@ -5,8 +5,9 @@
         <v-card-title class="px-6 py-3 d-flex align-center sidebar">
           <span class="body-1 font-weight-medium text-uppercase text--secondary">Watch:</span>
           <span class="ml-2 body-1" v-html="helpers.shortcut(subscription.address)"></span>
+          <v-spacer></v-spacer>
           <span
-            class="ml-4 mt-1 overline"
+            class="caption text-uppercase font-weight-medium"
             :class="subscription.network === 'mainnet' ? 'primary--text' : ''"
           >{{ subscription.network }}</span>
         </v-card-title>
