@@ -53,7 +53,7 @@
               <v-list-item-title>
                 <span v-html="helpers.shortcut(value.hash)"></span>
               </v-list-item-title>
-              <v-list-item-subtitle class="font-weight-light hash text--secondary">content 1/1</v-list-item-subtitle>
+              <v-list-item-subtitle class="font-weight-light hash text--secondary">content #{{ value.content_index + 1 }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
