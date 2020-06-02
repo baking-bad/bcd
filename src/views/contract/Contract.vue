@@ -13,7 +13,7 @@
 
     <v-toolbar flat class color="toolbar" height="75">
       <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
-        <v-tab :to="{ name: 'operations' }" replace>
+        <v-tab :to="{ name: 'operations' }" replace style="width: 175px;">
           <v-icon left small>mdi-swap-horizontal</v-icon>operations
           <span class="ml-1">({{ contract.tx_count || 0 }})</span>
         </v-tab>

@@ -17,7 +17,7 @@
       </v-btn>
 
       <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
-        <v-tab :to="{ name: 'big_map_keys' }" replace>
+        <v-tab :to="{ name: 'big_map_keys' }" replace style="width: 140px;">
           <v-icon left small>mdi-database</v-icon>keys
           <span v-if="bigmap" class="ml-1">({{ bigmap.total_keys }})</span>
         </v-tab>
