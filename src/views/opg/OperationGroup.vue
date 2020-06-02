@@ -71,6 +71,9 @@ export default {
         })
         .finally(() => (this.loading = false));
     }
+  },
+  watch: {
+    hash: "getOPG"
   }
 };
 </script>
