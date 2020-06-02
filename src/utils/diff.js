@@ -1,5 +1,7 @@
 import dayjs from "dayjs";
 
+const delimiter = '🡒';
+
 function getId() {
     return Math.floor(Math.random() * (+100000000 - +1)) + +1;
 }
@@ -36,7 +38,7 @@ function formatValue(val, typ) {
 
 function getValue(x) {
     if (x.diff_type === 'update') {
-        return `${formatValue(x.from, x.type)} 🡒 ${formatValue(x.value, x.type)}`
+        return `${formatValue(x.from, x.type)} ${delimiter} ${formatValue(x.value, x.type)}`
     }
     return formatValue(x.value, x.type)
 }

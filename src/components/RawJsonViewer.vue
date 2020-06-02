@@ -22,7 +22,7 @@
       </v-card-title>
       <v-progress-linear absolute v-if="!loaded" indeterminate color="primary"></v-progress-linear>
       <v-card-text class="data" style="max-height: calc(100% - 52px);">
-        <vue-json-pretty v-if="loaded" :data="data" :highlightMouseoverNode="true"></vue-json-pretty>
+        <vue-json-pretty class="raw-json-viewer" v-if="loaded" :data="data" :highlightMouseoverNode="true"></vue-json-pretty>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -112,12 +112,15 @@ export default {
 
 <style>
 .vjs-tree .vjs-value__string {
-  color: var(--v-tree-base);
+  color: var(--v-tree-base) !important;
 }
 .vjs-tree .vjs-tree__content.has-line {
   border-color: var(--v-border-base) !important;
 }
 .vjs-tree .is-mouseover {
   background-color: #99999920 !important;
+}
+.raw-json-viewer {
+  background-color: transparent !important;
 }
 </style>

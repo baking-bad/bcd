@@ -60,7 +60,7 @@
             <v-icon small class="mr-1">mdi-history</v-icon>
             <span>View history</span>
           </v-btn>
-          <v-btn small text @click="showRaw = true">
+          <v-btn v-if="diff.data.value" small text @click="showRaw = true">
             <v-icon small class="mr-1">mdi-code-braces</v-icon>
             <span>Raw JSON</span>
           </v-btn>

@@ -88,9 +88,11 @@
     </v-row>
     <v-row>
       <v-col>
-        <v-overlay v-if="loading" :value="loading" color="data" absolute>
-          <v-progress-circular v-if="items.length === 0" indeterminate color="primary" size="64" />
-        </v-overlay>
+        <v-skeleton-loader
+          v-if="loading && items.length === 0"
+          :loading="loading"
+          type="list-item-two-line, list-item-two-line, list-item-two-line"
+        />
         <EmptyState
           v-if="!loading && items.length === 0"
           icon="mdi-code-brackets"
@@ -239,10 +241,13 @@ export default {
           entries
         )
         .then(res => {
-          if (!res) return;
-          this.pushOperations(res.operations);
-          this.downloaded = res.operations.length == 0;
-          this.last_id = res.last_id;
+          if (!res) {
+            this.downloaded = true;  // prevent endless polling
+          } else {
+            this.pushOperations(res.operations);
+            this.downloaded = res.operations.length == 0;
+            this.last_id = res.last_id;
+          }
         })
         .catch(err => {
           console.log(err);

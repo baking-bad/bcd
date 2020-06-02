@@ -25,9 +25,11 @@
 
     <v-row class="px-8 pt-6" no-gutters>
       <v-col>
-        <v-overlay v-if="loading" :value="loading" color="data" absolute>
-          <v-progress-circular v-if="bigmap.length === 0" indeterminate color="primary" size="64" />
-        </v-overlay>
+        <v-skeleton-loader
+          v-if="loading && bigmap.length === 0"
+          :loading="loading"
+          type="list-item-two-line, list-item-two-line, list-item-two-line"
+        />
         <EmptyState
           v-if="!loading && bigmap.length === 0"
           icon="mdi-code-brackets"
@@ -99,12 +101,12 @@ export default {
             this.bigmap.length
           )
           .then(res => {
-            if (this.bigmap.length == 0) {
-              this.bigmap = res;
+            if (!res) {
+              this.downloaded = true;
             } else {
               this.bigmap.push(...res);
-            } 
-            this.downloaded = res.length == 0;
+              this.downloaded = res.length == 0;
+            }
           })
           .catch(err => {
             console.log(err);

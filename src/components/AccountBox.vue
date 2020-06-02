@@ -17,40 +17,25 @@
       </v-list-item>
     </template>
     <v-card class="data">
-      <v-card-title class="sidebar">
-        <v-row no-gutters>
-          <v-col cols="11">
-            <v-row no-gutters>
-              <v-col v-if="alias" cols="auto" class="mr-5 my-1 d-flex flex-column justify-center">
-                <span class="overline">Alias</span>
-                <span class="info-item-title text--secondary">{{ alias }}</span>
-              </v-col>
-              <v-col cols="2" class="my-1 d-flex flex-column justify-center">
-                <span class="overline">Primitive</span>
-                <span class="info-item-title text--secondary">address</span>
-              </v-col>
-              <v-col cols="2" class="my-1 d-flex flex-column justify-center">
-                <span class="overline">Network</span>
-                <span class="info-item-title text--secondary">{{ network }}</span>
-              </v-col>
-            </v-row>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col cols="1" class="d-flex align-center justify-end">
-            <v-btn icon text @click="show = false">
-              <v-icon>mdi-close</v-icon>
-            </v-btn>
-          </v-col>
-        </v-row>        
+      <v-card-title class="py-3 px-6 align-center sidebar">
+        <span class="body-1 font-weight-medium text-uppercase text--secondary mr-2">
+          {{ title }}:
+        </span>
+        <span v-if="alias" class="ml-2 body-1">{{ alias }}</span>
+        <span v-else class="ml-2 body-1" v-html="helpers.shortcut(address)"></span>
+        <v-spacer></v-spacer>
+        <span
+          class="caption text-uppercase font-weight-medium"
+          :class="network === 'mainnet' ? 'primary--text' : 'text--secondary'"
+        >{{ network }}</span>
       </v-card-title>
-      <v-divider></v-divider>
       <v-card-text class="pt-7">
         <v-row no-gutters>
           <v-col cols="12">
             <ValueInspector prim="address"
                             :value="address"
                             :network="network"
-                            :label="title"
+                            label="Address"
                             :sameTab="true">
             </ValueInspector>
           </v-col>
