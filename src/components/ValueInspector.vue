@@ -33,6 +33,17 @@
       <span>View contract</span>
     </v-btn>
     <v-btn
+      v-if="isKeyHash"
+      text
+      small
+      link
+      :to="`/${value}`"
+      target="_blank"
+    >
+      <v-icon small class="mr-1">mdi-magnify</v-icon>
+      <span>Search address</span>
+    </v-btn>
+    <v-btn
       v-else-if="prim === 'big_map'"
       text
       small
