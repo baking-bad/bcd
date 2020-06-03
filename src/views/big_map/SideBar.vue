@@ -67,9 +67,12 @@
                       <template v-if="item.action == 'copy'">
                         <span
                           class="text--secondary font-weight-light"
-                          v-if="item.source_ptr == ptr"
+                          v-if="item.destination_ptr"
                         >to</span>
-                        <span class="text--secondary font-weight-light" v-else>from</span>
+                        <span 
+                          class="text--secondary font-weight-light" 
+                          v-else-if="item.source_ptr"
+                        >from</span>
                       </template>
                     </v-list-item-title>
                     <v-list-item-subtitle>
@@ -83,7 +86,7 @@
                         class="text--primary"
                         text
                         small
-                        v-if="item.source_ptr == ptr"
+                        v-if="item.destination_ptr"
                       >
                         <v-icon small class="mr-1 text--secondary">mdi-link-variant</v-icon>
                         Big Map {{ item.destination_ptr }}
@@ -93,7 +96,7 @@
                         class="text--primary"
                         text
                         small
-                        v-else
+                        v-else-if="item.source_ptr"
                       >
                         <v-icon small class="mr-1 text--secondary">mdi-link-variant</v-icon>
                         Big Map {{ item.source_ptr }}

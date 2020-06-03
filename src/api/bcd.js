@@ -269,8 +269,8 @@ export class BetterCallApi {
       })
   }
 
-  getContractBigMapKeys(network, ptr, skip_removed = false, q = '', offset = 0) {
-    return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys?q=${q}&offset=${offset}&skip_removed=${skip_removed}`, {})
+  getContractBigMapKeys(network, ptr, q = '', offset = 0) {
+    return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys?q=${q}&offset=${offset}`, {})
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {

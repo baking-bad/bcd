@@ -66,7 +66,6 @@ export default {
   data: () => ({
     loading: true,
     downloaded: false,
-    showRemoved: true,
     orderBy: [],
     search: "",
     bigmap: [],
@@ -74,7 +73,7 @@ export default {
     _timerId: null
   }),
   created() {
-    this.fetchSearchDebounced(this.search, !this.showRemoved);
+    this.fetchSearchDebounced(this.search);
   },
   computed: {
     searchText() {
@@ -87,7 +86,7 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
-    fetchSearchDebounced(text, skipRemoved = false) {
+    fetchSearchDebounced(text) {
       this.loading = true;
       clearTimeout(this._timerId);
 
@@ -96,7 +95,6 @@ export default {
           .getContractBigMapKeys(
             this.network,
             this.ptr,
-            skipRemoved,
             text,
             this.bigmap.length
           )
@@ -120,32 +118,28 @@ export default {
     },
     onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
-        this.fetchSearchDebounced(this.searchText, !this.showRemoved);
+        this.fetchSearchDebounced(this.searchText);
       }
     },
-    onFiltersChange(searchText, skipRemoved) {
+    onFiltersChange(searchText) {
       if (this._locked) return;
       this._locked = true;
       this.downloaded = false;
       searchText = searchText ? searchText.trim() : "";
       if (searchText.length > 2 || searchText.length === 0) {
         this.bigmap = [];
-        this.loading = true;
-        this.fetchSearchDebounced(searchText, skipRemoved);
+        this.fetchSearchDebounced(searchText);
       }
       this._locked = false;
     }
   },
   watch: {
     search(val) {
-      this.onFiltersChange(val, !this.showRemoved);
-    },
-    showRemoved(val) {
-      this.onFiltersChange(this.searchText, !val);
+      this.onFiltersChange(val);
     },
     ptr() {
       this.search = "";
-      this.fetchSearchDebounced(this.search, !this.showRemoved);
+      this.onFiltersChange(this.search);
     }
   }
 };
