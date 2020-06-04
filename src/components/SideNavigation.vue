@@ -53,7 +53,7 @@
     <div class="d-flex flex-column align-center justify-center">
       <v-tooltip right>
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon @click="random" class="mt-3">
+          <v-btn v-on="on" icon @click="random" :loading="pickingRandom" class="mt-3">
               <v-icon color="grey lighten-2">mdi-dice-3-outline</v-icon>
           </v-btn>
         </template>
@@ -147,7 +147,8 @@ export default {
         text: "Statistics",
         to: "stats"
       }
-    ]
+    ],
+    pickingRandom: false
   }),
   methods: {
     ...mapActions({
@@ -159,6 +160,8 @@ export default {
       logout();
     },
     random() {
+      if (this.pickingRandom) return;
+      this.pickingRandom = true;
       this.api
         .getRandomContract()
         .then(res => {
@@ -169,6 +172,9 @@ export default {
             console.log(err);
             this.showError(err);
           }
+        })
+        .finally(() => {
+          this.pickingRandom = false;
         });
     },
     toggleTheme() {
