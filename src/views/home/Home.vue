@@ -25,6 +25,7 @@
               depressed
               color="border"
               class="text--secondary"
+              :loading="pickingRandom"
               @click="pickRandom"
             >Pick Random</v-btn>
           </v-col>
@@ -100,7 +101,8 @@ export default {
   data: () => ({
     webSocket: null,
     stats: [],
-    connecting: true
+    connecting: true,
+    pickingRandom: false
   }),
   mounted() {
     if (this.$route.name != this.config.HOME_PAGE) {
@@ -128,6 +130,8 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     pickRandom() {
+      if (this.pickingRandom) return;
+      this.pickingRandom = true;
       this.api
         .getRandomContract()
         .then(res => {
@@ -138,6 +142,9 @@ export default {
             console.log(err);
             this.showError(err);
           }
+        })
+        .finally(() => {
+          this.pickingRandom = false;
         });
     },
     onMessage(event) {

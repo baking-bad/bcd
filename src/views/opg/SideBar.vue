@@ -111,7 +111,7 @@
             <div class="d-flex flex-column px-4">
               <div v-for="(op, idx) in operations" :key="idx" class="d-flex align-center" :class="op.internal ? 'mt-2' : 'mt-4'">
                 <span v-if="op.internal" class="mr-2" style="font-size: 18px;">↳</span>
-                <div class="">
+                <div>
                   <span class="text--secondary" v-if="op.destination_alias">{{ op.destination_alias }}</span>
                   <span class="text--secondary" v-else v-html="helpers.shortcut(op.destination)"></span>
                   <span class="text--secondary" style="font-size: 20px;"> → </span>
