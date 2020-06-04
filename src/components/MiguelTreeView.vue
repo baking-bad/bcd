@@ -32,7 +32,7 @@
 
           <template v-if="item.value_type === 'big_map'">
             <v-btn
-              v-if="item.val && !diffMode"
+              v-if="!diffMode && item.val && item.val >= 0"
               :to="{ path: `/${network}/big_map/${item.value}` }"
               outlined
               small
@@ -44,7 +44,7 @@
             </v-btn>
             <template v-else>
               <span class="accent--text">big_map&nbsp;</span>
-              <span v-if="item.children.length === 0" class="text--disabled">0 diffs</span>
+              <span v-if="item.children.length === 0 && diffMode" class="text--disabled">0 diffs</span>
               <span v-else :class="item.type">{{ item.value }}</span>
             </template>
           </template>
