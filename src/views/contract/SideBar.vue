@@ -156,7 +156,13 @@
               <v-list-item v-if="same.length < sameCount">
                 <v-list-item-content>
                   <v-list-item-title class="d-flex align-center justify-center">
-                    <v-btn :loading="sameLoading" depressed small @click="requestMoreSame">Load more</v-btn>
+                    <v-btn
+                      class="text--secondary"
+                      :loading="sameLoading"
+                      text
+                      small
+                      @click="requestMoreSame"
+                    >Load more</v-btn>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -187,8 +193,9 @@
                 <v-list-item-content>
                   <v-list-item-title class="d-flex align-center justify-center">
                     <v-btn
+                      class="text--secondary"
                       :loading="similarLoading"
-                      depressed
+                      text
                       small
                       @click="requestMoreSimilar"
                     >Load more</v-btn>
@@ -203,10 +210,10 @@
 
     <BakingBadFooter />
 
-    <WatchSettings 
-      v-if="contract" 
-      :show.sync="showWatchSettings" 
-      :data="contract.subscription" 
+    <WatchSettings
+      v-if="contract"
+      :show.sync="showWatchSettings"
+      :data="contract.subscription"
       :contract="contract"
       :onUpdate="s => { 
         if (contract.subscription === null) contract.total_subscribed++;
@@ -215,16 +222,17 @@
       :onRemove="s => { 
         if (contract.subscription !== null) contract.total_subscribed--;
         contract.subscription = null;
-      }" />
+      }"
+    />
   </div>
 </template>
 
 <script>
 import { mapActions } from "vuex";
-import SimilarItem from "@/views/contract/SimilarItem.vue"
-import AccountBox from "@/components/AccountBox.vue"
+import SimilarItem from "@/views/contract/SimilarItem.vue";
+import AccountBox from "@/components/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
-import WatchSettings from "@/components/WatchSettings.vue"
+import WatchSettings from "@/components/WatchSettings.vue";
 
 export default {
   name: "SideBar",
@@ -232,7 +240,7 @@ export default {
     loading: Boolean,
     contract: Object,
     address: String,
-    network: String,
+    network: String
   },
   components: {
     SimilarItem,
@@ -250,11 +258,11 @@ export default {
     showWatchSettings: false
   }),
   created() {
-    this.requestSameSimilar()
+    this.requestSameSimilar();
   },
   computed: {
     standard() {
-      const standards = {'fa12': 'FA1.2', 'fa1': 'FA1'};
+      const standards = { fa12: "FA1.2", fa1: "FA1" };
       if (this.contract.tags) {
         for (var tag in standards) {
           if (this.contract.tags.includes(tag)) {
@@ -287,14 +295,15 @@ export default {
         });
       }
       return `${window.location.protocol}//${window.location.host}${routeData.href}`;
-    },
+    }
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
     requestSameSimilar() {
       this.same = [];
       this.sameCount = 0;
-      this.api.getSameContracts(this.network, this.address, 0)
+      this.api
+        .getSameContracts(this.network, this.address, 0)
         .then(res => {
           if (!res) return;
           this.same = res.contracts;
@@ -303,11 +312,12 @@ export default {
         .catch(err => {
           this.showError(err);
           console.log(err);
-        })
+        });
 
       this.similar = [];
       this.similarCount = 0;
-      this.api.getSimilarContracts(this.network, this.address, 0)
+      this.api
+        .getSimilarContracts(this.network, this.address, 0)
         .then(res => {
           if (!res) return;
           this.similar = res.contracts;
@@ -316,15 +326,12 @@ export default {
         .catch(err => {
           this.showError(err);
           console.log(err);
-        })
+        });
     },
     requestMoreSame() {
       this.sameLoading = true;
-      this.api.getSameContracts(
-        this.network,
-        this.address,
-        this.same.length
-      )
+      this.api
+        .getSameContracts(this.network, this.address, this.same.length)
         .then(res => {
           if (!res) return;
           this.same.push(...res.contracts);
@@ -337,11 +344,8 @@ export default {
     },
     requestMoreSimilar() {
       this.similarLoading = true;
-      this.api.getSimilarContracts(
-        this.network,
-        this.address,
-        this.similar.length
-      )
+      this.api
+        .getSimilarContracts(this.network, this.address, this.similar.length)
         .then(res => {
           if (!res) return;
           this.similar.push(...res.contracts);
@@ -354,7 +358,7 @@ export default {
     }
   },
   watch: {
-    address: 'requestSameSimilar'
+    address: "requestSameSimilar"
   }
 };
 </script>
