@@ -100,7 +100,7 @@
           :network="data.network"
         />
       </v-col>
-      <v-col cols="2">
+      <v-col cols="2" v-if="data.destination">
         <AccountBox
           :title="destinationHeader"
           :address="data.destination"
@@ -110,16 +110,18 @@
         />
       </v-col>
       <v-col cols="2">
-        <InfoItem title="Amount" :subtitle="(isNaN(data.amount) ? 0 : data.amount) | uxtz" />
+        <InfoItem v-if="data.kind !== 'delegation'" title="Amount" :subtitle="(isNaN(data.amount) ? 0 : data.amount) | uxtz" />
       </v-col>
-      <v-col cols="2" v-if="data.delegate">
+      <v-col cols="2" v-if="data.delegate || data.kind === 'delegation'">
         <AccountBox
+          v-if="data.delegate"
           title="Delegate"
           :address="data.delegate"
           :alias="data.delegate_alias"
           :highlighted="false"
           :network="data.network"
         />
+        <InfoItem v-else title="Delegate" subtitle="None" />
       </v-col>
       <v-col cols="2" v-if="consumedGas">
         <InfoItem title="Consumed Gas" :subtitle="consumedGas" />
