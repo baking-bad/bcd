@@ -134,7 +134,8 @@ export default {
 
 <style>
 .highlight {
-  font-weight: 700;
+  font-weight: 500;
+  font-style: italic;
 }
 .flex-child {
   white-space: nowrap;
