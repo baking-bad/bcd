@@ -233,12 +233,15 @@ export default {
         ["storage_strings", ""],
         ["error.with", "error message [if failed]"],
         ["error.id", "if failed"],
-        ["hash", "of the operation group"]
+        ["hash", "of the operation group"],
+        ["source", ""],
+        ["source_alias", ""]
       ],
       "big maps": [
         ["key_strings", ""],
         ["value_strings", ""],
-        ["key_hash", ""]
+        ["key_hash", ""],
+        ["address", "of the owner contract"]
       ]
     }
   }),
