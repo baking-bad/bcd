@@ -115,7 +115,8 @@
                   <span class="text--secondary" v-if="op.destination_alias">{{ op.destination_alias }}</span>
                   <span class="text--secondary" v-else v-html="helpers.shortcut(op.destination)"></span>
                   <span class="text--secondary" style="font-size: 20px;"> → </span>
-                  <span class="hash">{{ op.entrypoint || op.kind }}()</span>
+                  <span v-if="op.entrypoint" class="hash">{{ op.entrypoint }}()</span>
+                  <span v-else>{{ op.amount | uxtz }}</span>
                 </div>
               </div>
             </div>
