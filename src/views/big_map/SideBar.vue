@@ -116,12 +116,12 @@
           <v-expansion-panel-content
             v-if="bigmap"
             color="data"
-            class="hash font-weight-light"
-            style="font-size: 14px;"
+            class="hash"
+            style="font-size: 12px;"
           >
             <div v-for="(def, i) in bigmap.typedef" :key="i" class="ma-4">
               <span v-if="i === 0"></span>
-              <span v-else-if="def.name">{{ def.name }}&nbsp;</span>
+              <span v-else-if="def.name" class="font-weight-light">{{ def.name }}&nbsp;</span>
               <span class="tree--text" v-html="highlightType(def.type)"></span>
               <div v-for="(arg, j) in def.args" :key="i + j" class="pl-4">
                 <span>{{ arg.key }}&nbsp;</span>
