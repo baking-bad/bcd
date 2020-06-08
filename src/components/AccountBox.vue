@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-list-item v-on="on" class="link" :class="gutters ? '' : 'pa-0 ma-0'" selectable>
         <v-list-item-content>
-          <v-list-item-subtitle class="overline">
+          <v-list-item-subtitle v-if="title" class="overline">
             <span>{{ title }}</span>
           </v-list-item-subtitle>
           <v-list-item-title>
@@ -68,12 +68,6 @@ export default {
 </script>
 
 <style scoped>
-.info-item-title {
-  font-family: "Roboto Mono", monospace;
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 1.2rem;
-}
 .link.v-list-item--link:hover::before, .link.v-list-item--link:focus::before {
   opacity: 0;
 }
