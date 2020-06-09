@@ -1,5 +1,5 @@
 <template>
-  <div class="fill-height canvas">
+  <div class="fill-canvas canvas">
     <v-container fluid class="pa-8">
       <v-skeleton-loader
         v-if="loading && contents.length === 0"
