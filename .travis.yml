@@ -24,4 +24,4 @@ deploy:
   on:
     all_branches: true
     tag: true
-    condition: "$TRAVIS_TAG =~ ^[0-9\.]+$"
+    condition: "$TRAVIS_TAG =~ ^[0-9.]+$"
