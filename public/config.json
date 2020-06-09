@@ -2,7 +2,7 @@
     "API_URI": "https://api.better-call.dev/v1/",
     "WS_URI": "wss://api.better-call.dev/v1/ws",
     "NETWORKS": ["mainnet", "carthagenet", "zeronet", "babylonnet"],
-    "OAUTH_ENABLED": false,
+    "OAUTH_ENABLED": true,
     "GA_ENABLED": true,
     "MEMPOOL_ENABLED": true,
     "HOME_PAGE": "home",
