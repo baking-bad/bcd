@@ -1,3 +1,6 @@
+.ONESHELL:
+.PHONY: release
+
 dev:
 	npm run serve
 
