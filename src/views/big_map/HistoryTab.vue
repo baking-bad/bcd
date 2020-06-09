@@ -123,6 +123,7 @@ export default {
           (this.page - 1) * this.diffsPerPage
         )
         .then(res => {
+          if (!res) return;
           this.diffs = res.values;
           this.key = res.key;
           this.total = res.total;

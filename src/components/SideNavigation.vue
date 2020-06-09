@@ -158,6 +158,7 @@ export default {
     clickLogout() {
       this.userLogout();
       logout();
+      this.$router.push({ path: '/' });
     },
     random() {
       if (this.pickingRandom) return;
