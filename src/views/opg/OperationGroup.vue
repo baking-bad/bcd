@@ -63,6 +63,7 @@ export default {
     getOPG() {
       this.api.getOPG(this.hash)
         .then(res => {
+          if (!res) return;
           this.operations = res;
         })
         .catch(err => {

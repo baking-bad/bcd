@@ -52,7 +52,7 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="ma-0 bb-1">
+        <v-expansion-panel class="ma-0 bb-1" v-if="actions.length > 0">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase text--secondary">Actions</span>
           </v-expansion-panel-header>
@@ -175,7 +175,9 @@ export default {
         })
         .catch(err => {
           console.log(err);
-          this.showError(err);
+          if (err.code !== 204) {
+            this.showError(err);
+          }
         });
     },
     highlightType(expr) {
