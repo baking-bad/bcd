@@ -65,3 +65,10 @@ export function formatDate(timestamp) {
 export function plural(count, noun, suffix = 's') {
     return `${count} ${noun}${count !== 1 ? suffix : ''}`;
 }
+
+export function urlExtractBase58(url) {
+    const matches = url.match(/\b(tz|KT|o|expr)[1-9A-HJ-NP-Za-km-z]{34,}\b/);
+    if (matches && matches.length > 0) {
+        return matches[0];
+    }
+}

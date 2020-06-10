@@ -25,7 +25,7 @@
           </v-btn>
           <v-btn small text @click="downloadFile" class="text--secondary ml-2">
             <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
-            <span>Download as .tz</span>
+            <span>Download</span>
           </v-btn>
           <v-btn small text @click="openTryMichelson" class="text--secondary ml-2">
             <v-icon class="mr-1 text--secondary" small>mdi-play-circle-outline</v-icon>

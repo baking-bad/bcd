@@ -12,14 +12,6 @@
             <v-icon class="mr-1" small>mdi-code-json</v-icon>
             <span>Raw JSON</span>
           </v-btn>
-          <v-btn v-if="raw" @click="getStorage()" class="ml-2 text--secondary" small text>
-            <v-icon class="mr-1" small>mdi-file-tree</v-icon>
-            <span>Switch to Tree View</span>
-          </v-btn>
-          <v-btn v-else @click="getStorageRaw()" class="ml-2 text--secondary" small text>
-            <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
-            <span>Switch to Micheline</span>
-          </v-btn>
           <v-tooltip v-if="!raw" top>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -32,7 +24,7 @@
                 :disabled="downloading"
               >
                 <v-icon class="mr-1" small>mdi-download-outline</v-icon>
-                <span>Download as .json</span>
+                <span>Full dump</span>
               </v-btn>
             </template>
             Raw snapshot with all big map data
@@ -48,7 +40,15 @@
             text
           >
             <v-icon class="mr-1" small>mdi-content-copy</v-icon>
-            <span class="text--secondary">Copy as string</span>
+            <span class="text--secondary">Copy</span>
+          </v-btn>
+          <v-btn v-if="raw" @click="getStorage()" class="ml-2 text--secondary" small text>
+            <v-icon class="mr-1" small>mdi-file-tree</v-icon>
+            <span>Switch to Tree View</span>
+          </v-btn>
+          <v-btn v-else @click="getStorageRaw()" class="ml-2 text--secondary" small text>
+            <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
+            <span>Switch to Micheline</span>
           </v-btn>
         </v-card-title>
         <v-card-text class="pa-0">
