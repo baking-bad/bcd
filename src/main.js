@@ -6,7 +6,7 @@ import store from '@/store'
 import router from '@/router'
 import VueAnalytics from 'vue-analytics'
 
-import { shortcut, formatDatetime, formatDate, plural } from "@/utils/tz.js";
+import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58 } from "@/utils/tz.js";
 import { getJwt, logout, getBool } from "@/utils/auth.js";
 import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js"
 import { NodeRPC } from "@/api/rpc.js"
@@ -90,7 +90,8 @@ getRuntimeConfig().then(function (config) {
     {
       path: '*',
       redirect: to => {
-        return { name: 'search', query: { text: to.path.slice(1) } }
+        const text = urlExtractBase58(to.path) || to.path.split('/').join(' ');
+        return { name: 'search', query: { text } };
       }
     }
   ]);
