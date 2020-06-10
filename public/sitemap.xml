@@ -2,182 +2,210 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://better-call.dev/</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/stats</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/search</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://api.better-call.dev/v1/docs/index.html</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/stats/mainnet</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/stats/carthagenet</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/stats/zeronet</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/stats/babylonnet</loc>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@bakers_registry</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@atomex</loc>
-    <lastmod>2020-06-01</lastmod>
-  </url>
-  <url>
-    <loc>https://better-call.dev/@vested_funds_5</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_6</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_7</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_8</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_9</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_11</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_12</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_13</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_15</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_16</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_17</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_19</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_20</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_21</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_22</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_23</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_24</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_26</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_27</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_28</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_29</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_30</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_31</loc>
-    <lastmod>2020-06-01</lastmod>
-  </url>
-  <url>
-    <loc>https://better-call.dev/@vested_funds_2</loc>
-    <lastmod>2020-06-01</lastmod>
-  </url>
-  <url>
-    <loc>https://better-call.dev/@vested_funds_1</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@vested_funds_4</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
-    <loc>https://better-call.dev/@stakerdao</loc>
-    <lastmod>2020-06-01</lastmod>
+    <loc>https://better-call.dev/@vested_funds_2</loc>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
-    <loc>https://better-call.dev/@vested_funds_14</loc>
-    <lastmod>2020-06-01</lastmod>
+    <loc>https://better-call.dev/@vested_funds_5</loc>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
-    <loc>https://better-call.dev/@trianon_sto_issuer</loc>
-    <lastmod>2020-06-01</lastmod>
-  </url>
-  <url>
-    <loc>https://better-call.dev/@equisafe_kyc_registrar</loc>
-    <lastmod>2020-06-01</lastmod>
+    <loc>https://better-call.dev/@vested_funds_1</loc>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@tzbtc</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/@vested_funds_14</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/@trianon_sto_issuer</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/@equisafe_kyc_registrar</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/@stakerdao</loc>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@atomex_fa1_2</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@tst_main</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@tst_buy_adapter</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@the_dab</loc>
-    <lastmod>2020-06-01</lastmod>
-  </url>
-  <url>
-    <loc>https://better-call.dev/@vested_funds_3</loc>
-    <lastmod>2020-06-01</lastmod>
-  </url>
-  <url>
-    <loc>https://better-call.dev/@vested_funds_10</loc>
-    <lastmod>2020-06-01</lastmod>
-  </url>
-  <url>
-    <loc>https://better-call.dev/@vested_funds_18</loc>
-    <lastmod>2020-06-01</lastmod>
-  </url>
-  <url>
-    <loc>https://better-call.dev/@vested_funds_25</loc>
-    <lastmod>2020-06-01</lastmod>
-  </url>
-  <url>
-    <loc>https://better-call.dev/@vested_funds_32</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@trianon_security_token</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
   </url>
   <url>
     <loc>https://better-call.dev/@tst_sell_adapter</loc>
-    <lastmod>2020-06-01</lastmod>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/@vested_funds_3</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/@vested_funds_10</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/@vested_funds_18</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/@vested_funds_25</loc>
+    <lastmod>2020-06-10</lastmod>
+  </url>
+  <url>
+    <loc>https://better-call.dev/@vested_funds_32</loc>
+    <lastmod>2020-06-10</lastmod>
   </url>
 </urlset>
