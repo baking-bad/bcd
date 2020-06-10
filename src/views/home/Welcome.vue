@@ -8,7 +8,7 @@ import { login } from '@/utils/auth.js';
 export default {
   created() {
     login(this.$route.query.jwt);
-    this.$router.push({ path: "/" });
+    this.$router.push({ path: "/dashboard" });
   }
 };
 </script>
