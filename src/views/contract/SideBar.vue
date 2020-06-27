@@ -3,7 +3,7 @@
     <v-list-item style="height: 74px;">
       <v-list-item-content two-line>
         <v-list-item-title class="headline">
-          <span v-if="contract.alias">{{ contract.alias }}</span>
+          <span v-if="alias">{{ alias }}</span>
           <span v-else v-html="helpers.shortcut(address)"></span>
         </v-list-item-title>
         <v-list-item-subtitle>
@@ -271,6 +271,15 @@ export default {
         }
       }
       return null;
+    },
+    alias() {
+      if (this.contract.subscription && this.contract.subscription.alias) {
+        return this.contract.subscription.alias
+      }
+      if (this.contract.alias) {
+        return this.contract.alias
+      }
+      return undefined
     },
     isAuthorized() {
       return this.$store.state.isAuthorized;
