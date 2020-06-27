@@ -28,7 +28,7 @@
       <v-col cols="3">
         <v-select
           v-model="entrypoints"
-          :items="[]"
+          :items="availableEntrypoints"
           chips
           small-chips
           filled
@@ -140,7 +140,8 @@ export default {
     dates: [],
     datesBuf: [],
     datesModal: false,
-    entrypoints: []
+    entrypoints: [],
+    availableEntrypoints: []
   }),
   created() {
     this.fetchOperations();
@@ -203,6 +204,17 @@ export default {
       } else {
         return [0, 0];
       }
+    },
+    getEntrypoints() {
+      this.api
+        .getContractEntrypoints(this.network, this.address)
+        .then(res => {
+          if (!res) return;
+          this.availableEntrypoints = res.map(x => x.name);
+        })
+        .catch(err => {
+          console.log(err);
+        })
     },
     getOperations(clearData = false, resetFilters = false) {
       if (this.operationsLoading || (this.downloaded && !clearData)) return;
@@ -328,6 +340,7 @@ export default {
       if (this.config.MEMPOOL_ENABLED) {
         this.getMempool();
       }
+      this.getEntrypoints();
     },
     updateOperations() {
       this.getOperations(true, false);

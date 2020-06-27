@@ -52,7 +52,7 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel disabled class="ma-0 bb-1">
+        <!-- <v-expansion-panel disabled class="ma-0 bb-1">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase">Accounts</span>
           </v-expansion-panel-header>
@@ -64,7 +64,7 @@
             <span class="caption font-weight-bold text-uppercase">Deployments</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="data"></v-expansion-panel-content>
-        </v-expansion-panel>
+        </v-expansion-panel> -->
       </v-expansion-panels>
     </v-skeleton-loader>
 
@@ -167,7 +167,7 @@ export default {
   min-height: 48px;
 }
 .sidebar-list {
-  max-height: calc(100vh - 75px - 3 * 48px);
+  max-height: calc(100vh - 75px - 1 * 48px);  /* number of expansion panels */
   overflow-y: auto;
   border-radius: 0;
   padding: 0;
