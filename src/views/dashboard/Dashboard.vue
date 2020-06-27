@@ -16,9 +16,9 @@
         <v-tab :to="{ name: 'events' }" exact-active-class="active-tab" replace>
           <v-icon left small>mdi-message-text-clock-outline</v-icon>Events
         </v-tab>
-        <v-tab disabled>
+        <!-- <v-tab disabled>
           <v-icon left small>mdi-file-code-outline</v-icon>Deploy
-        </v-tab>
+        </v-tab> -->
       </v-tabs>
       <div class="mr-4 mt-6" style="width: 800px;">
         <SearchBox :inplace="true"></SearchBox>
