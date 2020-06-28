@@ -35,8 +35,7 @@
             <ValueInspector prim="address"
                             :value="address"
                             :network="network"
-                            label="Address"
-                            :sameTab="true">
+                            label="Address">
             </ValueInspector>
           </v-col>
         </v-row>
