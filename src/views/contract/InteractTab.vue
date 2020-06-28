@@ -134,8 +134,8 @@
           v-if="loading"
           type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
         ></v-skeleton-loader>
-        <v-card v-else flat outlined>
-          <v-navigation-drawer floating permanent width="500" style="max-height: 80vh;">
+        <v-card v-else flat outlined style="max-width: 500px;">
+          <v-navigation-drawer floating permanent style="max-height: 80vh; width: 100%;">
             <v-expansion-panels
               flat
               accordion
