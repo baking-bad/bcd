@@ -94,7 +94,7 @@ export default {
         value: 5
       }
     ],
-    languages: ["michelson", "ligo", "lorentz", "smartpy", "liquidity"]
+    languages: ["michelson", "ligo", "lorentz", "smartpy", "liquidity", "scaml"]
   }),
   created() {
     this.languagesSelection = [...this.languages.keys()];
