@@ -78,7 +78,7 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas">
             <v-list class="contract-list">
-              <v-list-item v-if="contract.language !== 'michelson'">
+              <v-list-item v-if="contract.language !== 'unknown'">
                 <v-list-item-content>
                   <v-list-item-subtitle class="overline">
                     Language

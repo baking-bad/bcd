@@ -81,7 +81,7 @@
 
       <div class="d-flex ml-3">
         <template v-if="item.type === 'contract'">
-          <v-chip v-if="item.body.language !== 'michelson'" class="mr-1 mb-3" small outlined pill>
+          <v-chip v-if="item.body.language !== 'unknown'" class="mr-1 mb-3" small outlined pill>
             <span v-html="highlight(item.body.language)"></span>
           </v-chip>
           <v-chip v-for="tag in item.body.tags" :key="tag" class="mr-1 mb-3" small outlined pill>
