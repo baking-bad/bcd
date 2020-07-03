@@ -2,9 +2,8 @@
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-row no-gutters>
       <v-col cols="8 pr-4">
-        <v-skeleton-loader v-if="loading" type="card-heading, image" />
-        <div v-else-if="selectedItem">
-          <v-card flat outlined>
+        <v-skeleton-loader :loading="loading" type="card-heading, image">
+          <v-card flat outlined v-if="selectedItem">
             <v-card-title class="py-2 px-5 sidebar">
               <span class="hash secondary--text">{{ selectedItem.name }}</span>
             </v-card-title>
@@ -56,7 +55,7 @@
                     color="accent"
                     @click="simulateOperation()"
                     :loading="simulating"
-                    :disabled="simulating || generating"
+                    :disabled="execution"
                   >
                     <v-icon small class="mr-1">mdi-play-circle-outline</v-icon>Simulate operation
                   </v-btn>
@@ -65,10 +64,21 @@
                     small
                     @click="generateParameters(formatAsMichelson, true)"
                     :loading="generating"
-                    :disabled="simulating || generating"
+                    :disabled="execution"
                     class="ml-4"
                   >
                     <v-icon small class="mr-1">mdi-code-tags</v-icon>Generate parameters
+                  </v-btn>
+                  <v-btn
+                    v-if="network === 'mainnet' || network === 'carthagenet'"
+                    outlined
+                    small
+                    color="primary"
+                    @click="callContract()"
+                    :loading="calling"
+                    :disabled="execution"
+                  >
+                    <v-icon small class="mr-1">mdi-play-circle-outline</v-icon>Call contract
                   </v-btn>
                 </div>
               </v-form>
@@ -127,50 +137,52 @@
               </v-expand-transition>
             </v-card-text>
           </v-card>
-        </div>
+          <div v-else></div>
+        </v-skeleton-loader>
       </v-col>
       <v-col cols="4" class="pl-4">
         <v-skeleton-loader
-          v-if="loading"
+          :loading="loading"
           type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
-        ></v-skeleton-loader>
-        <v-card v-else flat outlined style="max-width: 500px;">
-          <v-navigation-drawer floating permanent style="max-height: 80vh; width: 100%;">
-            <v-expansion-panels
-              flat
-              accordion
-              mandatory
-              active-class="entrypoint-selected"
-              v-model="selected"
-            >
-              <v-expansion-panel
-                v-for="(item, i) in entrypoints"
-                :key="i"
-                :class="i > 0 ? 'bt-1' : ''"
-                class="entrypoint-panel"
+        >
+          <v-card flat outlined style="max-width: 500px;">
+            <v-navigation-drawer floating permanent style="max-height: 80vh; width: 100%;">
+              <v-expansion-panels
+                flat
+                accordion
+                mandatory
+                active-class="entrypoint-selected"
+                v-model="selected"
               >
-                <v-expansion-panel-header>
-                  <div class="d-flex">
-                    <span class="hash">{{ item.name }}</span>
-                  </div>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <div class="d-flex flex-column parameters">
-                    <div v-for="(def, i) in item.typedef" :key="i" class="mb-2">
-                      <span v-if="i === 0" class="font-weight-light">parameter&nbsp;</span>
-                      <span v-else-if="def.name" class="font-weight-light">{{ def.name }}&nbsp;</span>
-                      <span class="tree--text" v-html="highlightType(def.type)"></span>
-                      <div v-for="(arg, j) in def.args" :key="i + j" class="pl-4">
-                        <span>{{ arg.key }}&nbsp;</span>
-                        <span class="tree--text" v-html="highlightType(arg.value)"></span>
+                <v-expansion-panel
+                  v-for="(item, i) in entrypoints"
+                  :key="i"
+                  :class="i > 0 ? 'bt-1' : ''"
+                  class="entrypoint-panel"
+                >
+                  <v-expansion-panel-header>
+                    <div class="d-flex">
+                      <span class="hash">{{ item.name }}</span>
+                    </div>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <div class="d-flex flex-column parameters">
+                      <div v-for="(def, i) in item.typedef" :key="i" class="mb-2">
+                        <span v-if="i === 0" class="font-weight-light">parameter&nbsp;</span>
+                        <span v-else-if="def.name" class="font-weight-light">{{ def.name }}&nbsp;</span>
+                        <span class="tree--text" v-html="highlightType(def.type)"></span>
+                        <div v-for="(arg, j) in def.args" :key="i + j" class="pl-4">
+                          <span>{{ arg.key }}&nbsp;</span>
+                          <span class="tree--text" v-html="highlightType(arg.value)"></span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-navigation-drawer>
-        </v-card>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-navigation-drawer>
+          </v-card>
+        </v-skeleton-loader>
       </v-col>
     </v-row>
     <v-dialog v-model="showResultOPG" width="1200" scrollable>
@@ -201,6 +213,8 @@ import VueJsonPretty from "vue-json-pretty";
 import Michelson from "@/components/Michelson.vue";
 import InternalOperation from "@/components/InternalOperation.vue";
 
+import { call } from "@/utils/beacon.js";
+
 export default {
   name: "InteractTab",
   props: {
@@ -218,6 +232,7 @@ export default {
     selected: -1,
     generating: false,
     simulating: false,
+    calling: false,
     model: {},
     settings: {
       source: null,
@@ -237,6 +252,9 @@ export default {
       if (this.selected < 0 || this.entrypoints.length < this.selected)
         return null;
       return this.entrypoints[this.selected];
+    },
+    execution() {
+      return this.simulating || this.generating || this.calling;
     }
   },
   created() {
@@ -312,7 +330,6 @@ export default {
             if (res.length > 1) {
               this.simulatedOperation.internal_operations = res.slice(1);
             }
-            console.log(this.simulatedOperation);
             this.showResultOPG = true;
           }
         })
@@ -323,6 +340,19 @@ export default {
     },
     highlightType(expr) {
       return expr.replace(/(\$\w+)/g, '<span class="accent--text">$1</span>');
+    },
+    callContract() {
+      if (this.selectedItem === null) return;
+
+      this.calling = true;
+      let args = [];
+      let data = this.model; 
+      Object.keys(data).sort().forEach(function(v) {
+        args.push(data[v])
+      });
+      call(this.network, this.address, this.selectedItem.name, args).finally(
+        () => (this.calling = false)
+      );
     }
   },
   watch: {
