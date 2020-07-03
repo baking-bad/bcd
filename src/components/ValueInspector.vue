@@ -32,14 +32,7 @@
       <v-icon small class="mr-1" v-if="!sameTab">mdi-open-in-new</v-icon>
       <span>View contract</span>
     </v-btn>
-    <v-btn
-      v-if="isKeyHash"
-      text
-      small
-      link
-      :to="`/${value}`"
-      target="_blank"
-    >
+    <v-btn v-if="isKeyHash" text small link :to="`/${value}`" target="_blank">
       <v-icon small class="mr-1">mdi-magnify</v-icon>
       <span>Search address</span>
     </v-btn>
@@ -50,11 +43,22 @@
       link
       :to="{ path: `/${network}/big_map/${value}` }"
     >View Big Map</v-btn>
+    <v-btn
+      v-if="isIpfsHash"
+      text
+      small
+      link
+      @click.prevent.stop="handleIpfsHash(value)"
+    >
+      <v-icon small class="mr-1">mdi-open-in-new</v-icon>
+      <span>View IPFS</span>
+    </v-btn>
   </div>
 </template>
 
 <script>
 import Michelson from "@/components/Michelson.vue";
+import isIpfs from "is-ipfs";
 
 export default {
   name: "ValueInspector",
@@ -89,6 +93,9 @@ export default {
         (this.prim === "address" || this.prim === "contract") &&
         this.value.startsWith("KT")
       );
+    },
+    isIpfsHash() {
+      return this.prim === "string" && isIpfs.multihash(this.value);
     }
   },
   methods: {
@@ -105,6 +112,9 @@ export default {
           window.open(this.$router.resolve(path).href, "_blank");
         }
       }
+    },
+    handleIpfsHash(hash) {
+      window.open(`https://cloudflare-ipfs.com/ipfs/${hash}`, "_blank");
     }
   }
 };
