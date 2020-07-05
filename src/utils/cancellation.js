@@ -37,7 +37,7 @@ export function postCancellable(api, url, params) {
             if (axios.isCancel(err)) {
                 return false;
             } else if (err.response) {
-                return err.response.data.error;
+                return err.response.data.message;
             }
             return err;
         })
