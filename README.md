@@ -112,11 +112,11 @@ npm i
 
 ## Publications
 * Evolution of the Better Call Dev explorer  
-https://medium.com/coinmonks/bcd2-tezos-smart-contracts-hub-85f6102fc2f9
+https://baking-bad.org/blog/2020/03/10/explorer-bcd2-tezos-smart-contracts-hub/
 * An overview of the renewed Tezos contract explorer  
-https://medium.com/coinmonks/better-call-dev-2-whats-new-587e94111a6e
+https://baking-bad.org/blog/2020/04/10/tezos-smart-contract-explorer-better-call-dev-what-is-new/
 * Better Call Dev strikes again!  
-https://medium.com/coinmonks/better-call-dev-strikes-again-b7fd784f7396
+https://baking-bad.org/blog/2020/06/10/better-call-dev-strikes-again/
 
 ## Contact us
 * Telegram: https://t.me/baking_bad_chat
