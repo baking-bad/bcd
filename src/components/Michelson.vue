@@ -7,8 +7,6 @@ import { codemirror } from "vue-codemirror-lite";
 require("codemirror/addon/mode/simple.js");
 require("codemirror/addon/display/autorefresh.js");
 require("codemirror/addon/search/searchcursor.js");
-require("codemirror/theme/material-darker.css");
-require("codemirror/theme/pastel-on-dark.css");
 require("codemirror/theme/darcula.css");
 require("codemirror/theme/neo.css");
 

@@ -19,8 +19,9 @@ export function getCancellable(api, url, params) {
         .catch((err) => {
             if (axios.isCancel(err)) {
                 return false;
+            } else {
+                throw err;
             }
-            return err;
         })
         .finally(() => {
             delete cancelTokens[id];
@@ -36,10 +37,9 @@ export function postCancellable(api, url, params) {
         .catch((err) => {
             if (axios.isCancel(err)) {
                 return false;
-            } else if (err.response) {
-                return err.response.data.error;
+            } else {
+                throw err;
             }
-            return err;
         })
         .finally(() => {
             delete cancelTokens[id];

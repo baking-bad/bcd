@@ -22,7 +22,7 @@
       <v-col cols="3" class="pt-3">
         <v-card flat outlined>
           <v-skeleton-loader
-            :loading="loading"
+            :loading="loading && total === 0"
             type="list-item-two-line, list-item-two-line, list-item-two-line"
           >
             <v-list class="ma-0 pa-0 data">
@@ -156,5 +156,11 @@ export default {
 .selected-date {
   border-left: 2px solid var(--v-primary-base);
   background: var(--v-sidebar-base) !important;
+}
+</style>
+
+<style>
+.v-pagination__item, .v-pagination__navigation {
+  box-shadow: none !important;
 }
 </style>
