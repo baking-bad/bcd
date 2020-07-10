@@ -18,7 +18,7 @@
                   class="text--secondary mb-6"
                   @click="showSimulationSettings = !showSimulationSettings"
                 >
-                  Dry-run settings
+                  Simulation settings
                   <v-icon v-if="showSimulationSettings" small class="ml-1">mdi-chevron-up</v-icon>
                   <v-icon v-else small class="ml-1">mdi-chevron-down</v-icon>
                 </v-btn>
@@ -146,7 +146,7 @@
           <InternalOperation :data="simulatedOperation" />
           <template v-for="(intop, intid) in simulatedOperation.internal_operations">
             <v-divider :key="'divider' + intid"></v-divider>
-            <InternalOperation :data="intop" :mainOperation="op" :key="intid" />
+            <InternalOperation :data="intop" :mainOperation="simulatedOperation" :key="intid" />
           </template>
         </v-card-text>
       </v-card>
@@ -203,12 +203,10 @@ export default {
     },
   },
   created() {
-    this.getEntrypoints();
-
-    Tezos.setProvider({ rpc: this.config.RPC_ENDPOINTS[this.network] });
+    this.getEntrypoints(this.$route.query.entrypoint);
 
     this.executeActions = [
-      { text: 'Dry-run', icon: 'mdi-play-circle-outline', callback: () => this.simulateOperation() },
+      { text: 'Simulate', icon: 'mdi-play-circle-outline', callback: () => this.simulateOperation() },
       { text: 'Raw JSON', icon: 'mdi-code-json', callback: () => this.generateParameters(true, true) },
       { text: 'Tezos-client', icon: 'mdi-console-line', callback: () => this.generateParameters(false) },
       { text: 'Beacon', icon: 'mdi-lighthouse', callback: async () => this.callContract("beacon") },
@@ -227,7 +225,7 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
-    getEntrypoints() {
+    getEntrypoints(selectedName = undefined) {
       this.loading = true;
       this.api
         .getContractEntrypoints(this.network, this.address)
@@ -236,7 +234,8 @@ export default {
           this.entrypoints = res.sort(function(a, b) {
             return a.name.localeCompare(b.name);
           });
-          this.selected = 0;
+          const idx = this.entrypoints.findIndex(element => element.name === selectedName);
+          this.selected = Math.max(0, idx);
         })
         .catch(err => {
           console.log(err);
@@ -250,6 +249,8 @@ export default {
       if (this.execution || !this.selectedItem) return;
 
       this.execution = true;
+      this.alertData = null;
+
       return this.api
         .getContractEntrypointData(
           this.network,
@@ -280,7 +281,10 @@ export default {
     },
     simulateOperation() {
       if (this.execution || !this.selectedItem) return;
+
       this.execution = true;
+      this.alertData = null;
+
       this.api
         .getContractEntrypointTrace(
           this.network,
@@ -315,37 +319,48 @@ export default {
     },
     async callContract(provider) {
       let parameter = await this.generateParameters(true);
+      if (!parameter) return;
+
+      const appName = "Better Call Dev";
+      const rpcUrl = this.config.RPC_ENDPOINTS[this.network];
 
       this.execution = true;
 
-      let wallet = null;
-      const appName = 'Better Call Dev';
-
-      if (provider === "beacon") {
-        wallet = new BeaconWallet({ name: appName });
-        await wallet.requestPermissions({ network: {
-          type: this.network,
-          rpcUrl: this.config.RPC_ENDPOINTS[this.network]
-        } });
-      } else if (provider === "thanos") {
-        wallet = new ThanosWallet(appName);
-        await wallet.connect(this.network);
-      } else {
-        console.log(`Unsupported provider: ${provider}`)
-        return;
-      }
-
-      Tezos.setWalletProvider(wallet);
-
       try {
+        let wallet = null;
+        
+        if (provider === "beacon") {
+          wallet = new BeaconWallet({ name: appName });
+          const activeAccount = await wallet.client.getActiveAccount();
+          if (activeAccount && activeAccount.network.type !== this.network) {
+            await wallet.client.setActiveAccount(undefined);
+          }       
+          await wallet.requestPermissions({ network: { type: this.network, rpcUrl: rpcUrl } });
+        } else if (provider === "thanos") {
+          wallet = new ThanosWallet(appName);
+          await wallet.connect(this.network);
+        } else {
+          console.log(`Unsupported provider: ${provider}`)
+          return;
+        }
+
+        Tezos.setProvider({ rpc: rpcUrl, wallet });
+
         const result = await Tezos.wallet.transfer({
           to: this.address,
-          amount: this.settings.amount,
-          parameter: parameter
+          amount: parseInt(this.settings.amount || '0'),
+          parameter: JSON.parse(JSON.stringify(parameter)),
+          mutez: true
         }).send()
-        console.log(result.opHash)
+
+        const routeData = this.$router.resolve({
+          name: "operation_group",
+          params: { network: this.network, hash: result.opHash }
+        });
+        window.open(routeData.href, "_blank");
+
       } catch(err) {
-        this.showError(err)
+        this.alertData = err.message;
         console.log(err)
       } finally {
         this.execution = false;
@@ -356,12 +371,13 @@ export default {
     address: "getEntrypoints",
     selectedItem: function(newValue) {
       if (newValue === null) return;
+      this.$router.replace({ query: { entrypoint: newValue.name } });
       this.alertData = null;
       this.parametersJSON = null;
       this.tezosClientCmdline = null;
       this.simulatedOperation = {};
       this.model = Object.assign({}, newValue.default_model);
-    }
+    },
   }
 };
 </script>
