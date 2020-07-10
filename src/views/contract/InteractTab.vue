@@ -41,6 +41,7 @@
                   </div>
                 </div>
                 <v-text-field
+                  id="amount"
                   v-model="settings.amount"
                   outlined
                   dense
@@ -51,38 +52,46 @@
                 ></v-text-field>
                 <div class="d-flex">
                   <v-menu offset-y>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                      outlined
-                      :loading="execution"
-                      color="accent"
-                      v-bind="attrs"
-                      v-on="on"
-                    >
-                      <span>Execute</span>
-                      <v-icon small class="ml-1">mdi-creation</v-icon>
-                    </v-btn>
-                  </template>
-                  <v-list>
-                    <v-list-item
-                      v-for="(item, index) in executeActions"
-                      :key="index"
-                      @click="item.callback()"
-                    >
-                      <v-list-item-title>{{ item.text }}</v-list-item-title>
-                      <v-list-item-avatar><v-icon>{{ item.icon }}</v-icon></v-list-item-avatar>
-                    </v-list-item>
-                  </v-list>
-                </v-menu>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn outlined :loading="execution" color="accent" v-bind="attrs" v-on="on">
+                        <span>Execute</span>
+                        <v-icon small class="ml-1">mdi-creation</v-icon>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item
+                        v-for="(item, index) in executeActions"
+                        :key="index"
+                        @click="item.callback()"
+                      >
+                        <v-list-item-title>{{ item.text }}</v-list-item-title>
+                        <v-list-item-avatar>
+                          <v-icon>{{ item.icon }}</v-icon>
+                        </v-list-item-avatar>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </div>
               </v-form>
-              <v-expand-transition mode="out-in">
-                <div v-show="alertData" class="pa-6 pt-0">
-                  <v-alert v-if="alertData" type="error" prominent text class="ma-0">
-                    <span class="text--primary">{{ alertData }}</span>
-                  </v-alert>                 
-                </div>
-              </v-expand-transition>
+              <div v-show="alertData" class="pa-6 pt-0">
+                <v-alert type="error" prominent text class="ma-0">
+                  <span class="text--primary">{{ alertData }}</span>
+                </v-alert>
+              </div>
+              <div v-show="injectedOpHash" class="pa-6 pt-0">
+                <v-alert type="success" prominent text class="ma-0">
+                  <div class="d-flex justify-space-between align-center">
+                    <span class="text--primary">Operation has been sucessfully injected</span>
+                    <v-btn
+                      text
+                      class="text--secondary hash"
+                      style="text-transform: none;"
+                      :to="`/${network}/opg/${injectedOpHash}`"
+                      target="_blank"
+                    ><span v-html="helpers.shortcut(injectedOpHash)"></span></v-btn>
+                  </div>
+                </v-alert>
+              </div>
             </v-card-text>
           </v-card>
           <div v-else></div>
@@ -151,18 +160,40 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <v-dialog v-model="showCmdline" width="800" scrollable>
+      <v-card flat outlined>
+        <v-card-title class="sidebar d-flex justify-center pa-4">
+          <span class="body-1 font-weight-medium text-uppercase text--secondary">Tezos-client</span>
+          <v-spacer></v-spacer>
+          <v-btn
+            class="mr-4 text--secondary"
+            v-clipboard="() => (tezosClientCmdline)"
+            v-clipboard:success="showClipboardOK"
+            text
+          >
+            <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
+          </v-btn>
+          <v-btn icon small @click="showCmdline = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <pre>{{ tezosClientCmdline }}</pre>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
     <RawJsonViewer :show.sync="showRawJSON" :raw="parametersJSON" />
   </v-container>
 </template>
 
 <script>
 import { mapActions } from "vuex";
-import { Tezos } from '@taquito/taquito'
-import { BeaconWallet } from '@taquito/beacon-wallet'
+import { Tezos } from "@taquito/taquito";
+import { BeaconWallet } from "@taquito/beacon-wallet";
 import { ThanosWallet } from "@thanos-wallet/dapp";
 
 import InternalOperation from "@/components/InternalOperation.vue";
-import RawJsonViewer from "@/components/RawJsonViewer.vue"
+import RawJsonViewer from "@/components/RawJsonViewer.vue";
 
 export default {
   name: "InteractTab",
@@ -190,6 +221,7 @@ export default {
     parametersJSON: null,
     simulatedOperation: {},
     tezosClientCmdline: null,
+    injectedOpHash: null,
     showRawJSON: false,
     showCmdline: false,
     showResultOPG: false,
@@ -200,25 +232,42 @@ export default {
       if (this.selected < 0 || this.entrypoints.length < this.selected)
         return null;
       return this.entrypoints[this.selected];
-    },
+    }
   },
   created() {
     this.getEntrypoints(this.$route.query.entrypoint);
 
     this.executeActions = [
-      { text: 'Simulate', icon: 'mdi-play-circle-outline', callback: () => this.simulateOperation() },
-      { text: 'Raw JSON', icon: 'mdi-code-json', callback: () => this.generateParameters(true, true) },
-      { text: 'Tezos-client', icon: 'mdi-console-line', callback: () => this.generateParameters(false) },
-      { text: 'Beacon', icon: 'mdi-lighthouse', callback: async () => this.callContract("beacon") },
+      {
+        text: "Simulate",
+        icon: "mdi-play-circle-outline",
+        callback: () => this.simulateOperation()
+      },
+      {
+        text: "Raw JSON",
+        icon: "mdi-code-json",
+        callback: () => this.generateParameters(true, true)
+      },
+      {
+        text: "Tezos-client",
+        icon: "mdi-console-line",
+        callback: () => this.generateParameters(false, true)
+      },
+      {
+        text: "Beacon",
+        icon: "mdi-lighthouse",
+        callback: async () => this.callContract("beacon")
+      }
     ];
 
     ThanosWallet.isAvailable()
       .then(available => {
         if (available) {
-          this.executeActions.push({ 
-            text: 'Thanos', 
-            icon: 'mdi-hand-right', 
-            callback: async () => this.callContract("thanos") })
+          this.executeActions.push({
+            text: "Thanos",
+            icon: "mdi-hand-right",
+            callback: async () => this.callContract("thanos")
+          });
         }
       })
       .catch(err => console.log(err));
@@ -234,7 +283,9 @@ export default {
           this.entrypoints = res.sort(function(a, b) {
             return a.name.localeCompare(b.name);
           });
-          const idx = this.entrypoints.findIndex(element => element.name === selectedName);
+          const idx = this.entrypoints.findIndex(
+            element => element.name === selectedName
+          );
           this.selected = Math.max(0, idx);
         })
         .catch(err => {
@@ -249,7 +300,6 @@ export default {
       if (this.execution || !this.selectedItem) return;
 
       this.execution = true;
-      this.alertData = null;
 
       return this.api
         .getContractEntrypointData(
@@ -257,25 +307,32 @@ export default {
           this.address,
           this.selectedItem.bin_path,
           this.model,
-          rawJSON ? "": "michelson"
+          rawJSON ? "" : "michelson"
         )
         .then(res => {
           if (rawJSON) {
             this.parametersJSON = res;
             if (show) this.showRawJSON = true;
           } else {
-            this.tezosClientCmdline = res;
+            const arg = String(res).replace(/\n|\s+/gm, " ");
+              this.tezosClientCmdline = `
+              transfer ${this.settings.amount || 0} 
+              from ${this.settings.source || "%YOUR_ADDRESS%"} 
+              to ${this.address} 
+              --entrypoint '${this.selectedItem.name}' 
+              --arg '${arg}'
+            `;
             if (show) this.showCmdline = true;
           }
           return res;
         })
         .catch(err => {
-          if(err.response) {
-            this.alertData = err.response.data.message
+          if (err.response) {
+            this.alertData = err.response.data.message;
           } else {
-            this.showError(err)
+            this.showError(err);
           }
-          console.log(err)
+          console.log(err);
         })
         .finally(() => (this.execution = false));
     },
@@ -283,7 +340,6 @@ export default {
       if (this.execution || !this.selectedItem) return;
 
       this.execution = true;
-      this.alertData = null;
 
       this.api
         .getContractEntrypointTrace(
@@ -305,12 +361,12 @@ export default {
           }
         })
         .catch(err => {
-          if(err.response) {
-            this.alertData = err.response.data.message
+          if (err.response) {
+            this.alertData = err.response.data.message;
           } else {
-            this.showError(err)
+            this.showError(err);
           }
-          console.log(err)
+          console.log(err);
         })
         .finally(() => (this.execution = false));
     },
@@ -328,40 +384,39 @@ export default {
 
       try {
         let wallet = null;
-        
+
         if (provider === "beacon") {
           wallet = new BeaconWallet({ name: appName });
           const activeAccount = await wallet.client.getActiveAccount();
           if (activeAccount && activeAccount.network.type !== this.network) {
             await wallet.client.setActiveAccount(undefined);
-          }       
-          await wallet.requestPermissions({ network: { type: this.network, rpcUrl: rpcUrl } });
+          }
+          await wallet.requestPermissions({
+            network: { type: this.network, rpcUrl: rpcUrl }
+          });
         } else if (provider === "thanos") {
           wallet = new ThanosWallet(appName);
           await wallet.connect(this.network);
         } else {
-          console.log(`Unsupported provider: ${provider}`)
+          console.log(`Unsupported provider: ${provider}`);
           return;
         }
 
         Tezos.setProvider({ rpc: rpcUrl, wallet });
 
-        const result = await Tezos.wallet.transfer({
-          to: this.address,
-          amount: parseInt(this.settings.amount || '0'),
-          parameter: JSON.parse(JSON.stringify(parameter)),
-          mutez: true
-        }).send()
+        const result = await Tezos.wallet
+          .transfer({
+            to: this.address,
+            amount: parseInt(this.settings.amount || "0"),
+            parameter: JSON.parse(JSON.stringify(parameter)),
+            mutez: true
+          })
+          .send();
 
-        const routeData = this.$router.resolve({
-          name: "operation_group",
-          params: { network: this.network, hash: result.opHash }
-        });
-        window.open(routeData.href, "_blank");
-
-      } catch(err) {
+        this.injectedOpHash = result.opHash;
+      } catch (err) {
         this.alertData = err.message;
-        console.log(err)
+        console.log(err);
       } finally {
         this.execution = false;
       }
@@ -371,13 +426,21 @@ export default {
     address: "getEntrypoints",
     selectedItem: function(newValue) {
       if (newValue === null) return;
-      this.$router.replace({ query: { entrypoint: newValue.name } });
+      if (this.$route.query.entrypoint != newValue.name) {
+        this.$router.replace({ query: { entrypoint: newValue.name } });
+      }
       this.alertData = null;
       this.parametersJSON = null;
       this.tezosClientCmdline = null;
       this.simulatedOperation = {};
       this.model = Object.assign({}, newValue.default_model);
     },
+    execution: function(newValue) {
+      if (newValue) {
+        this.alertData = null;
+        this.injectedOpHash = null;
+      }
+    }
   }
 };
 </script>
