@@ -7,50 +7,55 @@
             <v-card-title class="py-2 px-5 sidebar">
               <span class="hash secondary--text">{{ selectedItem.name }}</span>
             </v-card-title>
-            <v-card-text class="pa-0 pt-1 data">
+            <v-card-text class="pa-0 pt-1 data">              
               <v-form class="pa-6 pr-4">
                 <div v-if="selectedItem.schema">
                   <v-jsf v-model="model" :schema="selectedItem.schema"></v-jsf>
                 </div>
-                <v-btn
-                  text
-                  small
-                  class="text--secondary mb-6"
-                  @click="showSimulationSettings = !showSimulationSettings"
-                >
-                  Simulation settings
-                  <v-icon v-if="showSimulationSettings" small class="ml-1">mdi-chevron-up</v-icon>
-                  <v-icon v-else small class="ml-1">mdi-chevron-down</v-icon>
-                </v-btn>
-                <div v-show="showSimulationSettings">
-                  <div class="d-flex flex-column pr-2">
-                    <v-text-field
-                      v-model="settings.source"
-                      outlined
-                      dense
-                      label="Source"
-                      placeholder="Tz address"
-                    ></v-text-field>
-                    <v-text-field
-                      v-model="settings.sender"
-                      outlined
-                      dense
-                      label="Sender (optional)"
-                      placeholder="KT address, allows to simulate internal operation"
-                    ></v-text-field>
-                  </div>
+                <div class="d-flex pr-2">
+                  <v-text-field
+                    id="source"
+                    name="source"
+                    v-model="settings.source"
+                    outlined
+                    dense
+                    label="Source (optional)"
+                    placeholder="signer address"
+                  ></v-text-field>
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn text small :loading="importing" style="margin-top: 6px;" class="ml-4 text--secondary" v-bind="attrs" v-on="on">
+                        <v-icon small class="mr-1">mdi-import</v-icon>
+                        <span>Import</span>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item
+                        v-for="(item, index) in importActions"
+                        :key="index"
+                        @click="item.callback()"
+                      >
+                        <v-list-item-title>{{ item.text }}</v-list-item-title>
+                        <v-list-item-avatar>
+                          <v-icon>{{ item.icon }}</v-icon>
+                        </v-list-item-avatar>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </div>
-                <v-text-field
-                  id="amount"
-                  v-model="settings.amount"
-                  outlined
-                  dense
-                  label="Transaction amount"
-                  type="number"
-                  placeholder="In mutez (10^-6 tez)"
-                  class="mr-2"
-                ></v-text-field>
-                <div class="d-flex">
+                <div class="d-flex pr-2">
+                  <v-text-field
+                    id="amount"
+                    name="amount"
+                    v-model="settings.amount"
+                    outlined
+                    dense
+                    label="Amount (optional)"
+                    type="number"
+                    placeholder="in mutez = 0.000001 tez"
+                  ></v-text-field>
+                </div>
+                <div class="d-flex align-center">
                   <v-menu offset-y>
                     <template v-slot:activator="{ on, attrs }">
                       <v-btn outlined :loading="execution" color="accent" v-bind="attrs" v-on="on">
@@ -88,7 +93,9 @@
                       style="text-transform: none;"
                       :to="`/${network}/opg/${injectedOpHash}`"
                       target="_blank"
-                    ><span v-html="helpers.shortcut(injectedOpHash)"></span></v-btn>
+                    >
+                      <span v-html="helpers.shortcut(injectedOpHash)"></span>
+                    </v-btn>
                   </div>
                 </v-alert>
               </div>
@@ -147,12 +154,15 @@
         <v-card-title class="sidebar d-flex justify-center pa-4">
           <span class="body-1 font-weight-medium text-uppercase text--secondary">Simulation result</span>
           <v-spacer></v-spacer>
+          <span>gas limit: {{ gasLimit }}</span>
+          <span>storage limit: {{ storageLimit }}</span>
+          <v-spacer></v-spacer>
           <v-btn icon small @click="showResultOPG = false">
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text class="pa-0">
-          <InternalOperation :data="simulatedOperation" />
+          <InternalOperation :data="simulatedOperation" noheader />
           <template v-for="(intop, intid) in simulatedOperation.internal_operations">
             <v-divider :key="'divider' + intid"></v-divider>
             <InternalOperation :data="intop" :mainOperation="simulatedOperation" :key="intid" />
@@ -160,14 +170,14 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog v-model="showCmdline" width="800" scrollable>
+    <v-dialog v-model="showCmdline" width="800" scrollable :retain-focus="false">
       <v-card flat outlined>
-        <v-card-title class="sidebar d-flex justify-center pa-4">
+        <v-card-title class="sidebar d-flex justify-center py-2">
           <span class="body-1 font-weight-medium text-uppercase text--secondary">Tezos-client</span>
           <v-spacer></v-spacer>
           <v-btn
             class="mr-4 text--secondary"
-            v-clipboard="() => (tezosClientCmdline)"
+            v-clipboard="() => tezosClientCmdline"
             v-clipboard:success="showClipboardOK"
             text
           >
@@ -177,8 +187,8 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-card-text class="pa-0">
-          <pre>{{ tezosClientCmdline }}</pre>
+        <v-card-text class="pa-6">
+          <span class="hash">{{ tezosClientCmdline }}</span>
         </v-card-text>
       </v-card>
     </v-dialog>
@@ -208,6 +218,7 @@ export default {
   data: () => ({
     loading: true,
     execution: false,
+    importing: false,
     entrypoints: [],
     selected: -1,
     model: {},
@@ -217,6 +228,7 @@ export default {
       amount: null
     },
     executeActions: [],
+    importActions: [],
     alertData: null,
     parametersJSON: null,
     simulatedOperation: {},
@@ -232,9 +244,33 @@ export default {
       if (this.selected < 0 || this.entrypoints.length < this.selected)
         return null;
       return this.entrypoints[this.selected];
+    },
+    storageLimit() {
+      let val = this.simulatedOperation.burned || 0;
+      const internal = this.simulatedOperation.internal_operations || [];
+      if (internal) {
+        for (let i = 0; i < internal.length; i++) {
+          val += internal[i].burned || 0;
+        }
+      }
+      return val;
+    },
+    gasLimit() {
+      let val = 0;
+      const result = this.simulatedOperation.result;
+      if (result) {
+        val = result.consumed_gas || 0;
+        const internal = this.simulatedOperation.internal_operations || [];
+        for (let i = 0; i < internal.length; i++) {
+          if (internal[i].result) {
+            val += internal[i].result.consumed_gas || 0;
+          }
+        }
+      }
+      return val;
     }
   },
-  created() {
+  async created() {
     this.getEntrypoints(this.$route.query.entrypoint);
 
     this.executeActions = [
@@ -260,17 +296,30 @@ export default {
       }
     ];
 
-    ThanosWallet.isAvailable()
-      .then(available => {
-        if (available) {
-          this.executeActions.push({
-            text: "Thanos",
-            icon: "mdi-hand-right",
-            callback: async () => this.callContract("thanos")
-          });
-        }
-      })
-      .catch(err => console.log(err));
+    this.importActions = [
+      {
+        text: "Beacon",
+        icon: "mdi-lighthouse",
+        callback: async () => this.importSource("beacon")
+      }
+    ]
+
+    try {
+      if (await ThanosWallet.isAvailable()) {
+        this.executeActions.push({
+          text: "Thanos",
+          icon: "mdi-hand-right",
+          callback: async () => this.callContract("thanos")
+        });
+        this.importActions.push({
+          text: "Thanos",
+          icon: "mdi-hand-right",
+          callback: async () => this.importSource("thanos")
+        });
+      }
+    } catch (err) {
+      console.log(err);
+    }
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
@@ -315,13 +364,10 @@ export default {
             if (show) this.showRawJSON = true;
           } else {
             const arg = String(res).replace(/\n|\s+/gm, " ");
-              this.tezosClientCmdline = `
-              transfer ${this.settings.amount || 0} 
-              from ${this.settings.source || "%YOUR_ADDRESS%"} 
-              to ${this.address} 
-              --entrypoint '${this.selectedItem.name}' 
-              --arg '${arg}'
-            `;
+            const amount = this.settings.amount || 0;
+            const src = this.settings.source || "%YOUR_ADDRESS%";
+            const entrypoint = this.selectedItem.name;
+            this.tezosClientCmdline = `transfer ${amount} from ${src} to ${this.address} --entrypoint '${entrypoint}' --arg '${arg}'`;
             if (show) this.showCmdline = true;
           }
           return res;
@@ -348,7 +394,6 @@ export default {
           this.selectedItem.bin_path,
           this.model,
           this.settings.source,
-          this.settings.sender,
           this.settings.amount
         )
         .then(res => {
@@ -373,37 +418,50 @@ export default {
     highlightType(expr) {
       return expr.replace(/(\$\w+)/g, '<span class="accent--text">$1</span>');
     },
+    async getWallet(provider) {
+      const appName = "Better Call Dev";
+      const rpcUrl = this.config.RPC_ENDPOINTS[this.network];
+
+      if (provider === "beacon") {
+        let wallet = new BeaconWallet({ name: appName });
+        const activeAccount = await wallet.client.getActiveAccount();
+        if (activeAccount && activeAccount.network.type !== this.network) {
+          await wallet.client.setActiveAccount(undefined);
+        }
+        await wallet.requestPermissions({
+          network: { type: this.network, rpcUrl: rpcUrl }
+        });
+        return wallet;
+
+      } else if (provider === "thanos") {
+        let wallet = new ThanosWallet(appName);
+        await wallet.connect(this.network);
+        return wallet;
+        
+      } else {
+        throw `Unsupported provider: ${provider}`;
+      }
+    },
+    async importSource(provider) {
+      this.importing = true;      
+      try {
+        let wallet = await this.getWallet(provider);
+        this.settings.source = await wallet.getPKH();
+      } catch (err) {
+        this.alertData = err.message;
+        console.log(err)
+      } finally {
+        this.importing = false;
+      }
+    },
     async callContract(provider) {
       let parameter = await this.generateParameters(true);
       if (!parameter) return;
 
-      const appName = "Better Call Dev";
-      const rpcUrl = this.config.RPC_ENDPOINTS[this.network];
-
       this.execution = true;
-
       try {
-        let wallet = null;
-
-        if (provider === "beacon") {
-          wallet = new BeaconWallet({ name: appName });
-          const activeAccount = await wallet.client.getActiveAccount();
-          if (activeAccount && activeAccount.network.type !== this.network) {
-            await wallet.client.setActiveAccount(undefined);
-          }
-          await wallet.requestPermissions({
-            network: { type: this.network, rpcUrl: rpcUrl }
-          });
-        } else if (provider === "thanos") {
-          wallet = new ThanosWallet(appName);
-          await wallet.connect(this.network);
-        } else {
-          console.log(`Unsupported provider: ${provider}`);
-          return;
-        }
-
-        Tezos.setProvider({ rpc: rpcUrl, wallet });
-
+        let wallet = await this.getWallet(provider)
+        Tezos.setProvider({ rpc: this.config.RPC_ENDPOINTS[this.network], wallet });
         const result = await Tezos.wallet
           .transfer({
             to: this.address,
@@ -412,7 +470,6 @@ export default {
             mutez: true
           })
           .send();
-
         this.injectedOpHash = result.opHash;
       } catch (err) {
         this.alertData = err.message;

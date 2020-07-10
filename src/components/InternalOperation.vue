@@ -1,6 +1,6 @@
 <template>
   <div class="pb-2 data">
-    <v-row v-if="!data.internal && data.counter" no-gutters class="px-4 py-1 sidebar">
+    <v-row v-if="!data.internal && !noheader" no-gutters class="px-4 py-1 sidebar">
       <v-col cols="2">
         <InfoItem title="Counter" :subtitle="String(data.counter)" />
       </v-col>
@@ -63,7 +63,7 @@
         </v-tooltip>
       </v-col>
     </v-row>
-    <v-row no-gutters class="px-4 pt-4">
+    <v-row no-gutters class="px-4 pt-4" style="font-size: 16px;">
       <v-col cols="11">
         <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
         <span v-if="data.entrypoint" class="hash secondary--text">{{ data.entrypoint }}</span>
@@ -187,7 +187,8 @@ export default {
   props: {
     data: Object,
     address: String,
-    mainOperation: Object
+    mainOperation: Object,
+    noheader: Boolean
   },
   components: {
     InfoItem,
