@@ -128,11 +128,13 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style>
 .v-treeview-node__root {
   min-height: 20px !important;
 }
+</style>
 
+<style lang="scss" scoped>
 .v-treeview {
   font-size: 14px;
   font-weight: 400;

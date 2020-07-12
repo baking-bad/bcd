@@ -9,56 +9,62 @@
             </v-card-title>
             <v-card-text class="pa-0 pt-1 data">              
               <v-form class="pa-6 pr-4">
-                <div v-if="selectedItem.schema">
+                <div v-if="selectedItem.schema" class="pl-6 pt-4 pr-4 pb-0 mr-2 mb-6 canvas">
+                  <div class="mb-6">
+                    <span class="caption font-weight-medium text-uppercase text--disabled">Parameters</span>
+                  </div>
                   <v-jsf v-model="model" :schema="selectedItem.schema"></v-jsf>
                 </div>
-                <div class="d-flex pr-2">
-                  <v-text-field
-                    id="source"
-                    name="source"
-                    v-model="settings.source"
-                    outlined
-                    dense
-                    label="Source (optional)"
-                    placeholder="signer address"
-                  ></v-text-field>
-                  <v-menu offset-y>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn text small :loading="importing" style="margin-top: 6px;" class="ml-4 text--secondary" v-bind="attrs" v-on="on">
-                        <v-icon small class="mr-1">mdi-import</v-icon>
-                        <span>Import</span>
-                      </v-btn>
-                    </template>
-                    <v-list>
-                      <v-list-item
-                        v-for="(item, index) in importActions"
-                        :key="index"
-                        @click="item.callback()"
-                      >
-                        <v-list-item-title>{{ item.text }}</v-list-item-title>
-                        <v-list-item-avatar>
-                          <v-icon>{{ item.icon }}</v-icon>
-                        </v-list-item-avatar>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </div>
-                <div class="d-flex pr-2">
+                <div class="px-6 pt-4 pb-0 mr-2 mb-6 canvas optional-settings">
+                  <div class="mb-6">
+                    <span class="caption font-weight-medium text-uppercase text--disabled">Optional settings</span>
+                  </div>
+                  <div class="d-flex">
+                    <v-text-field
+                      id="source"
+                      name="source"
+                      v-model="settings.source"
+                      outlined
+                      dense
+                      label="source"
+                      placeholder="address"
+                    ></v-text-field>
+                    <v-menu offset-y>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn text small :loading="importing" style="margin-top: 6px;" class="ml-4 text--secondary" v-bind="attrs" v-on="on">
+                          <v-icon small class="mr-1">mdi-import</v-icon>
+                          <span>Import</span>
+                        </v-btn>
+                      </template>
+                      <v-list>
+                        <v-list-item
+                          v-for="(item, index) in importActions"
+                          :key="index"
+                          @click="item.callback()"
+                        >
+                          <v-list-item-title>{{ item.text }}</v-list-item-title>
+                          <v-list-item-avatar>
+                            <v-icon>{{ item.icon }}</v-icon>
+                          </v-list-item-avatar>
+                        </v-list-item>
+                      </v-list>
+                    </v-menu>
+                  </div>                  
                   <v-text-field
                     id="amount"
                     name="amount"
                     v-model="settings.amount"
                     outlined
                     dense
-                    label="Amount (optional)"
+                    label="amount"
                     type="number"
-                    placeholder="in mutez = 0.000001 tez"
+                    placeholder="mutez"
                   ></v-text-field>
                 </div>
                 <div class="d-flex align-center">
                   <v-menu offset-y>
                     <template v-slot:activator="{ on, attrs }">
-                      <v-btn outlined :loading="execution" color="accent" v-bind="attrs" v-on="on">
+                      <v-btn outlined :loading="execution" class="px-6" color="accent" v-bind="attrs" v-on="on">
                         <span>Execute</span>
                         <v-icon small class="ml-1">mdi-creation</v-icon>
                       </v-btn>
@@ -153,9 +159,14 @@
       <v-card flat outlined>
         <v-card-title class="sidebar d-flex justify-center pa-4">
           <span class="body-1 font-weight-medium text-uppercase text--secondary">Simulation result</span>
-          <v-spacer></v-spacer>
-          <span>gas limit: {{ gasLimit }}</span>
-          <span>storage limit: {{ storageLimit }}</span>
+          <div v-if="simulatedOperation && settings.source" class="d-flex flex-column align-center ml-10">
+            <span class="overline">gas limit</span>
+            <span class="hash" style="font-size: 14px; line-height: 14px;">{{ gasLimit }}</span>
+          </div>
+          <div v-if="simulatedOperation && settings.source" class="d-flex flex-column align-center ml-10">
+            <span class="overline">storage limit</span>
+            <span class="hash" style="font-size: 14px; line-height: 14px;">{{ storageLimit }}</span>
+          </div>
           <v-spacer></v-spacer>
           <v-btn icon small @click="showResultOPG = false">
             <v-icon>mdi-close</v-icon>
@@ -323,6 +334,33 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
+    applyStyles(node) {
+      if (!node) return;
+      if (node.type) {
+        const defaultTitle = {
+          "contract": "callback"
+        }
+        node["x-props"] = { 
+          outlined: true,
+          dense: true,
+          placeholder: node.prim,
+          label: node.title || defaultTitle[node.prim] || ""
+        }   
+      }
+      if (node.properties) {
+        for (var prop in node.properties) {
+          this.applyStyles(node.properties[prop]);
+        }
+      }
+      if (node.oneOf) {
+        for (var option in node.oneOf) {
+          this.applyStyles(node.oneOf[option]);
+        }
+      }
+      if (node.items) {
+        this.applyStyles(node.items);
+      }
+    },  
     getEntrypoints(selectedName = undefined) {
       this.loading = true;
       this.api
@@ -332,6 +370,7 @@ export default {
           this.entrypoints = res.sort(function(a, b) {
             return a.name.localeCompare(b.name);
           });
+          this.entrypoints.forEach(e => this.applyStyles(e.schema));
           const idx = this.entrypoints.findIndex(
             element => element.name === selectedName
           );
@@ -506,6 +545,38 @@ export default {
 .v-btn-toggle {
   flex-direction: column;
 }
+
+.vjsf-property fieldset, .optional-settings fieldset {
+  background-color: var(--v-data-base) !important;
+  border: 1px solid var(--v-border-base) !important;
+}
+
+/* fixing "+" button */
+.vjsf-property > .layout > .v-btn {
+  box-shadow: none !important;
+  background-color: transparent !important;
+  border-radius: 3px !important;
+  width: unset !important;
+  height: unset !important;
+  margin: 10px 0;
+  padding-left: 10px;
+  padding-right: 15px;
+}
+.vjsf-property .v-btn__content .v-icon {
+  color: var(--v-text-base) !important;
+}
+.vjsf-property > .layout > .v-btn > .v-btn__content::after {
+  content: "add" !important;
+  color: var(--v-text-base) !important;
+}
+
+.vjsf-property .v-subheader {
+  padding-left: 10px !important;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+/* end fixing "+" button */
 </style>
 
 <style lang="scss" scoped>
@@ -518,13 +589,6 @@ export default {
   }
 }
 
-.json-viewer {
-  max-height: 400px;
-  overflow-y: auto;
-  background: var(--v-canvas-base);
-  padding: 15px;
-}
-
 .entrypoint-panel > .v-expansion-panel-header {
   background-color: var(--v-sidebar-base);
 }
@@ -535,10 +599,5 @@ export default {
     background-color: var(--v-data-base);
   }
 }
-</style>
 
-<style>
-.v-treeview-node__root {
-  min-height: 20px !important;
-}
 </style>
