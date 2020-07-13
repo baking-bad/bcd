@@ -564,6 +564,7 @@ export default {
 }
 .vjsf-property .v-btn__content .v-icon {
   color: var(--v-text-base) !important;
+  opacity: .7;
 }
 .vjsf-property > .layout > .v-btn > .v-btn__content::after {
   content: "add" !important;
@@ -577,6 +578,7 @@ export default {
   text-transform: uppercase;
 }
 /* end fixing "+" button */
+
 </style>
 
 <style lang="scss" scoped>
