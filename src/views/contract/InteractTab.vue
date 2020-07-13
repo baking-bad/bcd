@@ -463,18 +463,19 @@ export default {
 
       if (provider === "beacon") {
         let wallet = new BeaconWallet({ name: appName });
+        const networkMap = { "sandboxnet": "custom" }
+        const type = networkMap[this.network] || this.network;
         const activeAccount = await wallet.client.getActiveAccount();
-        if (activeAccount && activeAccount.network.type !== this.network) {
+        if (activeAccount && activeAccount.network.type !== type) {
           await wallet.client.setActiveAccount(undefined);
         }
-        await wallet.requestPermissions({
-          network: { type: this.network, rpcUrl: rpcUrl }
-        });
+        await wallet.requestPermissions({ network: { type, rpcUrl } });
         return wallet;
 
       } else if (provider === "thanos") {
         let wallet = new ThanosWallet(appName);
-        await wallet.connect(this.network);
+        const networkMap = { "sandboxnet": "sandbox" }
+        await wallet.connect(networkMap[this.network] || this.network);
         return wallet;
         
       } else {
