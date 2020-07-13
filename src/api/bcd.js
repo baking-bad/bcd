@@ -187,11 +187,11 @@ export class BetterCallApi {
         if (res.status != 200) {
           throw new RequestFailedError(res);
         }
-        return res.data
+        return res.data;    
       })
   }
 
-  getContractEntrypointTrace(network, address, bin_path, data, source = null, sender = null, amount = null) {
+  getContractEntrypointTrace(network, address, bin_path, data, source = null, amount = null) {
     var body = {
       bin_path: bin_path,
       data: data
@@ -199,14 +199,12 @@ export class BetterCallApi {
     if (source !== null) {
       body.source = source;
     }
-    if (sender !== null) {
-      body.sender = sender;
-    }
     if (amount !== null) {
       body.amount = parseInt(amount);
     }
+    let method = source !== null ? "run_operation" : "trace";
 
-    return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/trace`, body)
+    return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/${method}`, body)
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {

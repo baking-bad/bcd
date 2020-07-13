@@ -46,6 +46,10 @@ html {
   overflow-y: auto !important;
 }
 
+:focus {
+  outline: none !important;
+}
+
 .hash {
   font-family: "Roboto Mono", monospace;
 }

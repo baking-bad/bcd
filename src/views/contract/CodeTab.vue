@@ -63,7 +63,7 @@
 import { mapActions } from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
-import RawJsonViewer from "@/components/RawJsonViewer.vue"
+import RawJsonViewer from "@/components/RawJsonViewer.vue";
 import LZString from "lz-string";
 
 export default {

@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 
-export const delimiter = '🡒';
+export const delimiter = '➛';
 
 function getId() {
     return Math.floor(Math.random() * (+100000000 - +1)) + +1;

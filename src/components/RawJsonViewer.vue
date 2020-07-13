@@ -8,6 +8,16 @@
         </span>
         <v-spacer></v-spacer>
         <v-btn
+          v-if="url"
+          class="mr-4 text--secondary"
+          :href="url"
+          target="_blank"
+          rel="nofollow noopener"
+          text
+        >
+          <v-icon small class="mr-1">mdi-open-in-new</v-icon>In new tab
+        </v-btn>
+        <v-btn
           class="mr-4 text--secondary"
           v-clipboard="() => JSON.stringify(data, null, '  ')"
           v-clipboard:success="showClipboardOK"
@@ -36,6 +46,7 @@ export default {
   name: "RawJsonViewer",
   props: {
     show: Boolean,
+    raw: Object,
     type: String,
     network: String,
     level: Number,
@@ -49,6 +60,7 @@ export default {
   },
   data: () => ({
     data: null,
+    url: null,
     loaded: false
   }),
   methods: {
@@ -64,23 +76,29 @@ export default {
     show(newValue) {
       if (!newValue) return;
       if (this.loaded) return;
+      
+      if (this.raw) {
+        this.data = this.raw;
+        this.loaded = true;
+        return;
+      }
 
-      let promise = null;
+      let res = null;
       const level = this.level && this.level > 0 ? this.level : "head";
 
       if (this.type === "operation") {
-        promise = this.rpc.getOperation(this.network, level, this.hash);
+        res = this.rpc.getOperation(this.network, level, this.hash);
       } else if (this.type === "big_map") {
-        promise = this.rpc.getBigMapValue(
+        res = this.rpc.getBigMapValue(
           this.network,
           level,
           this.ptr,
           this.keyhash
         );
       } else if (this.type === "code") {
-        promise = this.rpc.getContractCode(this.network, level, this.address);
+        res = this.rpc.getContractCode(this.network, level, this.address);
       } else if (this.type === "storage") {
-        promise = this.rpc.getContractStorage(
+        res = this.rpc.getContractStorage(
           this.network,
           level,
           this.address
@@ -89,9 +107,10 @@ export default {
         this.showError(`Unsupported type ${this.type}`);
       }
 
-      promise
-        .then(res => {
-          this.data = res;
+      res
+        .then(r => {
+          this.data = r.data;
+          this.url = r.url;
           this.loaded = true;
         })
         .catch(err => {

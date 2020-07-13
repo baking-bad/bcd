@@ -29,9 +29,10 @@ export class NodeRPC {
           throw new RequestFailedError(res);
         }
         let data = res.data
+        let url = `${res.config.baseURL}${res.config.url}`
 
         for (let i = 0; i < data.length; i++) {
-          if (data[i].hash == hash) return data[i];
+          if (data[i].hash == hash) return { data: data[i], url };
         }
         throw new RequestFailedError(res);
       })
@@ -43,7 +44,8 @@ export class NodeRPC {
         if (res.status != 200) {
           throw new RequestFailedError(res);
         }
-        return res.data;
+        let url = `${res.config.baseURL}${res.config.url}`
+        return { data: res.data, url};
       })
   }
 
@@ -53,7 +55,8 @@ export class NodeRPC {
         if (res.status != 200) {
           throw new RequestFailedError(res);
         }
-        return res.data.code;
+        let url = `${res.config.baseURL}${res.config.url}`
+        return { data: res.data.code, url };
       })
   }
 
@@ -63,7 +66,8 @@ export class NodeRPC {
         if (res.status != 200) {
           throw new RequestFailedError(res);
         }
-        return res.data;
+        let url = `${res.config.baseURL}${res.config.url}`
+        return { data: res.data, url };
       })
   }
 }
