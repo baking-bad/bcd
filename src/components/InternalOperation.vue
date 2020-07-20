@@ -146,13 +146,17 @@
           v-if="hasParameters || hasStorageDiff"
           no-gutters
         >
-          <v-col cols="6">
+          <v-col :cols="expanded ? 12 : 6">
             <template v-if="hasParameters">
-              <span class="overline ml-3">Parameters</span>
-              <MiguelTreeView :miguel="data.parameters" :network="data.network" openAll />            
+              <span class="overline ml-3">Parameters</span>&nbsp;
+              <v-btn v-if="hasStorageDiff" icon small @click="expanded = !expanded" class="text--disabled">
+                <v-icon v-if="expanded" small>mdi-table-row</v-icon>
+                <v-icon v-else small>mdi-table-column</v-icon>
+              </v-btn>
+              <MiguelTreeView :miguel="data.parameters" :network="data.network" openAll />
             </template>
           </v-col>
-          <v-col cols="6">
+          <v-col :cols="expanded ? 12 : 6" :class="expanded ? 'mt-4' : ''">
             <template v-if="hasStorageDiff">
               <span class="overline ml-3">Storage</span>&nbsp;
               <span
@@ -199,7 +203,8 @@ export default {
   },
   data: () => ({
     showRaw: false,
-    showParams: false
+    showParams: false,
+    expanded: false
   }),
   created() {
     this.showParams =
