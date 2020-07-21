@@ -256,17 +256,7 @@ export default {
           if (!res) {
             this.downloaded = true;  // prevent endless polling
           } else {
-            this.pushOperations(res.operations.sort(function(a, b) {
-              if (a.hash === b.hash) {
-                if (a.internal && b.internal) {
-                  return Math.sign(a.nonce - b.nonce);
-                } else {
-                  return Math.sign(+a.internal - +b.internal);
-                }
-              } else {
-                return 0;
-              }
-            }));
+            this.pushOperations(res.operations);
             this.downloaded = res.operations.length == 0;
             this.last_id = res.last_id;
           }
