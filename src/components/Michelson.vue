@@ -1,5 +1,5 @@
 <template>
-  <codemirror ref="editor" v-model="code" :options="cmOptions"></codemirror>
+  <codemirror ref="editor" v-model="value" :options="cmOptions"></codemirror>
 </template>
 
 <script>
@@ -17,7 +17,8 @@ export default {
   props: {
     code: String,
     firstLineNumber: Number,
-    mark: Object
+    mark: Object,
+    mutable: Boolean
   },
   components: {
     codemirror
@@ -28,6 +29,7 @@ export default {
     }
   },
   data: () => ({
+    value: "",
     cmOptions: {
       mode: "michelson",
       theme: "neo",
@@ -43,6 +45,10 @@ export default {
       this.cmOptions.firstLineNumber = this.firstLineNumber;
     if (this.$vuetify.theme.dark)
       this.cmOptions.theme = "darcula";
+    if (this.code !== null)
+      this.value = this.code
+    if (this.mutable)
+      this.cmOptions.readOnly = false;
 
     create();
   },
@@ -53,6 +59,11 @@ export default {
         { line: this.mark.row, ch: this.mark.end },
         { className: "error-mark" }
       );
+    }
+  },
+  watch: {
+    value(newValue) {
+      this.$emit('input', newValue);
     }
   }
 };

@@ -75,13 +75,14 @@ export default {
   watch: {
     show(newValue) {
       if (!newValue) return;
-      if (this.loaded) return;
       
       if (this.raw) {
         this.data = this.raw;
         this.loaded = true;
         return;
       }
+      
+      if (this.loaded) return;
 
       let res = null;
       const level = this.level && this.level > 0 ? this.level : "head";

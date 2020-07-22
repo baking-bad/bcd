@@ -13,7 +13,14 @@
                   <div class="mb-6">
                     <span class="caption font-weight-medium text-uppercase text--disabled">Parameters</span>
                   </div>
-                  <v-jsf v-model="model" :schema="selectedItem.schema"></v-jsf>
+                  <v-jsf v-model="model" :schema="selectedItem.schema">
+                    <template slot="custom-codemirror" slot-scope="{value, label, on}">
+                      <label class="codemirror-label">{{ label }}</label>
+                      <div class="mb-6 ba-1" style="border-radius: 3px;">
+                        <Michelson v-on="on" :code="value" mutable></Michelson>
+                      </div>
+                    </template>
+                  </v-jsf>
                 </div>
                 <div class="px-6 pt-4 pb-0 mr-2 mb-6 canvas optional-settings">
                   <div class="mb-6">
@@ -215,6 +222,7 @@ import { ThanosWallet } from "@thanos-wallet/dapp";
 
 import InternalOperation from "@/components/InternalOperation.vue";
 import RawJsonViewer from "@/components/RawJsonViewer.vue";
+import Michelson from "@/components/Michelson.vue";
 
 export default {
   name: "InteractTab",
@@ -224,7 +232,8 @@ export default {
   },
   components: {
     InternalOperation,
-    RawJsonViewer
+    RawJsonViewer,
+    Michelson
   },
   data: () => ({
     loading: true,
@@ -346,6 +355,9 @@ export default {
           placeholder: node.prim,
           label: node.title || defaultTitle[node.prim] || ""
         }   
+        if (node.prim === "lambda") {
+          node["x-display"] = "custom-codemirror"
+        }
       }
       if (node.properties) {
         for (var prop in node.properties) {
@@ -601,6 +613,19 @@ export default {
   & > .v-expansion-panel-header {
     background-color: var(--v-data-base);
   }
+}
+
+.codemirror-label {
+  font-size: 12px;
+  z-index: 100;
+  position: absolute;
+  transform: translateY(-12px) translateX(12px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
+  min-height: 6px;
 }
 
 </style>
