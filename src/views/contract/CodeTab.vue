@@ -19,6 +19,16 @@
             hide-details
           ></v-select>
           <v-spacer></v-spacer>
+          <v-btn 
+            class="mr-1 text--secondary"
+            v-clipboard="() => selectedCode"
+            v-clipboard:success="showClipboardOK"
+            small
+            text
+          >
+            <v-icon class="mr-1" small>mdi-content-copy</v-icon>
+            <span>Copy</span>
+          </v-btn>
           <v-btn @click="showRaw = true" small text class="text--secondary">
             <v-icon class="mr-1" small>mdi-code-json</v-icon>
             <span>Raw JSON</span>
@@ -116,7 +126,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["showError"]),
+    ...mapActions(["showError", "showClipboardOK"]),
     getFallbackLevel(protocol = "") {
       if (protocol !== "" && this.migrations) {
         for (var i = 0; i < this.migrations.length; i++) {
