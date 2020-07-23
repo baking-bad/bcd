@@ -87,9 +87,9 @@
           <v-chip v-for="tag in item.body.tags" :key="tag" class="mr-1 mb-3" small outlined pill>
             <span v-html="highlight(tag.toLowerCase())"></span>
           </v-chip>
-        </template>
-        <template v-else-if="item.type === 'operation'">
-          
+          <v-chip v-if="item.body.entrypoints" class="mr-1 mb-3" small outlined pill>
+            <span>{{ item.body.entrypoints.length }} entrypoints</span>
+          </v-chip>
         </template>
       </div>
 

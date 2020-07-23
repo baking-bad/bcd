@@ -7,6 +7,34 @@
           <span class="text--primary">{{ type }}</span>
         </span>
         <v-spacer></v-spacer>
+        <v-menu offset-y v-if="type === 'code'">
+          <template v-slot:activator="{ on, attrs }">
+            <v-btn text outlined v-bind="attrs" v-on="on" class="mr-4 text--secondary">
+              <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item
+              class="px-4"
+              v-for="(item, index) in ['parameter', 'storage', 'code', 'all']"
+              :key="index"
+              @click="() => {}"
+              v-clipboard="() => getSection(item)"
+              v-clipboard:success="showClipboardOK"
+            >
+              <v-list-item-title class="text-capitalize">{{ item }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+        <v-btn
+          v-else
+          class="mr-4 text--secondary"
+          v-clipboard="() => JSON.stringify(data, null, '  ')"
+          v-clipboard:success="showClipboardOK"
+          text
+        >
+          <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
+        </v-btn>
         <v-btn
           v-if="url"
           class="mr-4 text--secondary"
@@ -16,14 +44,6 @@
           text
         >
           <v-icon small class="mr-1">mdi-open-in-new</v-icon>In new tab
-        </v-btn>
-        <v-btn
-          class="mr-4 text--secondary"
-          v-clipboard="() => JSON.stringify(data, null, '  ')"
-          v-clipboard:success="showClipboardOK"
-          text
-        >
-          <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
         </v-btn>
         <v-btn text @click="close">
           <v-icon>mdi-close</v-icon>
@@ -61,7 +81,7 @@ export default {
   data: () => ({
     data: null,
     url: null,
-    loaded: false
+    loaded: false,
   }),
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
@@ -70,6 +90,16 @@ export default {
     },
     reset() {
       this.loaded = false;
+    },
+    getSection(section = undefined) {
+      if (section && Array.isArray(this.data)) {
+        for (var i = 0; i < this.data.length; i++) {
+          if (this.data[i].prim === section) {
+            return this.data[i];
+          }
+        }
+      }
+      return this.data;
     }
   },
   watch: {
@@ -81,7 +111,7 @@ export default {
         this.loaded = true;
         return;
       }
-      
+
       if (this.loaded) return;
 
       let res = null;
