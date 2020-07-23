@@ -372,7 +372,7 @@ export default {
       if (node.items) {
         this.applyStyles(node.items);
       }
-    },  
+    },
     getEntrypoints(selectedName = undefined) {
       this.loading = true;
       this.api
@@ -591,6 +591,12 @@ export default {
   text-transform: uppercase;
 }
 /* end fixing "+" button */
+
+.v-card__actions > .v-btn.v-btn--contained.v-size--default.primary {
+  background-color: var(--v-canvas--base) !important;
+  box-shadow: none !important;
+  margin-right: 5px;
+}
 
 </style>
 
