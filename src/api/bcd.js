@@ -196,13 +196,13 @@ export class BetterCallApi {
       bin_path: bin_path,
       data: data
     }
-    if (source !== null) {
+    if (source) {
       body.source = source;
     }
-    if (amount !== null) {
+    if (amount) {
       body.amount = parseInt(amount);
     }
-    let method = source !== null ? "run_operation" : "trace";
+    let method = source ? "run_operation" : "trace";
 
     return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/${method}`, body)
       .then((res) => {
