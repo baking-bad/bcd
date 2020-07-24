@@ -262,7 +262,7 @@ export default {
   },
   computed: {
     standard() {
-      const standards = { fa12: "FA1.2", fa1: "FA1" };
+      const standards = { fa2: "FA2", fa12: "FA1.2", fa1: "FA1", delegator: "manager.tz" };
       if (this.contract.tags) {
         for (var tag in standards) {
           if (this.contract.tags.includes(tag)) {
