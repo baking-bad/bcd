@@ -449,7 +449,7 @@ export default {
         )
         .then(res => {
           if (res) {
-            this.simulatedOperation = res;
+            this.simulatedOperation = res[0];
             if (res.length > 1) {
               this.simulatedOperation.internal_operations = res.slice(1);
             }
