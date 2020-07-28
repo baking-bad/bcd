@@ -226,7 +226,7 @@ export class BetterCallApi {
   }
 
   getContractStorageRaw(network, address) {
-    return this.api.get(`/contract/${network}/${address}/raw_storage`)
+    return this.api.get(`/contract/${network}/${address}/storage/raw`)
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -236,7 +236,29 @@ export class BetterCallApi {
   }
 
   getContractStorageRich(network, address) {
-    return this.api.get(`/contract/${network}/${address}/rich_storage`)
+    return this.api.get(`/contract/${network}/${address}/storage/rich`)
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getContractStorageSchema(network, address, fill_type='empty') {
+    return this.api.get(`/contract/${network}/${address}/storage/schema?fill_type=${fill_type}`)
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  prepareToFork(network, address, storage) {
+    return postCancellable(this.api, `/contract/${network}/${address}/fork`, {
+      storage: storage
+    })
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);

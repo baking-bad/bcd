@@ -18,6 +18,7 @@ import CodeTab from '@/views/contract/CodeTab.vue'
 import InteractTab from '@/views/contract/InteractTab.vue'
 import StorageTab from '@/views/contract/StorageTab.vue'
 import LogTab from '@/views/contract/LogTab.vue'
+import ForkTab from '@/views/contract/ForkTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
 import OpgContents from '@/views/opg/ContentsTab.vue'
@@ -166,7 +167,14 @@ const router = new Router({
                     name: 'log',
                     component: LogTab,
                     props: true
-                }
+                },
+                {
+                    path: 'fork',
+                    name: 'fork',
+                    components: {
+                        default: ForkTab,
+                    }
+                },
             ]
         },
         {

@@ -35,6 +35,14 @@
       </v-tooltip>
       <v-tooltip bottom>
         <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon class="mr-2" @click="onForkClick">
+            <v-icon class="text--secondary">mdi-source-fork</v-icon>
+          </v-btn>
+        </template>
+        Fork contract
+      </v-tooltip>
+      <v-tooltip bottom>
+        <template v-slot:activator="{ on }">
           <v-btn
             v-on="on"
             icon
@@ -240,13 +248,13 @@ export default {
     loading: Boolean,
     contract: Object,
     address: String,
-    network: String
+    network: String,
   },
   components: {
     SimilarItem,
     AccountBox,
     BakingBadFooter,
-    WatchSettings
+    WatchSettings,
   },
   data: () => ({
     same: [],
@@ -255,14 +263,19 @@ export default {
     similarCount: 0,
     similarLoading: false,
     sameLoading: false,
-    showWatchSettings: false
+    showWatchSettings: false,
   }),
   created() {
     this.requestSameSimilar();
   },
   computed: {
     standard() {
-      const standards = { fa2: "FA2", fa12: "FA1.2", fa1: "FA1", delegator: "manager.tz" };
+      const standards = {
+        fa2: "FA2",
+        fa12: "FA1.2",
+        fa1: "FA1",
+        delegator: "manager.tz",
+      };
       if (this.contract.tags) {
         for (var tag in standards) {
           if (this.contract.tags.includes(tag)) {
@@ -274,12 +287,12 @@ export default {
     },
     alias() {
       if (this.contract.subscription && this.contract.subscription.alias) {
-        return this.contract.subscription.alias
+        return this.contract.subscription.alias;
       }
       if (this.contract.alias) {
-        return this.contract.alias
+        return this.contract.alias;
       }
-      return undefined
+      return undefined;
     },
     isAuthorized() {
       return this.$store.state.isAuthorized;
@@ -292,19 +305,19 @@ export default {
       if (this.contract.slug) {
         routeData = this.$router.resolve({
           name: "slug",
-          params: { slug: this.contract.slug }
+          params: { slug: this.contract.slug },
         });
       } else {
         routeData = this.$router.resolve({
           name: "contract",
           params: {
             address: this.address,
-            network: this.network
-          }
+            network: this.network,
+          },
         });
       }
       return `${window.location.protocol}//${window.location.host}${routeData.href}`;
-    }
+    },
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
@@ -313,12 +326,12 @@ export default {
       this.sameCount = 0;
       this.api
         .getSameContracts(this.network, this.address, 0)
-        .then(res => {
+        .then((res) => {
           if (!res) return;
           this.same = res.contracts;
           this.sameCount = res.count;
         })
-        .catch(err => {
+        .catch((err) => {
           this.showError(err);
           console.log(err);
         });
@@ -327,12 +340,12 @@ export default {
       this.similarCount = 0;
       this.api
         .getSimilarContracts(this.network, this.address, 0)
-        .then(res => {
+        .then((res) => {
           if (!res) return;
           this.similar = res.contracts;
           this.similarCount = res.count;
         })
-        .catch(err => {
+        .catch((err) => {
           this.showError(err);
           console.log(err);
         });
@@ -341,11 +354,11 @@ export default {
       this.sameLoading = true;
       this.api
         .getSameContracts(this.network, this.address, this.same.length)
-        .then(res => {
+        .then((res) => {
           if (!res) return;
           this.same.push(...res.contracts);
         })
-        .catch(err => {
+        .catch((err) => {
           this.showError(err);
           console.log(err);
         })
@@ -355,20 +368,26 @@ export default {
       this.similarLoading = true;
       this.api
         .getSimilarContracts(this.network, this.address, this.similar.length)
-        .then(res => {
+        .then((res) => {
           if (!res) return;
           this.similar.push(...res.contracts);
         })
-        .catch(err => {
+        .catch((err) => {
           this.showError(err);
           console.log(err);
         })
         .finally(() => (this.similarLoading = false));
+    },
+    onForkClick() {
+      this.$emit('fork', {
+        address: this.address,
+        network: this.network
+      });
     }
   },
   watch: {
-    address: "requestSameSimilar"
-  }
+    address: "requestSameSimilar",
+  },
 };
 </script>
 
