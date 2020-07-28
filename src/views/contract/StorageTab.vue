@@ -1,70 +1,80 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
-    <v-skeleton-loader v-if="loading" type="card-heading, image" />
-    <div v-else-if="storage || rawStorage">
-      <v-card tile flat outlined class="pa-0">
-        <v-card-title class="d-flex sidebar px-4 py-3">
-          <span class="caption font-weight-bold text-uppercase text--secondary">
-            Latest
-          </span>
-          <v-spacer></v-spacer>
-          <v-btn @click="showRaw = true" small text class="text--secondary">
-            <v-icon class="mr-1" small>mdi-code-json</v-icon>
-            <span>Raw JSON</span>
-          </v-btn>
-          <v-tooltip v-if="!raw" top>
-            <template v-slot:activator="{ on }">
+    <v-skeleton-loader :loading="loading" type="card-heading, image">
+      <v-row v-if="storage || rawStorage">
+        <v-col cols="8">
+          <v-card tile flat outlined class="pa-0">
+            <v-card-title class="d-flex sidebar px-4 py-3">
+              <span class="caption font-weight-bold text-uppercase text--secondary">Latest</span>
+              <v-spacer></v-spacer>
+              <v-btn @click="showRaw = true" small text class="text--secondary">
+                <v-icon class="mr-1" small>mdi-code-json</v-icon>
+                <span>Raw JSON</span>
+              </v-btn>
+              <v-tooltip v-if="!raw" top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    small
+                    text
+                    class="ml-2 text--secondary"
+                    @click="downloadFile"
+                    :loading="downloading"
+                    :disabled="downloading"
+                  >
+                    <v-icon class="mr-1" small>mdi-download-outline</v-icon>
+                    <span>Full dump</span>
+                  </v-btn>
+                </template>
+                Raw snapshot with all big map data
+              </v-tooltip>
               <v-btn
-                v-on="on"
+                v-if="rawStorage && raw"
+                @click="() => {
+                  $clipboard(getStorageString());
+                  showClipboardOK();
+                }"
+                class="ml-2"
                 small
                 text
-                class="ml-2 text--secondary"
-                @click="downloadFile"
-                :loading="downloading"
-                :disabled="downloading"
               >
-                <v-icon class="mr-1" small>mdi-download-outline</v-icon>
-                <span>Full dump</span>
+                <v-icon class="mr-1" small>mdi-content-copy</v-icon>
+                <span class="text--secondary">Copy</span>
               </v-btn>
-            </template>
-            Raw snapshot with all big map data
-          </v-tooltip>
-          <v-btn
-            v-if="rawStorage && raw"
-            @click="{
-              $clipboard(getStorageString());
-              showClipboardOK();
-            }"
-            class="ml-2"
-            small
-            text
-          >
-            <v-icon class="mr-1" small>mdi-content-copy</v-icon>
-            <span class="text--secondary">Copy</span>
-          </v-btn>
-          <v-btn v-if="raw" @click="getStorage()" class="ml-2 text--secondary" small text>
-            <v-icon class="mr-1" small>mdi-file-tree</v-icon>
-            <span>Switch to Tree View</span>
-          </v-btn>
-          <v-btn v-else @click="getStorageRaw()" class="ml-2 text--secondary" small text>
-            <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
-            <span>Switch to Micheline</span>
-          </v-btn>
-        </v-card-title>
-        <v-card-text class="pa-0">
-          <Michelson v-if="raw" :code="rawStorage"></Michelson>
-          <div v-else class="py-4 data">
-            <MiguelTreeView :miguel="storage" :network="network" openAll />     
-          </div>    
-        </v-card-text>
-      </v-card>
-    </div>  
-    <ErrorState v-else />
-    <RawJsonViewer
-      :show.sync="showRaw"
-      type="storage"
-      :network="network"
-      :address="address" />
+              <v-btn v-if="raw" @click="getStorage()" class="ml-2 text--secondary" small text>
+                <v-icon class="mr-1" small>mdi-file-tree</v-icon>
+                <span>Switch to Tree View</span>
+              </v-btn>
+              <v-btn v-else @click="getStorageRaw()" class="ml-2 text--secondary" small text>
+                <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
+                <span>Switch to Micheline</span>
+              </v-btn>
+            </v-card-title>
+            <v-card-text class="pa-0">
+              <Michelson v-if="raw" :code="rawStorage"></Michelson>
+              <div v-else class="py-4 data">
+                <MiguelTreeView :miguel="storage" :network="network" openAll />
+              </div>
+            </v-card-text>
+          </v-card>
+        </v-col>
+        <v-col cols="4">
+          <v-skeleton-loader :loading="loading" type="card-heading, image">
+            <v-card v-if="schema" tile flat outlined class="pa-0">
+              <v-card-title class="d-flex sidebar px-4 py-3">
+                <span class="caption font-weight-bold text-uppercase text--secondary">Type</span>
+              </v-card-title>
+              <v-card-text class="data">
+                <TypeDef :typedef="schema.typedef" first="storage" class="pt-4"/>
+              </v-card-text>
+            </v-card>
+            <div v-else />
+          </v-skeleton-loader>
+        </v-col>
+      </v-row>
+      <ErrorState v-else />
+    </v-skeleton-loader>
+    <RawJsonViewer :show.sync="showRaw" type="storage" :network="network" :address="address" />
   </v-container>
 </template>
 
@@ -72,8 +82,9 @@
 import { mapActions } from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
-import RawJsonViewer from "@/components/RawJsonViewer.vue"
+import RawJsonViewer from "@/components/RawJsonViewer.vue";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
+import TypeDef from "@/views/contract/TypeDef.vue";
 
 export default {
   name: "StorageTab",
@@ -81,11 +92,12 @@ export default {
     RawJsonViewer,
     MiguelTreeView,
     ErrorState,
-    Michelson
+    Michelson,
+    TypeDef,
   },
   props: {
     address: String,
-    network: String
+    network: String,
   },
   data: () => ({
     loading: true,
@@ -94,8 +106,9 @@ export default {
     rawStorage: null,
     downloading: false,
     raw: false,
+    schema: null,
   }),
-  created() {
+  mounted() {
     this.getStorage(true);
   },
   methods: {
@@ -103,17 +116,22 @@ export default {
     getStorage(force = false) {
       if (this.storage) {
         this.raw = false;
-        if (!force) return
+        if (!force) return;
       }
       this.loading = true;
       this.api
         .getContractStorage(this.network, this.address)
-        .then(res => {
+        .then((res) => {
           if (!res) return;
           this.storage = res;
           this.raw = false;
+          return this.api.getContractStorageSchema(this.network, this.address);
         })
-        .catch(err => {
+        .then((res) => {
+          if (!res) return;
+          this.schema = res;
+        })
+        .catch((err) => {
           console.log(err);
           this.showError(err);
         })
@@ -122,31 +140,35 @@ export default {
     getStorageRaw(force = false) {
       if (this.rawStorage) {
         this.raw = true;
-        if (!force) return
+        if (!force) return;
       }
       this.loading = true;
       this.api
         .getContractStorageRaw(this.network, this.address)
-        .then(res => {
+        .then((res) => {
           this.rawStorage = String(res);
           this.raw = true;
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.showError(err);
         })
         .finally(() => (this.loading = false));
     },
-    getStorageString() {
-      if (this.rawStorage) {
-        return this.rawStorage.replace(/\n|\s+/gm, " ");
-      }
+    getStorageSchema() {
+      this.api
+        .getContractStorageSchema(this.network, this.address)
+
+        .catch((err) => {
+          console.log(err);
+          this.showError(err);
+        });
     },
     downloadFile() {
       this.downloading = true;
       this.api
         .getContractStorageRich(this.network, this.address)
-        .then(res => {
+        .then((res) => {
           var element = document.createElement("a");
           element.setAttribute(
             "href",
@@ -159,17 +181,17 @@ export default {
           element.click();
           document.body.removeChild(element);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.showError(err);
         })
         .finally(() => (this.downloading = false));
-    }
+    },
   },
   watch: {
     address() {
       this.getStorage(true);
-    }
-  }
+    },
+  },
 };
 </script>

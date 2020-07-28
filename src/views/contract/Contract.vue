@@ -6,13 +6,25 @@
           <SideNavigation />
         </v-col>
         <v-col cols="10">
-          <SideBar :loading="loading" :address="address" :network="network" :contract="contract" />
+          <SideBar
+            :loading="loading"
+            :address="address"
+            :network="network"
+            :contract="contract"
+            v-on:fork="onFork"
+          />
         </v-col>
       </v-row>
     </v-navigation-drawer>
 
     <v-toolbar flat class color="toolbar" height="75">
-      <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
+      <v-tabs
+        v-model="tab"
+        center-active
+        background-color="transparent"
+        slider-color="primary"
+        class="ml-4"
+      >
         <v-tab :to="{ name: 'operations' }" replace style="width: 175px;">
           <v-icon left small>mdi-swap-horizontal</v-icon>operations
           <span class="ml-1">({{ contract.tx_count || 0 }})</span>
@@ -30,6 +42,9 @@
           <v-icon left small>mdi-alert-circle-outline</v-icon>Log
           <span class="ml-1">({{ migrations.length }})</span>
         </v-tab>
+        <v-tab :to="{ name: 'fork' }" replace v-if="showFork">
+          <v-icon left small>mdi-source-fork</v-icon>Fork
+        </v-tab>
       </v-tabs>
       <div class="mr-6 mt-6" style="width: 800px;">
         <SearchBox :inplace="true"></SearchBox>
@@ -37,11 +52,11 @@
     </v-toolbar>
 
     <router-view
-      :address="address" 
+      :address="address"
       :network="network"
       :contract="contract"
-      :migrations="migrations">
-    </router-view>
+      :migrations="migrations"
+    ></router-view>
   </div>
 </template>
 
@@ -58,30 +73,33 @@ export default {
   components: {
     SearchBox,
     SideNavigation,
-    SideBar
+    SideBar,
   },
   props: {
     network: String,
-    address: String
+    address: String,
   },
   data: () => ({
     contractLoading: true,
     migrationsLoading: true,
     contract: {},
-    migrations: []
+    migrations: [],
+    showFork: false,
+    tab: null,
   }),
   created() {
+    this.showFork = this.$route.name === "fork";
     this.getContract();
     this.getMigrations();
   },
   computed: {
     loading() {
       return this.contractLoading || this.migrationsLoading;
-    }
+    },
   },
   methods: {
     ...mapActions({
-      showError: "showError"
+      showError: "showError",
     }),
     getContract() {
       if (
@@ -93,11 +111,11 @@ export default {
       this.contractLoading = true;
       this.api
         .getContract(this.network, this.address)
-        .then(res => {
+        .then((res) => {
           if (!res) return;
           this.contract = res;
         })
-        .catch(err => {
+        .catch((err) => {
           const matches = err.message.match(/\d+/);
           if (matches !== null && matches.length === 1)
             this.errorCode = parseInt(matches[0]);
@@ -107,16 +125,20 @@ export default {
     },
     getMigrations() {
       this.migrationsLoading = true;
-      this.api.getContractMigrations(this.network, this.address)
-        .then(res => {
+      this.api
+        .getContractMigrations(this.network, this.address)
+        .then((res) => {
           if (!res) return;
           this.migrations = res;
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.showError(err);
         })
         .finally(() => (this.migrationsLoading = false));
+    },
+    onFork() {
+      this.showFork = !this.showFork;
     },
   },
   watch: {
@@ -124,8 +146,11 @@ export default {
       cancelRequests();
       this.getContract();
       this.getMigrations();
-    }
-  }
+    },
+    showFork: function (newValue) {
+      this.$router.push({ name: newValue ? "fork" : "operations" });
+    },
+  },
 };
 </script>
 

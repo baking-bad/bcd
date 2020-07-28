@@ -18,15 +18,15 @@ export default {
     code: String,
     firstLineNumber: Number,
     mark: Object,
-    mutable: Boolean
+    mutable: Boolean,
   },
   components: {
-    codemirror
+    codemirror,
   },
   computed: {
     editor() {
       return this.$refs.editor.editor;
-    }
+    },
   },
   data: () => ({
     value: "",
@@ -37,18 +37,15 @@ export default {
       lineNumbers: true,
       viewportMargin: Infinity,
       readOnly: true,
-      autoRefresh: true
-    }
+      autoRefresh: true,
+    },
   }),
   created() {
     if (this.firstLineNumber)
       this.cmOptions.firstLineNumber = this.firstLineNumber;
-    if (this.$vuetify.theme.dark)
-      this.cmOptions.theme = "darcula";
-    if (this.code !== null)
-      this.value = this.code
-    if (this.mutable)
-      this.cmOptions.readOnly = false;
+    if (this.$vuetify.theme.dark) this.cmOptions.theme = "darcula";
+    if (this.code !== null) this.value = this.code;
+    if (this.mutable) this.cmOptions.readOnly = false;
 
     create();
   },
@@ -63,9 +60,16 @@ export default {
   },
   watch: {
     value(newValue) {
-      this.$emit('input', newValue);
-    }
-  }
+      this.$emit("input", newValue);
+    },
+    code(newValue) {
+      if (newValue === null) {
+        this.value = "";
+      } else {
+        this.value = newValue;
+      }
+    },
+  },
 };
 </script>
 
@@ -91,7 +95,7 @@ export default {
   padding-left: 15px !important;
 }
 .error-mark {
-  background-color: #F4433625;
+  background-color: #f4433625;
   color: var(--v-error-base) !important;
 }
 </style>
