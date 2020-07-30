@@ -13,10 +13,11 @@
 
     <v-toolbar flat class color="toolbar" height="75">
       <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
-        <v-tab v-for="(state, idx) in states" :key="idx" :to="`/stats/${state.network}`" replace>
-          <v-icon v-if="state.network === 'mainnet'" small left>mdi-crown</v-icon>
-          <v-icon v-else small left>mdi-flask-outline</v-icon>
-          {{ state.network }}
+        <v-tab :to="{name: 'stats_general'}" replace>
+          <v-icon left small>mdi-align-vertical-bottom</v-icon>&nbsp;General
+        </v-tab>
+        <v-tab :to="{name: 'stats_tokens'}" replace>
+          <v-icon left small>mdi-code-brackets</v-icon>&nbsp;Tokens
         </v-tab>
       </v-tabs>
       <div class="mr-6 mt-6" style="width: 800px;">
@@ -24,7 +25,7 @@
       </div>
     </v-toolbar>
 
-    <router-view></router-view>
+    <router-view :network="currentNetwork"></router-view>
   </div>
 </template>
 
@@ -32,21 +33,19 @@
 import { mapActions } from "vuex";
 import SearchBox from "@/components/SearchBox.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
-import SideBar from "@/views/stats/SideBar.vue"
+import SideBar from "@/views/stats/SideBar.vue";
 
 export default {
   name: "Stats",
   components: {
     SearchBox,
     SideNavigation,
-    SideBar
-  },
-  props: {
-    network: String
+    SideBar,
   },
   data: () => ({
     loading: true,
-    states: []
+    states: [],
+    currentNetwork: null,
   }),
   created() {
     this.getStats();
@@ -54,19 +53,21 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     navigate() {
-      if (!this.network && this.states.length > 0) {
-        this.$router.push({name: 'network_stats', params: {network: this.states[0].network}});
-      }
+      if (this.$route.params.network)
+        this.currentNetwork = this.$route.params.network;
+      else if (this.states.length > 0)
+        this.currentNetwork = this.states[0].network;
     },
     getStats() {
       this.loading = true;
-      this.api.getStats()
-        .then(res => {
+      this.api
+        .getStats()
+        .then((res) => {
           if (!res) return;
-          this.states = res.sort(function(a, b) {
-            if (a.network === 'mainnet' || b.network === 'zeronet') {
+          this.states = res.sort(function (a, b) {
+            if (a.network === "mainnet" || b.network === "zeronet") {
               return -1;
-            } else if(b.network === 'mainnet' || a.network === 'zeronet') {
+            } else if (b.network === "mainnet" || a.network === "zeronet") {
               return 1;
             } else {
               return b.network.localeCompare(a.network);
@@ -74,7 +75,7 @@ export default {
           });
           this.navigate();
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.showError(err);
         })
@@ -82,8 +83,8 @@ export default {
     },
   },
   watch: {
-    $route: 'navigate'
-  }
+    $route: "navigate",
+  },
 };
 </script>
 
