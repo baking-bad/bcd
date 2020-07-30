@@ -366,7 +366,7 @@ export default {
         .getContractEntrypointData(
           this.network,
           this.address,
-          this.bin_path,
+          this.binPath,
           this.value,
           rawJSON ? "" : "michelson"
         )
