@@ -79,8 +79,8 @@ export class BetterCallApi {
     let params = {}
     if (offset > 0) params.offset = offset;
     return getCancellable(this.api, `/contract/${network}/${address}/same`, {
-        params: params
-      })
+      params: params
+    })
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {
@@ -94,8 +94,8 @@ export class BetterCallApi {
     let params = {}
     if (offset > 0) params.offset = offset;
     return getCancellable(this.api, `/contract/${network}/${address}/similar`, {
-        params: params
-      })
+      params: params
+    })
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {
@@ -187,7 +187,7 @@ export class BetterCallApi {
         if (res.status != 200) {
           throw new RequestFailedError(res);
         }
-        return res.data;    
+        return res.data;
       })
   }
 
@@ -245,7 +245,7 @@ export class BetterCallApi {
       })
   }
 
-  getContractStorageSchema(network, address, fill_type='empty') {
+  getContractStorageSchema(network, address, fill_type = 'empty') {
     return this.api.get(`/contract/${network}/${address}/storage/schema?fill_type=${fill_type}`)
       .then((res) => {
         if (res.status != 200) {
@@ -324,6 +324,24 @@ export class BetterCallApi {
   getRandomContract() {
     cancelRequests();
     return getCancellable(this.api, `/pick_random`, {})
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getTokensByVersion(network, version, lastId = null, size = 0) {
+    let params = ''
+    if (size > 0) {
+      params += `size=${size}`
+    }
+    if (lastId !== null) {
+      if (params !== '') params += '&'
+      params += `last_id=${lastId}`
+    }
+    return getCancellable(this.api, `/tokens/${network}/version/${version}?${params}`, {})
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -442,10 +460,10 @@ export class BetterCallApi {
 
   getProfileSubscriptions() {
     return this.api.get(`/profile/subscriptions`, {
-        headers: {
-          'Authorization': getJwt()
-        }
-      })
+      headers: {
+        'Authorization': getJwt()
+      }
+    })
       .then((res) => {
         return res.data
       })
@@ -477,13 +495,13 @@ export class BetterCallApi {
 
   removeProfileSubscription(network, address) {
     return this.api.delete(`/profile/subscriptions`, {
-        headers: {
-          'Authorization': getJwt()
-        },
-        data: {
-          network, address
-        }
-      })
+      headers: {
+        'Authorization': getJwt()
+      },
+      data: {
+        network, address
+      }
+    })
       .then((res) => {
         return res.data
       })

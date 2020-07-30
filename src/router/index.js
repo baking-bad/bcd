@@ -9,6 +9,7 @@ import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
 import Stats from '@/views/stats/Stats.vue'
 import NetworkTab from '@/views/stats/NetworkTab.vue'
+import TokensTab from '@/views/stats/TokensTab.vue'
 
 import Diff from '@/views/diff/Diff.vue'
 
@@ -62,17 +63,27 @@ const router = new Router({
             props: { default: true },
         },
         {
-            path: '/stats',
+            path: '/stats/:network',
             components: {
                 default: Stats,
             },
-            name: 'stats',
             props: { default: true },
             children: [
                 {
-                    path: ':network',
-                    name: 'network_stats',
+                    name: 'stats',
+                    path: '',
+                    redirect: 'stats_general'
+                },
+                {
+                    name: 'stats_general',
+                    path: 'general',
                     component: NetworkTab,
+                    props: true
+                },
+                {
+                    path: 'tokens',
+                    name: 'stats_tokens',
+                    component: TokensTab,
                     props: true
                 }
             ]
@@ -84,15 +95,7 @@ const router = new Router({
             },
             name: 'diff',
             props: { default: true },
-        },
-        // {
-        //     path: '/projects',
-        //     components: {
-        //         default: Projects,
-        //         nav: Nav
-        //     },
-        //     name: 'projects'
-        // },      
+        },  
         { // backward compatibility
             path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
             children: [

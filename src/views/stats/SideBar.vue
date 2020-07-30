@@ -21,23 +21,23 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content color="data">
             <v-list class="stats-sidebar-list">
-              <template v-for="(state, idx) in states">
-                <v-divider :key="'divider' + idx" v-if="idx > 0"></v-divider>
-                <v-list-item :key="idx">
-                  <v-list-item-content>
-                    <v-list-item-title class="overline text--primary">{{ state.network }}</v-list-item-title>
-                    <v-list-item-subtitle class="body-2">{{ state.protocol.slice(0, 8) }}</v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-action>                   
-                    <v-list-item-action-text class="overline text--primary">
-                      {{ helpers.formatDatetime(state.timestamp) }}
-                    </v-list-item-action-text>
-                    <v-list-item-action-text class="body-2">
-                      level {{ state.level }}
-                    </v-list-item-action-text>
-                  </v-list-item-action>
-                </v-list-item>
-              </template>
+              <v-list-item-group v-model="item" mandatory>
+                <template v-for="(state, idx) in states">
+                  <v-divider :key="'divider' + idx" v-if="idx > 0"></v-divider>
+                  <v-list-item :key="idx" @click="navigate(state)">
+                    <v-list-item-content>
+                      <v-list-item-title class="overline text--primary">{{ state.network }}</v-list-item-title>
+                      <v-list-item-subtitle class="body-2">{{ state.protocol.slice(0, 8) }}</v-list-item-subtitle>
+                    </v-list-item-content>
+                    <v-list-item-action>
+                      <v-list-item-action-text
+                        class="overline text--primary"
+                      >{{ helpers.formatDatetime(state.timestamp) }}</v-list-item-action-text>
+                      <v-list-item-action-text class="body-2">level {{ state.level }}</v-list-item-action-text>
+                    </v-list-item-action>
+                  </v-list-item>
+                </template>
+              </v-list-item-group>
             </v-list>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -55,15 +55,28 @@ export default {
   name: "SideBar",
   props: {
     states: Array,
-    loading: Boolean
+    loading: Boolean,
   },
   components: {
-    BakingBadFooter
+    BakingBadFooter,
   },
+  created() {
+    this.states.forEach((x, idx) => {
+      if (x.network === this.$route.params.network) this.item = idx;
+    })
+  },
+  data: () => ({
+    item: 0,
+  }),
   computed: {
     apiHost() {
       var url = new URL(this.config.API_URI);
       return url.host;
+    },
+  },
+  methods: {
+    navigate(state) {
+      this.$router.push(`/stats/${state.network}/general`)
     }
   }
 };
