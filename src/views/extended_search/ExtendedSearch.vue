@@ -159,7 +159,7 @@ import { mapActions } from "vuex";
 import SearchFilters from "@/views/extended_search/SearchFilters.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import ResultItem from "@/views/extended_search/ResultItem.vue";
-import EmptyState from "@/components/EmptyState.vue"
+import EmptyState from "@/components/EmptyState.vue";
 
 export default {
   name: "ExtendedSearch",
@@ -167,7 +167,7 @@ export default {
     SearchFilters,
     SideNavigation,
     ResultItem,
-    EmptyState
+    EmptyState,
   },
   data: () => ({
     suggests: [],
@@ -183,33 +183,33 @@ export default {
     timeItems: [
       {
         name: "Any time",
-        value: 0
+        value: 0,
       },
       {
         name: "Last hour",
-        value: 1
+        value: 1,
       },
       {
         name: "Last 24 hours",
-        value: 2
+        value: 2,
       },
       {
         name: "Last week",
-        value: 3
+        value: 3,
       },
       {
         name: "Last month",
-        value: 4
+        value: 4,
       },
       {
         name: "Last year",
-        value: 5
-      }
+        value: 5,
+      },
     ],
     filters: {
       startTime: 0,
       networks: [],
-      languages: []
+      languages: [],
     },
     _timerId: null,
     _locked: false,
@@ -225,7 +225,7 @@ export default {
         ["delegate", "address"],
         ["hardcoded", "strings inside the code section"],
         ["manager", "[deployer] address"],
-        ["address"]
+        ["address"],
       ],
       operations: [
         ["entrypoint", ""],
@@ -235,15 +235,15 @@ export default {
         ["error.id", "if failed"],
         ["hash", "of the operation group"],
         ["source", ""],
-        ["source_alias", ""]
+        ["source_alias", ""],
       ],
       "big maps": [
         ["key_strings", ""],
         ["value_strings", ""],
         ["key_hash", ""],
-        ["address", "of the owner contract"]
-      ]
-    }
+        ["address", "of the owner contract"],
+      ],
+    },
   }),
   computed: {
     indices() {
@@ -255,7 +255,7 @@ export default {
         return ["bigmapdiff"];
       }
       return [];
-    }
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -273,31 +273,6 @@ export default {
         this.fetchSearchDebounced(++this.seqno, true);
       }
     },
-    searchMempool(opgHash) {
-      this.api
-        .getOPG(opgHash)
-        .then(res => {
-          if (res) {
-            this.suggests = res.map(op => {
-              return {
-                type: "operation",
-                value: op.hash,
-                body: op,
-                highlights: { hash: op.hash }
-              };
-            });
-            this.total = res.length;
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        })
-        .finally(() => {
-          this.loading = false;
-          this.cold = false;
-        });
-    },
     search(
       text,
       indices = [],
@@ -306,14 +281,12 @@ export default {
       languages = [],
       time = {}
     ) {
-      let hasText = text != null && text.length >= 2;
-      if (!this.loading && hasText && !this.completed) {
+      if (!this.loading && !this.completed) {
         this.loading = true;
         let offset = push ? this.suggests.length : 0;
         this.api
           .search(text, indices, offset, networks, languages, time, 1)
-          .then(res => {
-            this.completed = res.items.length == 0;
+          .then((res) => {
             if (!this.completed) {
               if (push) {
                 this.suggests.push(...res.items);
@@ -322,19 +295,16 @@ export default {
               }
             }
             this.total = res.count;
+            this.completed = (res.items.length == 0) || (this.total == 1 && this.suggests.length == 1 && this.suggests[0].body.mempool);
             this.elasticTime = res.time;
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
             this.showError(err);
           })
           .finally(() => {
-            if (this.suggests.length === 0 && this.isOpgHash(text)) {
-              this.searchMempool(text);
-            } else {
-              this.loading = false;
-              this.cold = false;
-            }
+            this.loading = false;
+            this.cold = false;
           });
       }
     },
@@ -372,7 +342,7 @@ export default {
     },
     getCatavaSrc() {
       return `https://services.tzkt.io/v1/avatars/${this.searchText}`;
-    }
+    },
   },
   watch: {
     searchText(val) {
@@ -394,12 +364,12 @@ export default {
     },
     filters: {
       deep: true,
-      handler: function() {
+      handler: function () {
         if (this.initializing) return;
         this.fetchSearchDebounced(++this.seqno);
-      }
-    }
-  }
+      },
+    },
+  },
 };
 </script>
 
