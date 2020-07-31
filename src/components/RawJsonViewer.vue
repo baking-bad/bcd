@@ -1,5 +1,12 @@
 <template>
-  <v-dialog class="raw-json-dialog" v-model="show" fullscreen scrollable persistent :retain-focus="false">
+  <v-dialog
+    class="raw-json-dialog"
+    v-model="show"
+    fullscreen
+    scrollable
+    persistent
+    :retain-focus="false"
+  >
     <v-card>
       <v-card-title class="sidebar py-2" primary-title>
         <span class="body-1 font-weight-medium text-uppercase text--secondary">
@@ -46,13 +53,17 @@
           <v-icon small class="mr-1">mdi-open-in-new</v-icon>In new tab
         </v-btn>
         <v-btn text @click="close">
-          <v-icon>mdi-close</v-icon>
-          Close
+          <v-icon>mdi-close</v-icon>Close
         </v-btn>
       </v-card-title>
       <v-progress-linear absolute v-if="!loaded" indeterminate color="primary"></v-progress-linear>
       <v-card-text class="data" style="max-height: calc(100% - 52px);">
-        <vue-json-pretty class="raw-json-viewer" v-if="loaded" :data="data" :highlightMouseoverNode="true"></vue-json-pretty>
+        <vue-json-pretty
+          class="raw-json-viewer"
+          v-if="loaded"
+          :data="data"
+          :highlightMouseoverNode="true"
+        ></vue-json-pretty>
       </v-card-text>
     </v-card>
   </v-dialog>
@@ -73,10 +84,10 @@ export default {
     address: String,
     hash: String,
     ptr: String,
-    keyhash: String
+    keyhash: String,
   },
   components: {
-    VueJsonPretty
+    VueJsonPretty,
   },
   data: () => ({
     data: null,
@@ -100,12 +111,12 @@ export default {
         }
       }
       return this.data;
-    }
+    },
   },
   watch: {
     show(newValue) {
       if (!newValue) return;
-      
+
       if (this.raw) {
         this.data = this.raw;
         this.loaded = true;
@@ -129,22 +140,18 @@ export default {
       } else if (this.type === "code") {
         res = this.rpc.getContractCode(this.network, level, this.address);
       } else if (this.type === "storage") {
-        res = this.rpc.getContractStorage(
-          this.network,
-          level,
-          this.address
-        );
+        res = this.rpc.getContractStorage(this.network, level, this.address);
       } else {
         this.showError(`Unsupported type ${this.type}`);
       }
 
       res
-        .then(r => {
+        .then((r) => {
           this.data = r.data;
           this.url = r.url;
           this.loaded = true;
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.showError(err);
         });
@@ -155,8 +162,8 @@ export default {
     address: "reset",
     hash: "reset",
     ptr: "reset",
-    keyhash: "reset"
-  }
+    keyhash: "reset",
+  },
 };
 </script>
 
