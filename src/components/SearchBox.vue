@@ -76,13 +76,13 @@
         <v-list-item-action-text>
           <span
             class="body-2"
-            v-if="!['alias', 'key_strings', 'entrypoint'].includes(item.body.found_by) 
+            v-if="!['alias', 'key_strings', 'entrypoint', ''].includes(item.body.found_by) 
                 && item.highlights[item.body.found_by]"
             v-html="item.highlights[item.body.found_by][0]"
           ></span>
         </v-list-item-action-text>
         <v-list-item-action-text>
-          <span class="overline grey--text">{{ item.body.found_by }}</span>
+          <span class="overline grey--text">{{ item.body.found_by || '' }}</span>
         </v-list-item-action-text>
       </v-list-item-action>
     </template>
