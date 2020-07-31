@@ -110,7 +110,11 @@
         />
       </v-col>
       <v-col cols="2">
-        <InfoItem v-if="data.kind !== 'delegation'" title="Amount" :subtitle="(isNaN(data.amount) ? 0 : data.amount) | uxtz" />
+        <InfoItem
+          v-if="data.kind !== 'delegation'"
+          title="Amount"
+          :subtitle="(isNaN(data.amount) ? 0 : data.amount) | uxtz"
+        />
       </v-col>
       <v-col cols="2" v-if="data.delegate || data.kind === 'delegation'">
         <AccountBox
@@ -149,7 +153,13 @@
           <v-col :cols="expanded ? 12 : 6">
             <template v-if="hasParameters">
               <span class="overline ml-3">Parameters</span>&nbsp;
-              <v-btn v-if="hasStorageDiff" icon small @click="expanded = !expanded" class="text--disabled">
+              <v-btn
+                v-if="hasStorageDiff"
+                icon
+                small
+                @click="expanded = !expanded"
+                class="text--disabled"
+              >
                 <v-icon v-if="expanded" small>mdi-table-row</v-icon>
                 <v-icon v-else small>mdi-table-column</v-icon>
               </v-btn>
@@ -163,7 +173,16 @@
                 class="text--secondary caption"
                 v-if="data.result"
               >{{ data.result.storage_size | bytes}}</span>
-              <MiguelTreeView :miguel="data.storage_diff" :network="data.network" diffMode />  
+              <v-btn
+                :to="`/${data.network}/${data.destination}/storage?level=${data.level}`"
+                target="_blank"
+                tile
+                x-small
+                text
+              >
+                <v-icon class="accent--text" small>mdi-open-in-new</v-icon>
+              </v-btn>
+              <MiguelTreeView :miguel="data.storage_diff" :network="data.network" diffMode />
             </template>
           </v-col>
         </v-row>
@@ -192,19 +211,19 @@ export default {
     data: Object,
     address: String,
     mainOperation: Object,
-    noheader: Boolean
+    noheader: Boolean,
   },
   components: {
     InfoItem,
     RawJsonViewer,
     OperationAlert,
     AccountBox,
-    MiguelTreeView
+    MiguelTreeView,
   },
   data: () => ({
     showRaw: false,
     showParams: false,
-    expanded: false
+    expanded: false,
   }),
   created() {
     this.showParams =
@@ -331,10 +350,10 @@ export default {
         }
       }
       return val;
-    }
+    },
   },
   methods: {
-    ...mapActions(["showClipboardOK"])
-  }
+    ...mapActions(["showClipboardOK"]),
+  },
 };
 </script>

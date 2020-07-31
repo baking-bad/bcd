@@ -5,7 +5,9 @@
         <v-col cols="8">
           <v-card tile flat outlined class="pa-0">
             <v-card-title class="d-flex sidebar px-4 py-3">
-              <span class="caption font-weight-bold text-uppercase text--secondary">Latest</span>
+              <span
+                class="caption font-weight-bold text-uppercase text--secondary"
+              >{{ level ? `Level ${level}`: "Latest"}}</span>
               <v-spacer></v-spacer>
               <v-btn @click="showRaw = true" small text class="text--secondary">
                 <v-icon class="mr-1" small>mdi-code-json</v-icon>
@@ -65,7 +67,7 @@
                 <span class="caption font-weight-bold text-uppercase text--secondary">Type</span>
               </v-card-title>
               <v-card-text class="data">
-                <TypeDef :typedef="schema.typedef" first="storage" class="pt-4"/>
+                <TypeDef :typedef="schema.typedef" first="storage" class="pt-4" />
               </v-card-text>
             </v-card>
             <div v-else />
@@ -74,7 +76,13 @@
       </v-row>
       <ErrorState v-else />
     </v-skeleton-loader>
-    <RawJsonViewer :show.sync="showRaw" type="storage" :network="network" :address="address" />
+    <RawJsonViewer
+      :show.sync="showRaw"
+      type="storage"
+      :network="network"
+      :address="address"
+      :level="level"
+    />
   </v-container>
 </template>
 
@@ -107,8 +115,10 @@ export default {
     downloading: false,
     raw: false,
     schema: null,
+    level: null,
   }),
   mounted() {
+    this.level = this.$route.query.level;
     this.getStorage(true);
   },
   methods: {
@@ -120,7 +130,7 @@ export default {
       }
       this.loading = true;
       this.api
-        .getContractStorage(this.network, this.address)
+        .getContractStorage(this.network, this.address, this.level)
         .then((res) => {
           if (!res) return;
           this.storage = res;
@@ -144,7 +154,7 @@ export default {
       }
       this.loading = true;
       this.api
-        .getContractStorageRaw(this.network, this.address)
+        .getContractStorageRaw(this.network, this.address, this.level)
         .then((res) => {
           this.rawStorage = String(res);
           this.raw = true;
@@ -167,7 +177,7 @@ export default {
     downloadFile() {
       this.downloading = true;
       this.api
-        .getContractStorageRich(this.network, this.address)
+        .getContractStorageRich(this.network, this.address, this.level)
         .then((res) => {
           var element = document.createElement("a");
           element.setAttribute(
