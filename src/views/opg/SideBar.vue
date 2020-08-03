@@ -109,12 +109,20 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas">
             <div class="d-flex flex-column px-4">
-              <div v-for="(op, idx) in operations" :key="idx" class="d-flex align-center" :class="op.internal ? 'mt-2' : 'mt-4'">
+              <div
+                v-for="(op, idx) in operations"
+                :key="idx"
+                class="d-flex align-center"
+                :class="op.internal ? 'mt-2' : 'mt-4'"
+              >
                 <span v-if="op.internal" class="mr-2" style="font-size: 18px;">↳</span>
                 <div>
-                  <span class="text--secondary" v-if="op.destination_alias">{{ op.destination_alias }}</span>
+                  <span
+                    class="text--secondary"
+                    v-if="op.destination_alias"
+                  >{{ op.destination_alias }}</span>
                   <span class="text--secondary" v-else v-html="helpers.shortcut(op.destination)"></span>
-                  <span class="text--secondary" style="font-size: 20px;"> → </span>
+                  <span class="text--secondary" style="font-size: 20px;">→</span>
                   <span v-if="op.entrypoint" class="hash">{{ op.entrypoint }}()</span>
                   <span v-else>{{ op.amount | uxtz }}</span>
                 </div>
@@ -134,6 +142,7 @@
       :network="network"
       :level="content.level"
       :hash="hash"
+      :raw="content.rawMempool"
     />
   </div>
 </template>
@@ -149,14 +158,14 @@ export default {
     network: String,
     hash: String,
     operations: Array,
-    loading: Boolean
+    loading: Boolean,
   },
   components: {
     RawJsonViewer,
-    BakingBadFooter
+    BakingBadFooter,
   },
   data: () => ({
-    showRaw: false
+    showRaw: false,
   }),
   computed: {
     content() {
@@ -176,14 +185,14 @@ export default {
         name: "operation_group",
         params: {
           hash: this.hash,
-          network: this.network
-        }
+          network: this.network,
+        },
       });
       return `${window.location.protocol}//${window.location.host}${routeData.href}`;
-    }
+    },
   },
   methods: {
-    ...mapActions(["showClipboardOK"])
-  }
+    ...mapActions(["showClipboardOK"]),
+  },
 };
 </script>

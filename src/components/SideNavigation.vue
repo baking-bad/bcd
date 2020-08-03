@@ -31,7 +31,7 @@
         <template v-for="(item, idx) in items">
           <v-tooltip v-if="!item.private || (isAuthorized && profile != null)" :key="idx" right>
             <template v-slot:activator="{ on }">
-              <v-list-item :to="{name: item.to}" v-on="on" active-class="primary--text">
+              <v-list-item :to="item.to" v-on="on" active-class="primary--text">
                 <template v-slot:default="{ active }">
                   <v-list-item-icon>
                     <v-icon v-if="active" color="primary">{{ item.icon }}</v-icon>
@@ -126,26 +126,17 @@ export default {
   },
   data: () => ({
     items: [
-      // {
-      //   icon: "mdi-home",
-      //   text: "Home page",
-      //   to: "home",
-      //   private: true
-      // },
       {
         icon: "mdi-cloud-search-outline",
         text: "Advanced search",
-        to: "search"
+        to: {name: "search"}
       },
-      // {
-      //   icon: "mdi-view-dashboard-outline",
-      //   text: "Projects",
-      //   to: "projects"
-      // },
       {
         icon: "mdi-poll",
         text: "Statistics",
-        to: "stats"
+        to: {
+          path: '/stats/mainnet/general'
+        }
       }
     ],
     pickingRandom: false

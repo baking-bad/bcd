@@ -9,6 +9,7 @@ import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
 import Stats from '@/views/stats/Stats.vue'
 import NetworkTab from '@/views/stats/NetworkTab.vue'
+import TokensTab from '@/views/stats/TokensTab.vue'
 
 import Diff from '@/views/diff/Diff.vue'
 
@@ -62,21 +63,37 @@ const router = new Router({
             props: { default: true },
         },
         {
-            path: '/stats',
+            path: '/stats/:network',
             components: {
                 default: Stats,
             },
-            name: 'stats',
             props: { default: true },
             children: [
                 {
-                    path: ':network',
-                    name: 'network_stats',
+                    path: '',
+                    name: 'stats',
+                    redirect: 'stats_general'
+                },
+                {
+                    name: 'stats_general',
+                    path: 'general',
                     component: NetworkTab,
+                    props: true
+                },
+                {
+                    path: 'fa12',
+                    name: 'stats_fa12',
+                    component: TokensTab,
+                    props: true
+                },
+                {
+                    path: 'fa2',
+                    name: 'stats_fa20',
+                    component: TokensTab,
                     props: true
                 }
             ]
-        },      
+        },
         {
             path: '/diff',
             components: {
@@ -84,15 +101,7 @@ const router = new Router({
             },
             name: 'diff',
             props: { default: true },
-        },
-        // {
-        //     path: '/projects',
-        //     components: {
-        //         default: Projects,
-        //         nav: Nav
-        //     },
-        //     name: 'projects'
-        // },      
+        },  
         { // backward compatibility
             path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
             children: [

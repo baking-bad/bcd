@@ -19,13 +19,7 @@
       <v-col cols="2" v-if="address" class="py-0 d-flex justify-end align-center">
         <v-tooltip top>
           <template v-slot:activator="{ on }">
-            <v-btn
-              v-on="on"
-              v-if="!data.mempool && data.id"
-              icon
-              class="mr-2 text--secondary"
-              @click="showRaw = true"
-            >
+            <v-btn v-on="on" icon class="mr-2 text--secondary" @click="showRaw = true">
               <v-icon>mdi-code-json</v-icon>
             </v-btn>
           </template>
@@ -194,6 +188,7 @@
       :network="data.network"
       :level="data.level"
       :hash="data.hash"
+      :raw="data.rawMempool"
     />
   </div>
 </template>

@@ -12,15 +12,13 @@
             </div>
 
             <div class="mb-6">
-              <v-btn-toggle
-                v-model="selectedFillType"
-                color="primary"
-                dense
-                mandatory
-                v-if="isStorage"
-              >
-                <v-btn small value="empty">Empty</v-btn>
-                <v-btn small value="current">Current</v-btn>
+              <v-btn-toggle v-model="selectedFillType" color="primary" dense mandatory>
+                <v-btn
+                  small
+                  :value="data.value"
+                  v-for="data in fillTypes"
+                  :key="data.value"
+                >{{ data.text }}</v-btn>
               </v-btn-toggle>
             </div>
 
@@ -45,7 +43,7 @@
             <div class="mb-6">
               <v-btn-toggle
                 v-model="selectedNetwork"
-                color="primary"                
+                color="primary"
                 dense
                 mandatory
                 v-if="isStorage"
@@ -262,11 +260,18 @@ export default {
       sender: null,
       amount: null,
     },
+    fillTypes: [
+      {
+        value: "empty",
+        text: "Empty",
+      },
+    ],
     model: {},
   }),
   async created() {
     this.model = this.value;
     this.setExecuteActions();
+    this.setFillTypes();
 
     this.importActions = [
       {
@@ -356,6 +361,12 @@ export default {
       } catch (err) {
         console.log(err);
       }
+    },
+    setFillTypes() {
+      this.fillTypes.push({
+        value: this.isStorage ? "current" : "latest",
+        text: this.isStorage ? "Current" : "Latest call",
+      });
     },
     generateParameters(rawJSON = false, show = false) {
       if (this.execution) return;
@@ -558,6 +569,7 @@ export default {
       this.parametersJSON = null;
       this.tezosClientCmdline = null;
       this.simulatedOperation = {};
+      this.selectedFillType = 'empty';
     },
     model: {
       deep: true,
@@ -568,20 +580,37 @@ export default {
     },
     selectedFillType: function (newValue) {
       this.show = false;
-      this.api
-        .getContractStorageSchema(this.network, this.address, newValue)
-        .then((res) => {
-          if (!res) return;
-          this.model = res.default_model;
-          this.$forceUpdate();
-        })
-        .catch((err) => {
-          console.log(err);
-          this.showError(err);
-        })
-        .finally(() => {
-          this.show = true;
-        });
+      if (this.isStorage) {
+        this.api
+          .getContractStorageSchema(this.network, this.address, newValue)
+          .then((res) => {
+            if (!res) return;
+            this.model = res.default_model;
+            this.$forceUpdate();
+          })
+          .catch((err) => {
+            console.log(err);
+            this.showError(err);
+          })
+          .finally(() => {
+            this.show = true;
+          });
+      } else {
+        this.api
+          .getContractEntrypointSchema(this.network, this.address, this.name, newValue)
+          .then((res) => {
+            if (!res) return;
+            this.model = res.default_model;
+            this.$forceUpdate();
+          })
+          .catch((err) => {
+            console.log(err);
+            this.showError(err);
+          })
+          .finally(() => {
+            this.show = true;
+          });
+      }
     },
   },
 };
