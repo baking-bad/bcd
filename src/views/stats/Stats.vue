@@ -6,7 +6,7 @@
           <SideNavigation />
         </v-col>
         <v-col cols="10">
-          <SideBar :loading="loading" :states="states" />
+          <SideBar :loading="loading" :states="states" :network="currentNetwork" />
         </v-col>
       </v-row>
     </v-navigation-drawer>
@@ -16,8 +16,11 @@
         <v-tab :to="{name: 'stats_general'}" replace>
           <v-icon left small>mdi-align-vertical-bottom</v-icon>&nbsp;General
         </v-tab>
-        <v-tab :to="{name: 'stats_tokens'}" replace>
-          <v-icon left small>mdi-code-brackets</v-icon>&nbsp;Tokens
+        <v-tab :to="{name: 'stats_fa12'}" replace>
+          <v-icon left small>mdi-bank-outline</v-icon>&nbsp;FA1.2
+        </v-tab>
+        <v-tab :to="{name: 'stats_fa20'}" replace>
+          <v-icon left small>mdi-bank</v-icon>&nbsp;FA2.0
         </v-tab>
       </v-tabs>
       <div class="mr-6 mt-6" style="width: 800px;">

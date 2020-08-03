@@ -1,52 +1,41 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-skeleton-loader :loading="loading" type="table">
-      <v-data-table :items="viewedTokens" :headers="headers" hide-default-footer>
+      <v-data-table :items="viewedTokens" :headers="headers" class="ba-1 avg-gas-consumption" hide-default-footer>
         <template v-slot:item="{item}">
-          <tr @click="navigate(item)" class="custom-link">
+          <tr>
             <td>
-              <div class="d-flex flex-column justify-start">
-                <span class="hash">{{ item.alias || item.address}}</span>
-                <span class="caption grey--text">last action {{ item.last_action | fromNow }}</span>
-              </div>
+              <v-btn 
+                class="text--secondary hash"
+                :to="`/${item.network}/${item.address}`"
+                style="text-transform: none;"
+                target="_blank"
+                text>
+                <span v-if="item.alias">{{ item.alias }}</span>
+                <span v-else v-html="helpers.shortcut(item.address)"></span>
+              </v-btn>
+            </td>
+            <td>
+              <span class="text--secondary">{{ item.last_action | fromNow }}</span>
             </td>
             <template v-for="(method, key) in item.methods">
               <td :key="key">
-                <div class="d-flex flex-column justify-start">
-                  <v-chip small class="my-1" color="transparent">
-                    <v-avatar left>
-                      <v-icon small color="blue lighten-2">mdi-fire</v-icon>
-                    </v-avatar>
-                    {{ method.average_consumed_gas }}
-                  </v-chip>
-                  <v-chip small class="my-1" color="transparent">
-                    <v-avatar left>
-                      <v-icon small color="grey darken-3">mdi-function</v-icon>
-                    </v-avatar>
-                    {{ method.call_count }}
-                  </v-chip>
-                </div>
+                <v-icon
+                  small
+                  class="mb-1 mr-1"
+                  :class="method.call_count > 0 ? 'info--text' : 'text--disabled'"
+                >mdi-fire</v-icon>
+                <span
+                  class="hash"
+                  :class="method.call_count > 0 ? '' : 'text--disabled'"
+                >{{ method.average_consumed_gas }}</span>
               </td>
             </template>
           </tr>
         </template>
         <template v-slot:top>
-          <v-toolbar flat>
-            <v-chip small class="my-2 mr-3" color="transparent">
-              <v-avatar left>
-                <v-icon small color="blue lighten-2">mdi-fire</v-icon>
-              </v-avatar>Average consumed gas
-            </v-chip>
-            <v-chip small class="my-2 ml-3" color="transparent">
-              <v-avatar left>
-                <v-icon small color="grey darken-3">mdi-function</v-icon>
-              </v-avatar>Method calls count
-            </v-chip>
-            <v-spacer></v-spacer>
-            <v-btn-toggle v-model="selectedVersion" color="primary" dense mandatory>
-              <v-btn value="fa12">FA1.2</v-btn>
-              <v-btn value="fa2">FA2</v-btn>
-            </v-btn-toggle>
+          <v-toolbar flat color="sidebar">
+            <span class="table-title mx-auto">Average gas consumption</span>
           </v-toolbar>
         </template>
         <template v-slot:footer>
@@ -91,6 +80,9 @@ export default {
         (this.page + 1) * PAGE_SIZE
       );
     },
+    selectedVersion() {
+      return this.$route.path.split('/').reverse()[0];
+    },
   },
   data: () => ({
     loading: true,
@@ -98,24 +90,28 @@ export default {
     lastId: null,
     page: 0,
     total: 0,
-    selectedVersion: "fa12",
     headers: [
       {
-        text: "Address",
-        value: "address",
+        text: "Contract",
+        class: "pl-8",
+        sortable: false,
+      },
+      {
+        text: "Last active",
+        sortable: false,
       },
     ],
   }),
   created() {
-    this.getTokensInfo(this.selectedVersion);
+    this.getTokensInfo(this.network, this.selectedVersion);
   },
   methods: {
     ...mapActions(["showError"]),
-    getTokensInfo(version) {
+    getTokensInfo(network, version) {
       this.loading = true;
 
       this.api
-        .getTokensByVersion(this.network, version, this.lastId, PAGE_SIZE)
+        .getTokensByVersion(network, version, this.lastId, PAGE_SIZE)
         .then((res) => {
           if (!res) return;
           this.lastId = res.last_id;
@@ -123,13 +119,13 @@ export default {
 
           this.tokens.push(...res.tokens);
           if (this.tokens.length > 0) {
-            this.headers = this.headers.splice(0, 1);
+            this.headers = this.headers.splice(0, 2);
             let methods = this.tokens[0].methods;
             Object.keys(methods).forEach((element) => {
               this.headers.push({
                 text: element,
-                align: "center",
-                sortable: false,
+                align: "left",
+                sortable: false
               });
             });
           }
@@ -146,35 +142,44 @@ export default {
     right() {
       this.page++;
       if (this.tokens.length == this.page * PAGE_SIZE) {
-        this.getTokensInfo(this.selectedVersion);
+        this.getTokensInfo(this.network, this.selectedVersion);
       }
-    },
-    navigate(item) {
-      this.$router.push({
-        name: 'contract',
-        params: {
-          address: item.address,
-          network: item.network
-        }
-      })
     }
   },
   watch: {
-    $route: function () {
-      this.getTokensInfo(this.selectedVersion);
+    network: function (newValue) {
+      this.tokens = [];
+      this.lastId = null;
+      this.page = 0;
+      this.total = 0;
+      this.getTokensInfo(newValue, this.selectedVersion);
     },
     selectedVersion: function (newValue) {
       this.tokens = [];
       this.lastId = null;
       this.page = 0;
       this.total = 0;
-      this.getTokensInfo(newValue);
+      this.getTokensInfo(this.network, newValue);
     },
   },
 };
 </script>
 
 <style>
+thead.v-data-table-header > tr > th {
+  font-size: 16px;
+  font-weight: 400;
+}
+.avg-gas-consumption tbody tr:hover {
+  background: var(--v-sidebar-base) !important;
+}
+.avg-gas-consumption {
+  background: var(--v-data-base) !important;
+}
+.table-title {
+  font-family: "Roboto Condensed", sans-serif;
+  font-size: 18px;
+}
 .custom-link:hover {
   cursor: pointer;
 }

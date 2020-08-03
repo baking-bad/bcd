@@ -41,7 +41,14 @@
           >
             <v-col class="pl-12"></v-col>
             <v-col>Unique contracts</v-col>
-            <v-col>FA tokens</v-col>
+            <v-col>
+              <router-link
+                style="text-decoration: none;"
+                :to="`/stats/mainnet/fa12`"
+              >
+                <span class="secondary--text">FA tokens</span>
+              </router-link>
+            </v-col>
             <v-col>Contract calls</v-col>
             <v-col class="text-left pl-12">Synced</v-col>
           </v-row>
@@ -57,7 +64,7 @@
               <v-btn
                 small
                 text
-                :to="`/stats/${item.network}`"
+                :to="`/stats/${item.network}/general`"
                 :class="item.network === 'mainnet' ? 'secondary--text' : 'text--primary'"
               >
                 <span>{{ item.network }}</span>

@@ -4,7 +4,7 @@
       <v-list-item-content two-line>
         <v-list-item-title class="headline">Statistics</v-list-item-title>
         <v-list-item-subtitle>
-          <span class="overline">{{ apiHost }}</span>
+          <span class="overline">{{ network }}</span>
         </v-list-item-subtitle>
       </v-list-item-content>
     </v-list-item>
@@ -17,7 +17,7 @@
       <v-expansion-panels flat tile mandatory multiple active-class="opened-panel">
         <v-expansion-panel class="ma-0 bb-1">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase text--secondary">Indexer state</span>
+            <span class="caption font-weight-bold text-uppercase text--secondary">Networks</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="data">
             <v-list class="stats-sidebar-list">
@@ -56,6 +56,7 @@ export default {
   props: {
     states: Array,
     loading: Boolean,
+    network: String,
   },
   components: {
     BakingBadFooter,
@@ -63,22 +64,19 @@ export default {
   created() {
     this.states.forEach((x, idx) => {
       if (x.network === this.$route.params.network) this.item = idx;
-    })
+    });
   },
   data: () => ({
     item: 0,
   }),
-  computed: {
-    apiHost() {
-      var url = new URL(this.config.API_URI);
-      return url.host;
-    },
-  },
   methods: {
     navigate(state) {
-      this.$router.push(`/stats/${state.network}/general`)
-    }
-  }
+      this.$router.push({
+        name: this.$router.name,
+        params: { network: state.network },
+      });
+    },
+  },
 };
 </script>
 
