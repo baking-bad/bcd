@@ -274,7 +274,8 @@ export default {
         fa2: "FA2",
         fa12: "FA1.2",
         fa1: "FA1",
-        delegator: "manager.tz",
+        delegator: "Delegator",
+        multisig: "Multisig"
       };
       if (this.contract.tags) {
         for (var tag in standards) {
