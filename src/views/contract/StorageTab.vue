@@ -1,79 +1,81 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-skeleton-loader :loading="loading" type="card-heading, image">
-      <v-row v-if="storage || rawStorage">
-        <v-col cols="8">
-          <v-card tile flat outlined class="pa-0">
-            <v-card-title class="d-flex sidebar px-4 py-3">
-              <span
-                class="caption font-weight-bold text-uppercase text--secondary"
-              >{{ level ? `Level ${level}`: "Latest"}}</span>
-              <v-spacer></v-spacer>
-              <v-btn @click="showRaw = true" small text class="text--secondary">
-                <v-icon class="mr-1" small>mdi-code-json</v-icon>
-                <span>Raw JSON</span>
-              </v-btn>
-              <v-tooltip v-if="!raw" top>
-                <template v-slot:activator="{ on }">
-                  <v-btn
-                    v-on="on"
-                    small
-                    text
-                    class="ml-2 text--secondary"
-                    @click="downloadFile"
-                    :loading="downloading"
-                    :disabled="downloading"
-                  >
-                    <v-icon class="mr-1" small>mdi-download-outline</v-icon>
-                    <span>Full dump</span>
-                  </v-btn>
-                </template>
-                Raw snapshot with all big map data
-              </v-tooltip>
+      <v-card v-if="storage || rawStorage" tile flat outlined class="pa-0">
+        <v-card-title class="d-flex sidebar px-4 py-3">
+          <v-select
+            v-if="storageVersions.length > 0"
+            v-model="level"
+            @change="getStorage(true)"
+            :items="storageVersions"
+            item-text="version"
+            item-value="level"
+            style="max-width: 175px;"
+            rounded
+            dense
+            background-color="data"
+            class="mb-1"
+            hide-details
+          ></v-select>
+          <v-spacer></v-spacer>
+          <v-btn @click="showRaw = true" small text class="text--secondary">
+            <v-icon class="mr-1" small>mdi-code-json</v-icon>
+            <span>Raw JSON</span>
+          </v-btn>
+          <v-tooltip v-if="!raw" top>
+            <template v-slot:activator="{ on }">
               <v-btn
-                v-if="rawStorage && raw"
-                @click="() => {
+                v-on="on"
+                small
+                text
+                class="ml-2 text--secondary"
+                @click="downloadFile"
+                :loading="downloading"
+                :disabled="downloading"
+              >
+                <v-icon class="mr-1" small>mdi-download-outline</v-icon>
+                <span>Full dump</span>
+              </v-btn>
+            </template>
+            Raw snapshot with all big map data
+          </v-tooltip>
+          <v-btn
+            v-if="rawStorage && raw"
+            @click="() => {
                   $clipboard(getStorageString());
                   showClipboardOK();
                 }"
-                class="ml-2"
-                small
-                text
-              >
-                <v-icon class="mr-1" small>mdi-content-copy</v-icon>
-                <span class="text--secondary">Copy</span>
-              </v-btn>
-              <v-btn v-if="raw" @click="getStorage()" class="ml-2 text--secondary" small text>
-                <v-icon class="mr-1" small>mdi-file-tree</v-icon>
-                <span>Switch to Tree View</span>
-              </v-btn>
-              <v-btn v-else @click="getStorageRaw()" class="ml-2 text--secondary" small text>
-                <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
-                <span>Switch to Micheline</span>
-              </v-btn>
-            </v-card-title>
-            <v-card-text class="pa-0">
+            class="ml-2"
+            small
+            text
+          >
+            <v-icon class="mr-1" small>mdi-content-copy</v-icon>
+            <span class="text--secondary">Copy</span>
+          </v-btn>
+          <v-btn v-if="raw" @click="getStorage()" class="ml-2 text--secondary" small text>
+            <v-icon class="mr-1" small>mdi-file-tree</v-icon>
+            <span>Switch to Tree View</span>
+          </v-btn>
+          <v-btn v-else @click="getStorageRaw()" class="ml-2 text--secondary" small text>
+            <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
+            <span>Switch to Micheline</span>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="pa-0 data">
+          <v-row no-gutters>
+            <v-col cols="8">
               <Michelson v-if="raw" :code="rawStorage"></Michelson>
               <div v-else class="py-4 data">
                 <MiguelTreeView :miguel="storage" :network="network" openAll />
               </div>
-            </v-card-text>
-          </v-card>
-        </v-col>
-        <v-col cols="4">
-          <v-skeleton-loader :loading="loading" type="card-heading, image">
-            <v-card v-if="schema" tile flat outlined class="pa-0">
-              <v-card-title class="d-flex sidebar px-4 py-3">
-                <span class="caption font-weight-bold text-uppercase text--secondary">Type</span>
-              </v-card-title>
-              <v-card-text class="data">
-                <TypeDef :typedef="schema.typedef" first="storage" class="pt-4" />
-              </v-card-text>
-            </v-card>
-            <div v-else />
-          </v-skeleton-loader>
-        </v-col>
-      </v-row>
+            </v-col>
+            <v-divider vertical></v-divider>
+            <v-col>
+               <TypeDef :typedef="schema.typedef" first="storage" class="pt-3 pb-1 px-6" style="opacity: .8;" />            
+            </v-col>
+          </v-row>
+        </v-card-text>
+      </v-card>
       <ErrorState v-else />
     </v-skeleton-loader>
     <RawJsonViewer
@@ -118,8 +120,20 @@ export default {
     level: null,
   }),
   mounted() {
-    this.level = this.$route.query.level;
+    if (this.$route.query.level) this.level = this.$route.query.level;
     this.getStorage(true);
+  },
+  computed: {
+    storageVersions() {
+      let versions = [{ version: "Latest", level: null }];
+      if (this.$route.query.level) {
+        versions.push({
+          version: `At ${this.$route.query.level}`,
+          level: this.$route.query.level,
+        });
+      }
+      return versions;
+    },
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
