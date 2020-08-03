@@ -70,8 +70,8 @@ const router = new Router({
             props: { default: true },
             children: [
                 {
-                    name: 'stats',
                     path: '',
+                    name: 'stats',
                     redirect: 'stats_general'
                 },
                 {
@@ -81,13 +81,19 @@ const router = new Router({
                     props: true
                 },
                 {
-                    path: 'tokens',
-                    name: 'stats_tokens',
+                    path: 'fa12',
+                    name: 'stats_fa12',
+                    component: TokensTab,
+                    props: true
+                },
+                {
+                    path: 'fa2',
+                    name: 'stats_fa20',
                     component: TokensTab,
                     props: true
                 }
             ]
-        },      
+        },
         {
             path: '/diff',
             components: {
