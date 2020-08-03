@@ -167,6 +167,21 @@
                 class="text--secondary caption"
                 v-if="data.result"
               >{{ data.result.storage_size | bytes}}</span>
+              <v-tooltip top>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    v-on="on"
+                    :to="`/${data.network}/${data.destination}/storage?level=${data.level}`"
+                    target="_blank"
+                    tile
+                    x-small
+                    text
+                  >
+                    <v-icon class="text--secondary" small>mdi-open-in-new</v-icon>
+                  </v-btn>
+                </template>
+                <span>View storage at level {{ data.level }}</span>
+              </v-tooltip>
               <MiguelTreeView :miguel="data.storage_diff" :network="data.network" diffMode />
             </template>
           </v-col>

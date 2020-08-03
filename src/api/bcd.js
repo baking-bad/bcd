@@ -224,8 +224,12 @@ export class BetterCallApi {
       })
   }
 
-  getContractStorage(network, address) {
-    return getCancellable(this.api, `/contract/${network}/${address}/storage`, {})
+  getContractStorage(network, address, level=null) {
+    let params = '?';
+    if (level){
+      params += `level=${level}`
+    }
+    return getCancellable(this.api, `/contract/${network}/${address}/storage${params}`, {})
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {
@@ -235,8 +239,12 @@ export class BetterCallApi {
       })
   }
 
-  getContractStorageRaw(network, address) {
-    return this.api.get(`/contract/${network}/${address}/storage/raw`)
+  getContractStorageRaw(network, address, level=null) {
+    let params = '?';
+    if (level){
+      params += `level=${level}`
+    }
+    return this.api.get(`/contract/${network}/${address}/storage/raw${params}`)
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -245,8 +253,12 @@ export class BetterCallApi {
       })
   }
 
-  getContractStorageRich(network, address) {
-    return this.api.get(`/contract/${network}/${address}/storage/rich`)
+  getContractStorageRich(network, address, level=null) {
+    let params = '?';
+    if (level){
+      params += `level=${level}`
+    }
+    return this.api.get(`/contract/${network}/${address}/storage/rich${params}`)
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
