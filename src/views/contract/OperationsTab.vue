@@ -279,7 +279,6 @@ export default {
         })
         .catch(err => {
           console.log(err);
-          this.showError(err);
         })
         .finally(() => (this.mempoolLoading = false));
     },
