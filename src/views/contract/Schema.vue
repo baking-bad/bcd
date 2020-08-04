@@ -60,6 +60,7 @@
                 dense
                 label="source"
                 placeholder="address"
+                hint="Press 'fill' to paste your wallet address"
               ></v-text-field>
               <v-menu offset-y>
                 <template v-slot:activator="{ on, attrs }">
@@ -206,7 +207,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <RawJsonViewer :show.sync="showRawJSON" :raw="parametersJSON" />
+    <RawJsonViewer :show.sync="showRawJSON" :raw="parametersJSON" :type="isStorage ? 'script' : 'parameters'" />
   </div>
 </template>
 

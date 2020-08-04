@@ -146,6 +146,7 @@ export default {
       cancelRequests();
       this.getContract();
       this.getMigrations();
+      this.showFork = false;
     },
     showFork: function (newValue) {
       this.$router.push({ name: newValue ? "fork" : "operations" });

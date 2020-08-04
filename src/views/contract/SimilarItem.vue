@@ -16,9 +16,14 @@
       </v-list-item-subtitle>
     </v-list-item-content>
     <v-list-item-icon v-if="diff">
-      <v-btn small icon @click.prevent.stop="onDiffClick(item)">
-        <v-icon>mdi-directions-fork</v-icon>
-      </v-btn>
+      <v-tooltip right>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" small icon @click.prevent.stop="onDiffClick(item)">
+              <v-icon>mdi-directions-fork</v-icon>
+            </v-btn>
+          </template>
+          <span>Side-by-side diff</span>
+        </v-tooltip>
     </v-list-item-icon>
   </v-list-item>
 </template>

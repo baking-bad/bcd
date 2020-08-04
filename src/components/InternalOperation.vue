@@ -162,11 +162,7 @@
           </v-col>
           <v-col :cols="expanded ? 12 : 6" :class="expanded ? 'mt-4' : ''">
             <template v-if="hasStorageDiff">
-              <span class="overline ml-3">Storage</span>&nbsp;
-              <span
-                class="text--secondary caption"
-                v-if="data.result"
-              >{{ data.result.storage_size | bytes}}</span>
+              <span class="overline ml-3">Storage</span>
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
                   <v-btn
@@ -182,6 +178,10 @@
                 </template>
                 <span>View storage at level {{ data.level }}</span>
               </v-tooltip>
+              <span
+                class="text--secondary caption"
+                v-if="data.result"
+              >{{ data.result.storage_size | bytes}}</span>
               <MiguelTreeView :miguel="data.storage_diff" :network="data.network" diffMode />
             </template>
           </v-col>
