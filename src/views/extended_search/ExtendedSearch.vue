@@ -270,23 +270,29 @@ export default {
     },
     onDownloadPage(entries) {
       if (entries[0].isIntersecting && !this.completed) {
-        this.fetchSearchDebounced(++this.seqno, true);
+        this.fetchSearchDebounced(this.searchText, ++this.seqno, true);
       }
     },
-    search(
-      text,
-      indices = [],
-      push = false,
-      networks = [],
-      languages = [],
-      time = {}
-    ) {
-      if (!this.loading && !this.completed) {
-        this.loading = true;
-        let offset = push ? this.suggests.length : 0;
+    fetchSearchDebounced(text, seqno, push = false) {
+      if (!text || text.length < 3) return;
+
+      this.loading = true;
+      this.completed = false;
+      // cancel pending call
+      clearTimeout(this._timerId);
+
+      const indices = this.indices;
+      const networks = this.filters.networks;
+      const languages = this.filters.languages;
+      const time = { s: this.filters.startTime };
+      const offset = push ? this.suggests.length : 0;
+
+      this._timerId = setTimeout(() => {
         this.api
           .search(text, indices, offset, networks, languages, time, 1)
           .then((res) => {
+            if (seqno !== this.seqno || !res) return;
+            
             if (!this.completed) {
               if (push) {
                 this.suggests.push(...res.items);
@@ -294,41 +300,26 @@ export default {
                 this.suggests = res.items;
               }
             }
+
             this.total = res.count;
-            this.completed = (res.items.length == 0) || (this.total == 1 && this.suggests.length == 1 && this.suggests[0].body.mempool);
+            this.completed = (res.items.length == 0) 
+              || (this.total == 1 
+                && this.suggests.length == 1 
+                && this.suggests[0].body.mempool);
             this.elasticTime = res.time;
+
+            if (text !== this.$route.query.text) {
+              this.$router.replace({ query: { text: text } });
+            }
           })
           .catch((err) => {
             console.log(err);
             this.showError(err);
           })
           .finally(() => {
-            this.loading = false;
-            this.cold = false;
+            this.cold = false;    
+            this.loading = false;        
           });
-      }
-    },
-    fetchSearchDebounced(seqno, push = false) {
-      if (!this.searchText || this.searchText.length < 3) return;
-
-      this.completed = false;
-      // cancel pending call
-      clearTimeout(this._timerId);
-
-      let text = this.searchText;
-      let indices = this.indices;
-      let networks = this.filters.networks;
-      let languages = this.filters.languages;
-      let time = { s: this.filters.startTime };
-
-      // delay new call 500ms
-      this._timerId = setTimeout(() => {
-        if (seqno === this.seqno) {
-          this.search(text, indices, push, networks, languages, time);
-          if (text !== this.$route.query.text) {
-            this.$router.replace({ query: { text: text } });
-          }
-        }
       }, 500);
     },
     isAddress() {
@@ -350,7 +341,7 @@ export default {
       this._locked = true;
       this.searchText = val ? val.trim() : "";
       if (this.searchText) {
-        this.fetchSearchDebounced(++this.seqno);
+        this.fetchSearchDebounced(this.searchText, ++this.seqno);
       } else {
         this.suggests = [];
         this.total = 0;
@@ -360,13 +351,13 @@ export default {
     },
     indices() {
       if (this.initializing) return;
-      this.fetchSearchDebounced(++this.seqno);
+      this.fetchSearchDebounced(this.searchText, ++this.seqno);
     },
     filters: {
       deep: true,
       handler: function () {
         if (this.initializing) return;
-        this.fetchSearchDebounced(++this.seqno);
+        this.fetchSearchDebounced(this.searchText, ++this.seqno);
       },
     },
   },
