@@ -13,6 +13,9 @@ export function applyStyles(node) {
         if (node.prim === "lambda") {
             node["x-display"] = "custom-codemirror";
         }
+        if (node.prim === "contract") {
+            node["x-display"] = "custom-contract";
+        }
     }
     if (node.properties) {
         for (var prop in node.properties) {
