@@ -30,6 +30,25 @@
                     <Michelson v-on="on" :code="value" mutable></Michelson>
                   </div>
                 </template>
+                <template slot="custom-contract" slot-scope="props">
+                  <v-text-field
+                    :ref="props.fullKey"
+                    :label="props.label"
+                    v-on="props.on"
+                    dense
+                    outlined
+                    :value="props.value"
+                    :placeholder="props.label"
+                    :hint="props.schema.tag ? `\'Fill\' button finds the newest contract with this contract type. If contract's absent nothing is set.` : ``"
+                    persistent-hint
+                  >
+                    <template v-slot:append-outer v-if="props.schema.tag">
+                      <v-btn text small @click="getRandomContract(props)" class="text--secondary">
+                        <v-icon small left>mdi-format-horizontal-align-left</v-icon>fill
+                      </v-btn>
+                    </template>
+                  </v-text-field>
+                </template>
               </v-jsf>
               <div v-else></div>
             </v-skeleton-loader>
@@ -60,35 +79,37 @@
                 dense
                 label="source"
                 placeholder="address"
-              ></v-text-field>
-              <v-menu offset-y>
-                <template v-slot:activator="{ on, attrs }">
-                  <v-btn
-                    text
-                    small
-                    :loading="importing"
-                    style="margin-top: 6px;"
-                    class="ml-4 text--secondary"
-                    v-bind="attrs"
-                    v-on="on"
-                  >
-                    <v-icon small class="mr-1">mdi-import</v-icon>
-                    <span>Import</span>
-                  </v-btn>
+              >
+                <template v-slot:append-outer>
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-btn
+                        text
+                        small
+                        :loading="importing"
+                        class="text--secondary"
+                        v-bind="attrs"
+                        v-on="on"
+                      >
+                        <v-icon small left>mdi-format-horizontal-align-left</v-icon>
+                        <span>fill</span>
+                      </v-btn>
+                    </template>
+                    <v-list>
+                      <v-list-item
+                        v-for="(item, index) in importActions"
+                        :key="index"
+                        @click="item.callback()"
+                      >
+                        <v-list-item-title>{{ item.text }}</v-list-item-title>
+                        <v-list-item-avatar>
+                          <v-icon>{{ item.icon }}</v-icon>
+                        </v-list-item-avatar>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
                 </template>
-                <v-list>
-                  <v-list-item
-                    v-for="(item, index) in importActions"
-                    :key="index"
-                    @click="item.callback()"
-                  >
-                    <v-list-item-title>{{ item.text }}</v-list-item-title>
-                    <v-list-item-avatar>
-                      <v-icon>{{ item.icon }}</v-icon>
-                    </v-list-item-avatar>
-                  </v-list-item>
-                </v-list>
-              </v-menu>
+              </v-text-field>
             </div>
             <v-text-field
               id="amount"
@@ -269,7 +290,6 @@ export default {
     model: {},
   }),
   async created() {
-    this.model = this.value;
     this.setExecuteActions();
     this.setFillTypes();
 
@@ -556,6 +576,21 @@ export default {
         this.execution = false;
       }
     },
+    getRandomContract(props) {
+      this.show = false;
+      this.api
+        .search(props.schema.tag, ["contract"], 0, [this.network], [], {}, 0)
+        .then((res) => {
+          if (res.items) {
+            this.model[props.fullKey] = res.items[0].value;
+          }
+        })
+        .catch((err) => {
+          this.alertData = err.message;
+          console.log(err);
+        })
+        .finally(() => (this.show = true));
+    },
   },
   watch: {
     execution: function (newValue) {
@@ -569,7 +604,7 @@ export default {
       this.parametersJSON = null;
       this.tezosClientCmdline = null;
       this.simulatedOperation = {};
-      this.selectedFillType = 'empty';
+      this.selectedFillType = "empty";
     },
     model: {
       deep: true,
@@ -597,7 +632,12 @@ export default {
           });
       } else {
         this.api
-          .getContractEntrypointSchema(this.network, this.address, this.name, newValue)
+          .getContractEntrypointSchema(
+            this.network,
+            this.address,
+            this.name,
+            newValue
+          )
           .then((res) => {
             if (!res) return;
             this.model = res.default_model;
@@ -656,7 +696,8 @@ export default {
 /* end fixing "+" button */
 
 .v-card__actions > .v-btn.v-btn--contained.v-size--default.primary {
-  background-color: var(--v-canvas--base) !important;
+  background-color: var(--v-canvas-base) !important;
+  color: var(--v-text-base) !important;
   box-shadow: none !important;
   margin-right: 5px;
 }
