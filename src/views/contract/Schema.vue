@@ -1,10 +1,12 @@
 <template>
   <div>
     <v-card flat outlined>
-      <v-card-title class="py-2 px-5 sidebar">
-        <span class="hash secondary--text">{{ name }}</span>
-      </v-card-title>
-      <v-card-text class="pa-0 pt-1 data">
+      <v-card-text class="pa-0 pt-6 data">
+        <h2 class="ml-6 font-weight-regular">
+          <span class="mr-2 hash font-weight-thin">{{ isStorage ? 'Fork' : 'Call' }}</span>
+          <span v-if="isStorage" class="secondary--text" v-html="helpers.shortcut(name)"></span>
+          <span v-else class="hash secondary--text">{{ name }}</span>
+        </h2>
         <v-form class="pa-6 pr-4">
           <div v-if="schema" class="pl-6 pt-4 pr-4 pb-4 mr-2 mb-6 canvas">
             <div class="mb-6">

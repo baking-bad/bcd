@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-row no-gutters>
-      <v-col cols="8 pr-4">
+      <v-col cols="8" class="pr-4">
         <v-skeleton-loader :loading="loading" type="card-heading, image">
           <Schema
             header="Parameters"
