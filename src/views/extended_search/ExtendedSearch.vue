@@ -159,7 +159,7 @@ import { mapActions } from "vuex";
 import SearchFilters from "@/views/extended_search/SearchFilters.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import ResultItem from "@/views/extended_search/ResultItem.vue";
-import EmptyState from "@/components/EmptyState.vue"
+import EmptyState from "@/components/EmptyState.vue";
 
 export default {
   name: "ExtendedSearch",
@@ -167,7 +167,7 @@ export default {
     SearchFilters,
     SideNavigation,
     ResultItem,
-    EmptyState
+    EmptyState,
   },
   data: () => ({
     suggests: [],
@@ -183,33 +183,33 @@ export default {
     timeItems: [
       {
         name: "Any time",
-        value: 0
+        value: 0,
       },
       {
         name: "Last hour",
-        value: 1
+        value: 1,
       },
       {
         name: "Last 24 hours",
-        value: 2
+        value: 2,
       },
       {
         name: "Last week",
-        value: 3
+        value: 3,
       },
       {
         name: "Last month",
-        value: 4
+        value: 4,
       },
       {
         name: "Last year",
-        value: 5
-      }
+        value: 5,
+      },
     ],
     filters: {
       startTime: 0,
       networks: [],
-      languages: []
+      languages: [],
     },
     _timerId: null,
     _locked: false,
@@ -225,7 +225,7 @@ export default {
         ["delegate", "address"],
         ["hardcoded", "strings inside the code section"],
         ["manager", "[deployer] address"],
-        ["address"]
+        ["address"],
       ],
       operations: [
         ["entrypoint", ""],
@@ -235,15 +235,15 @@ export default {
         ["error.id", "if failed"],
         ["hash", "of the operation group"],
         ["source", ""],
-        ["source_alias", ""]
+        ["source_alias", ""],
       ],
       "big maps": [
         ["key_strings", ""],
         ["value_strings", ""],
         ["key_hash", ""],
-        ["address", "of the owner contract"]
-      ]
-    }
+        ["address", "of the owner contract"],
+      ],
+    },
   }),
   computed: {
     indices() {
@@ -255,7 +255,7 @@ export default {
         return ["bigmapdiff"];
       }
       return [];
-    }
+    },
   },
   mounted() {
     this.$nextTick(() => {
@@ -270,50 +270,29 @@ export default {
     },
     onDownloadPage(entries) {
       if (entries[0].isIntersecting && !this.completed) {
-        this.fetchSearchDebounced(++this.seqno, true);
+        this.fetchSearchDebounced(this.searchText, ++this.seqno, true);
       }
     },
-    searchMempool(opgHash) {
-      this.api
-        .getOPG(opgHash)
-        .then(res => {
-          if (res) {
-            this.suggests = res.map(op => {
-              return {
-                type: "operation",
-                value: op.hash,
-                body: op,
-                highlights: { hash: op.hash }
-              };
-            });
-            this.total = res.length;
-          }
-        })
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        })
-        .finally(() => {
-          this.loading = false;
-          this.cold = false;
-        });
-    },
-    search(
-      text,
-      indices = [],
-      push = false,
-      networks = [],
-      languages = [],
-      time = {}
-    ) {
-      let hasText = text != null && text.length >= 2;
-      if (!this.loading && hasText && !this.completed) {
-        this.loading = true;
-        let offset = push ? this.suggests.length : 0;
+    fetchSearchDebounced(text, seqno, push = false) {
+      if (!text || text.length < 3) return;
+
+      this.loading = true;
+      this.completed = false;
+      // cancel pending call
+      clearTimeout(this._timerId);
+
+      const indices = this.indices;
+      const networks = this.filters.networks;
+      const languages = this.filters.languages;
+      const time = { s: this.filters.startTime };
+      const offset = push ? this.suggests.length : 0;
+
+      this._timerId = setTimeout(() => {
         this.api
           .search(text, indices, offset, networks, languages, time, 1)
-          .then(res => {
-            this.completed = res.items.length == 0;
+          .then((res) => {
+            if (seqno !== this.seqno || !res) return;
+            
             if (!this.completed) {
               if (push) {
                 this.suggests.push(...res.items);
@@ -321,44 +300,26 @@ export default {
                 this.suggests = res.items;
               }
             }
+
             this.total = res.count;
+            this.completed = (res.items.length == 0) 
+              || (this.total == 1 
+                && this.suggests.length == 1 
+                && this.suggests[0].body.mempool);
             this.elasticTime = res.time;
+
+            if (text !== this.$route.query.text) {
+              this.$router.replace({ query: { text: text } });
+            }
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
             this.showError(err);
           })
           .finally(() => {
-            if (this.suggests.length === 0 && this.isOpgHash(text)) {
-              this.searchMempool(text);
-            } else {
-              this.loading = false;
-              this.cold = false;
-            }
+            this.cold = false;    
+            this.loading = false;        
           });
-      }
-    },
-    fetchSearchDebounced(seqno, push = false) {
-      if (!this.searchText || this.searchText.length < 3) return;
-
-      this.completed = false;
-      // cancel pending call
-      clearTimeout(this._timerId);
-
-      let text = this.searchText;
-      let indices = this.indices;
-      let networks = this.filters.networks;
-      let languages = this.filters.languages;
-      let time = { s: this.filters.startTime };
-
-      // delay new call 500ms
-      this._timerId = setTimeout(() => {
-        if (seqno === this.seqno) {
-          this.search(text, indices, push, networks, languages, time);
-          if (text !== this.$route.query.text) {
-            this.$router.replace({ query: { text: text } });
-          }
-        }
       }, 500);
     },
     isAddress() {
@@ -372,7 +333,7 @@ export default {
     },
     getCatavaSrc() {
       return `https://services.tzkt.io/v1/avatars/${this.searchText}`;
-    }
+    },
   },
   watch: {
     searchText(val) {
@@ -380,7 +341,7 @@ export default {
       this._locked = true;
       this.searchText = val ? val.trim() : "";
       if (this.searchText) {
-        this.fetchSearchDebounced(++this.seqno);
+        this.fetchSearchDebounced(this.searchText, ++this.seqno);
       } else {
         this.suggests = [];
         this.total = 0;
@@ -390,16 +351,16 @@ export default {
     },
     indices() {
       if (this.initializing) return;
-      this.fetchSearchDebounced(++this.seqno);
+      this.fetchSearchDebounced(this.searchText, ++this.seqno);
     },
     filters: {
       deep: true,
-      handler: function() {
+      handler: function () {
         if (this.initializing) return;
-        this.fetchSearchDebounced(++this.seqno);
-      }
-    }
-  }
+        this.fetchSearchDebounced(this.searchText, ++this.seqno);
+      },
+    },
+  },
 };
 </script>
 

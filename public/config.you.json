@@ -1,7 +1,7 @@
 {
   "API_URI": "https://you.better-call.dev/v1/",
   "WS_URI": "wss://you.better-call.dev/v1/ws",
-  "NETWORKS": ["mainnet", "carthagenet", "bcdnet"],
+  "NETWORKS": ["mainnet", "carthagenet", "dalphanet"],
   "OAUTH_ENABLED": true,
   "GA_ENABLED": false,
   "MEMPOOL_ENABLED": true,
@@ -9,7 +9,7 @@
   "RPC_ENDPOINTS": {
     "mainnet": "https://rpc.tzkt.io/mainnet",
     "carthagenet": "https://rpc.tzkt.io/carthagenet",
-    "bcdnet": "https://you.better-call.dev"
+    "dalphanet": "https://rpc.tzkt.io/dalphanet"
   },
   "TZKT_ENDPOINTS": {
     "mainnet": "https://tzkt.io/",

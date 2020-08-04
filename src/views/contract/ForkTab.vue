@@ -1,11 +1,11 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
-    <v-row>
-      <v-col cols="8">
+    <v-row no-gutters>
+      <v-col cols="8" class="pr-4">
         <v-skeleton-loader :loading="loading" type="card-heading, image">
           <Schema
             v-if="storage"
-            name="Fork"
+            :name="$route.params.address"
             header="Storage"
             :isStorage="true"
             :schema="storage.schema"
@@ -16,14 +16,12 @@
           <div v-else />
         </v-skeleton-loader>
       </v-col>
-      <v-col cols="4">
+      <v-col cols="4" class="pl-4">
         <v-skeleton-loader :loading="loading" type="card-heading, image">
           <v-card v-if="storage" tile flat outlined class="pa-0">
-            <v-card-title class="d-flex sidebar px-4 py-3">
-              <span class="caption font-weight-bold text-uppercase text--secondary">Type</span>
-            </v-card-title>
             <v-card-text class="data">
-              <TypeDef :typedef="storage.typedef" first="storage" class="pt-4" />
+              <span class="hash ml-2 text--primary" style="font-size: 15px; font-weight: 400;">Storage type</span>
+              <TypeDef :typedef="storage.typedef" first="storage" class="pt-4 px-2" />
             </v-card-text>
           </v-card>
           <div v-else/>

@@ -15,7 +15,12 @@
       </v-list-item-content>
       <v-list-item-action v-if="standard">
         <v-list-item-action-text>
-          <v-chip small class="caption">{{ standard }}</v-chip>
+          <v-chip
+            small
+            class="caption"
+            :to="`/search?text=${standard.tag}`"
+            target="_blank"
+          >{{ standard.text }}</v-chip>
         </v-list-item-action-text>
       </v-list-item-action>
     </v-list-item>
@@ -274,12 +279,13 @@ export default {
         fa2: "FA2",
         fa12: "FA1.2",
         fa1: "FA1",
-        delegator: "manager.tz",
+        delegator: "Delegator",
+        multisig: "Multisig",
       };
       if (this.contract.tags) {
         for (var tag in standards) {
           if (this.contract.tags.includes(tag)) {
-            return standards[tag];
+            return { tag, text: standards[tag] };
           }
         }
       }
@@ -379,11 +385,11 @@ export default {
         .finally(() => (this.similarLoading = false));
     },
     onForkClick() {
-      this.$emit('fork', {
+      this.$emit("fork", {
         address: this.address,
-        network: this.network
+        network: this.network,
       });
-    }
+    },
   },
   watch: {
     address: "requestSameSimilar",

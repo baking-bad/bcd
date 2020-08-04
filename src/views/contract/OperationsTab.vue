@@ -38,7 +38,7 @@
           multiple
           hide-details
         >
-          <template v-slot:selection="{ item, index }">
+          <template v-slot:selection="{ index }">
             <v-chip x-small v-if="index < 1">
               <span>{{ shortestEntrypoint }}</span>
             </v-chip>&nbsp;
@@ -279,7 +279,6 @@ export default {
         })
         .catch(err => {
           console.log(err);
-          this.showError(err);
         })
         .finally(() => (this.mempoolLoading = false));
     },
