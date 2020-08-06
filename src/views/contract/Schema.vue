@@ -264,7 +264,7 @@ export default {
   data: () => ({
     show: true,
     selectedNetwork: null,
-    selectedFillType: "current",
+    selectedFillType: "empty",
     networks: [],
     importActions: [],
     executeActions: [],
