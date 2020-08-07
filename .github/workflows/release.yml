@@ -2,7 +2,7 @@ name: Build release and make notifications
 on:
   push:
     tags:
-      - '*.*.*'
+      - '*.*.0'
 
 jobs:
   build:
