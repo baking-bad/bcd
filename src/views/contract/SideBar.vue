@@ -218,6 +218,22 @@
             </v-list>
           </v-expansion-panel-content>
         </v-expansion-panel>
+
+        <v-expansion-panel class="ma-0 bb-1" v-if="migrations.length > 0">
+          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+            <span
+              class="caption font-weight-bold text-uppercase text--secondary"
+            >Logs ({{ migrations.length }})</span>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content color="data">
+            <v-list class="contract-list">
+              <template v-for="(log, i) in migrations">
+                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+                <LogItem :key="i" :log="log" :network="network" :address="address"/>
+              </template>
+            </v-list>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
       </v-expansion-panels>
     </v-skeleton-loader>
 
@@ -243,6 +259,7 @@
 <script>
 import { mapActions } from "vuex";
 import SimilarItem from "@/views/contract/SimilarItem.vue";
+import LogItem from "@/views/contract/LogItem.vue";
 import AccountBox from "@/components/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
 import WatchSettings from "@/components/WatchSettings.vue";
@@ -254,9 +271,11 @@ export default {
     contract: Object,
     address: String,
     network: String,
+    migrations: Array,
   },
   components: {
     SimilarItem,
+    LogItem,
     AccountBox,
     BakingBadFooter,
     WatchSettings,

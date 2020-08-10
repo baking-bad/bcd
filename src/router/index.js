@@ -18,7 +18,7 @@ import OperationsTab from '@/views/contract/OperationsTab.vue'
 import CodeTab from '@/views/contract/CodeTab.vue'
 import InteractTab from '@/views/contract/InteractTab.vue'
 import StorageTab from '@/views/contract/StorageTab.vue'
-import LogTab from '@/views/contract/LogTab.vue'
+import TransfersTab from '@/views/contract/TransfersTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
@@ -30,6 +30,10 @@ import BigMapHistory from '@/views/big_map/HistoryTab.vue'
 
 import Dashboard from '@/views/dashboard/Dashboard.vue'
 import EventsTab from '@/views/dashboard/EventsTab.vue'
+
+import DAppList from '@/views/dapps/List.vue'
+import DApp from '@/views/dapps/DApp.vue'
+import MainDApp from '@/views/dapps/Main.vue'
 
 
 Vue.use(VueRouter)
@@ -61,6 +65,36 @@ const router = new Router({
             },
             name: 'search',
             props: { default: true },
+        },
+        {
+            path: '/dapps',
+            components: {
+                default: MainDApp
+            },
+            props: { default: true },
+            children: [
+                {
+                    path: '',
+                    name: 'dapps',
+                    redirect: 'list'
+                },
+                {
+                    path: 'list',
+                    components: {
+                        default: DAppList
+                    },
+                    name: 'dapps-list',
+                    props: { default: true },
+                },
+                {
+                    path: ':address(KT[0-9A-z]{34})',
+                    components: {
+                        default: DApp
+                    },
+                    name: 'dapp',
+                    props: { default: true },
+                },
+            ]
         },
         {
             path: '/stats/:network',
@@ -101,7 +135,7 @@ const router = new Router({
             },
             name: 'diff',
             props: { default: true },
-        },  
+        },
         { // backward compatibility
             path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
             children: [
@@ -172,17 +206,16 @@ const router = new Router({
                     props: true
                 },
                 {
-                    path: 'log',
-                    name: 'log',
-                    component: LogTab,
-                    props: true
-                },
-                {
                     path: 'fork',
                     name: 'fork',
                     components: {
                         default: ForkTab,
                     }
+                },{
+                    path: 'transfers',
+                    name: 'transfers',
+                    component: TransfersTab,
+                    props: true
                 },
             ]
         },

@@ -165,6 +165,17 @@ export class BetterCallApi {
       })
   }
 
+  getContractTransfers(network, address, size=10, offset=0) {
+    return getCancellable(this.api, `/contract/${network}/${address}/transfers?size=${size}&offset=${offset}`, {})
+      .then((res) => {
+        if (!res) { return res; }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
   getContractEntrypoints(network, address) {
     return getCancellable(this.api, `/contract/${network}/${address}/entrypoints`, {})
       .then((res) => {
@@ -214,7 +225,7 @@ export class BetterCallApi {
       })
   }
 
-  getContractEntrypointSchema(network, address, entrypoint, fill_type='empty') {
+  getContractEntrypointSchema(network, address, entrypoint, fill_type = 'empty') {
     return this.api.get(`/contract/${network}/${address}/entrypoints/schema?fill_type=${fill_type}&entrypoint=${entrypoint}`)
       .then((res) => {
         if (res.status != 200) {
@@ -224,9 +235,9 @@ export class BetterCallApi {
       })
   }
 
-  getContractStorage(network, address, level=null) {
+  getContractStorage(network, address, level = null) {
     let params = '?';
-    if (level){
+    if (level) {
       params += `level=${level}`
     }
     return getCancellable(this.api, `/contract/${network}/${address}/storage${params}`, {})
@@ -239,9 +250,9 @@ export class BetterCallApi {
       })
   }
 
-  getContractStorageRaw(network, address, level=null) {
+  getContractStorageRaw(network, address, level = null) {
     let params = '?';
-    if (level){
+    if (level) {
       params += `level=${level}`
     }
     return this.api.get(`/contract/${network}/${address}/storage/raw${params}`)
@@ -253,9 +264,9 @@ export class BetterCallApi {
       })
   }
 
-  getContractStorageRich(network, address, level=null) {
+  getContractStorageRich(network, address, level = null) {
     let params = '?';
-    if (level){
+    if (level) {
       params += `level=${level}`
     }
     return this.api.get(`/contract/${network}/${address}/storage/rich${params}`)
@@ -347,6 +358,17 @@ export class BetterCallApi {
     cancelRequests();
     return getCancellable(this.api, `/pick_random`, {})
       .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getContractsStats(network, addresses, period) {
+    return getCancellable(this.api, `/stats/${network}/contracts?period=${period}&contracts=${addresses.join(',')}`, {})
+      .then((res) => {
+        if (!res) { return res; }
         if (res.status != 200) {
           throw new RequestFailedError(res);
         }
@@ -579,8 +601,18 @@ export class BetterCallApi {
       })
   }
 
-  getNetworkStatsSeries(network, index, period) {
-    return getCancellable(this.api, `/stats/${network}/series?name=${index}&period=${period}`, {})
+  getNetworkStatsSeries(network, index, period, addresses = []) {
+    let params = [];
+    if (addresses && addresses.length) {
+      params.push(`address=${addresses.join(',')}`)
+    }
+    if (period) {
+      params.push(`period=${period}`)
+    }
+    if (index) {
+      params.push(`name=${index}`)
+    }
+    return getCancellable(this.api, `/stats/${network}/series?${params.join('&')}`, {})
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {
@@ -604,6 +636,44 @@ export class BetterCallApi {
   getContractBySlug(slug) {
     return getCancellable(this.api, `/slug/${slug}`, {})
       .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getDApps() {
+    return getCancellable(this.api, `/dapps`, {})
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getDApp(network, address) {
+    return getCancellable(this.api, `/dapps/${network}/${address}`, {})
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getTokenVolumeSeries(network, period, addresses, token_id) {
+    let params = [];
+    params.push(`contracts=${addresses.join(',')}`)
+
+    params.push(`period=${period}`)
+
+    params.push(`token_id=${token_id}`)
+
+    return getCancellable(this.api, `/tokens/${network}/series?${params.join('&')}`, {})
+      .then((res) => {
+        if (!res) { return res; }
         if (res.status != 200) {
           throw new RequestFailedError(res);
         }
