@@ -10,6 +10,7 @@
             :loading="loading"
             :address="address"
             :network="network"
+            :migrations="migrations"
             :contract="contract"
             v-on:fork="onFork"
           />
@@ -38,9 +39,9 @@
         <v-tab :to="{ name: 'interact' }" replace>
           <v-icon left small>mdi-play-box-outline</v-icon>Interact
         </v-tab>
-        <v-tab v-if="migrations.length > 0" :to="{ name: 'log' }" replace>
-          <v-icon left small>mdi-alert-circle-outline</v-icon>Log
-          <span class="ml-1">({{ migrations.length }})</span>
+        <v-tab :to="{ name: 'transfers' }" replace v-if="transfers && transfers.total > 0">
+          <v-icon left small>mdi-transfer</v-icon>Transfers
+          <span class="ml-1">({{ transfers.total || 0 }})</span>
         </v-tab>
         <v-tab :to="{ name: 'fork' }" replace v-if="showFork">
           <v-icon left small>mdi-source-fork</v-icon>Fork
@@ -56,6 +57,7 @@
       :network="network"
       :contract="contract"
       :migrations="migrations"
+      :transfers="transfers"
     ></router-view>
   </div>
 </template>
@@ -82,8 +84,10 @@ export default {
   data: () => ({
     contractLoading: true,
     migrationsLoading: true,
+    transfersLoading: true,
     contract: {},
     migrations: [],
+    transfers: null,
     showFork: false,
     tab: null,
   }),
@@ -91,6 +95,7 @@ export default {
     this.showFork = this.$route.name === "fork";
     this.getContract();
     this.getMigrations();
+    this.getTransfers();
   },
   computed: {
     loading() {
@@ -137,6 +142,20 @@ export default {
         })
         .finally(() => (this.migrationsLoading = false));
     },
+    getTransfers() {
+      this.transfersLoading = true;
+      this.api
+        .getContractTransfers(this.network, this.address, 20, 0)
+        .then((res) => {
+          if (!res) return;
+          this.transfers = res;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.showError(err);
+        })
+        .finally(() => (this.transfersLoading = false));
+    },
     onFork() {
       this.showFork = !this.showFork;
     },
@@ -146,6 +165,7 @@ export default {
       cancelRequests();
       this.getContract();
       this.getMigrations();
+      this.getTransfers();
       this.showFork = false;
     },
     showFork: function (newValue) {

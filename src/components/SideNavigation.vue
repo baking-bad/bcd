@@ -54,12 +54,11 @@
       <v-tooltip right>
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" icon @click="random" :loading="pickingRandom" class="mt-3">
-              <v-icon color="grey lighten-2">mdi-dice-3-outline</v-icon>
+            <v-icon color="grey lighten-2">mdi-dice-3-outline</v-icon>
           </v-btn>
         </template>
         <span>Pick random</span>
       </v-tooltip>
-
 
       <v-tooltip v-if="config.JUPYTER_PATH" right>
         <template v-slot:activator="{ on }">
@@ -111,7 +110,7 @@ import { logout } from "@/utils/auth.js";
 export default {
   name: "SideNavigation",
   props: {
-    app: Boolean
+    app: Boolean,
   },
   computed: {
     isAuthorized() {
@@ -122,44 +121,51 @@ export default {
     },
     apiDocsUrl() {
       return `${this.config.API_URI}docs/index.html`;
-    }
+    },
   },
   data: () => ({
     items: [
       {
         icon: "mdi-cloud-search-outline",
         text: "Advanced search",
-        to: {name: "search"}
+        to: { name: "search" },
       },
       {
         icon: "mdi-poll",
         text: "Statistics",
         to: {
-          path: '/stats/mainnet/general'
-        }
-      }
+          path: "/stats/mainnet/general",
+        },
+      },
+      {
+        icon: "mdi-apps",
+        text: "DApps",
+        to: {
+          path: "/dapps",
+        },
+      },
     ],
-    pickingRandom: false
+    pickingRandom: false,
   }),
   methods: {
     ...mapActions({
       userLogout: "logout",
-      showError: "showError"
+      showError: "showError",
     }),
     clickLogout() {
       this.userLogout();
       logout();
-      this.$router.push({ path: '/' });
+      this.$router.push({ path: "/" });
     },
     random() {
       if (this.pickingRandom) return;
       this.pickingRandom = true;
       this.api
         .getRandomContract()
-        .then(res => {
+        .then((res) => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
-        .catch(err => {
+        .catch((err) => {
           if (err.code !== 204) {
             console.log(err);
             this.showError(err);
@@ -171,8 +177,8 @@ export default {
     },
     toggleTheme() {
       this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      localStorage.setItem('dark', this.$vuetify.theme.dark);
-    }
-  }
+      localStorage.setItem("dark", this.$vuetify.theme.dark);
+    },
+  },
 };
 </script>
