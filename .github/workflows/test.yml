@@ -1,0 +1,18 @@
+on: push
+name: Run linter and test build
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: setup Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: 10.x
+    - name: npm install, lint and build
+      run: |
+        npm install @vue/cli
+        npm run lint
+        npm run build
