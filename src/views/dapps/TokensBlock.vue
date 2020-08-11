@@ -94,7 +94,7 @@ export default {
 
       this.loadingTokenSeries = true;
       this.api
-        .getTokenVolumeSeries("mainnet", period, this.contracts, token_id)
+        .getTokenVolumeSeries("mainnet", period, this.tokens[this.selectedToken].contract, token_id)
         .then((res) => {
           this.series.token_volume = res;
         })
