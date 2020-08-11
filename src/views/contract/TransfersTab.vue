@@ -13,17 +13,10 @@
               </v-col>
               <v-col cols="2" class="d-flex align-center justify-end pr-6">
                 <span class="body-1">
-<<<<<<< HEAD
                   {{ item.token ? (item.amount / 10 ** item.token.decimals).toFixed(item.token.decimals) : item.amount }}
                   <span
                     class="caption text-uppercase font-weight-regular text--disabled"
                   >{{ item.token ? item.token.symbol : 'tok'}}</span>
-=======
-                  {{ item.amount }}
-                  <span
-                    class="caption text-uppercase font-weight-regular text--disabled"
-                  >tok</span>
->>>>>>> View: transfers
                 </span>
               </v-col>
               <v-col cols="5" class="d-flex align-center">
