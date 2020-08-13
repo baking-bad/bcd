@@ -1,6 +1,6 @@
 <template>
   <div>
-    <v-dialog max-width="525" v-model="show" @click:outside="close()">
+    <v-dialog max-width="525" v-model="show" @click:outside="close()" @keydown.esc="close()">
       <v-card class="data">
         <v-card-title class="px-6 py-3 d-flex align-center sidebar">
           <span class="body-1 font-weight-medium text-uppercase text--secondary">Watch:</span>

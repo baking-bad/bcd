@@ -21,31 +21,68 @@
             <v-list class="sidebar-list">
               <template v-for="(item, i) in subscriptions">
                 <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <v-list-item :key="i" class="pr-2" :to="item.address.startsWith('KT') ? `/${item.network}/${item.address}` : `/${item.address}`">
+                <v-list-item
+                  :key="i"
+                  class="pr-2"
+                  :to="item.address.startsWith('KT') ? `/${item.network}/${item.address}` : `/${item.address}`"
+                >
                   <v-list-item-content>
                     <v-list-item-title class="body-2">
                       <span v-if="item.alias">{{ item.alias }}</span>
                       <span v-else v-html="helpers.shortcut(item.address)"></span>
                     </v-list-item-title>
                     <v-list-item-subtitle class="overline">
-                      <span :class="item.network === 'mainnet' ? 'secondary--text' : ''">{{ item.network }}</span>
+                      <span
+                        :class="item.network === 'mainnet' ? 'secondary--text' : ''"
+                      >{{ item.network }}</span>
                     </v-list-item-subtitle>
                   </v-list-item-content>
                   <v-list-item-action>
                     <v-list-item-action-text class="d-flex">
-                      <v-btn small text @click.prevent.stop="watchSettings(item)" class="settings-button pl-1 pr-0">
-                        <v-icon v-if="item.watch_errors" color="error" class="mr-1" small>mdi-alert-outline</v-icon>
-                        <v-icon v-if="item.watch_migrations" color="warning" class="mr-1" small>mdi-source-pull</v-icon>
-                        <v-icon v-if="item.watch_calls" color="secondary" class="mr-1" small>mdi-swap-horizontal</v-icon>
-                        <v-icon v-if="item.watch_mempool" color="info" class="mr-1" small>mdi-history</v-icon>
-                        <v-icon v-if="item.watch_deployments || item.watch_same || item.watch_similar" color="accent" class="mr-1" small>mdi-shape-square-plus</v-icon>
+                      <v-btn
+                        small
+                        text
+                        @click.prevent.stop="watchSettings(item)"
+                        class="settings-button pl-1 pr-0"
+                      >
+                        <v-icon
+                          v-if="item.watch_errors"
+                          color="error"
+                          class="mr-1"
+                          small
+                        >mdi-alert-outline</v-icon>
+                        <v-icon
+                          v-if="item.watch_migrations"
+                          color="warning"
+                          class="mr-1"
+                          small
+                        >mdi-source-pull</v-icon>
+                        <v-icon
+                          v-if="item.watch_calls"
+                          color="secondary"
+                          class="mr-1"
+                          small
+                        >mdi-swap-horizontal</v-icon>
+                        <v-icon
+                          v-if="item.watch_mempool"
+                          color="info"
+                          class="mr-1"
+                          small
+                        >mdi-history</v-icon>
+                        <v-icon
+                          v-if="item.watch_deployments || item.watch_same || item.watch_similar"
+                          color="accent"
+                          class="mr-1"
+                          small
+                        >mdi-shape-square-plus</v-icon>
                       </v-btn>
                     </v-list-item-action-text>
                   </v-list-item-action>
                 </v-list-item>
               </template>
               <div v-if="subscriptions.length === 0" class="pa-4 text--secondary body-2">
-                Press<v-icon small class="text--disabled mx-1">mdi-eye-outline</v-icon>button on a contract page
+                Press
+                <v-icon small class="text--disabled mx-1">mdi-eye-outline</v-icon>button on a contract page
                 <br />to receive notifications
               </div>
             </v-list>
@@ -64,7 +101,7 @@
             <span class="caption font-weight-bold text-uppercase">Deployments</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="data"></v-expansion-panel-content>
-        </v-expansion-panel> -->
+        </v-expansion-panel>-->
       </v-expansion-panels>
     </v-skeleton-loader>
 
@@ -88,7 +125,7 @@ export default {
   name: "SideBar",
   components: {
     WatchSettings,
-    BakingBadFooter
+    BakingBadFooter,
   },
   computed: {
     isAuthorized() {
@@ -96,19 +133,19 @@ export default {
     },
     profile() {
       return this.$store.state.profile;
-    }
+    },
   },
   data: () => ({
     loading: true,
     subscriptions: [],
     selected: null,
-    showWatchSettings: false
+    showWatchSettings: false,
   }),
   created() {
     this.getSubscriptions();
   },
   methods: {
-    ...mapActions(["showError", "setSubscriptionChanged"]),
+    ...mapActions(["showError", "setSubscriptions"]),
     watchSettings(item) {
       this.selected = item;
       this.showWatchSettings = true;
@@ -117,42 +154,50 @@ export default {
       this.$store.state.profile.updated = true;
     },
     updateSubscription(item) {
-      this.subscriptions = this.subscriptions.map(s => {
+      this.subscriptions = this.subscriptions.map((s) => {
         if (s.address === item.address && s.network === item.network) {
           return item;
         } else {
           return s;
         }
       });
-      this.setSubscriptionChanged(item);
+      this.$emit("subscriptionChanged", item);
     },
     removeSubscription(item) {
       this.subscriptions = this.subscriptions.filter(
-        s => s.address !== item.address || s.network !== item.network
+        (s) => s.address !== item.address || s.network !== item.network
       );
-      this.setSubscriptionChanged(item);
+      this.$emit("subscriptionChanged", item);
     },
     getSubscriptions() {
       this.loading = true;
       this.api
         .getProfileSubscriptions()
-        .then(res => {
+        .then((res) => {
           if (!res) return;
           this.subscriptions = res;
         })
-        .catch(err => {
+        .catch((err) => {
           this.showError(err);
           console.log(err);
         })
         .finally(() => (this.loading = false));
-    }
-  }
+    },
+  },
+  watch: {
+    subscriptions: {
+      deep: true,
+      handler: function (newValue) {
+        this.setSubscriptions(newValue);
+      },
+    },
+  },
 };
 </script>
 
 <style scss>
 .settings-button {
-  opacity: .7;
+  opacity: 0.7;
 }
 .settings-button:hover {
   opacity: 1;
@@ -167,7 +212,7 @@ export default {
   min-height: 48px;
 }
 .sidebar-list {
-  max-height: calc(100vh - 75px - 1 * 48px);  /* number of expansion panels */
+  max-height: calc(100vh - 75px - 1 * 48px); /* number of expansion panels */
   overflow-y: auto;
   border-radius: 0;
   padding: 0;
