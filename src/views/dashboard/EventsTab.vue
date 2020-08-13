@@ -36,9 +36,14 @@
                 </v-btn>
               </v-col>
               <v-col cols="5">
-                <template v-if="item.type === 'error' || item.type === 'call' || item.type === 'invoke'">
+                <template
+                  v-if="item.type === 'error' || item.type === 'call' || item.type === 'invoke'"
+                >
                   <span v-if="item.body.internal" class="hash font-weight-thin mr-1">internal</span>
-                  <span :class="item.type === 'error' ? '' : 'secondary--text'" class="hash mr-1">{{ item.body.entrypoint }}</span>
+                  <span
+                    :class="item.type === 'error' ? '' : 'secondary--text'"
+                    class="hash mr-1"
+                  >{{ item.body.entrypoint }}</span>
                   <template v-if="item.type === 'error'">
                     <span class="text--secondary" style="font-size: 20px;">→</span>
                     <span class="body-1 error--text ml-1">{{ item.body.errors[0].title }}</span>
@@ -63,21 +68,21 @@
                   <span class="font-weight-light body-1">
                     <span v-if="item.body.kind === 'lambda'">
                       One or more stored
-                      <span
-                        class="font-weight-regular warning--text"
-                      >lambda</span>
+                      <span class="font-weight-regular warning--text">lambda</span>
                       expressions were
                       <span
                         class="font-weight-regular warning--text"
                       >altered</span>
                     </span>
                     <span v-else-if="item.body.kind === 'update'">
-                      Contract code was altered during the <span
+                      Contract code was altered during the
+                      <span
                         class="hash font-weight-regular warning--text"
                       >{{ item.body.protocol.slice(0, 8) }}</span> update
                     </span>
                     <span v-else-if="item.body.kind === 'bootstrap'">
-                      Contract was originated during the <span
+                      Contract was originated during the
+                      <span
                         class="hash font-weight-regular warning--text"
                       >{{ item.body.protocol.slice(0, 8) }}</span> activation
                     </span>
@@ -95,9 +100,7 @@
                 </template>
                 <template v-else-if="item.type === 'deploy'">
                   <span class="font-weight-light body-1">
-                    <span
-                      class="caption text-uppercase font-weight-regular accent--text"
-                    >Deployed</span>
+                    <span class="caption text-uppercase font-weight-regular accent--text">Deployed</span>
                     new contract to
                     <span
                       class="caption text-uppercase font-weight-regular"
@@ -141,9 +144,7 @@
                     <span v-html="helpers.shortcut(item.body.hash)"></span>
                   </v-btn>
                 </template>
-                <template
-                  v-else-if="(item.type === 'migration' && item.body.kind === 'update')"
-                >
+                <template v-else-if="(item.type === 'migration' && item.body.kind === 'update')">
                   <v-btn
                     class="text--secondary hash"
                     :to="{name: 'diff', query: {
@@ -185,13 +186,16 @@ import EmptyState from "@/components/EmptyState.vue";
 
 export default {
   name: "Events",
+  props: {
+    changed: Object,
+  },
   components: {
-    EmptyState
+    EmptyState,
   },
   data: () => ({
     events: [],
     loading: false,
-    downloaded: false
+    downloaded: false,
   }),
   created() {
     this.getEvents();
@@ -199,7 +203,7 @@ export default {
   computed: {
     profile() {
       return this.$store.state.profile;
-    }
+    },
   },
   methods: {
     ...mapActions(["showError", "showSuccess"]),
@@ -209,7 +213,7 @@ export default {
       const offset = force ? 0 : this.events.length;
       this.api
         .getProfileEvents(offset)
-        .then(res => {
+        .then((res) => {
           if (!res) {
             this.downloaded = true;
           } else {
@@ -221,7 +225,7 @@ export default {
             this.downloaded = res.length == 0;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.showError(err);
           this.downloaded = true;
@@ -232,18 +236,22 @@ export default {
       if (this.events.length === 0) return;
       const ts = this.events[0].body.timestamp;
 
-      this.api.profileMarkAllRead(dayjs(ts).unix())
+      this.api
+        .profileMarkAllRead(dayjs(ts).unix())
         .then(() => {
           this.showSuccess("All events marked as read");
           this.$store.state.profile.mark_read_at = ts;
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.showError(err);
-        })
+        });
     },
     isMarkedRead(item) {
-      return dayjs(item.body.timestamp).unix() <= dayjs(this.profile.mark_read_at).unix()
+      return (
+        dayjs(item.body.timestamp).unix() <=
+        dayjs(this.profile.mark_read_at).unix()
+      );
     },
     getIcon(itemType) {
       const icons = {
@@ -254,7 +262,7 @@ export default {
         call: "mdi-swap-horizontal",
         invoke: "mdi-swap-horizontal",
         migration: "mdi-source-pull",
-        mempool: "mdi-history"
+        mempool: "mdi-history",
       };
       return icons[itemType];
     },
@@ -267,7 +275,7 @@ export default {
         call: "secondary",
         invoke: "secondary",
         migration: "warning",
-        mempool: "info"
+        mempool: "info",
       };
       return colors[itemType];
     },
@@ -275,19 +283,22 @@ export default {
       if (isIntersecting) {
         this.getEvents();
       }
-    }
+    },
   },
   watch: {
-    "$store.state.subscriptionChanged": function() {
-      this.getEvents(true);
-    }
-  }
+    changed: {
+      deep: true,
+      handler: function () {
+        this.getEvents(true);
+      },
+    },
+  },
 };
 </script>
 
 <style scoped>
 .read-item {
   background-color: var(--v-canvas-base);
-  opacity: .8;
+  opacity: 0.8;
 }
 </style>

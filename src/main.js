@@ -109,7 +109,10 @@ getRuntimeConfig().then(function (config) {
     if (loggedIn && store.state.profile === null) {
       api.getProfile()
         .then(res => {
+          let subs = res.subscriptions;
+          delete res['subscriptions'];
           store.dispatch('setProfile', res);
+          store.dispatch('setSubscriptions', subs);
         })
         .catch(err => {
           if (err instanceof UnauthorizedError) {

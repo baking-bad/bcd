@@ -6,7 +6,7 @@
           <SideNavigation />
         </v-col>
         <v-col cols="10">
-          <SideBar />        
+          <SideBar v-on:subscriptionChanged="onSubscriptionChanged" />
         </v-col>
       </v-row>
     </v-navigation-drawer>
@@ -18,29 +18,37 @@
         </v-tab>
         <!-- <v-tab disabled>
           <v-icon left small>mdi-file-code-outline</v-icon>Deploy
-        </v-tab> -->
+        </v-tab>-->
       </v-tabs>
       <div class="mr-4 mt-6" style="width: 800px;">
         <SearchBox :inplace="true"></SearchBox>
       </div>
     </v-toolbar>
 
-    <router-view />
+    <router-view :changed="changedItem" />
   </div>
 </template>
 
 <script>
 import SearchBox from "@/components/SearchBox.vue";
-import SideNavigation from "@/components/SideNavigation.vue"
-import SideBar from "@/views/dashboard/SideBar.vue"
+import SideNavigation from "@/components/SideNavigation.vue";
+import SideBar from "@/views/dashboard/SideBar.vue";
 
 export default {
   name: "Dashboard",
   components: {
     SearchBox,
     SideBar,
-    SideNavigation
-  }
+    SideNavigation,
+  },
+  data: () => ({
+    changedItem: null,
+  }),
+  methods: {
+    onSubscriptionChanged(item) {
+      this.changedItem = item;
+    },
+  },
 };
 </script>
 

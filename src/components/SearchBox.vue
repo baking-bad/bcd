@@ -5,7 +5,6 @@
     :items="suggests"
     item-text="value"
     @keyup.enter="onEnter(searchText)"
-    @change="onSearch"
     return-object
     placeholder="Search anything"
     autocomplete="off"
@@ -20,12 +19,16 @@
     :autofocus="!inplace"
     :outlined="!inplace"
     :dense="inplace"
+    :menu-props="menuProps"
+    @blur="menuProps = {}"
   >
     <template v-slot:item="{ item }">
       <v-list-item-avatar>
         <v-icon v-if="item.type == 'contract'">mdi-code-json</v-icon>
         <v-icon v-else-if="item.type == 'operation'">mdi-swap-horizontal</v-icon>
         <v-icon v-else-if="item.type == 'bigmapdiff'">mdi-database-edit</v-icon>
+        <v-icon v-else-if="item.type == 'subscription'">mdi-eye-outline</v-icon>
+        <v-icon v-else-if="item.type == 'recent'">mdi-history</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title>
@@ -51,32 +54,42 @@
             <span class="text--secondary" style="font-size: 20px;">→</span>
             <span>{{ item.body.key }}</span>
           </template>
+          <template v-if="item.type == 'subscription'">
+            <span class="text--secondary">{{ item.body.alias }}</span>
+          </template>
+          <template v-if="item.type == 'recent'">
+            <span class="purple--text">{{ item.value }}</span>
+          </template>
         </v-list-item-title>
 
-        <v-list-item-subtitle class="overline">
-          <span :class="item.body.network === 'mainnet' ? 'secondary--text' : ''">
-            {{ item.body.network }}&nbsp;|&nbsp;
-          </span>
-          <span v-if="item.type === 'contract'">
-            {{ helpers.plural(item.body.tx_count - 1, 'tx') }}&nbsp;|&nbsp;
-          </span>
-          <span v-else-if="item.type === 'operation'">
-            {{ item.body.status }}&nbsp;|&nbsp;
-          </span>
-          <span v-else-if="item.type === 'bigmapdiff' && item.group">
-            {{ helpers.plural(item.group.count, "update") }}&nbsp;|&nbsp;
-          </span>
-          <span class="overline text--primary">
+        <v-list-item-subtitle class="overline" v-if="item.body">
+          <span
+            v-if="item.body.network"
+            :class="item.body.network === 'mainnet' ? 'secondary--text' : ''"
+          >{{ item.body.network }}&nbsp;|&nbsp;</span>
+          <span
+            v-if="item.type === 'contract'"
+          >{{ helpers.plural(item.body.tx_count - 1, 'tx') }}&nbsp;|&nbsp;</span>
+          <span v-else-if="item.type === 'operation'">{{ item.body.status }}&nbsp;|&nbsp;</span>
+          <span
+            v-else-if="item.type === 'bigmapdiff' && item.group"
+          >{{ helpers.plural(item.group.count, "update") }}&nbsp;|&nbsp;</span>
+          <span
+            v-else-if="item.type === 'subscription'"
+          >Subscribed at {{ helpers.formatDate(item.body.subscribed_at) }}</span>
+          <span class="overline text--primary" v-if="item.body.timestamp">
             {{ helpers.formatDate(item.body.timestamp) }}
-            <span v-if="item.body.last_action">— {{ helpers.formatDate(item.body.last_action) }}</span>
+            <span
+              v-if="item.body.last_action"
+            >— {{ helpers.formatDate(item.body.last_action) }}</span>
           </span>
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action>
-        <v-list-item-action-text>
+        <v-list-item-action-text v-if="item.body.found_by">
           <span
             class="body-2"
-            v-if="!['alias', 'key_strings', 'entrypoint', ''].includes(item.body.found_by) 
+            v-if="!['alias', 'key_strings', 'entrypoint', 'subscription', 'recent', ''].includes(item.body.found_by) 
                 && item.highlights[item.body.found_by]"
             v-html="item.highlights[item.body.found_by][0]"
           ></span>
@@ -84,6 +97,12 @@
         <v-list-item-action-text>
           <span class="overline grey--text">{{ item.body.found_by || '' }}</span>
         </v-list-item-action-text>
+        <v-btn
+          x-small
+          text
+          v-if="item.type === 'recent'"
+          @click.stop.prevent="onRemoveClick(item.value)"
+        >remove</v-btn>
       </v-list-item-action>
     </template>
   </v-combobox>
@@ -92,10 +111,15 @@
 <script>
 import { mapActions } from "vuex";
 import { checkAddress, checkOperation, checkKeyHash } from "@/utils/tz.js";
+import {
+  getHistory,
+  addHistoryItem,
+  removeHistoryItem,
+} from "@/utils/history.js";
 
 export default {
   props: {
-    inplace: Boolean
+    inplace: Boolean,
   },
   data: () => ({
     suggests: [],
@@ -103,39 +127,95 @@ export default {
     searchText: null,
     _locked: false,
     _timerId: null,
-    seqno: 0
+    seqno: 0,
+    menuProps: {},
   }),
+  created() {
+    this.suggests = this.getHistoryItems("");
+  },
   methods: {
     ...mapActions(["showError"]),
     onSearch() {
-      if (!this.model) return;
+      if (!this.model || !this.model.body) return;
       const value = this.model.value || this.model;
       const network = this.model.body.network;
 
+      addHistoryItem(this.searchText || value);
       if (this.model.type == "operation" && checkOperation(value)) {
         this.$nextTick(() => {
           this.model = null;
         });
         this.$router.push({ path: `/${network}/opg/${value}` });
-      }
-      if (this.model.type == "contract" && checkAddress(value)) {
+      } else if (this.model.type == "contract" && checkAddress(value)) {
         this.$nextTick(() => {
           this.model = null;
         });
         this.$router.push({ path: `/${network}/${value}` });
-      }
-      if (this.model.type == "bigmapdiff" && checkKeyHash(value)) {
+      } else if (this.model.type == "bigmapdiff" && checkKeyHash(value)) {
         const ptr = this.model.body.ptr;
         this.$nextTick(() => {
           this.model = null;
         });
         this.$router.push({ path: `/${network}/big_map/${ptr}/${value}` });
+      } else if (this.model.type == "subscription") {
+        this.$nextTick(() => {
+          this.model = null;
+        });
+        this.$router.push({
+          path: `/${network}/${value}`,
+        });
+      } else if (this.model.type == "recent") {
+        this.menuProps = {
+          value: true,
+        };
       }
     },
     onEnter(searchText) {
       if (searchText !== null && searchText.length > 2) {
+        addHistoryItem(searchText);
         this.$router.push({ name: "search", query: { text: searchText } });
       }
+    },
+    getPrivateItems(searchText) {
+      let result = [];
+      if (this.$store.state.subscriptions.length == 0) return result;
+
+      this.$store.state.subscriptions
+        .filter((sub) =>
+          sub.alias.toLowerCase().startsWith(searchText.toLowerCase())
+        )
+        .forEach((item) => {
+          result.push({
+            type: "subscription",
+            body: Object.assign(
+              {
+                found_by: "subscription",
+              },
+              item
+            ),
+            value: item.address,
+          });
+        });
+      return result;
+    },
+    getHistoryItems(searchText) {
+      let result = [];
+      let history = getHistory();
+      if (history.length == 0) return result;
+
+      if (searchText !== "") {
+        history = history.filter((item) =>
+          item.toLowerCase().startsWith(searchText.toLowerCase())
+        );
+      }
+      history.forEach((item) => {
+        result.push({
+          type: "recent",
+          body: item,
+          value: item,
+        });
+      });
+      return result;
     },
     fetchSearchDebounced(text, seqno) {
       if (!text || text.length < 3) return;
@@ -145,21 +225,29 @@ export default {
       this._timerId = setTimeout(() => {
         this.api
           .search(text)
-          .then(res => {
+          .then((res) => {
             if (seqno === this.seqno) {
-              this.suggests = res.items;
+              this.suggests = this.getHistoryItems(text);
+              this.suggests.push(...this.getPrivateItems(text));
+              this.suggests.push(...res.items);
             }
           })
-          .catch(err => {
+          .catch((err) => {
             console.log(err);
             this.showError(err);
           });
       }, 100);
-    }
+    },
+    onRemoveClick(text) {
+      removeHistoryItem(text);
+      this.suggests = this.getHistoryItems("");
+    },
   },
   watch: {
     searchText(val) {
       if (this._locked) return;
+      this.menuProps = {};
+      this.onSearch();
       this._locked = true;
       this.searchText = val ? val.trim() : "";
       if (this.searchText) {
@@ -168,9 +256,10 @@ export default {
         this.suggests = [];
         this.model = null;
       }
+
       this._locked = false;
-    }
-  }
+    },
+  },
 };
 </script>
 
