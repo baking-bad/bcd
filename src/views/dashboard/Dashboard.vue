@@ -16,6 +16,9 @@
         <v-tab :to="{ name: 'events' }" exact-active-class="active-tab" replace>
           <v-icon left small>mdi-message-text-clock-outline</v-icon>Events
         </v-tab>
+        <v-tab :to="{ name: 'tasks' }" exact-active-class="active-tab" replace>
+          <v-icon left small>mdi-brain</v-icon>Tasks
+        </v-tab>
         <!-- <v-tab disabled>
           <v-icon left small>mdi-file-code-outline</v-icon>Deploy
         </v-tab>-->
@@ -25,7 +28,9 @@
       </div>
     </v-toolbar>
 
-    <router-view :changed="changedItem" />
+    <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
+      <router-view :changed="changedItem" />
+    </v-container>
   </div>
 </template>
 
