@@ -30,6 +30,7 @@ import BigMapHistory from '@/views/big_map/HistoryTab.vue'
 
 import Dashboard from '@/views/dashboard/Dashboard.vue'
 import EventsTab from '@/views/dashboard/EventsTab.vue'
+import TasksTab from '@/views/dashboard/TasksTab.vue'
 
 
 Vue.use(VueRouter)
@@ -202,6 +203,12 @@ const router = new Router({
                     path: 'events',
                     name: 'events',
                     component: EventsTab,
+                    props: true
+                },
+                {
+                    path: 'tasks',
+                    name: 'tasks',
+                    component: TasksTab,
                     props: true
                 }
             ]

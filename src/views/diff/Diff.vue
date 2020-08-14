@@ -9,12 +9,12 @@
         <v-col cols="6">
           <v-skeleton-loader v-if="loading" type="card-heading, image"></v-skeleton-loader>
         </v-col>
-      </v-row>      
+      </v-row>
       <v-row v-if="!loading && res" no-gutters>
         <v-col cols="12">
           <template v-if="isAuthorized">
             <v-btn
-              v-if="task"
+              v-if="voted && task"
               fab
               elevation="3"
               right
@@ -34,11 +34,21 @@
               fixed
               color="success"
               style="margin-right: 65px;"
-              @click="upVote"
+              @click="vote(1)"
+              :disabled="voted"
             >
               <v-icon>mdi-thumb-up-outline</v-icon>
             </v-btn>
-            <v-btn fab elevation="3" right bottom fixed color="error" @click="downVote">
+            <v-btn
+              fab
+              elevation="3"
+              right
+              bottom
+              fixed
+              color="error"
+              @click="vote(2)"
+              :disabled="voted"
+            >
               <v-icon>mdi-thumb-down-outline</v-icon>
             </v-btn>
           </template>
@@ -66,14 +76,15 @@ export default {
   components: {
     SideNavigation,
     DiffViewer,
-    ErrorState
+    ErrorState,
   },
   data: () => ({
     res: null,
     loading: true,
     snackbar: false,
     snacktext: "",
-    task: null
+    task: null,
+    voted: false,
   }),
   created() {
     this.requestData();
@@ -88,31 +99,33 @@ export default {
         address: params.addressA,
         network: params.networkA,
         protocol: params.protocolA,
-        level: parseInt(params.levelA)
+        level: parseInt(params.levelA),
       };
       const right = {
         address: params.addressB,
         network: params.networkB,
         protocol: params.protocolB,
-        level: parseInt(params.levelB)
+        level: parseInt(params.levelB),
       };
       return { left, right };
-    }
+    },
   },
   methods: {
     ...mapActions(["showError"]),
     requestData() {
       this.getDiff();
-      if (this.isAuthorized) {
-        this.nextTask();
-      }
+      this.task = null;
+      this.snackbar = false;
+      this.voted = false;
     },
     getDiff() {
       this.loading = true;
       this.api
         .getDiff(this.query)
-        .then(res => (this.res = res))
-        .catch(err => {
+        .then((res) => {
+          this.res = res;
+        })
+        .catch((err) => {
           console.log(err);
           this.showError(err);
         })
@@ -120,54 +133,36 @@ export default {
           this.loading = false;
         });
     },
-    upVote() {
+    vote(vote) {
       this.api
         .vote(
           this.query.left.network,
           this.query.left.address,
           this.query.right.network,
           this.query.right.address,
-          1
+          vote
         )
         .then(() => {
-          this.snacktext = "Success";
+          this.snacktext = "Thank you";
           this.snackbar = true;
+          return this.api.getTasks();
         })
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        });
-    },
-    downVote() {
-      this.api
-        .vote(
-          this.query.left.network,
-          this.query.left.address,
-          this.query.right.network,
-          this.query.right.address,
-          0
-        )
-        .then(() => {
-          this.snacktext = "Success";
-          this.snackbar = true;
+        .then((res) => {
+          if (res && res.length > 0) {
+            this.task = res[0];
+          } else {
+            this.task = null;
+          }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.showError(err);
-        });
+        })
+        .finally(() => (this.voted = true));
     },
-    nextTask() {
-      this.api
-        .getNextVoteTask()
-        .then(res => (this.task = res))
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        });
-    }
   },
   watch: {
-    $route: "requestData"
-  }
+    $route: "requestData",
+  },
 };
 </script>

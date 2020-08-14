@@ -426,8 +426,26 @@ export class BetterCallApi {
       })
   }
 
-  getNextVoteTask() {
-    return this.api.get(`/profile/vote/task`,
+  getTasks() {
+    return this.api.get(`/profile/vote/tasks`,
+      {
+        headers: {
+          'Authorization': getJwt()
+        }
+      })
+      .then((res) => {
+        return res.data
+      })
+      .catch((err) => {
+        if (err.response !== undefined && err.response.status == 401) {
+          throw new UnauthorizedError(err);
+        }
+        throw err;
+      })
+  }
+
+  generateTasks() {
+    return this.api.get(`/profile/vote/generate`,
       {
         headers: {
           'Authorization': getJwt()

@@ -1,5 +1,5 @@
 <template>
-  <div class="fill-height canvas">
+  <div class="fill-height canvas" v-if="profile">
     <v-list-item style="max-height: 74px;">
       <v-list-item-content two-line>
         <v-list-item-title class="headline">Dashboard</v-list-item-title>
@@ -13,6 +13,33 @@
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
     >
       <v-expansion-panels flat tile mandatory active-class="opened-panel">
+        <v-expansion-panel class="ma-0 bb-1" v-if="profile">
+          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+            <span class="caption font-weight-bold text-uppercase text--secondary">Info</span>
+          </v-expansion-panel-header>
+          <v-expansion-panel-content color="data">
+            <v-list disabled>
+              <v-list-item v-if="profile.name">
+                <v-list-item-content>
+                  <v-list-item-subtitle class="overline">Name</v-list-item-subtitle>
+                  <v-list-item-title class="body-2">{{ profile.name }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item v-if="profile.registered_at">
+                <v-list-item-content>
+                  <v-list-item-subtitle class="overline">Registered At</v-list-item-subtitle>
+                  <v-list-item-title class="body-2">{{ profile.registered_at | formatDate }}</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-list-item v-if="profile.marked_contracts">
+                <v-list-item-content>
+                  <v-list-item-subtitle class="overline">Completed tasks</v-list-item-subtitle>
+                  <v-list-item-title class="body-2">{{ profile.marked_contracts }} tasks</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
         <v-expansion-panel class="ma-0 bb-1">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase text--secondary">Watch</span>
