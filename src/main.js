@@ -40,6 +40,12 @@ Vue.filter('formatDate', function (value) {
   }
 })
 
+Vue.filter('formatTime', function (value) {
+  if (value) {
+    return dayjs(value).format('D MMMM YYYY HH:mm');
+  }
+})
+
 Vue.filter('fromNow', function (value) {
   if (value) {
     return dayjs(value).fromNow();
