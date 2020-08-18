@@ -15,6 +15,9 @@
     <v-col cols="12" v-if="dapp.tokens">
       <TokensBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
     </v-col>
+    <v-col cols="12" v-if="dapp.agora_review_post_id || dapp.agora_qa_post_id">
+      <AgoraBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
+    </v-col>
   </v-row>
 </template>
 
@@ -25,6 +28,7 @@ import InformationBlock from "@/views/dapps/InformationBlock.vue";
 import ScreenshotsBlock from "@/views/dapps/ScreenshotsBlock.vue";
 import StatisticsBlock from "@/views/dapps/StatisticsBlock.vue";
 import TokensBlock from "@/views/dapps/TokensBlock.vue";
+import AgoraBlock from "@/views/dapps/AgoraBlock.vue";
 
 export default {
   name: "DApp",
@@ -33,7 +37,8 @@ export default {
     ScreenshotsBlock,
     InformationBlock,
     StatisticsBlock,
-    TokensBlock
+    TokensBlock,
+    AgoraBlock
   },
   data: () => ({
     loading: true,
