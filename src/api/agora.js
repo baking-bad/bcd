@@ -32,6 +32,10 @@ export class AgoraApi {
         return this.get(`https://forum.tezosagora.org/t/${postId}/posts.json `)
     }
 
+    getPostsWithRating(postId) {
+        return this.get(`https://try.thepavilion.io/t/this-is-a-new-post-with-ratings/${postId}.json`)
+    }
+
     getReplies(postId) {
         return this.get(`https://forum.tezosagora.org/posts/${postId}/replies.json`)
     }
