@@ -24,16 +24,11 @@
           </v-list-item>
           <v-list-item selectable v-if="dapp.interfaces.length" class="mx-0 px-0">
             <v-list-item-content>
-              <v-list-item-subtitle>Interfaces</v-list-item-subtitle>
+              <v-list-item-subtitle class="overline">Interfaces</v-list-item-subtitle>
               <v-list-item-title class="info-item-title">{{ dapp.interfaces.join(', ') }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-list>
-        <template v-for="link in dapp.social_links">
-          <v-btn :href="link" target="_blank" icon :key="link">
-            <v-icon>{{ getSocialIcon(link) }}</v-icon>
-          </v-btn>
-        </template>
       </v-skeleton-loader>
     </v-col>
     <v-col cols="6">
@@ -71,26 +66,6 @@ export default {
   props: {
     dapp: Object,
     loading: Boolean,
-  },
-  methods: {
-    getSocialIcon(link) {
-      if (link.includes("twitter")) {
-        return "mdi-twitter";
-      } else if (link.includes("youtube")) {
-        return "mdi-youtube";
-      } else if (link.includes("github")) {
-        return "mdi-github";
-      } else if (link.includes("reddit")) {
-        return "mdi-reddit";
-      } else if (link.includes("linkedin")) {
-        return "mdi-linkedin";
-      } else if (link.includes("facebook")) {
-        return "mdi-facebook";
-      } else if (link.startsWith("tg://")) {
-        return "mdi-telegram";
-      }
-      return "mdi-web";
-    },
   },
 };
 </script>

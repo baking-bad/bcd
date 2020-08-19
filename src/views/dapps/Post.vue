@@ -1,16 +1,21 @@
 <template>
   <v-card class="mt-6 ml-2 pt-2 elevation-0 transparent">
     <v-card-title class="pa-0 postHeader" style="border-radius: 15px">
-      <v-list-item disabled two-line dense selectable>
-        <v-list-item-avatar>
+      <v-list-item
+        disabled
+        :two-line="post.name !== ''"
+        selectable
+        dense
+      >
+        <v-list-item-avatar left>
           <v-img
             :src="`https://forum.tezosagora.org${post.avatar_template}`.replace('{size}', '100')"
           ></v-img>
         </v-list-item-avatar>
         <v-list-item-content>
-          <v-list-item-title class="subtitle-1">{{ post.username }}&nbsp;</v-list-item-title>
+          <v-list-item-title class="subtitle-1">{{ post.username }}&nbsp;<span class="caption" v-if="post.moderator">[moderator]</span></v-list-item-title>
           <v-list-item-subtitle>
-            <span class="overline" v-if="post.moderator">moderator</span>
+            <span class="body-2" v-if="post.name !== ''">{{ post.name }}</span>
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action>
@@ -56,7 +61,10 @@ export default {
           '<blockquote class="blockquote bcd-blockquote">'
         )
         .replace(/\n<\/blockquote>/g, "</blockquote>")
-        .replace(/href="(\/u\/[a-zA-Z0-9_]*)"/gm, `href="https://forum.tezosagora.org$1"`)
+        .replace(
+          /href="(\/u\/[a-zA-Z0-9_]*)"/gm,
+          `href="https://forum.tezosagora.org$1"`
+        )
         .replace(/(href="http[^"]*")/gm, `$1 target="_blank"`);
     },
   },
@@ -102,7 +110,7 @@ export default {
   text-decoration: none;
 }
 .bcd-blockquote {
-  font-size: 1rem !important;
+  font-size: 0.9rem !important;
   border-left: 3px lightgray solid;
   margin-bottom: 15px;
 }
@@ -110,8 +118,8 @@ export default {
   display: none;
 }
 .post {
-  font-size: 1.1rem;
-  line-height: 1.8rem;
+  font-size: 1rem;
+  line-height: 1.6rem;
 }
 .post-date {
   font-size: 1rem;
