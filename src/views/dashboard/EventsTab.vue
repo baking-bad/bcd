@@ -1,8 +1,7 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-skeleton-loader
-      v-if="loading"
-      :loading="loading"
+      :loading="loading && !profile"
       type="list-item-two-line, list-item-two-line, list-item-two-line"
     >
       <div class="d-flex mb-4" v-if="events.length > 0">
@@ -274,8 +273,9 @@ export default {
     },
     isMarkedRead(item) {
       return (
+        this.profile &&
         dayjs(item.body.timestamp).unix() <=
-        dayjs(this.profile.mark_read_at).unix()
+          dayjs(this.profile.mark_read_at).unix()
       );
     },
     getIcon(itemType) {
