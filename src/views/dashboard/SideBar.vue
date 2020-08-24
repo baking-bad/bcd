@@ -72,6 +72,12 @@
                         @click.prevent.stop="watchSettings(item)"
                         class="settings-button pl-1 pr-0"
                       >
+                      <v-icon
+                          v-if="item.sentry_enabled"
+                          color="success"
+                          class="mr-1"
+                          small
+                        >mdi-bell-ring</v-icon>
                         <v-icon
                           v-if="item.watch_errors"
                           color="error"
