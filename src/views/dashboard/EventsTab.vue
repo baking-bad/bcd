@@ -44,7 +44,11 @@
                   >{{ item.body.entrypoint }}</span>
                   <template v-if="item.type === 'error'">
                     <span class="text--secondary" style="font-size: 20px;">→</span>
-                    <span class="body-1 error--text ml-1">{{ item.body.errors[0].title }}</span>
+                    <span
+                      class="body-1 error--text ml-1"
+                      v-if="item.body.errors && item.body.errors.length > 0"
+                    >{{ item.body.errors[0].title }}</span>
+                    <span class="body-1 error--text ml-1">{{ item.body.status }}</span>
                   </template>
                   <template v-else-if="item.type === 'invoke'">
                     <span class="body-1">

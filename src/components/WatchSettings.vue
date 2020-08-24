@@ -30,6 +30,15 @@
               </template>
             </div>
           </div>
+
+          <v-text-field
+            label="Sentry DSN"
+            hint="It tells us where to send the events to"
+            v-model="subscription.sentry_dsn"
+            v-show="subscription.sentry_enabled"
+            persistent-hint
+            clearable
+          ></v-text-field>
         </v-card-text>
         <v-card-actions class="d-flex flex-row align-center justify-end pa-6">
           <v-btn
@@ -46,13 +55,7 @@
           <v-btn small text class="px-4 mr-2 text--secondary" @click="close()">
             <span>Cancel</span>
           </v-btn>
-          <v-btn
-            :loading="updating"
-            small
-            outlined
-            class="px-6"
-            @click="subscribe()"
-          >
+          <v-btn :loading="updating" small outlined class="px-6" @click="subscribe()">
             <span>Save</span>
           </v-btn>
         </v-card-actions>
@@ -71,7 +74,7 @@ export default {
     data: Object,
     contract: Object,
     onUpdate: Function,
-    onRemove: Function
+    onRemove: Function,
   },
   data: () => ({
     updating: false,
@@ -86,7 +89,9 @@ export default {
       watch_calls: null,
       watch_same: null,
       watch_similar: null,
-      watch_mempool: false
+      watch_mempool: false,
+      sentry_enabled: false,
+      sentry_dsn: "",
     },
     groups: [
       {
@@ -95,24 +100,29 @@ export default {
           {
             value: "watch_errors",
             label: "Failed operations",
-            default: true
+            default: true,
           },
           {
             value: "watch_migrations",
             label: "Code modifications",
-            default: true
+            default: true,
           },
           {
             value: "watch_calls",
             label: "Applied contract calls",
-            default: false
+            default: false,
           },
           {
             value: "watch_mempool",
             label: "Mempool operations",
-            default: true
-          }
-        ]
+            default: true,
+          },
+          {
+            value: "sentry_enabled",
+            label: "Enable sentry notification",
+            default: false,
+          },
+        ],
       },
       {
         name: "Also suggest",
@@ -120,21 +130,21 @@ export default {
           {
             value: "watch_same",
             label: "Same contracts",
-            default: false
+            default: false,
           },
           {
             value: "watch_similar",
             label: "Similar contracts",
-            default: true
+            default: true,
           },
           {
             value: "watch_deployments",
             label: "Deployments",
-            default: true
-          }
-        ]
-      }
-    ]
+            default: true,
+          },
+        ],
+      },
+    ],
   }),
   methods: {
     ...mapActions(["showError", "showSuccess"]),
@@ -143,9 +153,9 @@ export default {
     },
     getDefaultFlags() {
       return this.groups
-        .map(g => g.items.map(item => [item.value, item.default]))
+        .map((g) => g.items.map((item) => [item.value, item.default]))
         .flat()
-        .reduce(function(obj, kv) {
+        .reduce(function (obj, kv) {
           obj[kv[0]] = kv[1];
           return obj;
         }, {});
@@ -161,7 +171,7 @@ export default {
           }
           this.showSuccess("Watch settings updated");
         })
-        .catch(err => {
+        .catch((err) => {
           this.showError(err);
           console.log(err);
         })
@@ -184,7 +194,7 @@ export default {
           }
           this.showSuccess("Watch removed");
         })
-        .catch(err => {
+        .catch((err) => {
           this.showError(err);
           console.log(err);
         })
@@ -192,7 +202,7 @@ export default {
           this.removing = false;
           this.close();
         });
-    }
+    },
   },
   watch: {
     show(newValue) {
@@ -205,14 +215,14 @@ export default {
           {
             address: this.contract.address,
             network: this.contract.network,
-            alias: this.contract.alias
+            alias: this.contract.alias,
           },
           this.getDefaultFlags()
         );
       } else {
         this.showError("Failed to init subscription");
       }
-    }
-  }
+    },
+  },
 };
 </script>
