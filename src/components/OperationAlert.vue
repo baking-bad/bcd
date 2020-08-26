@@ -14,7 +14,8 @@
           <span class="text--secondary body-1">
             <span>{{ err.descr }}</span>
             <span v-if="err.with" style="word-break: break-all">
-              with<span class="ml-2 hash font-weight-medium" >{{ err.with }}</span>
+              with
+              <span class="ml-2 hash font-weight-medium">{{ err.with }}</span>
             </span>
             <span
               v-else-if="err.id.includes('contract.balance_too_low')"
@@ -23,13 +24,25 @@
           </span>
         </v-col>
         <v-spacer></v-spacer>
-        <v-col cols="2" class="d-flex justify-end align-center" v-if="err.id.includes('michelson_v1.script_rejected') && operationId">
+        <v-col
+          cols="2"
+          class="d-flex justify-end align-center"
+          v-if="err.id.includes('michelson_v1.script_rejected') && operationId"
+        >
           <v-btn
             small
             text
             @click="getErrorLocation"
             :loading="errorLocationLoading"
+            class="text--secondary" 
           >Show failed code</v-btn>
+        </v-col>
+        <v-col
+          cols="2"
+          class="d-flex justify-end align-center"
+          v-if="err.id.includes('invalidSyntacticConstantError') && operationId"
+        >
+          <v-btn small text class="text--secondary" @click="showParameterError(err)">Show parameter</v-btn>
         </v-col>
       </v-row>
     </v-alert>
@@ -49,48 +62,64 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <TreeNodeDetails v-model="showTreeNodeView" :data="treeNodeData" :network="network" />
   </div>
 </template>
 
 <script>
 import Michelson from "@/components/Michelson.vue";
+import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
 
 export default {
   name: "OperationAlert",
   props: {
     operationId: String,
-    errors: Array
+    errors: Array,
+    network: String,
   },
   components: {
-    Michelson
+    Michelson,
+    TreeNodeDetails,
   },
   data: () => ({
     errorLocation: null,
     errorLocationLoading: false,
-    showErrorLocation: false
+    showErrorLocation: false,
+    showTreeNodeView: false,
+    treeNodeData: null,
   }),
   computed: {
     displayedErrors() {
-      return this.errors.filter(e => !e.id.includes('runtime_error'));
-    }
+      return this.errors.filter((e) => !e.id.includes("runtime_error"));
+    },
   },
   methods: {
     getErrorLocation() {
       this.errorLocationLoading = true;
       this.api
         .getErrorLocation(this.operationId)
-        .then(res => {
+        .then((res) => {
           this.errorLocation = res;
           this.showErrorLocation = true;
         })
-        .catch(err => console.log(err))
+        .catch((err) => console.log(err))
         .finally(() => (this.errorLocationLoading = false));
-    }
+    },
+    showParameterError(err) {
+      this.treeNodeData = {
+        realPrim: "lambda",
+        value_type: "lambda",
+        from: err.wrong_expression,
+        val: err.expected_form,
+      };
+      this.showTreeNodeView = true;
+    },
   },
   watch: {
-    showErrorLocation: function(newValue) {
+    showErrorLocation: function (newValue) {
       if (!newValue) this.errorLocation = null;
-    }
-  }
+    },
+  },
 };
 </script>

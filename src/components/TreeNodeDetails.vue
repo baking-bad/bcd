@@ -33,7 +33,7 @@
       </v-card-title>
       <v-card-text class="data" :class="data.realPrim === 'lambda' ? 'pa-0' : 'pt-7'">
         <v-row no-gutters>
-          <v-col v-if="data.diffType === 'update'" cols="6" class="pr-5">
+          <v-col v-if="data.diffType === 'update' || !data.diffType" cols="6" class="pr-5">
             <ValueInspector
               :prim="data.realPrim"
               :value="data.from"
@@ -41,7 +41,7 @@
               :label="data.realPrim"
             ></ValueInspector>
           </v-col>
-          <v-col :cols="data.diffType === 'update' ? 6 : 12">
+          <v-col :cols="data.diffType === 'update' || !data.diffType ? 6 : 12">
             <ValueInspector
               :prim="data.realPrim"
               :value="data.val"
@@ -74,7 +74,7 @@ export default {
   }),
   computed: {
     fullscreen() {
-      return this.data.realPrim === 'lambda' && this.data.diffType === 'update';
+      return this.data.realPrim === 'lambda' && (!this.data.diffType || this.data.diffType === 'update');
     },
     isLambdaEdited() {
       return (
