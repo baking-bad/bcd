@@ -136,7 +136,7 @@
       <div v-show="showParams" class="px-4 pb-2">
         <v-row v-if="data.errors" no-gutters>
           <v-col>
-            <OperationAlert :errors="data.errors" :operationId="data.id" />
+            <OperationAlert :errors="data.errors" :operationId="data.id" :network="data.network"/>
           </v-col>
         </v-row>
         <v-row
