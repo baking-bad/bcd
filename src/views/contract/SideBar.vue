@@ -3,7 +3,12 @@
     <v-list-item style="height: 74px;">
       <v-list-item-content two-line>
         <v-list-item-title class="headline">
-          <span v-if="alias">{{ alias }}</span>
+          <v-tooltip bottom v-if="alias" :disabled="alias.length < 15">
+            <template v-slot:activator="{ on, attrs }">
+              <span v-bind="attrs" v-on="on">{{ alias}}</span>
+            </template>
+            <span>{{ alias }}</span>
+          </v-tooltip>
           <span v-else v-html="helpers.shortcut(address)"></span>
         </v-list-item-title>
         <v-list-item-subtitle>
@@ -229,7 +234,7 @@
             <v-list class="contract-list">
               <template v-for="(log, i) in migrations">
                 <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <LogItem :key="i" :log="log" :network="network" :address="address"/>
+                <LogItem :key="i" :log="log" :network="network" :address="address" />
               </template>
             </v-list>
           </v-expansion-panel-content>
