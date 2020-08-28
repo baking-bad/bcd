@@ -42,10 +42,7 @@
             <v-col class="pl-12"></v-col>
             <v-col>Unique contracts</v-col>
             <v-col>
-              <router-link
-                style="text-decoration: none;"
-                :to="`/stats/mainnet/fa12`"
-              >
+              <router-link style="text-decoration: none;" :to="`/stats/mainnet/fa12`">
                 <span class="secondary--text">FA tokens</span>
               </router-link>
             </v-col>
@@ -86,8 +83,14 @@
       class="d-flex justify-center align-center text--disabled"
       style="z-index: 0"
     >
-      <span class="overline">Tezos smart contract explorer by </span>
-      <v-btn small text href="https://baking-bad.org/docs" target="_blank" class="text--secondary mb-1 ml-1 pa-1">
+      <span class="overline">Tezos smart contract explorer by</span>
+      <v-btn
+        small
+        text
+        href="https://baking-bad.org/docs"
+        target="_blank"
+        class="text--secondary mb-1 ml-1 pa-1"
+      >
         <span>Baking Bad</span>
       </v-btn>
     </v-footer>
@@ -103,35 +106,28 @@ export default {
   name: "Home",
   components: {
     HomeToolbar,
-    SearchBox
+    SearchBox,
   },
   data: () => ({
-    webSocket: null,
     stats: [],
     connecting: true,
-    pickingRandom: false
+    pickingRandom: false,
+    hasOpenCallback: false,
   }),
   mounted() {
     if (this.$route.name != this.config.HOME_PAGE) {
       this.$router.push({ path: this.config.HOME_PAGE });
     }
-  },
-  created() {
-    this.webSocket = new WebSocket(this.config.WS_URI);
-    this.webSocket.onmessage = this.onMessage;
-    this.webSocket.onopen = this.onOpen;
-    this.webSocket.onclose = this.onClose;
-    this.webSocket.onerror = this.onError;
+
+    this.ws.onMessage(this.onMessage);
+    this.ws.onOpen(this.onOpen);
   },
   beforeRouteLeave(to, from, next) {
-    if (this.webSocket && this.webSocket.readyState === 1) {
-      this.webSocket.send(
-        JSON.stringify({
-          action: "unsubscribe",
-          channel: "stats"
-        })
-      );
-    }
+    this.ws.send({
+      action: "unsubscribe",
+      channel: "stats",
+    });
+
     next();
   },
   methods: {
@@ -141,10 +137,10 @@ export default {
       this.pickingRandom = true;
       this.api
         .getRandomContract()
-        .then(res => {
+        .then((res) => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
-        .catch(err => {
+        .catch((err) => {
           if (err.code !== 204) {
             console.log(err);
             this.showError(err);
@@ -154,10 +150,9 @@ export default {
           this.pickingRandom = false;
         });
     },
-    onMessage(event) {
-      let data = JSON.parse(event.data);
-      if (data.body) {
-        this.stats = data.body.sort(function(a, b) {
+    onMessage(data) {
+      if (data.body && data.channel_name == "stats") {
+        this.stats = data.body.sort(function (a, b) {
           if (a.network === "mainnet" || b.network === "zeronet") {
             return -1;
           } else if (b.network === "mainnet" || a.network === "zeronet") {
@@ -168,22 +163,14 @@ export default {
         });
       }
     },
-    onError(event) {
-      console.log("error: ", event.data);
-    },
     onOpen() {
-      this.webSocket.send(
-        JSON.stringify({
-          action: "subscribe",
-          channel: "stats"
-        })
-      );
+      this.ws.send({
+        action: "subscribe",
+        channel: "stats",
+      });
       this.connecting = false;
     },
-    onClose(event) {
-      console.log("close: ", event.data);
-    }
-  }
+  },
 };
 </script>
 

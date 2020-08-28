@@ -102,11 +102,11 @@
         <v-expansion-panels v-if="items.length > 0" multiple hover flat class="bb-1">
           <ContentItem
             :data="item"
-            :key="item.hash + '_' + item.counter + '_' + key"
             :address="address"
             v-for="(item, key) in items"
+            :key="item.hash + '_' + item.counter + '_' + key"
           />
-        </v-expansion-panels>        
+        </v-expansion-panels>
         <span v-intersect="onDownloadPage" v-if="!loading && !downloaded"></span>
       </v-col>
     </v-row>
@@ -116,18 +116,18 @@
 <script>
 import { mapActions } from "vuex";
 import ContentItem from "@/views/contract/ContentItem.vue";
-import EmptyState from "@/components/EmptyState.vue"
+import EmptyState from "@/components/EmptyState.vue";
 import dayjs from "dayjs";
 
 export default {
   name: "OperationsTab",
   props: {
     address: String,
-    network: String
+    network: String,
   },
   components: {
     ContentItem,
-    EmptyState
+    EmptyState,
   },
   data: () => ({
     operations: [],
@@ -141,7 +141,8 @@ export default {
     datesBuf: [],
     datesModal: false,
     entrypoints: [],
-    availableEntrypoints: []
+    availableEntrypoints: [],
+    operationsChannelName: null,
   }),
   created() {
     this.fetchOperations();
@@ -165,7 +166,7 @@ export default {
       return operations;
     },
     dateRangeText() {
-      let texts = this.dates.map(d => dayjs(d).format("MMM DD"));
+      let texts = this.dates.map((d) => dayjs(d).format("MMM DD"));
       if (texts.length === 2) {
         return texts.join(" — ");
       } else if (texts.length === 1) {
@@ -182,7 +183,7 @@ export default {
         if (this.entrypoints[i].length < s.length) s = this.entrypoints[i];
       }
       return s;
-    }
+    },
   },
   methods: {
     ...mapActions(["showError"]),
@@ -196,7 +197,7 @@ export default {
       return 0;
     },
     getTimestamps() {
-      let timestamps = this.dates.map(d => dayjs(d).unix() * 1000).sort();
+      let timestamps = this.dates.map((d) => dayjs(d).unix() * 1000).sort();
       if (timestamps.length === 2) {
         return [timestamps[0], timestamps[1] + 86400000];
       } else if (timestamps.length === 1) {
@@ -208,13 +209,13 @@ export default {
     getEntrypoints() {
       this.api
         .getContractEntrypoints(this.network, this.address)
-        .then(res => {
+        .then((res) => {
           if (!res) return;
-          this.availableEntrypoints = res.map(x => x.name);
+          this.availableEntrypoints = res.map((x) => x.name);
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
-        })
+        });
     },
     getOperations(clearData = false, resetFilters = false) {
       if (this.operationsLoading || (this.downloaded && !clearData)) return;
@@ -234,7 +235,7 @@ export default {
       }
 
       const onChainStatuses = ["applied", "failed", "skipped", "backtracked"];
-      let status = this.status.filter(s => onChainStatuses.includes(s));
+      let status = this.status.filter((s) => onChainStatuses.includes(s));
       if (status.length === 0 && this.status.length > 0) {
         this.operationsLoading = false;
         return;
@@ -252,16 +253,16 @@ export default {
           status,
           entries
         )
-        .then(res => {
+        .then((res) => {
           if (!res) {
-            this.downloaded = true;  // prevent endless polling
+            this.downloaded = true; // prevent endless polling
           } else {
             this.pushOperations(res.operations);
             this.downloaded = res.operations.length == 0;
             this.last_id = res.last_id;
           }
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           this.showError(err);
           this.downloaded = true;
@@ -274,10 +275,10 @@ export default {
 
       this.api
         .getContractMempool(this.network, this.address)
-        .then(res => {
+        .then((res) => {
           this.mempool = res;
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
         })
         .finally(() => (this.mempoolLoading = false));
@@ -288,18 +289,18 @@ export default {
 
       // Apply operation filters
       if (this.status.length > 0) {
-        mempoolOperations = mempoolOperations.filter(o =>
+        mempoolOperations = mempoolOperations.filter((o) =>
           this.status.includes(o.status)
         );
       }
       if (this.entrypoints.length > 0) {
-        mempoolOperations = mempoolOperations.filter(o =>
+        mempoolOperations = mempoolOperations.filter((o) =>
           this.entrypoints.includes(o.entrypoint)
         );
       }
       if (this.dates.length > 0) {
         let timestamps = this.getTimestamps();
-        mempoolOperations = mempoolOperations.filter(function(op) {
+        mempoolOperations = mempoolOperations.filter(function (op) {
           const ts = dayjs(op.timestamp).unix() * 1000;
           return ts >= timestamps[0] && ts < timestamps[1];
         });
@@ -309,16 +310,16 @@ export default {
       if (this.operations.length > 0) {
         const lastTimestamp = this.operations[this.operations.length - 1]
           .timestamp;
-        const lastHashes = this.operations.slice(0, 15).map(o => o.hash);
+        const lastHashes = this.operations.slice(0, 15).map((o) => o.hash);
         mempoolOperations = mempoolOperations.filter(
-          o => o.timestamp >= lastTimestamp && !lastHashes.includes(o.hash)
+          (o) => o.timestamp >= lastTimestamp && !lastHashes.includes(o.hash)
         );
       }
 
       return mempoolOperations;
     },
     pushOperations(data) {
-      data.forEach(element => {
+      data.forEach((element) => {
         if (element.internal) {
           this.operations[this.operations.length - 1].internal_operations.push(
             element
@@ -329,12 +330,27 @@ export default {
         }
       });
     },
+    unshiftOperations(data) {
+      data.forEach((element) => {
+        if (element.internal) {
+          this.operations[0].internal_operations.push(
+            element
+          );
+        } else {
+          element.internal_operations = [];
+          this.operations.unshift(element);
+        }
+      });
+    },
     onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
         this.getOperations();
       }
     },
     fetchOperations() {
+      this.ws.onMessage(this.onOperationUpdates);
+      this.ws.onOpen(this.onOpen);
+
       this.getOperations(true, true);
       if (this.config.MEMPOOL_ENABLED) {
         this.getMempool();
@@ -343,13 +359,36 @@ export default {
     },
     updateOperations() {
       this.getOperations(true, false);
-    }
+    },
+    onOperationUpdates(data) {
+      if (data.body === "ok") {
+        this.operationsChannelName = data.channel_name;
+      } else if (data.channel_name === this.operationsChannelName) {
+        this.unshiftOperations(data.body);
+      }
+    },
+    onOpen() {
+      this.ws.send({
+        action: "subscribe",
+        channel: "operations",
+        address: this.address,
+        network: this.network,
+      });
+    },
   },
+  beforeRouteLeave() {},
   watch: {
     address: "fetchOperations",
     status: "updateOperations",
     entrypoints: "updateOperations",
-    dates: "updateOperations"
-  }
+    dates: "updateOperations",
+    $route: function (to, from) {
+      console.log(from)
+      this.ws.send({
+        action: "unsubscribe",
+        channel: `operations_${from.params.network}_${from.params.address}`,
+      });
+    },
+  },
 };
 </script>
