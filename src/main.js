@@ -11,6 +11,7 @@ import { getJwt, logout, getBool } from "@/utils/auth.js";
 import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js"
 import { NodeRPC } from "@/api/rpc.js"
 import { TzKTApi } from "@/api/tzkt.js"
+import { BcdWs } from "@/api/ws.js";
 
 import '@mdi/font/css/materialdesignicons.css';
 import { makeVuetify } from '@/plugins/vuetify';
@@ -75,11 +76,13 @@ getRuntimeConfig().then(function (config) {
   let api = new BetterCallApi(config.API_URI);
   let rpc = new NodeRPC(config.RPC_ENDPOINTS);
   let tzkt = new TzKTApi(config.TZKT_ENDPOINTS);
+  let ws = new BcdWs(config.WS_URI);
+  
   let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress }
 
   Vue.mixin({
-    data() { 
-      return {config, api, rpc, tzkt, helpers} 
+    data() {
+      return { config, api, rpc, tzkt, ws, helpers }
     }
   });
 
@@ -164,5 +167,5 @@ getRuntimeConfig().then(function (config) {
     store,
     vuetify,
     render: h => h(App),
-  }).$mount('#app')
+  }).$mount('#app');
 })
