@@ -42,7 +42,7 @@
           class="d-flex justify-end align-center"
           v-if="err.id.includes('invalidSyntacticConstantError') && operationId"
         >
-          <v-btn small text class="text--secondary" @click="showParameterError(err)">Show parameter</v-btn>
+          <v-btn small text class="text--secondary" @click="showParameterError(err)">Show mismatch</v-btn>
         </v-col>
       </v-row>
     </v-alert>
@@ -112,6 +112,7 @@ export default {
         value_type: "lambda",
         from: err.wrong_expression,
         val: err.expected_form,
+        diffType: 'error'
       };
       this.showTreeNodeView = true;
     },
