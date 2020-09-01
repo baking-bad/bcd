@@ -31,6 +31,7 @@ import BigMapHistory from '@/views/big_map/HistoryTab.vue'
 import Dashboard from '@/views/dashboard/Dashboard.vue'
 import EventsTab from '@/views/dashboard/EventsTab.vue'
 import TasksTab from '@/views/dashboard/TasksTab.vue'
+import CompilationsTab from '@/views/dashboard/CompilationsTab.vue'
 
 import DAppList from '@/views/dapps/List.vue'
 import DApp from '@/views/dapps/DApp.vue'
@@ -242,6 +243,12 @@ const router = new Router({
                     path: 'tasks',
                     name: 'tasks',
                     component: TasksTab,
+                    props: true
+                },
+                {
+                    path: 'compilations',
+                    name: 'compilations',
+                    component: CompilationsTab,
                     props: true
                 }
             ]

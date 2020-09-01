@@ -47,6 +47,13 @@ Vue.filter('formatTime', function (value) {
   }
 })
 
+
+Vue.filter('formatShortTime', function (value) {
+  if (value) {
+    return dayjs(value).format('D MMM YYYY HH:mm');
+  }
+})
+
 Vue.filter('fromNow', function (value) {
   if (value) {
     return dayjs(value).fromNow();

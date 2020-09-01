@@ -9,7 +9,15 @@
             </template>
             <span>{{ alias }}</span>
           </v-tooltip>
-          <span v-else v-html="helpers.shortcut(address)"></span>
+          <span v-else v-html="helpers.shortcut(address)"></span>&nbsp;
+          <v-btn
+            icon
+            target="_blank"
+            :href="contract.verification_source"
+            v-if="contract && contract.verified"
+          >
+            <v-icon small color="primary">mdi-shield-check</v-icon>
+          </v-btn>
         </v-list-item-title>
         <v-list-item-subtitle>
           <span
@@ -33,11 +41,11 @@
     <div class="d-flex align-center px-4 sidebar" style="height: 48px;">
       <span class="caption font-weight-bold text-uppercase text--secondary">Actions</span>
     </div>
-    <div class="d-flex align-center justify-center pa-2">
-      <v-tooltip bottom v-if="isAuthorized && contract">
+    <div class="d-flex align-center justify-start pa-2 px-4">
+      <v-tooltip bottom v-if="isAuthorized && contract && !contract.verified">
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" icon class="mr-2" @click="onVerifyClick">
-            <v-icon class="primary--text">mdi-shield-check-outline</v-icon>
+            <v-icon class="text--secondary">mdi-shield-check-outline</v-icon>
           </v-btn>
         </template>
         Verify contract
@@ -268,7 +276,7 @@
       }"
     />
 
-    <VerifyDialog v-model="showVerifyDialog" :address="address" :network="network"/>
+    <VerifyDialog v-model="showVerifyDialog" :address="address" :network="network" />
   </div>
 </template>
 
