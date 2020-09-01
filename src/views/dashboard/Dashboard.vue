@@ -16,6 +16,13 @@
         <v-tab :to="{ name: 'events' }" exact-active-class="active-tab" replace>
           <v-icon left small>mdi-message-text-clock-outline</v-icon>Events
         </v-tab>
+        <v-tab :to="{ name: 'compilations' }" exact-active-class="active-tab" replace>
+          <v-icon left small>mdi-play-speed</v-icon>
+          <span>
+            Compilations
+            <span v-if="profile">&nbsp;({{ profile.compilation_tasks }})</span>
+          </span>
+        </v-tab>
         <v-tab :to="{ name: 'tasks' }" exact-active-class="active-tab" replace>
           <v-icon left small>mdi-brain</v-icon>Tasks
         </v-tab>
@@ -45,6 +52,11 @@ export default {
     SearchBox,
     SideBar,
     SideNavigation,
+  },
+  computed: {
+    profile() {
+      return this.$store.state.profile;
+    },
   },
   data: () => ({
     changedItem: null,

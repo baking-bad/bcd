@@ -72,7 +72,7 @@
                         @click.prevent.stop="watchSettings(item)"
                         class="settings-button pl-1 pr-0"
                       >
-                      <v-icon
+                        <v-icon
                           v-if="item.sentry_enabled"
                           color="success"
                           class="mr-1"
@@ -122,51 +122,6 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="ma-0 bb-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase text--secondary">Verifications</span>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content color="data">
-            <v-list class="py-0">
-              <template v-for="(task, i) in tasks">
-                <v-list-item
-                  selectable
-                  :key="i"
-                  @click="task.status === 'failed' ? runTask(task): ''"
-                  :inactive="task.status !== 'failed'"
-                  :ripple="false"
-                >
-                  <v-list-item-content>
-                    <v-list-item-title class="body-2">
-                      <span v-if="task.alias">{{ task.alias }}</span>
-                      <span v-else v-html="helpers.shortcut(task.address)"></span>
-                    </v-list-item-title>
-                    <v-list-item-subtitle class="overline">
-                      <span
-                        :class="task.network === 'mainnet' ? 'secondary--text' : ''"
-                      >{{ task.network }} {{task.status === 'failed' ? '(try again)': ''}}</span>
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                  <v-list-item-action>
-                    <v-tooltip left>
-                      <template v-slot:activator="{ on }">
-                        <v-icon
-                          v-on="on"
-                          small
-                          :color="getTaskStatusColor(task)"
-                        >{{ getTaskStatusIcon(task) }}</v-icon>
-                      </template>
-                      <span class="overline">{{ task.status }}</span>
-                    </v-tooltip>
-                  </v-list-item-action>
-                </v-list-item>
-                <v-divider :key="`divider-${i}`" />
-              </template>
-            </v-list>
-            <v-divider />
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-
         <!-- <v-expansion-panel disabled class="ma-0 bb-1">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase">Accounts</span>
@@ -191,7 +146,6 @@
       :onUpdate="updateSubscription"
       :onRemove="removeSubscription"
     />
-
   </div>
 </template>
 
@@ -204,7 +158,7 @@ export default {
   name: "SideBar",
   components: {
     WatchSettings,
-    BakingBadFooter
+    BakingBadFooter,
   },
   computed: {
     isAuthorized() {
@@ -219,26 +173,6 @@ export default {
     subscriptions: [],
     selected: null,
     showWatchSettings: false,
-    tasks: [
-      {
-        address: "KT1BVtYtqHWvAHYyMG4xd4sjC1Ej5FiUWZze",
-        network: "dalphanet",
-        status: "pending",
-        kind: "verification",
-      },
-      {
-        address: "KT1BVtYtqHWvAHYyMG4xd4sjC1Ej5FiUWZze",
-        network: "dalphanet",
-        status: "success",
-        kind: "verification",
-      },
-      {
-        address: "KT1BVtYtqHWvAHYyMG4xd4sjC1Ej5FiUWZze",
-        network: "dalphanet",
-        status: "failed",
-        kind: "verification",
-      },
-    ],
   }),
   created() {
     this.getSubscriptions();
@@ -281,25 +215,6 @@ export default {
           console.log(err);
         })
         .finally(() => (this.loading = false));
-    },
-    getTaskStatusIcon(task) {
-      if (task.status === "failed") {
-        return "mdi-close";
-      } else if (task.status === "success") {
-        return "mdi-check";
-      }
-      return "mdi-clock-outline";
-    },
-    getTaskStatusColor(task) {
-      if (task.status === "failed") {
-        return "red";
-      } else if (task.status === "success") {
-        return "green";
-      }
-      return "grey";
-    },
-    runTask(task) {
-      console.log("run task", task.status);
     },
   },
   watch: {
