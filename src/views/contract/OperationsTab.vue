@@ -333,9 +333,7 @@ export default {
     unshiftOperations(data) {
       data.forEach((element) => {
         if (element.internal) {
-          this.operations[0].internal_operations.push(
-            element
-          );
+          this.operations[0].internal_operations.push(element);
         } else {
           element.internal_operations = [];
           this.operations.unshift(element);
@@ -376,19 +374,25 @@ export default {
       });
     },
   },
-  beforeRouteLeave() {},
+  beforeRouteUpdate(to, from, next) {
+    this.ws.send({
+      action: "unsubscribe",
+      channel: `operations_${from.params.network}_${from.params.address}`,
+    });
+    next();
+  },
+  beforeRouteLeave(to, from, next) {
+    this.ws.send({
+      action: "unsubscribe",
+      channel: `operations_${from.params.network}_${from.params.address}`,
+    });
+    next();
+  },
   watch: {
     address: "fetchOperations",
     status: "updateOperations",
     entrypoints: "updateOperations",
     dates: "updateOperations",
-    $route: function (to, from) {
-      console.log(from)
-      this.ws.send({
-        action: "unsubscribe",
-        channel: `operations_${from.params.network}_${from.params.address}`,
-      });
-    },
   },
 };
 </script>

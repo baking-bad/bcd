@@ -90,9 +90,6 @@ export default {
     selectedTag: -1,
     verification: false,
   }),
-  created() {
-    this.getRepos();
-  },
   methods: {
     ...mapActions(["showError", "showSuccess"]),
     close() {
@@ -158,7 +155,11 @@ export default {
     },
   },
   watch: {
-    $route: "getRepos",
+    value: function(newValue) {
+      if (!newValue) return;
+      if (!this.repos || this.repos.length > 0) return;
+      this.getRepos();
+    }
   },
 };
 </script>
