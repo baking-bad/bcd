@@ -20,7 +20,6 @@
 
     <v-toolbar flat class color="toolbar" height="75">
       <v-tabs
-        v-model="tab"
         center-active
         background-color="transparent"
         slider-color="primary"
@@ -89,7 +88,6 @@ export default {
     migrations: [],
     transfers: null,
     showFork: false,
-    tab: null,
   }),
   created() {
     this.showFork = this.$route.name === "fork";
