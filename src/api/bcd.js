@@ -288,10 +288,8 @@ export class BetterCallApi {
       })
   }
 
-  prepareToFork(network, address, storage) {
-    return postCancellable(this.api, `/contract/${network}/${address}/fork`, {
-      storage: storage
-    })
+  prepareToFork(data) {
+    return postCancellable(this.api, `/fork`, data)
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -749,7 +747,45 @@ export class BetterCallApi {
   }
 
   verifyContract(network, address, repo, ref) {
-    return this.api.post(`/verify`, {
+    return this.api.post(`/profile/compilations/verify`, {
+      network: network,
+      address: address,
+      repo: repo,
+      ref: ref,
+    }, {
+      headers: {
+        'Authorization': getJwt()
+      },
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  deployContract(network, address, repo, ref) {
+    return this.api.post(`/profile/compilations/deploy`, {
+      network: network,
+      address: address,
+      repo: repo,
+      ref: ref,
+    }, {
+      headers: {
+        'Authorization': getJwt()
+      },
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  deployFinalizeContract(network, address, repo, ref) {
+    return this.api.post(`/profile/compilations/deploy/finalize`, {
       network: network,
       address: address,
       repo: repo,

@@ -2,8 +2,8 @@
   <div>
     <v-card flat outlined>
       <v-card-text class="pa-0 pt-6 data">
-        <h2 class="ml-6 font-weight-regular">
-          <span class="mr-2 hash font-weight-thin">{{ isStorage ? 'Fork' : 'Call' }}</span>
+        <h2 class="ml-6 font-weight-regular" v-if="title">
+          <span class="mr-2 hash font-weight-thin">{{ title }}</span>
           <span v-if="isStorage" class="secondary--text" v-html="helpers.shortcut(name)"></span>
           <span v-else class="hash secondary--text">{{ name }}</span>
         </h2>
@@ -13,7 +13,7 @@
               <span class="caption font-weight-medium text-uppercase text--disabled">{{ header }}</span>
             </div>
 
-            <div class="mb-6">
+            <div class="mb-6" v-if="!isDeploy">
               <v-btn-toggle v-model="selectedFillType" color="primary" dense mandatory>
                 <v-btn
                   small
@@ -67,7 +67,7 @@
                 color="primary"
                 dense
                 mandatory
-                v-if="isStorage"
+                v-if="isStorage || isDeploy"
               >
                 <v-btn :value="n" :key="n" v-for="n in networks" small>{{ n }}</v-btn>
               </v-btn-toggle>
@@ -230,7 +230,11 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <RawJsonViewer :show.sync="showRawJSON" :raw="parametersJSON" :type="isStorage ? 'script' : 'parameters'" />
+    <RawJsonViewer
+      :show.sync="showRawJSON"
+      :raw="parametersJSON"
+      :type="isStorage || isDeploy ? 'script' : 'parameters'"
+    />
   </div>
 </template>
 
@@ -259,7 +263,9 @@ export default {
     network: String,
     binPath: String,
     header: String,
-    isStorage: Boolean,
+    title: String,
+    type: String,
+    script: Array,
   },
   data: () => ({
     show: true,
@@ -332,6 +338,15 @@ export default {
       }
       return val;
     },
+    isStorage() {
+      return this.type === "storage";
+    },
+    isParameter() {
+      return this.type === "parameter";
+    },
+    isDeploy() {
+      return this.type === "deploy";
+    },
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
@@ -340,28 +355,32 @@ export default {
         {
           text: "Simulate",
           icon: "mdi-play-circle-outline",
-          callback: this.isStorage ? null : () => this.simulateOperation(),
+          callback: this.isParameter ? () => this.simulateOperation() : null,
         },
         {
           text: "Raw JSON",
           icon: "mdi-code-json",
-          callback: this.isStorage
-            ? () => this.prepareContractToFork(true)
-            : () => this.generateParameters(true, true),
+          callback: this.isParameter
+            ? () => this.generateParameters(true, true)
+            : this.isDeploy
+            ? null
+            : () => this.prepareContractToFork(true),
         },
         {
           text: "Tezos-client",
           icon: "mdi-console-line",
-          callback: this.isStorage
-            ? null
-            : () => this.generateParameters(false, true),
+          callback: this.isParameter
+            ? () => this.generateParameters(false, true)
+            : null,
         },
         {
           text: "Beacon",
           icon: "mdi-lighthouse",
-          callback: this.isStorage
-            ? async () => this.fork("beacon")
-            : async () => this.callContract("beacon"),
+          callback: this.isParameter
+            ? async () => this.callContract("beacon")
+            : this.isDeploy
+            ? async () => this.makeDeploy("beacon", this.script)
+            : async () => this.fork("beacon"),
         },
       ];
 
@@ -371,9 +390,11 @@ export default {
             text: "Thanos",
             icon: "mdi-hand-right",
             callback: async () =>
-              this.isStorage
-                ? this.fork("thanos")
-                : this.callContract("thanos"),
+              this.isParameter
+                ? this.callContract("thanos")
+                : this.isDeploy
+                ? async () => this.makeDeploy("thanos", this.script)
+                : async () => this.fork("thanos"),
           });
           this.importActions.push({
             text: "Thanos",
@@ -386,6 +407,7 @@ export default {
       }
     },
     setFillTypes() {
+      if (this.isDeploy) return;
       this.fillTypes.push({
         value: this.isStorage ? "current" : "latest",
         text: this.isStorage ? "Current" : "Latest call",
@@ -528,7 +550,11 @@ export default {
 
       this.execution = true;
       this.api
-        .prepareToFork(this.network, this.address, this.model)
+        .prepareToFork({
+          network: this.network,
+          address: this.address,
+          storage: this.model,
+        })
         .then((res) => {
           if (!res) return;
           this.parametersJSON = res;
@@ -549,35 +575,56 @@ export default {
 
       this.execution = true;
       try {
-        let data = await this.api.prepareToFork(
-          this.network,
-          this.address,
-          this.model
-        );
-        let wallet = await this.getWallet(provider, this.selectedNetwork);
-        Tezos.setProvider({
-          rpc: this.config.RPC_ENDPOINTS[this.selectedNetwork],
-          wallet,
+        let data = await this.api.prepareToFork({
+          network: this.network,
+          address: this.address,
+          storage: this.model,
         });
-        Tezos.wallet
-          .originate({
-            code: data.code,
-            init: data.storage,
-          })
-          .send()
-          .then((originationOp) => {
-            this.injectedOpHash = originationOp.opHash;
-          })
-          .catch((err) => {
-            this.alertData = err.message;
-            console.log(err);
-          });
+        await this.deploy(provider, data.code, data.storage);
       } catch (err) {
         this.alertData = err.message;
         console.log(err);
       } finally {
         this.execution = false;
       }
+    },
+    async makeDeploy(provider) {
+      if (this.execution) return;
+
+      this.execution = true;
+      try {
+        let data = await this.api.prepareToFork({
+          script: JSON.stringify(this.script),
+          storage: this.model,
+        });
+        await this.deploy(provider, data.code, data.storage);
+      } catch (err) {
+        this.alertData = err.message;
+        console.log(err);
+      } finally {
+        this.execution = false;
+      }
+    },
+    async deploy(provider, code, storage) {
+      let wallet = await this.getWallet(provider, this.selectedNetwork);
+      Tezos.setProvider({
+        rpc: this.config.RPC_ENDPOINTS[this.selectedNetwork],
+        wallet,
+      });
+      Tezos.wallet
+        .originate({
+          code: code,
+          init: storage,
+        })
+        .send()
+        .then((originationOp) => {
+          this.injectedOpHash = originationOp.opHash;
+          this.$emit("onDeploy", originationOp);
+        })
+        .catch((err) => {
+          this.alertData = err.message;
+          console.log(err);
+        });
     },
     getRandomContract(props) {
       this.show = false;
@@ -618,7 +665,7 @@ export default {
     },
     selectedFillType: function (newValue) {
       this.show = false;
-      if (this.isStorage) {
+      if (this.isStorage || this.isDeploy) {
         this.api
           .getContractStorageSchema(this.network, this.address, newValue)
           .then((res) => {
