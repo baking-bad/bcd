@@ -5,6 +5,8 @@
         <v-skeleton-loader :loading="loading" type="card-heading, image">
           <Schema
             header="Parameters"
+            title="Call"
+            type="parameter"
             v-if="selectedItem"
             v-model="model"
             :schema="selectedItem.schema"
@@ -57,7 +59,7 @@
 <script>
 import { mapActions } from "vuex";
 
-import Schema from "@/views/contract/Schema.vue";
+import Schema from "@/components/Schema.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
 
 import { applyStyles } from '@/utils/styles.js';

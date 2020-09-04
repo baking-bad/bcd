@@ -1,79 +1,115 @@
 <template>
-  <v-data-table
-    class="elevation-0"
-    no-data-text
-    :items="items"
-    :headers="headers"
-    :options.sync="options"
-    item-key="id"
-    :loading="loading"
-    :server-items-length="total"
-    show-expand
-    single-expand
-    hide-default-header
-    :footer-props="{
+  <div>
+    <v-data-table
+      class="elevation-0"
+      no-data-text
+      :items="items"
+      :headers="headers"
+      :options.sync="options"
+      item-key="id"
+      :loading="loading"
+      :server-items-length="total"
+      show-expand
+      single-expand
+      hide-default-header
+      :footer-props="{
       disableItemsPerPage: true,
     }"
-  >
-    <template v-slot:item.status="{ item }">
-      <div class="d-flex align-center justify-center">
-        <span class="caption mr-2 text--secondary">{{ item.status }}</span>
-        <v-icon small :color="getStatusColor(item.status)">{{ getStatusIcon(item.status) }}</v-icon>
-      </div>
-    </template>
-    <template v-slot:item.created_at="{ item }">
-      <span>{{ item.created_at | formatShortTime }}</span>
-    </template>
-    <template v-slot:item.kind="{ item }">
-      <span class="text-uppercase text--secondary">{{ item.kind }}</span>
-    </template>
-    <template v-slot:item.address="{ item }">
-      <v-list-item class="px-0">
-        <v-list-item-content>
-          <v-list-item-title class="hash">{{ item.address }}</v-list-item-title>
-          <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
-    </template>
-    <template v-slot:expanded-item="{ headers, item }">
-      <td :colspan="headers.length" class="py-2">
-        <div class="d-flex" v-if="item.status === 'failed'">
+    >
+      <template v-slot:top>
+        <v-toolbar flat>
+          <v-toolbar-title></v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn text color="primary" :loading="verify" @click="tryAgain(item)">
-            <v-icon small left>mdi-play</v-icon>Try again
+          <v-btn text color="primary" @click="showCompileDialog = !showCompileDialog">
+            <v-icon left>mdi-progress-wrench</v-icon>Build
           </v-btn>
+        </v-toolbar>
+      </template>
+      <template v-slot:item.status="{ item }">
+        <div class="d-flex align-center justify-center" style="min-height: 65px;">
+          <span class="caption mr-2 text--secondary">{{ item.status }}</span>
+          <v-icon small :color="getStatusColor(item.status)">{{ getStatusIcon(item.status) }}</v-icon>
         </div>
-        <v-list v-if="item.results" dense>
-          <template v-for="(result, i) in item.results">
-            <v-list-item
-              :key="i"
-              :three-line="result.error !== undefined"
-              :two-line="!result.error"
-            >
-              <v-list-item-avatar>
-                <v-icon
-                  small
-                  :color="getStatusColor(result.status)"
-                >{{ getStatusIcon(result.status) }}</v-icon>
-              </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title>{{ result.path }}</v-list-item-title>
-                <v-list-item-subtitle v-if="result.language">{{ result.language }}</v-list-item-subtitle>
-                <v-list-item-subtitle v-if="result.error">{{ result.error }}</v-list-item-subtitle>
-              </v-list-item-content>
-            </v-list-item>
-          </template>
-        </v-list>
-      </td>
-    </template>
-  </v-data-table>
+      </template>
+      <template v-slot:item.created_at="{ item }">
+        <span>{{ item.created_at | formatShortTime }}</span>
+      </template>
+      <template v-slot:item.kind="{ item }">
+        <span class="text-uppercase text--secondary">{{ item.kind }}</span>
+      </template>
+      <template v-slot:item.address="{ item }">
+        <v-list-item
+          class="px-0"
+          v-if="item.address"
+          :to="{name: 'contract', params: {address: item.address, network: item.network}}"
+          target="_blank"
+        >
+          <v-list-item-content>
+            <v-list-item-title class="hash">{{ item.address }}</v-list-item-title>
+            <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </template>
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length" class="py-2">
+          <div class="d-flex" v-if="item.status === 'failed'">
+            <v-spacer></v-spacer>
+            <v-btn text color="primary" :loading="verify" @click="tryAgain(item)">
+              <v-icon small left>mdi-play</v-icon>Try again
+            </v-btn>
+          </div>
+          <v-list v-if="item.results" dense>
+            <template v-for="(result, i) in item.results">
+              <v-list-item
+                :key="i"
+                :three-line="result.error !== undefined"
+                :two-line="!result.error"
+              >
+                <v-list-item-avatar>
+                  <v-icon
+                    small
+                    :color="getStatusColor(result.status)"
+                  >{{ getStatusIcon(result.status) }}</v-icon>
+                </v-list-item-avatar>
+                <v-list-item-content>
+                  <v-list-item-title>{{ result.path }}</v-list-item-title>
+                  <v-list-item-subtitle v-if="result.language">{{ result.language }}</v-list-item-subtitle>
+                  <v-list-item-subtitle v-if="result.error">{{ result.error }}</v-list-item-subtitle>
+                </v-list-item-content>
+                <v-list-item-action v-if="item.kind === 'deployment'">
+                  <v-tooltip left>
+                    <template v-slot:activator="{ on }">
+                      <v-btn icon v-on="on" @click="onDeploy(result)">
+                        <v-icon color="primary">mdi-play</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Deploy</span>
+                  </v-tooltip>
+                </v-list-item-action>
+              </v-list-item>
+            </template>
+          </v-list>
+        </td>
+      </template>
+    </v-data-table>
+
+    <CompileDialog v-model="showCompileDialog" />
+    <DeployDialog v-model="showDeployDialog" :task="deployedTask" v-if="deployedTask"/>
+  </div>
 </template>
 
 <script>
 import { mapActions } from "vuex";
 
+import CompileDialog from "@/views/dashboard/CompileDialog.vue";
+import DeployDialog from "@/views/dashboard/DeployDialog.vue";
+
 export default {
   name: "CompilationsTab",
+  components: {
+    CompileDialog,
+    DeployDialog,
+  },
   data: () => ({
     loading: false,
     verify: false,
@@ -82,6 +118,9 @@ export default {
       page: 1,
       itemsPerPage: 10,
     },
+    showCompileDialog: false,
+    showDeployDialog: false,
+    deployedTask: null
   }),
   computed: {
     items() {
@@ -160,6 +199,11 @@ export default {
           this.verify = false;
         });
     },
+    onDeploy(task) {
+      if (!task) return;
+      this.deployedTask = task;
+      this.showDeployDialog = !this.showDeployDialog;
+    }
   },
   watch: {
     options: {

@@ -6,6 +6,8 @@
           <Schema
             v-if="storage"
             :name="$route.params.address"
+            title="Fork"
+            type="storage"
             header="Storage"
             :isStorage="true"
             :schema="storage.schema"
@@ -34,7 +36,7 @@
 <script>
 import { mapActions } from "vuex";
 
-import Schema from "@/views/contract/Schema.vue";
+import Schema from "@/components/Schema.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
 
 import { applyStyles } from "@/utils/styles.js";

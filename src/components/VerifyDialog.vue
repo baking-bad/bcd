@@ -155,11 +155,11 @@ export default {
     },
   },
   watch: {
-    value: function(newValue) {
+    value: function (newValue) {
       if (!newValue) return;
       if (!this.repos || this.repos.length > 0) return;
       this.getRepos();
-    }
+    },
   },
 };
 </script>
