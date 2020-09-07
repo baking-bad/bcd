@@ -294,7 +294,7 @@ export default {
     },
     allocationFee() {
       if (this.data.result && this.data.result.allocated_destination_contract) {
-        return 257000;
+        return this.data.burned;
       }
       return 0;
     },
