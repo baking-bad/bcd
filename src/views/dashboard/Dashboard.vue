@@ -19,7 +19,7 @@
         <v-tab :to="{ name: 'compilations' }" exact-active-class="active-tab" replace>
           <v-icon left small>mdi-play-speed</v-icon>
           <span>
-            Compilations
+            Actions
             <span v-if="profile">&nbsp;({{ profile.compilation_tasks }})</span>
           </span>
         </v-tab>

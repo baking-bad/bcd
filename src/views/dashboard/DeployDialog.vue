@@ -67,7 +67,9 @@
                     <v-col cols="8">
                       <div class="d-flex flex-column align-center justify-space-between">
                         <v-icon size="100" color="secondary" class="mb-3">mdi-license</v-icon>
-                        <span class="subtitle-2 mb-6">You successfully deployed new contract. You can view it in operation {{ hash }}.</span>
+                        <span
+                          class="subtitle-2 mb-6"
+                        >You successfully deployed new contract. You can view it in operation {{ hash }}.</span>
                         <v-btn color="primary" @click="onClose">Finish</v-btn>
                       </div>
                     </v-col>
@@ -107,12 +109,21 @@ export default {
     },
     onDeploy(data) {
       this.hash = data.opHash;
+      this.api.finalizeDeployContract(
+        this.hash,
+        this.task.compilation_task_id,
+        this.task.id
+      );
       this.step = 2;
     },
   },
   watch: {
     value(newValue) {
-      if (newValue) this.step = 1;
+      if (newValue) {
+        this.step = 1;
+        this.hash = null;
+        this.model = {};
+      }
     },
   },
 };

@@ -16,6 +16,7 @@
           ref="dropzone"
           id="customdropzone"
           useCustomSlot
+          @vdropzone-complete="onComplete"
           v-if="dropzoneOptions.url"
         >
           <div class="d-flex flex-column align-center justify-center" style="min-height: 300px">
@@ -37,6 +38,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 import vue2Dropzone from "vue2-dropzone";
 import "vue2-dropzone/dist/vue2Dropzone.min.css";
 
@@ -50,8 +53,8 @@ export default {
   components: {
     vueDropzone: vue2Dropzone,
   },
-  created() {
-    this.dropzoneOptions.url = `${this.config.API_URI}profile/compilations/deploy`;
+  mounted() {
+    this.dropzoneOptions.url = `${this.config.API_URI}profile/compilations/deployment`;
   },
   data: () => {
     return {
@@ -59,6 +62,7 @@ export default {
         autoProcessQueue: false,
         maxFilesize: 1,
         maxFiles: 10,
+        paramName: "files",
         parallelUploads: 10,
         headers: {
           Authorization: getJwt(),
@@ -68,14 +72,18 @@ export default {
     };
   },
   methods: {
+    ...mapActions(["showSuccess"]),
     onClose() {
       this.$emit("input", false);
       this.$refs["dropzone"].removeAllFiles();
     },
     onSubmit() {
       this.$refs["dropzone"].processQueue();
-      this.$emit("input", false);
     },
+    onComplete() {
+      this.showSuccess('Files uploaded successfully');
+      this.onClose();
+    }
   },
 };
 </script>
@@ -86,5 +94,16 @@ export default {
   border: 2px dashed lightgrey;
   border-radius: 5px;
   min-height: 300px;
+}
+</style>
+
+<style lang="scss">
+.vue-dropzone > .dz-preview .dz-details {
+  background-color: transparent;
+}
+.dropzone .dz-preview.dz-file-preview .dz-image {
+  border: none;
+  background: #5b942acc;
+  border-color: transparent;
 }
 </style>
