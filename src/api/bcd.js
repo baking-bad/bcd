@@ -746,13 +746,48 @@ export class BetterCallApi {
       })
   }
 
+  getVerificationList() {
+    return getCancellable(this.api, `/profile/compilations/verification`, {
+      headers: {
+        'Authorization': getJwt()
+      },
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
   verifyContract(network, address, repo, ref) {
-    return this.api.post(`/profile/compilations/verify`, {
+    return this.api.post(`/profile/compilations/verification`, {
       network: network,
       address: address,
       repo: repo,
       ref: ref,
     }, {
+      headers: {
+        'Authorization': getJwt()
+      },
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getDeploymentList(limit, offset) {
+    let params = [];
+    if (limit > 0) {
+      params.push(`limit=${limit}`)
+    }
+    if (offset > 0) {
+      params.push(`offset=${offset}`)
+    }
+    return getCancellable(this.api, `/profile/compilations/deployment?${params.join('&')}`, {
       headers: {
         'Authorization': getJwt()
       },
@@ -766,7 +801,7 @@ export class BetterCallApi {
   }
 
   deployContract(network, address, repo, ref) {
-    return this.api.post(`/profile/compilations/deploy`, {
+    return this.api.post(`/profile/compilations/deployment`, {
       network: network,
       address: address,
       repo: repo,
@@ -784,12 +819,11 @@ export class BetterCallApi {
       })
   }
 
-  deployFinalizeContract(network, address, repo, ref) {
-    return this.api.post(`/profile/compilations/deploy/finalize`, {
-      network: network,
-      address: address,
-      repo: repo,
-      ref: ref,
+  finalizeDeployContract(hash, taskId, resultId) {
+    return this.api.patch(`/profile/compilations/deployment`, {
+      operation_hash: hash,
+      task_id: taskId,
+      result_id: resultId,
     }, {
       headers: {
         'Authorization': getJwt()
