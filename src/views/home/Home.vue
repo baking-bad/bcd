@@ -150,12 +150,13 @@ export default {
           this.pickingRandom = false;
         });
     },
-    onMessage(data) {
-      if (data.body && data.channel_name == "stats") {
-        this.stats = data.body.sort(function (a, b) {
-          if (a.network === "mainnet" || b.network === "zeronet") {
+    onMessage(event) {
+      let data = JSON.parse(event.data);
+      if (data.body) {
+        this.stats = data.body.sort(function(a, b) {
+          if (a.network === "mainnet") {
             return -1;
-          } else if (b.network === "mainnet" || a.network === "zeronet") {
+          } else if (b.network === "mainnet") {
             return 1;
           } else {
             return b.network.localeCompare(a.network);
