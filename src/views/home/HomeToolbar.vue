@@ -1,6 +1,6 @@
 <template>
   <v-app-bar app clipped-left flat class="canvas pr-4">
-    <v-menu open-on-hover bottom offset-y v-if="!isAuthorized && config.OAUTH_ENABLED">
+    <v-menu open-on-hover bottom offset-y v-if="!isAuthorized && config.oauth_enabled">
       <template v-slot:activator="{ on }">
         <v-btn color="primary" text small v-on="on">
           <v-icon class="mr-1" small>mdi-login</v-icon>Sign in
