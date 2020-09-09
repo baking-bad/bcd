@@ -150,8 +150,7 @@ export default {
           this.pickingRandom = false;
         });
     },
-    onMessage(event) {
-      let data = JSON.parse(event.data);
+    onMessage(data) {
       if (data.body) {
         this.stats = data.body.sort(function(a, b) {
           if (a.network === "mainnet") {
