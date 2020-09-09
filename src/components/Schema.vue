@@ -310,7 +310,7 @@ export default {
       },
     ];
 
-    this.networks = Object.keys(this.config.RPC_ENDPOINTS);
+    this.networks = Object.keys(this.config.rpc_endpoints);
     this.selectedNetwork = this.network;
   },
   computed: {
@@ -485,7 +485,7 @@ export default {
     },
     async getWallet(provider, network) {
       const appName = "Better Call Dev";
-      const rpcUrl = this.config.RPC_ENDPOINTS[network];
+      const rpcUrl = this.config.rpc_endpoints[network];
 
       if (provider === "beacon") {
         let wallet = new BeaconWallet({ name: appName });
@@ -526,7 +526,7 @@ export default {
       try {
         let wallet = await this.getWallet(provider, this.network);
         Tezos.setProvider({
-          rpc: this.config.RPC_ENDPOINTS[this.network],
+          rpc: this.config.rpc_endpoints[this.network],
           wallet,
         });
         const result = await Tezos.wallet
@@ -608,7 +608,7 @@ export default {
     async deploy(provider, code, storage) {
       let wallet = await this.getWallet(provider, this.selectedNetwork);
       Tezos.setProvider({
-        rpc: this.config.RPC_ENDPOINTS[this.selectedNetwork],
+        rpc: this.config.rpc_endpoints[this.selectedNetwork],
         wallet,
       });
       Tezos.wallet

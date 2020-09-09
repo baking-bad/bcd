@@ -26,6 +26,17 @@ export class BetterCallApi {
     });
   }
 
+  getConfig() {
+    return getCancellable(this.api, `/config`, {})
+      .then((res) => {
+        if (!res) { return res; }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
   search(text, indices = [], offset = 0, networks = [], languages = [], time = {}, group = 0) {
     let params = {
       q: text

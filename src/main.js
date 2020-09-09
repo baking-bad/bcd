@@ -79,12 +79,15 @@ const getRuntimeConfig = async () => {
   return await runtimeConfig.json();
 }
 
-getRuntimeConfig().then(function (config) {
+getRuntimeConfig().then(async function (config) {
   let api = new BetterCallApi(config.API_URI);
-  let rpc = new NodeRPC(config.RPC_ENDPOINTS);
-  let tzkt = new TzKTApi(config.TZKT_ENDPOINTS);
+  let response = await api.getConfig();
+  Object.assign(config, response);
+
+  let rpc = new NodeRPC(config.rpc_endpoints);
+  let tzkt = new TzKTApi(config.tzkt_endpoints);
   let ws = new BcdWs(config.WS_URI);
-  
+
   let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress }
 
   Vue.mixin({

@@ -29,7 +29,7 @@
             mandatory
             active-class="secondary--text"
           >
-            <v-chip filter outlined v-for="net in config.NETWORKS" :key="net">{{ net }}</v-chip>
+            <v-chip filter outlined v-for="net in config.networks" :key="net">{{ net }}</v-chip>
           </v-chip-group>
         </v-list-item-content>
       </v-list-item>
@@ -98,7 +98,7 @@ export default {
   }),
   created() {
     this.languagesSelection = [...this.languages.keys()];
-    this.networksSelection = [...this.config.NETWORKS.keys()];
+    this.networksSelection = [...this.config.networks.keys()];
   },
   watch: {
     languagesSelection: function(newValue) {
@@ -113,7 +113,7 @@ export default {
       this.filters.networks = [];
       if (newValue.length < this.languages.length) {
         newValue.forEach(x => {
-          this.filters.networks.push(this.config.NETWORKS[x]);
+          this.filters.networks.push(this.config.networks[x]);
         });
       }
     },
@@ -136,7 +136,7 @@ export default {
       if (newValue === false) {
         this.selectedTime = 0;
         this.languagesSelection = [...this.languages.keys()];
-        this.networksSelection = [...this.config.NETWORKS.keys()];
+        this.networksSelection = [...this.config.networks.keys()];
       }
     }
   }

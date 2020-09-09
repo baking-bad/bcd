@@ -28,13 +28,9 @@ Reloaded each time you press F5 in the browser.
 #### Required fields
 * `API_URI` base URL for BCDHub API, e.g. _https://api.better-call.dev/v1/_
 * `WS_URI` WebSocket endpoint, e.g. _wss://api.better-call.dev/v1/ws_
-* `NETWORKS` array of networks supported
-* `OAUTH_ENABLED` if `true` a sing in button will be shown in the UI
 * `GA_ENABLED` enable Google Analytics
 * `MEMPOOL_ENABLED` query mempool operations
 * `HOME_PAGE` redirect to this page unless it's `home`
-* `RPC_ENDPOINTS` map `network` -> node URI
-* `TZKT_ENDPOINTS` map `network` -> TzKT base URL
 
 #### Sandbox environment
 * `SINGLE_USER_MODE` activate single user mode
