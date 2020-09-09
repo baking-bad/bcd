@@ -165,7 +165,7 @@ export class BetterCallApi {
       })
   }
 
-  getContractTransfers(network, address, size=10, offset=0) {
+  getContractTransfers(network, address, size = 10, offset = 0) {
     return getCancellable(this.api, `/contract/${network}/${address}/transfers?size=${size}&offset=${offset}`, {})
       .then((res) => {
         if (!res) { return res; }
@@ -288,10 +288,8 @@ export class BetterCallApi {
       })
   }
 
-  prepareToFork(network, address, storage) {
-    return postCancellable(this.api, `/contract/${network}/${address}/fork`, {
-      storage: storage
-    })
+  prepareToFork(data) {
+    return postCancellable(this.api, `/fork`, data)
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -692,6 +690,146 @@ export class BetterCallApi {
     return getCancellable(this.api, `/tokens/${network}/series?${params.join('&')}`, {})
       .then((res) => {
         if (!res) { return res; }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getProfileRepos() {
+    return getCancellable(this.api, `/profile/repos`, {
+      headers: {
+        'Authorization': getJwt()
+      }
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getProfileRefs(name) {
+    return getCancellable(this.api, `/profile/refs?repo=${name}`, {
+      headers: {
+        'Authorization': getJwt()
+      }
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getProfileCompilations(limit = 0, offset = 0) {
+    let params = [];
+    if (limit > 0) {
+      params.push(`limit=${limit}`)
+    }
+    if (offset > 0) {
+      params.push(`offset=${offset}`)
+    }
+    return getCancellable(this.api, `/profile/compilations?${params.join('&')}`, {
+      headers: {
+        'Authorization': getJwt()
+      }
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getVerificationList() {
+    return getCancellable(this.api, `/profile/compilations/verification`, {
+      headers: {
+        'Authorization': getJwt()
+      },
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  verifyContract(network, address, repo, ref) {
+    return this.api.post(`/profile/compilations/verification`, {
+      network: network,
+      address: address,
+      repo: repo,
+      ref: ref,
+    }, {
+      headers: {
+        'Authorization': getJwt()
+      },
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getDeploymentList(limit, offset) {
+    let params = [];
+    if (limit > 0) {
+      params.push(`limit=${limit}`)
+    }
+    if (offset > 0) {
+      params.push(`offset=${offset}`)
+    }
+    return getCancellable(this.api, `/profile/compilations/deployment?${params.join('&')}`, {
+      headers: {
+        'Authorization': getJwt()
+      },
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  deployContract(network, address, repo, ref) {
+    return this.api.post(`/profile/compilations/deployment`, {
+      network: network,
+      address: address,
+      repo: repo,
+      ref: ref,
+    }, {
+      headers: {
+        'Authorization': getJwt()
+      },
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  finalizeDeployContract(hash, taskId, resultId) {
+    return this.api.patch(`/profile/compilations/deployment`, {
+      operation_hash: hash,
+      task_id: taskId,
+      result_id: resultId,
+    }, {
+      headers: {
+        'Authorization': getJwt()
+      },
+    })
+      .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
         }

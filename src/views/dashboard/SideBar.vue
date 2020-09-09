@@ -72,7 +72,7 @@
                         @click.prevent.stop="watchSettings(item)"
                         class="settings-button pl-1 pr-0"
                       >
-                      <v-icon
+                        <v-icon
                           v-if="item.sentry_enabled"
                           color="success"
                           class="mr-1"

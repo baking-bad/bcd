@@ -9,7 +9,15 @@
             </template>
             <span>{{ alias }}</span>
           </v-tooltip>
-          <span v-else v-html="helpers.shortcut(address)"></span>
+          <span v-else v-html="helpers.shortcut(address)"></span>&nbsp;
+          <v-btn
+            icon
+            target="_blank"
+            :href="contract.verification_source"
+            v-if="contract && contract.verified"
+          >
+            <v-icon small color="primary">mdi-shield-check</v-icon>
+          </v-btn>
         </v-list-item-title>
         <v-list-item-subtitle>
           <span
@@ -32,7 +40,16 @@
     <v-divider></v-divider>
     <div class="d-flex align-center px-4 sidebar" style="height: 48px;">
       <span class="caption font-weight-bold text-uppercase text--secondary">Actions</span>
-      <v-spacer></v-spacer>
+    </div>
+    <div class="d-flex align-center justify-start pa-2 px-4">
+      <v-tooltip bottom v-if="isAuthorized && contract && !contract.verified">
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" icon class="mr-2" @click="onVerifyClick">
+            <v-icon class="text--secondary">mdi-shield-check-outline</v-icon>
+          </v-btn>
+        </template>
+        Verify contract
+      </v-tooltip>
       <v-tooltip bottom v-if="isAuthorized && contract">
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" icon class="mr-2" @click="showWatchSettings = true">
@@ -258,6 +275,8 @@
         contract.subscription = null;
       }"
     />
+
+    <VerifyDialog v-model="showVerifyDialog" :address="address" :network="network" />
   </div>
 </template>
 
@@ -268,6 +287,7 @@ import LogItem from "@/views/contract/LogItem.vue";
 import AccountBox from "@/components/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
 import WatchSettings from "@/components/WatchSettings.vue";
+import VerifyDialog from "@/components/VerifyDialog.vue";
 
 export default {
   name: "SideBar",
@@ -284,6 +304,7 @@ export default {
     AccountBox,
     BakingBadFooter,
     WatchSettings,
+    VerifyDialog,
   },
   data: () => ({
     same: [],
@@ -293,6 +314,7 @@ export default {
     similarLoading: false,
     sameLoading: false,
     showWatchSettings: false,
+    showVerifyDialog: false,
   }),
   created() {
     this.requestSameSimilar();
@@ -413,6 +435,9 @@ export default {
         address: this.address,
         network: this.network,
       });
+    },
+    onVerifyClick() {
+      this.showVerifyDialog = !this.showVerifyDialog;
     },
   },
   watch: {
