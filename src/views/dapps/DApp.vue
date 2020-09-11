@@ -20,7 +20,15 @@
         <AgoraBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
       </v-col>
     </v-row>
-    <v-speed-dial v-model="fab" fixed bottom right direction="top" open-on-hover v-if="dapp.social_links && dapp.social_links.length > 0">
+    <v-speed-dial
+      v-model="fab"
+      fixed
+      bottom
+      right
+      direction="top"
+      open-on-hover
+      v-if="dapp.social_links && dapp.social_links.length > 0"
+    >
       <template v-slot:activator>
         <v-btn v-model="fab" fab color="white">
           <v-icon v-if="fab" color="primary">mdi-close</v-icon>
@@ -61,15 +69,15 @@ export default {
     fab: false,
   }),
   created() {
-    this.getDApp(this.$route.params.address);
+    this.getDApp(this.$route.params.slug);
   },
   methods: {
     ...mapActions(["showError"]),
-    getDApp(address) {
+    getDApp(slug) {
       this.loading = true;
 
       this.api
-        .getDApp("mainnet", address)
+        .getDApp(slug)
         .then((res) => {
           this.dapp = res;
         })
@@ -120,7 +128,7 @@ export default {
   },
   watch: {
     $route: function () {
-      this.getDApp(this.$route.params.address);
+      this.getDApp(this.$route.params.slug);
     },
   },
 };

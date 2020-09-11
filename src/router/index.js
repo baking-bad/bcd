@@ -41,266 +41,266 @@ import MainDApp from '@/views/dapps/Main.vue'
 Vue.use(VueRouter)
 
 const router = new Router({
-    linkActiveClass: '',
-    linkExactActiveClass: '',
-    mode: 'history',
-    routes: [
+  linkActiveClass: '',
+  linkExactActiveClass: '',
+  mode: 'history',
+  routes: [
+    {
+      path: '/',
+      components: {
+        default: Home
+      },
+      name: 'home'
+    },
+    {
+      path: '/welcome',
+      components: {
+        default: Welcome,
+      },
+      name: 'welcome',
+      props: { default: true }
+    },
+    {
+      path: '/search',
+      components: {
+        default: ExtendedSearch
+      },
+      name: 'search',
+      props: { default: true },
+    },
+    {
+      path: '/dapps',
+      components: {
+        default: MainDApp
+      },
+      props: { default: true },
+      children: [
         {
-            path: '/',
-            components: {
-                default: Home
-            },
-            name: 'home'
+          path: '',
+          name: 'dapps',
+          redirect: 'list'
         },
         {
-            path: '/welcome',
-            components: {
-                default: Welcome,
-            },
-            name: 'welcome',
-            props: { default: true }
+          path: 'list',
+          components: {
+            default: DAppList
+          },
+          name: 'dapps-list',
+          props: { default: true },
         },
         {
-            path: '/search',
-            components: {
-                default: ExtendedSearch
-            },
-            name: 'search',
-            props: { default: true },
+          path: ':slug',
+          components: {
+            default: DApp
+          },
+          name: 'dapp',
+          props: { default: true },
+        },
+      ]
+    },
+    {
+      path: '/stats/:network',
+      components: {
+        default: Stats,
+      },
+      props: { default: true },
+      children: [
+        {
+          path: '',
+          name: 'stats',
+          redirect: 'stats_general'
         },
         {
-            path: '/dapps',
-            components: {
-                default: MainDApp
-            },
-            props: { default: true },
-            children: [
-                {
-                    path: '',
-                    name: 'dapps',
-                    redirect: 'list'
-                },
-                {
-                    path: 'list',
-                    components: {
-                        default: DAppList
-                    },
-                    name: 'dapps-list',
-                    props: { default: true },
-                },
-                {
-                    path: ':address(KT[0-9A-z]{34})',
-                    components: {
-                        default: DApp
-                    },
-                    name: 'dapp',
-                    props: { default: true },
-                },
-            ]
+          name: 'stats_general',
+          path: 'general',
+          component: NetworkTab,
+          props: true
         },
         {
-            path: '/stats/:network',
-            components: {
-                default: Stats,
-            },
-            props: { default: true },
-            children: [
-                {
-                    path: '',
-                    name: 'stats',
-                    redirect: 'stats_general'
-                },
-                {
-                    name: 'stats_general',
-                    path: 'general',
-                    component: NetworkTab,
-                    props: true
-                },
-                {
-                    path: 'fa12',
-                    name: 'stats_fa12',
-                    component: TokensTab,
-                    props: true
-                },
-                {
-                    path: 'fa2',
-                    name: 'stats_fa20',
-                    component: TokensTab,
-                    props: true
-                }
-            ]
+          path: 'fa12',
+          name: 'stats_fa12',
+          component: TokensTab,
+          props: true
         },
         {
-            path: '/diff',
-            components: {
-                default: Diff,
-            },
-            name: 'diff',
-            props: { default: true },
-        },
-        { // backward compatibility
-            path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
-            children: [
-                {
-                    path: '',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}`
-                    }
-                },
-                {
-                    path: 'operations',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}/operations`
-                    }
-                },
-                {
-                    path: 'script',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}/code`
-                    }
-                },
-                {
-                    path: 'state',
-                    redirect: to => {
-                        const { params } = to
-                        return `/${params.network}net/${params.address}/storage`
-                    }
-                },
-            ]
-        },
-        {
-            path: '/:network/:address(KT[0-9A-z]{34})',
-            components: {
-                default: Contract,
-            },
-            props: { default: true },
-            children: [
-                {
-                    path: '',
-                    name: 'contract',
-                    redirect: 'operations'
-                },
-                {
-                    path: 'operations',
-                    name: 'operations',
-                    component: OperationsTab,
-                    props: true
-                },
-                {
-                    path: 'code',
-                    name: 'code',
-                    component: CodeTab,
-                    props: true
-                },
-                {
-                    path: 'interact',
-                    name: 'interact',
-                    component: InteractTab,
-                    props: true
-                },
-                {
-                    path: 'storage',
-                    name: 'storage',
-                    component: StorageTab,
-                    props: true
-                },
-                {
-                    path: 'fork',
-                    name: 'fork',
-                    components: {
-                        default: ForkTab,
-                    }
-                },{
-                    path: 'transfers',
-                    name: 'transfers',
-                    component: TransfersTab,
-                    props: true
-                },
-            ]
-        },
-        {
-            path: '/dashboard',
-            components: {
-                default: Dashboard
-            },
-            props: { default: true },
-            children: [
-                {
-                    path: '',
-                    name: 'dashboard',
-                    redirect: 'events'
-                },
-                {
-                    path: 'events',
-                    name: 'events',
-                    component: EventsTab,
-                    props: true
-                },
-                {
-                    path: 'tasks',
-                    name: 'tasks',
-                    component: TasksTab,
-                    props: true
-                },
-                {
-                    path: 'compilations',
-                    name: 'compilations',
-                    component: CompilationsTab,
-                    props: true
-                }
-            ]
-        },
-        {
-            path: '/:network/big_map/:ptr(\\d+)',
-            components: {
-                default: BigMap
-            },
-            props: { default: true },
-            children: [
-                {
-                    path: '',
-                    name: 'big_map',
-                    redirect: 'keys'
-                },
-                {
-                    path: 'keys',
-                    name: 'big_map_keys',
-                    component: BigMapKeys,
-                    props: true
-                },
-                {
-                    path: ':keyhash',
-                    name: 'big_map_history',
-                    component: BigMapHistory,
-                    props: true
-                }
-            ]
-        },
-        {
-            path: '/:network/opg/:hash(o[0-9A-z]{50})',
-            alias: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
-            components: {
-                default: OperationGroup
-            },
-            props: { default: true },
-            children: [
-                {
-                    path: '',
-                    name: 'operation_group',
-                    redirect: 'contents'
-                },
-                {
-                    path: 'contents',
-                    name: 'opg_contents',
-                    component: OpgContents,
-                    props: true
-                }
-            ]
+          path: 'fa2',
+          name: 'stats_fa20',
+          component: TokensTab,
+          props: true
         }
-    ]
+      ]
+    },
+    {
+      path: '/diff',
+      components: {
+        default: Diff,
+      },
+      name: 'diff',
+      props: { default: true },
+    },
+    { // backward compatibility
+      path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',
+      children: [
+        {
+          path: '',
+          redirect: to => {
+            const { params } = to
+            return `/${params.network}net/${params.address}`
+          }
+        },
+        {
+          path: 'operations',
+          redirect: to => {
+            const { params } = to
+            return `/${params.network}net/${params.address}/operations`
+          }
+        },
+        {
+          path: 'script',
+          redirect: to => {
+            const { params } = to
+            return `/${params.network}net/${params.address}/code`
+          }
+        },
+        {
+          path: 'state',
+          redirect: to => {
+            const { params } = to
+            return `/${params.network}net/${params.address}/storage`
+          }
+        },
+      ]
+    },
+    {
+      path: '/:network/:address(KT[0-9A-z]{34})',
+      components: {
+        default: Contract,
+      },
+      props: { default: true },
+      children: [
+        {
+          path: '',
+          name: 'contract',
+          redirect: 'operations'
+        },
+        {
+          path: 'operations',
+          name: 'operations',
+          component: OperationsTab,
+          props: true
+        },
+        {
+          path: 'code',
+          name: 'code',
+          component: CodeTab,
+          props: true
+        },
+        {
+          path: 'interact',
+          name: 'interact',
+          component: InteractTab,
+          props: true
+        },
+        {
+          path: 'storage',
+          name: 'storage',
+          component: StorageTab,
+          props: true
+        },
+        {
+          path: 'fork',
+          name: 'fork',
+          components: {
+            default: ForkTab,
+          }
+        }, {
+          path: 'transfers',
+          name: 'transfers',
+          component: TransfersTab,
+          props: true
+        },
+      ]
+    },
+    {
+      path: '/dashboard',
+      components: {
+        default: Dashboard
+      },
+      props: { default: true },
+      children: [
+        {
+          path: '',
+          name: 'dashboard',
+          redirect: 'events'
+        },
+        {
+          path: 'events',
+          name: 'events',
+          component: EventsTab,
+          props: true
+        },
+        {
+          path: 'tasks',
+          name: 'tasks',
+          component: TasksTab,
+          props: true
+        },
+        {
+          path: 'compilations',
+          name: 'compilations',
+          component: CompilationsTab,
+          props: true
+        }
+      ]
+    },
+    {
+      path: '/:network/big_map/:ptr(\\d+)',
+      components: {
+        default: BigMap
+      },
+      props: { default: true },
+      children: [
+        {
+          path: '',
+          name: 'big_map',
+          redirect: 'keys'
+        },
+        {
+          path: 'keys',
+          name: 'big_map_keys',
+          component: BigMapKeys,
+          props: true
+        },
+        {
+          path: ':keyhash',
+          name: 'big_map_history',
+          component: BigMapHistory,
+          props: true
+        }
+      ]
+    },
+    {
+      path: '/:network/opg/:hash(o[0-9A-z]{50})',
+      alias: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
+      components: {
+        default: OperationGroup
+      },
+      props: { default: true },
+      children: [
+        {
+          path: '',
+          name: 'operation_group',
+          redirect: 'contents'
+        },
+        {
+          path: 'contents',
+          name: 'opg_contents',
+          component: OpgContents,
+          props: true
+        }
+      ]
+    }
+  ]
 });
 
 export default router;

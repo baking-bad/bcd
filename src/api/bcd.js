@@ -669,8 +669,8 @@ export class BetterCallApi {
       })
   }
 
-  getDApp(network, address) {
-    return getCancellable(this.api, `/dapps/${network}/${address}`, {})
+  getDApp(slug) {
+    return getCancellable(this.api, `/dapps/${slug}`, {})
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
