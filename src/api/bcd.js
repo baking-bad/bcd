@@ -690,9 +690,11 @@ export class BetterCallApi {
       })
   }
 
-  getTokenVolumeSeries(network, period, address, token_id) {
+  getTokenVolumeSeries(network, period, contract, addresses, token_id) {
     let params = [];
-    params.push(`address=${address}`)
+    params.push(`contract=${contract}`)
+
+    params.push(`addresses=${addresses.join(',')}`)
 
     params.push(`period=${period}`)
 
