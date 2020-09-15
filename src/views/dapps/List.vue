@@ -8,7 +8,7 @@
           <template v-if="i > 1">
             <v-card
               :elevation="hover ? 1 : 0"
-              :to="{name: 'dapp', params:{address: dapp.contracts[0].address}}"
+              :to="{name: 'dapp', params:{slug: dapp.slug}}"
             >
               <v-img :src="dapp.pictures[0].link" height="200"></v-img>
               <v-divider></v-divider>
@@ -24,7 +24,7 @@
           <template v-else>
             <v-card
               :elevation="hover ? 1 : 0"
-              :to="{name: 'dapp', params:{address: dapp.contracts[0].address}}"
+              :to="{name: 'dapp', params:{slug: dapp.slug}}"
             >
               <v-img :src="dapp.pictures[0].link" height="300">
                 <div class="d-flex lightbox align-end" style="height: 100%; width: 100%">

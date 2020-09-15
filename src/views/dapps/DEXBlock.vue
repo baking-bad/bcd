@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col cols="2">
-      <h3>Tokens</h3>
+      <h3>DEX Tokens</h3>
     </v-col>
     <v-col cols="10" class="d-flex justify-end">
       <v-skeleton-loader :loading="loading" type="actions">
@@ -19,11 +19,11 @@
         </v-btn-toggle>
       </v-skeleton-loader>
     </v-col>
-    <v-col cols="4" v-if="dapp.tokens">
+    <v-col cols="4" v-if="dapp.dex_tokens">
       <v-skeleton-loader :loading="loading || loadingTokenSeries" type="list-item@4">
         <v-list class="py-0">
           <v-list-item-group v-model="selectedToken" color="primary" mandatory>
-            <v-list-item v-for="(token, i) in dapp.tokens" :key="i">
+            <v-list-item v-for="(token, i) in dapp.dex_tokens" :key="i">
               <v-list-item-content>
                 <v-list-item-title>{{ token.name }}</v-list-item-title>
               </v-list-item-content>
@@ -32,13 +32,13 @@
         </v-list>
       </v-skeleton-loader>
     </v-col>
-    <v-col cols="8" v-if="dapp.tokens">
+    <v-col cols="8" v-if="dapp.dex_tokens">
       <v-skeleton-loader :loading="loading || loadingTokenSeries" type="image">
         <v-card flat outlined>
           <v-card-text class="data pa-0">
             <ColumnChart
               :data="series.token_volume"
-              :title="`Volume, ${dapp.tokens[selectedToken].symbol}`"
+              :title="`Volume, ${dapp.dex_tokens[selectedToken].symbol}`"
               name="Volume"
             ></ColumnChart>
           </v-card-text>
@@ -53,7 +53,7 @@ import { mapActions } from "vuex";
 import ColumnChart from "@/components/ColumnChart.vue";
 
 export default {
-  name: "TokensBlock",
+  name: "DEXBlock",
   props: {
     dapp: Object,
     loading: Boolean,
@@ -70,7 +70,7 @@ export default {
     },
     tokens() {
       if (!this.dapp) return [];
-      return this.dapp.tokens;
+      return this.dapp.dex_tokens;
     },
   },
   data: () => ({
@@ -84,7 +84,7 @@ export default {
   mounted() {
     this.getTokenSeries(
       this.selectedPeriod,
-      this.dapp.tokens[this.selectedToken].token_id
+      this.dapp.dex_tokens[this.selectedToken].token_id
     );
   },
   methods: {
@@ -94,7 +94,13 @@ export default {
 
       this.loadingTokenSeries = true;
       this.api
-        .getTokenVolumeSeries("mainnet", period, this.tokens[this.selectedToken].contract, token_id)
+        .getTokenVolumeSeries(
+          "mainnet",
+          period,
+          this.tokens[this.selectedToken].contract,
+          this.contracts,
+          token_id
+        )
         .then((res) => {
           this.series.token_volume = res;
         })

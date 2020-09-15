@@ -13,8 +13,8 @@
       <v-col cols="12">
         <StatisticsBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
       </v-col>
-      <v-col cols="12" v-if="dapp.tokens">
-        <TokensBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
+      <v-col cols="12" v-if="dapp.categories.includes('DEX')">
+        <DEXBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
       </v-col>
       <v-col cols="12" v-if="dapp.agora_review_post_id || dapp.agora_qa_post_id">
         <AgoraBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
@@ -50,8 +50,8 @@ import HeaderBlock from "@/views/dapps/HeaderBlock.vue";
 import InformationBlock from "@/views/dapps/InformationBlock.vue";
 import ScreenshotsBlock from "@/views/dapps/ScreenshotsBlock.vue";
 import StatisticsBlock from "@/views/dapps/StatisticsBlock.vue";
-import TokensBlock from "@/views/dapps/TokensBlock.vue";
 import AgoraBlock from "@/views/dapps/AgoraBlock.vue";
+import DEXBlock from '@/views/dapps/DEXBlock.vue';
 
 export default {
   name: "DApp",
@@ -60,8 +60,8 @@ export default {
     ScreenshotsBlock,
     InformationBlock,
     StatisticsBlock,
-    TokensBlock,
     AgoraBlock,
+    DEXBlock,
   },
   data: () => ({
     loading: true,
