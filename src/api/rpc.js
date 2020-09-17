@@ -70,4 +70,15 @@ export class NodeRPC {
         return { data: res.data, url };
       })
   }
+
+  getBigMapTotalBytes(network, level, ptr) {
+    return this.getApi(network).get(`/chains/main/blocks/${level}/context/raw/json/big_maps/index/${ptr}/total_bytes`)
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        let url = `${res.config.baseURL}${res.config.url}`
+        return { data: res.data, url };
+      })
+  }
 }

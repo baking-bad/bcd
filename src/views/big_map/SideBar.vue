@@ -41,6 +41,14 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
+              <v-list-item v-if="!isNaN(totalBytes)">
+                <v-list-item-content>
+                  <v-list-item-subtitle class="overline">Total size</v-list-item-subtitle>
+                  <v-list-item-title class="body-2">
+                    <span>{{ totalBytes }} bytes</span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
               <AccountBox
                 title="Owner contract"
                 :address="bigmap.address"
@@ -69,8 +77,8 @@
                           class="text--secondary font-weight-light"
                           v-if="item.destination_ptr"
                         >to</span>
-                        <span 
-                          class="text--secondary font-weight-light" 
+                        <span
+                          class="text--secondary font-weight-light"
                           v-else-if="item.source_ptr"
                         >from</span>
                       </template>
@@ -146,47 +154,61 @@ export default {
   name: "SideBar",
   components: {
     AccountBox,
-    BakingBadFooter
+    BakingBadFooter,
   },
   props: {
     ptr: String,
     network: String,
-    bigmap: Object
+    bigmap: Object,
   },
   data: () => ({
-    actions: []
+    actions: [],
+    totalBytes: NaN,
   }),
   computed: {
     removed() {
-      return this.actions.some(item => item.action === "remove");
-    }
+      return this.actions.some((item) => item.action === "remove");
+    },
   },
   created() {
     this.getBigMapActions();
+    this.getTotalBytes();
   },
   methods: {
     ...mapActions(["showError"]),
     getBigMapActions() {
       this.api
         .getContractBigMapActions(this.network, this.ptr)
-        .then(res => {
+        .then((res) => {
           if (!res) return;
           this.actions = res.items;
         })
-        .catch(err => {
+        .catch((err) => {
           console.log(err);
           if (err.code !== 204) {
             this.showError(err);
           }
         });
     },
+    getTotalBytes() {
+      this.rpc
+        .getBigMapTotalBytes(this.network, "head", this.ptr)
+        .then((res) => {
+          if (!res) return;
+          this.totalBytes = parseInt(res.data, 10);
+        })
+        .catch((err) => {
+          console.log(err);
+          this.showError(err);
+        });
+    },
     highlightType(expr) {
       return expr.replace(/(\$\w+)/g, '<span class="accent--text">$1</span>');
-    }
+    },
   },
   watch: {
-    ptr: 'getBigMapActions'
-  }
+    ptr: "getBigMapActions",
+  },
 };
 </script>
 
