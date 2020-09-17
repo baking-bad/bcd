@@ -58,7 +58,9 @@
             <span class="text--secondary">{{ item.body.alias }}</span>
           </template>
           <template v-if="item.type == 'recent'">
-            <span class="purple--text">{{ item.value }}</span>
+            <span v-if="item.value.alias">{{ item.value.alias }}</span>
+            <span v-else-if="item.value.shortcut" v-html="helpers.shortcut(item.value.shortcut)"></span>
+            <span v-else>{{ item.value.value }}</span>
           </template>
         </v-list-item-title>
 
@@ -77,6 +79,7 @@
           <span
             v-else-if="item.type === 'subscription'"
           >Subscribed at {{ helpers.formatDate(item.body.subscribed_at) }}</span>
+          <span v-else-if="item.type === 'recent' && item.value.second">{{ item.value.second }}</span>
           <span class="overline text--primary" v-if="item.body.timestamp">
             {{ helpers.formatDate(item.body.timestamp) }}
             <span
@@ -100,9 +103,13 @@
         <v-btn
           x-small
           text
+          color="grey darken-2"
           v-if="item.type === 'recent'"
           @click.stop.prevent="onRemoveClick(item.value)"
-        >remove</v-btn>
+        >
+          recent
+          <v-icon right>mdi-close</v-icon>
+        </v-btn>
       </v-list-item-action>
     </template>
   </v-combobox>
@@ -140,7 +147,9 @@ export default {
       const value = this.model.value || this.model;
       const network = this.model.body.network;
 
-      addHistoryItem(this.searchText || value);
+      addHistoryItem(
+        this.buildHistoryItem(this.model, value || this.searchText)
+      );
       if (this.model.type == "operation" && checkOperation(value)) {
         this.$nextTick(() => {
           this.model = null;
@@ -170,9 +179,27 @@ export default {
         };
       }
     },
+    buildHistoryItem(model, value) {
+      let historyItem = {
+        value: value,
+      };
+      if (this.model && this.model.body) {
+        if (this.model.body.alias) historyItem.alias = this.model.body.alias;
+        else {
+          historyItem.shortcut = value;
+        }
+        
+        if (this.model.type == "operation" && this.model.body.entrypoint) {
+          historyItem.second = `Called ${this.model.body.entrypoint}`;
+        }
+      }
+      return historyItem;
+    },
     onEnter(searchText) {
       if (searchText !== null && searchText.length > 2) {
-        addHistoryItem(searchText);
+        addHistoryItem({
+          value: searchText,
+        });
         this.$router.push({ name: "search", query: { text: searchText } });
       }
     },
@@ -204,9 +231,14 @@ export default {
       if (history.length == 0) return result;
 
       if (searchText !== "") {
-        history = history.filter((item) =>
-          item.toLowerCase().startsWith(searchText.toLowerCase())
-        );
+        history = history.filter((item) => {
+          if (item.alias) {
+            return item.alias
+              .toLowerCase()
+              .startsWith(searchText.toLowerCase());
+          }
+          return item.value.toLowerCase().startsWith(searchText.toLowerCase());
+        });
       }
       history.forEach((item) => {
         result.push({

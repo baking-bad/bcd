@@ -16,5 +16,5 @@ export function addHistoryItem(item) {
 
 export function removeHistoryItem(item) {
     let history = getHistory();
-    localStorage.setItem(historyKey, JSON.stringify(history.filter(x => x !== item)));
+    localStorage.setItem(historyKey, JSON.stringify(history.filter(x => JSON.stringify(x) !== JSON.stringify(item))));
 }
