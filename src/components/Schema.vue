@@ -423,7 +423,7 @@ export default {
           this.network,
           this.address,
           this.binPath,
-          this.value,
+          this.model,
           rawJSON ? "" : "michelson"
         )
         .then((res) => {
@@ -460,7 +460,7 @@ export default {
           this.network,
           this.address,
           this.binPath,
-          this.value,
+          this.model,
           this.settings.source,
           this.settings.amount
         )
