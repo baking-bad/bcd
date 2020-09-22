@@ -38,9 +38,9 @@
         <v-tab :to="{ name: 'interact' }" replace>
           <v-icon left small>mdi-play-box-outline</v-icon>Interact
         </v-tab>
-        <v-tab :to="{ name: 'transfers' }" replace v-if="transfers && transfers.total > 0">
-          <v-icon left small>mdi-transfer</v-icon>Transfers
-          <span class="ml-1">({{ transfers.total || 0 }})</span>
+        <v-tab :to="{ name: 'tokens' }" replace v-if="tokens && tokens.length > 0">
+          <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
+          <span class="ml-1">({{ tokens.length|| 0 }})</span>
         </v-tab>
         <v-tab :to="{ name: 'fork' }" replace v-if="showFork">
           <v-icon left small>mdi-source-fork</v-icon>Fork
@@ -56,7 +56,7 @@
       :network="network"
       :contract="contract"
       :migrations="migrations"
-      :transfers="transfers"
+      :tokens="tokens"
     ></router-view>
   </div>
 </template>
@@ -83,17 +83,17 @@ export default {
   data: () => ({
     contractLoading: true,
     migrationsLoading: true,
-    transfersLoading: true,
+    tokensLoading: true,
     contract: {},
     migrations: [],
-    transfers: null,
+    tokens: null,
     showFork: false,
   }),
   created() {
     this.showFork = this.$route.name === "fork";
     this.getContract();
     this.getMigrations();
-    this.getTransfers();
+    this.getTokens();
   },
   computed: {
     loading() {
@@ -140,19 +140,19 @@ export default {
         })
         .finally(() => (this.migrationsLoading = false));
     },
-    getTransfers() {
-      this.transfersLoading = true;
+    getTokens() {
+      this.tokensLoading = true;
       this.api
-        .getContractTransfers(this.network, this.address, 20, 0)
+        .getContractTokens(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          this.transfers = res;
+          this.tokens = res;
         })
         .catch((err) => {
           console.log(err);
           this.showError(err);
         })
-        .finally(() => (this.transfersLoading = false));
+        .finally(() => (this.tokensLoading = false));
     },
     onFork() {
       this.showFork = !this.showFork;
