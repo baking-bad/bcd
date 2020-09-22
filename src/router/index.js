@@ -18,7 +18,7 @@ import OperationsTab from '@/views/contract/OperationsTab.vue'
 import CodeTab from '@/views/contract/CodeTab.vue'
 import InteractTab from '@/views/contract/InteractTab.vue'
 import StorageTab from '@/views/contract/StorageTab.vue'
-import TransfersTab from '@/views/contract/TransfersTab.vue'
+import ContractTokensTab from '@/views/contract/TokensTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
@@ -214,9 +214,9 @@ const router = new Router({
             default: ForkTab,
           }
         }, {
-          path: 'transfers',
-          name: 'transfers',
-          component: TransfersTab,
+          path: 'tokens',
+          name: 'tokens',
+          component: ContractTokensTab,
           props: true
         },
       ]

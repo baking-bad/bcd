@@ -54,6 +54,11 @@
             <span class="text--secondary" style="font-size: 20px;">→</span>
             <span>{{ item.body.key }}</span>
           </template>
+          <template v-else-if="item.type == 'token_metadata'">
+            <span class="text--secondary">{{ item.body.name }}</span>
+            <span class="text--secondary" style="font-size: 20px;">→</span>
+            <span>{{ item.body.symbol }}</span>
+          </template>
           <template v-if="item.type == 'subscription'">
             <span class="text--secondary">{{ item.body.alias }}</span>
           </template>
@@ -76,6 +81,9 @@
           <span
             v-else-if="item.type === 'bigmapdiff' && item.group"
           >{{ helpers.plural(item.group.count, "update") }}&nbsp;|&nbsp;</span>
+          <span
+            v-else-if="item.type === 'token_metadata' && item.group"
+          >{{ helpers.plural(item.group.count, "token") }}&nbsp;|&nbsp;</span>
           <span
             v-else-if="item.type === 'subscription'"
           >Subscribed at {{ helpers.formatDate(item.body.subscribed_at) }}</span>

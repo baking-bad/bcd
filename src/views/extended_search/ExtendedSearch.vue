@@ -70,6 +70,9 @@
           <v-tab>
             <v-icon left small>mdi-database</v-icon>Big Maps
           </v-tab>
+          <v-tab>
+            <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
+          </v-tab>
           <div class="d-flex ml-8" style="margin-top: 6px;">
             <v-btn
               v-model="showFilters"
@@ -100,7 +103,11 @@
         <template
           v-else-if="(isAddress() || isOpgHash()) && !loading && tzkt.supportsAny(filters.networks)"
         >
-          <v-card flat outlined class="mt-8 pa-8 data d-flex flex-column justify-center align-center">
+          <v-card
+            flat
+            outlined
+            class="mt-8 pa-8 data d-flex flex-column justify-center align-center"
+          >
             <v-img class="img-avatar" :src="getCatavaSrc()"></v-img>
             <span class="headline grey--text">
               Mysterious
@@ -243,6 +250,12 @@ export default {
         ["key_hash", ""],
         ["address", "of the owner contract"],
       ],
+      "tokens": [
+        ["name", ""],
+        ["symbol", ""],
+        ["contract", "contract which created token"],
+        ["registry_address", "token metadata registry"],
+      ],
     },
   }),
   computed: {
@@ -253,6 +266,8 @@ export default {
         return ["operation"];
       } else if (this.tab == 3) {
         return ["bigmapdiff"];
+      } else if (this.tab == 4) {
+        return ["token_metadata"];
       }
       return [];
     },
@@ -292,7 +307,7 @@ export default {
           .search(text, indices, offset, networks, languages, time, 1)
           .then((res) => {
             if (seqno !== this.seqno || !res) return;
-            
+
             if (!this.completed) {
               if (push) {
                 this.suggests.push(...res.items);
@@ -302,10 +317,11 @@ export default {
             }
 
             this.total = res.count;
-            this.completed = (res.items.length == 0) 
-              || (this.total == 1 
-                && this.suggests.length == 1 
-                && this.suggests[0].body.mempool);
+            this.completed =
+              res.items.length == 0 ||
+              (this.total == 1 &&
+                this.suggests.length == 1 &&
+                this.suggests[0].body.mempool);
             this.elasticTime = res.time;
 
             if (text !== this.$route.query.text) {
@@ -317,8 +333,8 @@ export default {
             this.showError(err);
           })
           .finally(() => {
-            this.cold = false;    
-            this.loading = false;        
+            this.cold = false;
+            this.loading = false;
           });
       }, 500);
     },
