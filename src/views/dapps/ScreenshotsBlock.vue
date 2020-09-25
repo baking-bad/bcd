@@ -81,7 +81,7 @@ export default {
     initTabs() {
       let value = {};
       this.dapp.pictures.forEach((x) => {
-        if (x.type == "logo") {
+        if (x.type === "logo" || x.type === 'cover') {
           return;
         }
         if (x.type in value) {

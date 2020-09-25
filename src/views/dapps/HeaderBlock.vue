@@ -2,7 +2,7 @@
   <v-row>
     <v-col cols="2">
       <v-skeleton-loader :loading="loading" type="image">
-        <v-img v-if="logo" :src="logo.link" width="200" aspect-ratio="1" class="rounded-logo"></v-img>
+        <v-img :src="dapp.logo" width="200" aspect-ratio="1" class="rounded-logo" contain></v-img>
       </v-skeleton-loader>
     </v-col>
     <v-col cols="8">
@@ -12,7 +12,7 @@
           <span class="subtitle-1 text--secondary">{{ dapp.short_description }}</span>
           <p class="body-1">{{ dapp.authors.join(', ') }}</p>
 
-          <p class="caption">{{ dapp.full_description }}</p>
+          <p class="body-2">{{ dapp.full_description }}</p>
         </div>
       </v-skeleton-loader>
     </v-col>
@@ -32,21 +32,11 @@ export default {
     dapp: Object,
     loading: Boolean,
   },
-  computed: {
-    logo() {
-      for (let i = 0; i < this.dapp.pictures.length; i++) {
-        if (this.dapp.pictures[i].type === "logo") {
-          return this.dapp.pictures[i];
-        }
-      }
-      return null;
-    },
-  },
 };
 </script>
 
 <style lang="scss" scoped>
 .rounded-logo {
-  border-radius: 50px;
+  border-radius: 10px;
 }
 </style>

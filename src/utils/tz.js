@@ -25,7 +25,7 @@ export function checkKeyHash(keyhash) {
     return true;
 }
 
-export function shortcut(value, tail=4) {
+export function shortcut(value, tail = 4) {
     if (!value) return '';
 
     let head = 0;
@@ -71,4 +71,8 @@ export function urlExtractBase58(url) {
     if (matches && matches.length > 0) {
         return matches[0];
     }
+}
+
+export function round(value, decimals) {
+    return parseFloat((value / 10 ** decimals).toFixed(decimals));
 }

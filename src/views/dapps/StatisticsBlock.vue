@@ -25,7 +25,7 @@
           <v-card-text class="data pa-0">
             <ColumnChart
               :data="series.users"
-              :title="summary ? `<div class='text-center py-0'>Unique users<div>
+              :title="summary ? `<div class='text-center py-0'>Unique accounts<div>
                 <div class='text--secondary caption text-center py-0'>Total ${summary.users}</div>` : 'Unique users'"
               name="Unique users"
             ></ColumnChart>
@@ -39,10 +39,9 @@
           <v-card-text class="data pa-0">
             <ColumnChart
               :data="series.volume"
-              :title="summary ? `<div class='text-center py-0'>Volume, \uA729<div>
-                <div class='text--secondary caption text-center py-0'>Total ${summary.volume / 10 ** 6} \uA729</div>` : 'Volume, \uA729'"
-              name="Volume"
-              formatter="gas"
+              :title="summary ? `<div class='text-center py-0'>Activity (contracts calls count)<div>
+                <div class='text--secondary caption text-center py-0'>Total ${summary.txs} calls</div>` : 'Calls count'"
+              name="Calls count"
             ></ColumnChart>
           </v-card-text>
         </v-card>
@@ -98,7 +97,7 @@ export default {
           this.series.users = res;
           return this.api.getNetworkStatsSeries(
             "mainnet",
-            "volume",
+            "operation",
             period,
             this.contracts
           );

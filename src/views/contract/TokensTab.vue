@@ -53,6 +53,22 @@
                   </v-list-item-content>
                 </v-list-item>
               </v-col>
+              <v-col cols="2" v-if="token.supply">
+                <v-list-item selectable>
+                  <v-list-item-content>
+                    <v-list-item-title class="overline">Supply</v-list-item-title>
+                    <v-list-item-subtitle>{{ helpers.round(token.supply, token.decimals) }} {{ token.symbol }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-col>
+              <v-col cols="2" v-if="token.transfered">
+                <v-list-item selectable>
+                  <v-list-item-content>
+                    <v-list-item-title class="overline">Transfered</v-list-item-title>
+                    <v-list-item-subtitle>{{ helpers.round(token.transfered, token.decimals) }} {{ token.symbol }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-col>
               <template v-for="(value, key) in token.extras">
                 <v-col cols="2" :key="key">
                   <v-tooltip bottom>
@@ -86,7 +102,7 @@
                     </v-col>
                     <v-col cols="2" class="d-flex align-center justify-end pr-6">
                       <span class="body-2">
-                        {{ token ? (item.amount / 10 ** token.decimals).toFixed(token.decimals) : item.amount }}
+                        {{ token ? helpers.round(item.amount, token.decimals).toLocaleString(undefined, { maximumFractionDigits: token.decimals }) : item.amount }}
                         <span
                           class="caption text-uppercase font-weight-regular text--disabled"
                         >{{ token.symbol ? token.symbol : `tok_${item.token_id}`}}</span>
