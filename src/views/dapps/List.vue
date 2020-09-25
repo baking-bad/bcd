@@ -1,39 +1,49 @@
 <template>
   <v-skeleton-loader :loading="loading" type="card">
     <v-row>
-      <v-col v-for="(dapp, i) in dapps" :key="i" :cols="i < 2 ? 6 : 4"
-      
-      >
+      <v-col v-for="(dapp, i) in dapps" :key="i" :cols="i < 2 ? 6 : 4">
         <v-hover v-slot:default="{ hover }">
           <template v-if="i > 1">
             <v-card
-              :elevation="hover ? 1 : 0"
-              :to="{name: 'dapp', params:{slug: dapp.slug}}"
+              :elevation="hover && !dapp.soon  ? 1 : 0"
+              :to="dapp.soon ? null : {name: 'dapp', params:{slug: dapp.slug}}"
             >
-              <v-img :src="dapp.pictures[0].link" height="200"></v-img>
+              <v-img :src="dapp.cover || dapp.logo" height="200" contain class="mx-2"></v-img>
               <v-divider></v-divider>
-              <v-card-title primary-title>
-                <div>
+              <v-card-text primary-title>
+                <div class="d-flex flex-column">
                   <p class="headline mb-0">{{ dapp.name }}</p>
-                  <p class="overline mt-0">{{ dapp.short_description }}</p>
-                  <v-chip v-for="c in dapp.categories" :key="c" class="mx-1" small>{{ c }}</v-chip>
+                  <p
+                    class="overline mt-0"
+                    style="height: 25px; max-height: 25px"
+                  >{{ dapp.short_description }}</p>
+                  <div class="d-flex">
+                    <v-chip v-for="c in dapp.categories" :key="c" class="mx-1" small>{{ c }}</v-chip>
+                  </div>
                 </div>
-              </v-card-title>
+              </v-card-text>
+
+              <v-img
+                v-if="dapp.soon"
+                class="coming-soon"
+                src="/img/coming_soon.png"
+              />
+
+              <v-overlay :opacity="0.4" v-model="dapp.soon" absolute></v-overlay>
             </v-card>
           </template>
           <template v-else>
             <v-card
-              :elevation="hover ? 1 : 0"
+              :elevation="hover && !dapp.soon ? 1 : 0"
               :to="{name: 'dapp', params:{slug: dapp.slug}}"
             >
-              <v-img :src="dapp.pictures[0].link" height="300">
+              <v-img :src="dapp.cover || dapp.logo" height="300">
                 <div class="d-flex lightbox align-end" style="height: 100%; width: 100%">
-                  <v-card-title
-                    primary-title
-                    class="title white--text pa-0"
-                    style="width: 100%;"
-                  >
-                    <div class="d-flex pa-4 justify-space-between align-center" style="height: 50%; width: 100%">
+                  <v-card-text primary-title class="title white--text pa-0" style="width: 100%;">
+                    <div
+                      class="d-flex pa-4 justify-space-between align-center"
+                      style="height: 50%; width: 100%"
+                    >
                       <div>
                         <p class="headline mb-0">{{ dapp.name }}</p>
                         <p class="overline mt-0">{{ dapp.short_description }}</p>
@@ -42,7 +52,7 @@
                         <v-chip v-for="c in dapp.categories" :key="c" class="mx-1" small>{{ c }}</v-chip>
                       </div>
                     </div>
-                  </v-card-title>
+                  </v-card-text>
                 </div>
               </v-img>
             </v-card>
@@ -97,5 +107,14 @@ export default {
     rgba(0, 0, 0, 0.8) 0%,
     transparent 150px
   );
+}
+
+.coming-soon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100px;
+  width: 100px;
+  z-index: 100;
 }
 </style>

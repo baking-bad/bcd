@@ -6,7 +6,7 @@ import store from '@/store'
 import router from '@/router'
 import VueAnalytics from 'vue-analytics'
 
-import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress } from "@/utils/tz.js";
+import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { getJwt, logout, getBool } from "@/utils/auth.js";
 import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js"
 import { NodeRPC } from "@/api/rpc.js"
@@ -88,7 +88,7 @@ getRuntimeConfig().then(async function (config) {
   let tzkt = new TzKTApi(config.tzkt_endpoints);
   let ws = new BcdWs(config.WS_URI);
 
-  let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress }
+  let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress, round }
 
   Vue.mixin({
     data() {

@@ -1,7 +1,7 @@
 <template>
   <v-row>
     <v-col cols="2">
-      <h3>DEX Tokens</h3>
+      <h3>DEX Volumes</h3>
     </v-col>
     <v-col cols="10" class="d-flex justify-end">
       <v-skeleton-loader :loading="loading" type="actions">
@@ -23,6 +23,11 @@
       <v-skeleton-loader :loading="loading || loadingTokenSeries" type="list-item@4">
         <v-list class="py-0">
           <v-list-item-group v-model="selectedToken" color="primary" mandatory>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-title>Tezos</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item v-for="(token, i) in dapp.dex_tokens" :key="i">
               <v-list-item-content>
                 <v-list-item-title>{{ token.name }}</v-list-item-title>
@@ -35,10 +40,11 @@
     <v-col cols="8" v-if="dapp.dex_tokens">
       <v-skeleton-loader :loading="loading || loadingTokenSeries" type="image">
         <v-card flat outlined>
-          <v-card-text class="data pa-0">
+          <v-card-text class="data pa-0" v-if="this.data[this.selectedToken]">
             <ColumnChart
-              :data="series.token_volume"
-              :title="`Volume, ${dapp.dex_tokens[selectedToken].symbol}`"
+              :data="this.data[this.selectedToken].series"
+              :title="`<div class='text-center py-0'>Volume, ${token !== null ? token.symbol: '\uA729'}<div>
+                <div class='text--secondary caption text-center py-0'>Total ${this.data[this.selectedToken].total} ${token !== null ? token.symbol: '\uA729'}</div>`"
               name="Volume"
             ></ColumnChart>
           </v-card-text>
@@ -72,37 +78,45 @@ export default {
       if (!this.dapp) return [];
       return this.dapp.dex_tokens;
     },
+    token() {
+      if (
+        this.selectedToken > 0 &&
+        this.selectedToken <= this.dapp.dex_tokens.length
+      )
+        return this.dapp.dex_tokens[this.selectedToken - 1];
+      return null;
+    },
   },
   data: () => ({
     loadingTokenSeries: true,
-    series: {
-      token_volume: [],
-    },
+    data: {},
     selectedToken: 0,
     selectedPeriod: "month",
   }),
   mounted() {
-    this.getTokenSeries(
-      this.selectedPeriod,
-      this.dapp.dex_tokens[this.selectedToken].token_id
-    );
+    this.getSeries(this.selectedPeriod, this.selectedToken);
   },
   methods: {
     ...mapActions(["showError"]),
-    getTokenSeries(period, token_id) {
-      if (this.tokens.length == 0 || token_id === undefined) return;
+    getTokenSeries(period) {
+      if (this.selectedToken in this.data) return;
+      if (this.tokens.length == 0) return;
+      let token = this.tokens[this.selectedToken - 1];
 
       this.loadingTokenSeries = true;
       this.api
         .getTokenVolumeSeries(
           "mainnet",
           period,
-          this.tokens[this.selectedToken].contract,
+          token.contract,
           this.contracts,
-          token_id
+          token.token_id
         )
         .then((res) => {
-          this.series.token_volume = res;
+          this.data[this.selectedToken] = this.prepareSeries(
+            res,
+            this.token.decimals
+          );
         })
         .catch((err) => {
           console.log(err);
@@ -112,13 +126,53 @@ export default {
           this.loadingTokenSeries = false;
         });
     },
+    getTezosVolume(period) {
+      if (this.selectedToken in this.data) return;
+      this.loadingTokenSeries = true;
+
+      this.api
+        .getNetworkStatsSeries("mainnet", "volume", period, this.contracts)
+        .then((res) => {
+          this.data[this.selectedToken] = this.prepareSeries(res);
+        })
+        .catch((err) => {
+          console.log(err);
+          this.showError(err);
+        })
+        .finally(() => {
+          this.loadingTokenSeries = false;
+        });
+    },
+    prepareSeries(series, decimals = 6) {
+      let result = [];
+      let total = 0;
+      series.forEach((x) => {
+        total += x[1];
+        result.push([
+          x[0],
+          this.helpers.round(x[1], decimals),
+        ]);
+      });
+      return {
+        series: result,
+        total:  this.helpers.round(total, decimals),
+      };
+    },
+    getSeries(period, selectedToken) {
+      if (selectedToken > 0) {
+        this.getTokenSeries(this.selectedPeriod);
+      } else if (selectedToken == 0) {
+        this.getTezosVolume(period);
+      }
+    },
   },
   watch: {
     selectedPeriod: function (newValue) {
-      this.getTokenSeries(newValue, this.tokens[this.selectedToken].token_id);
+      this.data = {};
+      this.getSeries(newValue, this.selectedToken);
     },
     selectedToken: function (newValue) {
-      this.getTokenSeries(this.selectedPeriod, this.tokens[newValue].token_id);
+      this.getSeries(this.selectedPeriod, newValue);
     },
   },
 };

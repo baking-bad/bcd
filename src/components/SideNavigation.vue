@@ -137,13 +137,13 @@ export default {
           path: "/stats/mainnet/general",
         },
       },
-      // {
-      //   icon: "mdi-apps",
-      //   text: "DApps",
-      //   to: {
-      //     path: "/dapps",
-      //   },
-      // },
+      {
+        icon: "mdi-apps",
+        text: "DApps",
+        to: {
+          path: "/dapps",
+        },
+      },
     ],
     pickingRandom: false,
   }),
