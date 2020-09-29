@@ -7,9 +7,8 @@ export function getHistory() {
 
 export function addHistoryItem(item) {
     let history = getHistory();
-    if (history.includes(item)) {
-        history = history.filter(x => x !== item)
-    }
+    history = history.filter(x => JSON.stringify(x) !== JSON.stringify(item))
+
     history.unshift(item)
     localStorage.setItem(historyKey, JSON.stringify(history.slice(0, historySize)));
 }
