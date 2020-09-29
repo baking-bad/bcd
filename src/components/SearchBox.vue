@@ -63,9 +63,9 @@
             <span class="text--secondary">{{ item.body.alias }}</span>
           </template>
           <template v-if="item.type == 'recent'">
-            <span v-if="item.value.alias">{{ item.value.alias }}</span>
-            <span v-else-if="item.value.shortcut" v-html="helpers.shortcut(item.value.shortcut)"></span>
-            <span v-else>{{ item.value.value }}</span>
+            <span v-if="item.body.alias">{{ item.body.alias }}</span>
+            <span v-else-if="item.body.shortcut" v-html="helpers.shortcut(item.body.shortcut)"></span>
+            <span v-else>{{ item.value }}</span>
           </template>
         </v-list-item-title>
 
@@ -87,7 +87,7 @@
           <span
             v-else-if="item.type === 'subscription'"
           >Subscribed at {{ helpers.formatDate(item.body.subscribed_at) }}</span>
-          <span v-else-if="item.type === 'recent' && item.value.second">{{ item.value.second }}</span>
+          <span v-else-if="item.type === 'recent' && item.body.second">{{ item.body.second }}</span>
           <span class="overline text--primary" v-if="item.body.timestamp">
             {{ helpers.formatDate(item.body.timestamp) }}
             <span
@@ -188,6 +188,7 @@ export default {
       }
     },
     buildHistoryItem(model, value) {
+      if (typeof(value) === 'object') return value;
       let historyItem = {
         value: value,
       };
@@ -252,7 +253,7 @@ export default {
         result.push({
           type: "recent",
           body: item,
-          value: item,
+          value: item.value,
         });
       });
       return result;
