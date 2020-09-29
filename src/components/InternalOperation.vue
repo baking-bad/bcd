@@ -293,10 +293,7 @@ export default {
       return "0 (0%)";
     },
     allocationFee() {
-      if (this.data.result && this.data.result.allocated_destination_contract) {
-        return this.data.burned;
-      }
-      return 0;
+      return this.data.allocated_destination_contract_burned || 0;
     },
     paidStorageDiff() {
       if (this.data.result && this.data.result.paid_storage_size_diff) {
