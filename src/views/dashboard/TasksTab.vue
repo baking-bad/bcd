@@ -7,8 +7,7 @@
       type="success"
       v-if="profile && profile.marked_contracts == 0"
     >
-      Completing these tasks help us to improve BCD for
-      <strong>you</strong>. You can similarity mark contracts pairs. It will boost teaching of our algorithms.
+      Completing these tasks helps to teach our algorithms to detect similar contracts more precisely. Thank you!
     </v-alert>
     <v-skeleton-loader :loading="loading" type="table">
       <v-data-table
@@ -55,7 +54,7 @@
           <div class="d-flex flex-column align-center justify-center">
             <span
               class="mb-4 subtitle-1"
-            >Still no tasks. You can get new tasks by pressing button below.</span>
+            >Still no tasks. You can get new tasks by pressing the button below.</span>
             <v-btn depressed tile color="primary" @click="getNewTasks">Get tasks</v-btn>
           </div>
         </v-card-text>

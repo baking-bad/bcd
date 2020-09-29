@@ -1,7 +1,7 @@
 <template>
   <v-toolbar flat class color="toolbar" height="75">
     <v-toolbar-title class="headline">
-      <router-link style="text-decoration: none;" to="/dapps">
+      <router-link style="text-decoration: none; color: inherit;" to="/dapps">
         <span class="font-weight-light">
           Tezos
           <span class="font-weight-regular">DApps</span>
