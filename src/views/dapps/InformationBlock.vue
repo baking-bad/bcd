@@ -11,12 +11,12 @@
                 <v-list-item-title class="info-item-title">{{ dapp.authors.join(', ') }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item selectable class="mx-0 px-0">
+            <!-- <v-list-item selectable class="mx-0 px-0">
               <v-list-item-content>
                 <v-list-item-subtitle class="overline">License</v-list-item-subtitle>
                 <v-list-item-title class="info-item-title">{{ dapp.license }}</v-list-item-title>
               </v-list-item-content>
-            </v-list-item>
+            </v-list-item> -->
             <v-list-item
               selectable
               v-if="dapp.categories && dapp.categories.length"

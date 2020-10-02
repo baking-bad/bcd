@@ -80,10 +80,7 @@ export default {
   methods: {
     initTabs() {
       let value = {};
-      this.dapp.pictures.forEach((x) => {
-        if (x.type === "logo" || x.type === 'cover') {
-          return;
-        }
+      this.dapp.screenshots.forEach((x) => {
         if (x.type in value) {
           value[x.type].push(x);
         } else {
@@ -107,7 +104,7 @@ export default {
       } else if (type === "iphone") {
         return 2.2;
       }
-      return 4 / 3;
+      return 16 / 9;
     },
     getScreenshotTypeIcon(type) {
       if (type === "desktop") {

@@ -4,7 +4,7 @@
       <v-col cols="12">
         <HeaderBlock class="mb-10" :dapp="dapp" :loading="loading" />
       </v-col>
-      <v-col cols="12" v-if="dapp.pictures">
+      <v-col cols="12" v-if="dapp.screenshots">
         <ScreenshotsBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
       </v-col>
       <v-col cols="12">
