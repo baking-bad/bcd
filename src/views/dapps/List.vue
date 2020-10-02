@@ -8,15 +8,12 @@
               :elevation="hover && !dapp.soon  ? 1 : 0"
               :to="dapp.soon ? null : {name: 'dapp', params:{slug: dapp.slug}}"
             >
-              <v-img :src="dapp.cover || dapp.logo" height="200" contain class="mx-2"></v-img>
+              <v-img :src="dapp.cover || dapp.logo"></v-img>
               <v-divider></v-divider>
               <v-card-text primary-title>
                 <div class="d-flex flex-column">
                   <p class="headline mb-0">{{ dapp.name }}</p>
-                  <p
-                    class="overline mt-0"
-                    style="height: 25px; max-height: 25px"
-                  >{{ dapp.short_description }}</p>
+                  <p class="overline mt-0">{{ dapp.short_description }}</p>
                   <div class="d-flex">
                     <v-chip v-for="c in dapp.categories" :key="c" class="mx-1" small>{{ c }}</v-chip>
                   </div>
@@ -37,11 +34,11 @@
               :elevation="hover && !dapp.soon ? 1 : 0"
               :to="{name: 'dapp', params:{slug: dapp.slug}}"
             >
-              <v-img :src="dapp.cover || dapp.logo" height="300">
+              <v-img :src="dapp.cover || dapp.logo">
                 <div class="d-flex lightbox align-end" style="height: 100%; width: 100%">
                   <v-card-text primary-title class="title white--text pa-0" style="width: 100%;">
                     <div
-                      class="d-flex pa-4 justify-space-between align-center"
+                      class="d-flex px-4 justify-space-between align-center"
                       style="height: 50%; width: 100%"
                     >
                       <div>
