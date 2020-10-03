@@ -98,8 +98,12 @@ export default {
         return "mdi-linkedin";
       } else if (link.includes("facebook")) {
         return "mdi-facebook";
-      } else if (link.startsWith("tg://")) {
+      } else if (link.startsWith("tg://") || link.includes("t.me")) {
         return "mdi-telegram";
+      } else if (link.includes("gitlab")) {
+        return "mdi-gitlab";
+      } else if (link.includes("github")) {
+        return "mdi-github";
       }
       return "mdi-web";
     },
@@ -116,8 +120,12 @@ export default {
         return "#007bb5";
       } else if (link.includes("facebook")) {
         return "#1877f2";
-      } else if (link.startsWith("tg://")) {
+      } else if (link.startsWith("tg://") || link.includes("t.me")) {
         return "#0088cc";
+      } else if (link.includes("gitlab")) {
+        return "#F26D25";
+      } else if (link.includes("github")) {
+        return "#24292F";
       }
       return "grey";
     },
