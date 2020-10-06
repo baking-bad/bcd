@@ -13,6 +13,12 @@
             <SearchBox />
           </v-col>
           <v-col cols="12" align="center">
+            <v-btn 
+              large
+              depressed
+              color="border"
+              class="text--secondary mr-5"
+              to="/dapps"><v-icon left color="error">mdi-fire</v-icon>Explore DApps</v-btn>
             <v-btn
               large
               depressed
