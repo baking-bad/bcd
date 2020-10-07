@@ -19,6 +19,7 @@ import CodeTab from '@/views/contract/CodeTab.vue'
 import InteractTab from '@/views/contract/InteractTab.vue'
 import StorageTab from '@/views/contract/StorageTab.vue'
 import ContractTokensTab from '@/views/contract/TokensTab.vue'
+import TransfersTab from '@/views/contract/TransfersTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
@@ -172,7 +173,7 @@ const router = new Router({
       ]
     },
     {
-      path: '/:network/:address(KT[0-9A-z]{34})',
+      path: '/:network/:address([0-9A-z]{36})',
       components: {
         default: Contract,
       },
@@ -213,10 +214,17 @@ const router = new Router({
           components: {
             default: ForkTab,
           }
-        }, {
+        }, 
+        {
           path: 'tokens',
           name: 'tokens',
           component: ContractTokensTab,
+          props: true
+        },
+        {
+          path: 'transfers',
+          name: 'transfers',
+          component: TransfersTab,
           props: true
         },
       ]

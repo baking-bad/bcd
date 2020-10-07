@@ -146,6 +146,43 @@ export class BetterCallApi {
       })
   }
 
+  getAccountInfo(network, address) {
+    return getCancellable(this.api, `/account/${network}/${address}`, {})
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+
+  getAccountTransfers(network, address, token_id = -1, contracts=[], size = 10, last_id = '') {
+    let params = {};
+    if (token_id > -1) {
+      params['token_id'] = token_id
+    }
+    if (size > 0) {
+      params['size'] = size
+    }
+    if (last_id > '') {
+      params['last_id'] = last_id
+    }
+    if (contracts && contracts.length > 0) {
+      params['contracts'] = contracts.join(',')
+    } 
+    return getCancellable(this.api, `/tokens/${network}/transfers/${address}`, {
+      params: params
+    })
+      .then((res) => {
+        if (!res) { return res; }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
   getContractCode(network, address, protocol = "", level = 0) {
     let params = {}
     if (protocol !== "") {

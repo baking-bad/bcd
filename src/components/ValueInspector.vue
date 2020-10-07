@@ -13,24 +13,14 @@
     ></v-textarea>
     <v-text-field v-else :value="value" :suffix="suffix" readonly filled :label="label"></v-text-field>
     <v-btn
-      v-if="(isKeyHash || isContract) && tzkt.supports(network)"
-      text
-      small
-      link
-      @click.prevent.stop="handleAddress(value, true)"
-    >
-      <v-icon small class="mr-1">mdi-open-in-new</v-icon>
-      <span>Open in TzKT.io</span>
-    </v-btn>
-    <v-btn
-      v-if="isContract && value !== $route.params.address"
+      v-if="value !== $route.params.address"
       text
       small
       link
       @click.prevent.stop="handleAddress(value)"
     >
       <v-icon small class="mr-1" v-if="!sameTab">mdi-open-in-new</v-icon>
-      <span>View contract</span>
+      <span>View</span>
     </v-btn>
     <v-btn v-if="isKeyHash" text small link :to="`/${value}`" target="_blank">
       <v-icon small class="mr-1">mdi-magnify</v-icon>
@@ -101,7 +91,7 @@ export default {
   methods: {
     handleAddress(s, external = false) {
       const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
-      if (address.startsWith("tz") || external) {
+      if (external) {
         let href = this.tzkt.resolve(this.network, address);
         window.open(href, "_blank");
       } else {
