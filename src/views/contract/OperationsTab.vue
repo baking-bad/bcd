@@ -25,7 +25,7 @@
           </template>
         </v-select>
       </v-col>
-      <v-col cols="3">
+      <v-col cols="3" v-if="isContract">
         <v-select
           v-model="entrypoints"
           :items="availableEntrypoints"
@@ -79,7 +79,7 @@
           </v-date-picker>
         </v-menu>
       </v-col>
-      <v-col class="d-flex align-center justify-end" cols="3">
+      <v-col class="d-flex align-center justify-end">
         <v-btn small text @click="fetchOperations">
           <v-icon small class="mr-1 text--secondary">mdi-trash-can</v-icon>
           <span class="text--secondary">clear filters</span>
@@ -184,6 +184,9 @@ export default {
       }
       return s;
     },
+    isContract() {
+      return this.address.startsWith("KT");
+    }
   },
   methods: {
     ...mapActions(["showError"]),
@@ -207,6 +210,7 @@ export default {
       }
     },
     getEntrypoints() {
+      if (!this.isContract) return;
       this.api
         .getContractEntrypoints(this.network, this.address)
         .then((res) => {

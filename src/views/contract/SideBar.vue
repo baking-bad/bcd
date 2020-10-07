@@ -1,11 +1,11 @@
 <template>
   <div class="fill-height canvas">
-    <v-list-item style="height: 74px;">
+    <v-list-item style="height: 74px">
       <v-list-item-content two-line>
         <v-list-item-title class="headline">
           <v-tooltip bottom v-if="alias" :disabled="alias.length < 15">
             <template v-slot:activator="{ on, attrs }">
-              <span v-bind="attrs" v-on="on">{{ alias}}</span>
+              <span v-bind="attrs" v-on="on">{{ alias }}</span>
             </template>
             <span>{{ alias }}</span>
           </v-tooltip>
@@ -23,7 +23,8 @@
           <span
             class="overline"
             :class="network === 'mainnet' ? 'secondary--text' : ''"
-          >{{ network }}</span>
+            >{{ network }}</span
+          >
         </v-list-item-subtitle>
       </v-list-item-content>
       <v-list-item-action v-if="standard">
@@ -33,13 +34,16 @@
             class="caption"
             :to="`/search?text=${standard.tag}`"
             target="_blank"
-          >{{ standard.text }}</v-chip>
+            >{{ standard.text }}</v-chip
+          >
         </v-list-item-action-text>
       </v-list-item-action>
     </v-list-item>
     <v-divider></v-divider>
-    <div class="d-flex align-center px-4 sidebar" style="height: 48px;">
-      <span class="caption font-weight-bold text-uppercase text--secondary">Actions</span>
+    <div class="d-flex align-center px-4 sidebar" style="height: 48px">
+      <span class="caption font-weight-bold text-uppercase text--secondary"
+        >Actions</span
+      >
     </div>
     <div class="d-flex align-center justify-start pa-2 px-4">
       <v-tooltip bottom v-if="isAuthorized && contract && !contract.verified">
@@ -53,14 +57,16 @@
       <v-tooltip bottom v-if="isAuthorized && contract">
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" icon class="mr-2" @click="showWatchSettings = true">
-            <v-icon v-if="contract.subscription" class="text--primary">mdi-eye-settings-outline</v-icon>
+            <v-icon v-if="contract.subscription" class="text--primary"
+              >mdi-eye-settings-outline</v-icon
+            >
             <v-icon v-else class="text--secondary">mdi-eye-outline</v-icon>
           </v-btn>
         </template>
         <span v-if="contract.subscription">Edit watch settings</span>
         <span v-else>Watch contract</span>
       </v-tooltip>
-      <v-tooltip bottom>
+      <v-tooltip bottom v-if="isContract">
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" icon class="mr-2" @click="onForkClick">
             <v-icon class="text--secondary">mdi-source-fork</v-icon>
@@ -74,10 +80,12 @@
             v-on="on"
             icon
             class="mr-2"
-            @click="() => {
-              $clipboard(address); 
-              showClipboardOK();
-            }"
+            @click="
+              () => {
+                $clipboard(address);
+                showClipboardOK();
+              }
+            "
           >
             <v-icon class="text--secondary">mdi-content-copy</v-icon>
           </v-btn>
@@ -89,10 +97,12 @@
           <v-btn
             v-on="on"
             icon
-            @click="() => {
-              $clipboard(contractLink); 
-              showClipboardOK();
-            }"
+            @click="
+              () => {
+                $clipboard(contractLink);
+                showClipboardOK();
+              }
+            "
           >
             <v-icon class="text--secondary">mdi-share-variant</v-icon>
           </v-btn>
@@ -109,17 +119,24 @@
       <v-expansion-panels flat tile mandatory active-class="opened-panel">
         <v-expansion-panel class="ma-0 bb-1">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase text--secondary">Details</span>
+            <span
+              class="caption font-weight-bold text-uppercase text--secondary"
+              >Details</span
+            >
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas">
             <v-list class="contract-list">
-              <v-list-item v-if="contract.language !== 'unknown'">
+              <v-list-item
+                v-if="contract.language && contract.language !== 'unknown'"
+              >
                 <v-list-item-content>
                   <v-list-item-subtitle class="overline">
                     Language
                     <v-tooltip right>
                       <template v-slot:activator="{ on }">
-                        <v-icon x-small v-on="on" class="text--secondary">mdi-help-circle</v-icon>
+                        <v-icon x-small v-on="on" class="text--secondary"
+                          >mdi-help-circle</v-icon
+                        >
                       </template>
                       Guessed by heuristics
                     </v-tooltip>
@@ -131,26 +148,26 @@
               </v-list-item>
               <v-list-item>
                 <v-list-item-content>
-                  <v-list-item-subtitle class="overline">Was active</v-list-item-subtitle>
-                  <v-list-item-title class="body-2">
+                  <v-list-item-subtitle class="overline"
+                    >Was active</v-list-item-subtitle
+                  >
+                  <v-list-item-title class="body-2" v-if="isContract">
                     {{ helpers.formatDatetime(contract.timestamp) }}
-                    <span
-                      v-if="contract.last_action > contract.timestamp"
-                    >— {{ helpers.formatDatetime(contract.last_action) }}</span>
+                    <span v-if="contract.last_action > contract.timestamp"
+                      >—
+                      {{ helpers.formatDatetime(contract.last_action) }}</span
+                    >
                   </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item v-if="contract.balance >= 0">
-                <v-list-item-content>
-                  <v-list-item-subtitle class="overline">Balance</v-list-item-subtitle>
-                  <v-list-item-title class="body-2">
-                    <span>{{ contract.balance | uxtz }}</span>
+                  <v-list-item-title class="body-2" v-else>
+                    {{ helpers.formatDatetime(contract.last_action) }}
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
               <v-list-item v-if="contract.total_withdrawn">
                 <v-list-item-content>
-                  <v-list-item-subtitle class="overline">Total withdrawn</v-list-item-subtitle>
+                  <v-list-item-subtitle class="overline"
+                    >Total withdrawn</v-list-item-subtitle
+                  >
                   <v-list-item-title class="body-2">
                     <span>{{ contract.total_withdrawn | uxtz }}</span>
                   </v-list-item-title>
@@ -175,17 +192,74 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="ma-0 bb-1" v-if="sameCount > 0">
+        <v-expansion-panel class="ma-0 bb-1">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span
               class="caption font-weight-bold text-uppercase text--secondary"
-            >Same contracts ({{ sameCount }})</span>
+              >Balances</span
+            >
+          </v-expansion-panel-header>
+          <v-expansion-panel-content color="data">
+            <v-list class="contract-list">
+              <v-list-item v-if="contract.balance >= 0">
+                <v-list-item-content>
+                  <v-list-item-subtitle class="overline"
+                    >Tezos</v-list-item-subtitle
+                  >
+                  <v-list-item-title class="body-2">
+                    <span>{{ contract.balance | uxtz }}</span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <template v-for="(token, i) in contract.tokens">
+                <v-divider :key="`divider-balance-${i}`"></v-divider>
+                <v-list-item :key="i">
+                  <v-list-item-content>
+                    <v-list-item-subtitle class="overline"
+                      ><span v-if="token.name">{{ token.name }}</span>
+                      <span v-else
+                        >{{ token.contract.substring(0, 10) }} ... ({{
+                          token.token_id
+                        }})</span
+                      ></v-list-item-subtitle
+                    >
+                    <v-list-item-title class="body-2">
+                      <span>{{
+                        helpers
+                          .round(token.balance, token.decimals)
+                          .toLocaleString(undefined, {
+                            maximumFractionDigits: token.decimals,
+                          })
+                      }}</span
+                      >&nbsp;
+                      <span v-if="token.symbol" class="overline">{{
+                        token.symbol
+                      }}</span>
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
+            </v-list>
+          </v-expansion-panel-content>
+        </v-expansion-panel>
+
+        <v-expansion-panel class="ma-0 bb-1" v-if="isContract && sameCount > 0">
+          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+            <span
+              class="caption font-weight-bold text-uppercase text--secondary"
+              >Same contracts ({{ sameCount }})</span
+            >
           </v-expansion-panel-header>
           <v-expansion-panel-content color="data">
             <v-list class="contract-list">
               <template v-for="(contract, i) in same">
                 <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <SimilarItem :key="i" :item="contract" :address="address" :network="network" />
+                <SimilarItem
+                  :key="i"
+                  :item="contract"
+                  :address="address"
+                  :network="network"
+                />
               </template>
               <v-divider></v-divider>
               <v-list-item v-if="same.length < sameCount">
@@ -197,7 +271,8 @@
                       text
                       small
                       @click="requestMoreSame"
-                    >Load more</v-btn>
+                      >Load more</v-btn
+                    >
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -205,11 +280,15 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="ma-0 bb-1" v-if="similarCount > 0">
+        <v-expansion-panel
+          class="ma-0 bb-1"
+          v-if="isContract && similarCount > 0"
+        >
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span
               class="caption font-weight-bold text-uppercase text--secondary"
-            >Similar contracts ({{ similarCount }})</span>
+              >Similar contracts ({{ similarCount }})</span
+            >
           </v-expansion-panel-header>
           <v-expansion-panel-content color="data">
             <v-list class="contract-list">
@@ -233,7 +312,8 @@
                       text
                       small
                       @click="requestMoreSimilar"
-                    >Load more</v-btn>
+                      >Load more</v-btn
+                    >
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -245,13 +325,19 @@
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span
               class="caption font-weight-bold text-uppercase text--secondary"
-            >Logs ({{ migrations.length }})</span>
+              >Logs ({{ migrations.length }})</span
+            >
           </v-expansion-panel-header>
           <v-expansion-panel-content color="data">
             <v-list class="contract-list">
               <template v-for="(log, i) in migrations">
                 <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <LogItem :key="i" :log="log" :network="network" :address="address" />
+                <LogItem
+                  :key="i"
+                  :log="log"
+                  :network="network"
+                  :address="address"
+                />
               </template>
             </v-list>
           </v-expansion-panel-content>
@@ -266,17 +352,25 @@
       :show.sync="showWatchSettings"
       :data="contract.subscription"
       :contract="contract"
-      :onUpdate="s => { 
-        if (contract.subscription === null) contract.total_subscribed++;
-        contract.subscription = s;
-      }"
-      :onRemove="s => { 
-        if (contract.subscription !== null) contract.total_subscribed--;
-        contract.subscription = null;
-      }"
+      :onUpdate="
+        (s) => {
+          if (contract.subscription === null) contract.total_subscribed++;
+          contract.subscription = s;
+        }
+      "
+      :onRemove="
+        (s) => {
+          if (contract.subscription !== null) contract.total_subscribed--;
+          contract.subscription = null;
+        }
+      "
     />
 
-    <VerifyDialog v-model="showVerifyDialog" :address="address" :network="network" />
+    <VerifyDialog
+      v-model="showVerifyDialog"
+      :address="address"
+      :network="network"
+    />
   </div>
 </template>
 
@@ -317,7 +411,7 @@ export default {
     showVerifyDialog: false,
   }),
   created() {
-    this.requestSameSimilar();
+    if (this.isContract) this.requestSameSimilar();
   },
   computed: {
     standard() {
@@ -370,10 +464,14 @@ export default {
       }
       return `${window.location.protocol}//${window.location.host}${routeData.href}`;
     },
+    isContract() {
+      return this.address.startsWith("KT");
+    },
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
     requestSameSimilar() {
+      if (!this.isContract) return;
       this.same = [];
       this.sameCount = 0;
       this.api
