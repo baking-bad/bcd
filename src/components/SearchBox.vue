@@ -25,7 +25,9 @@
     <template v-slot:item="{ item }">
       <v-list-item-avatar>
         <v-icon v-if="item.type == 'contract'">mdi-code-json</v-icon>
-        <v-icon v-else-if="item.type == 'operation'">mdi-swap-horizontal</v-icon>
+        <v-icon v-else-if="item.type == 'operation'"
+          >mdi-swap-horizontal</v-icon
+        >
         <v-icon v-else-if="item.type == 'bigmapdiff'">mdi-database-edit</v-icon>
         <v-icon v-else-if="item.type == 'subscription'">mdi-eye-outline</v-icon>
         <v-icon v-else-if="item.type == 'recent'">mdi-history</v-icon>
@@ -41,22 +43,31 @@
               <span
                 v-if="item.body.destination_alias"
                 class="text--secondary"
-              >{{ item.body.destination_alias}}</span>
-              <span v-else v-html="helpers.shortcut(item.body.destination)" class="text--secondary"></span>
-              <span class="text--secondary" style="font-size: 20px;">→</span>
+                >{{ item.body.destination_alias }}</span
+              >
+              <span
+                v-else
+                v-html="helpers.shortcut(item.body.destination)"
+                class="text--secondary"
+              ></span>
+              <span class="text--secondary" style="font-size: 20px">→</span>
             </template>
-            <span v-if="item.body.entrypoint" class="hash">{{ item.body.entrypoint}}()</span>
-            <span v-else-if="item.body.kind === 'origination'">origination</span>
+            <span v-if="item.body.entrypoint" class="hash"
+              >{{ item.body.entrypoint }}()</span
+            >
+            <span v-else-if="item.body.kind === 'origination'"
+              >origination</span
+            >
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
           <template v-else-if="item.type == 'bigmapdiff'">
             <span class="text--secondary">{{ item.body.ptr }}</span>
-            <span class="text--secondary" style="font-size: 20px;">→</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
             <span>{{ item.body.key }}</span>
           </template>
           <template v-else-if="item.type == 'token_metadata'">
             <span class="text--secondary">{{ item.body.name }}</span>
-            <span class="text--secondary" style="font-size: 20px;">→</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
             <span>{{ item.body.symbol }}</span>
           </template>
           <template v-if="item.type == 'subscription'">
@@ -64,7 +75,10 @@
           </template>
           <template v-if="item.type == 'recent'">
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
-            <span v-else-if="item.body.shortcut" v-html="helpers.shortcut(item.body.shortcut)"></span>
+            <span
+              v-else-if="item.body.shortcut"
+              v-html="helpers.shortcut(item.body.shortcut)"
+            ></span>
             <span v-else>{{ item.value }}</span>
           </template>
         </v-list-item-title>
@@ -73,26 +87,34 @@
           <span
             v-if="item.body.network"
             :class="item.body.network === 'mainnet' ? 'secondary--text' : ''"
-          >{{ item.body.network }}&nbsp;|&nbsp;</span>
-          <span
-            v-if="item.type === 'contract'"
-          >{{ helpers.plural(item.body.tx_count - 1, 'tx') }}&nbsp;|&nbsp;</span>
-          <span v-else-if="item.type === 'operation'">{{ item.body.status }}&nbsp;|&nbsp;</span>
-          <span
-            v-else-if="item.type === 'bigmapdiff' && item.group"
-          >{{ helpers.plural(item.group.count, "update") }}&nbsp;|&nbsp;</span>
-          <span
-            v-else-if="item.type === 'token_metadata' && item.group"
-          >{{ helpers.plural(item.group.count, "token") }}&nbsp;|&nbsp;</span>
-          <span
-            v-else-if="item.type === 'subscription'"
-          >Subscribed at {{ helpers.formatDate(item.body.subscribed_at) }}</span>
-          <span v-else-if="item.type === 'recent' && item.body.second">{{ item.body.second }}</span>
+            >{{ item.body.network }}&nbsp;|&nbsp;</span
+          >
+          <span v-if="item.type === 'contract'"
+            >{{
+              helpers.plural(item.body.tx_count - 1, "tx")
+            }}&nbsp;|&nbsp;</span
+          >
+          <span v-else-if="item.type === 'operation'"
+            >{{ item.body.status }}&nbsp;|&nbsp;</span
+          >
+          <span v-else-if="item.type === 'bigmapdiff' && item.group"
+            >{{ helpers.plural(item.group.count, "update") }}&nbsp;|&nbsp;</span
+          >
+          <span v-else-if="item.type === 'token_metadata' && item.group"
+            >{{ helpers.plural(item.group.count, "token") }}&nbsp;|&nbsp;</span
+          >
+          <span v-else-if="item.type === 'subscription'"
+            >Subscribed at
+            {{ helpers.formatDate(item.body.subscribed_at) }}</span
+          >
+          <span v-else-if="item.type === 'recent' && item.body.second">{{
+            item.body.second
+          }}</span>
           <span class="overline text--primary" v-if="item.body.timestamp">
             {{ helpers.formatDate(item.body.timestamp) }}
-            <span
-              v-if="item.body.last_action"
-            >— {{ helpers.formatDate(item.body.last_action) }}</span>
+            <span v-if="item.body.last_action"
+              >— {{ helpers.formatDate(item.body.last_action) }}</span
+            >
           </span>
         </v-list-item-subtitle>
       </v-list-item-content>
@@ -100,13 +122,24 @@
         <v-list-item-action-text v-if="item.body.found_by">
           <span
             class="body-2"
-            v-if="!['alias', 'key_strings', 'entrypoint', 'subscription', 'recent', ''].includes(item.body.found_by) 
-                && item.highlights[item.body.found_by]"
+            v-if="
+              ![
+                'alias',
+                'key_strings',
+                'entrypoint',
+                'subscription',
+                'recent',
+                '',
+              ].includes(item.body.found_by) &&
+              item.highlights[item.body.found_by]
+            "
             v-html="item.highlights[item.body.found_by][0]"
           ></span>
         </v-list-item-action-text>
         <v-list-item-action-text>
-          <span class="overline grey--text">{{ item.body.found_by || '' }}</span>
+          <span class="overline grey--text">{{
+            item.body.found_by || ""
+          }}</span>
         </v-list-item-action-text>
         <v-btn
           x-small
@@ -181,6 +214,11 @@ export default {
         this.$router.push({
           path: `/${network}/${value}`,
         });
+      } else if (this.model.type == "token_metadata" && checkAddress(value)) {
+        this.$nextTick(() => {
+          this.model = null;
+        });
+        this.$router.push({ path: `/${network}/${value}` });
       } else if (this.model.type == "recent") {
         this.menuProps = {
           value: true,
@@ -188,7 +226,7 @@ export default {
       }
     },
     buildHistoryItem(model, value) {
-      if (typeof(value) === 'object') return value;
+      if (typeof value === "object") return value;
       let historyItem = {
         value: value,
       };
@@ -197,7 +235,7 @@ export default {
         else {
           historyItem.shortcut = value;
         }
-        
+
         if (this.model.type == "operation" && this.model.body.entrypoint) {
           historyItem.second = `Called ${this.model.body.entrypoint}`;
         }
