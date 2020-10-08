@@ -1,9 +1,10 @@
 <template>
   <v-row>
-    <v-col cols="2">
-      <h3>DEX Volumes</h3>
+    <v-col cols="4">
+      <h3>DEX Turnover</h3>
+      <span class="text--secondary caption">* Total token transfers amount</span>
     </v-col>
-    <v-col cols="10" class="d-flex justify-end">
+    <v-col cols="8" class="d-flex justify-end">
       <v-skeleton-loader :loading="loading" type="actions">
         <v-btn-toggle v-model="selectedPeriod" color="primary" dense mandatory>
           <v-btn
