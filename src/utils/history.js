@@ -2,11 +2,14 @@ const historyKey = 'history';
 const historySize = 10;
 
 const isDroppedKey = 'isDropped';
+const versionKey = 'version';
+const version = '0';
 
 export function getHistory() {
-    if (!isDropped()) {
+    if (!isCurrentVersion()) {
+        localStorage.removeItem(isDroppedKey);
         localStorage.setItem(historyKey, JSON.stringify([]));
-        setIsDropped();
+        setVersion();
     }
     return JSON.parse(localStorage.getItem(historyKey)) || [];
 }
@@ -21,13 +24,15 @@ export function addHistoryItem(item) {
 
 export function removeHistoryItem(item) {
     let history = getHistory();
-    localStorage.setItem(historyKey, JSON.stringify(history.filter(x => JSON.stringify(x) !== JSON.stringify(item))));
+    localStorage.setItem(historyKey, JSON.stringify(history.filter(x => x.value !== item)));
 }
 
-function isDropped() {
-    return JSON.parse(localStorage.getItem(isDroppedKey)) || false;
+
+function setVersion() {
+    return localStorage.setItem(versionKey, version);
 }
 
-function setIsDropped() {
-    return localStorage.setItem(isDroppedKey, true);
+function isCurrentVersion() {
+    let current = localStorage.getItem(versionKey);
+    return current == version;
 }
