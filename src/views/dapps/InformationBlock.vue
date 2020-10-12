@@ -54,7 +54,8 @@
               </v-list-item-content>
             </v-list-item>
           </v-list>
-          <div class="d-flex">
+          <span class="overline text--secondary">Social</span>
+          <div class="d-flex" style="margin-left: -3px;">
             <template v-for="link in dapp.social_links">
               <v-btn
                 :href="link"
@@ -138,6 +139,8 @@ export default {
         return "mdi-gitlab";
       } else if (link.includes("github")) {
         return "mdi-github";
+      } else if (link.includes("instagram")) {
+        return "mdi-instagram";
       }
       return "mdi-web";
     },
@@ -160,6 +163,8 @@ export default {
         return "#F26D25";
       } else if (link.includes("github")) {
         return "#24292F";
+      } else if (link.includes("instagram")) {
+        return "#e30181";
       }
       return "grey";
     },

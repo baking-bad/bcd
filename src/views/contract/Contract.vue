@@ -1,6 +1,13 @@
 <template>
   <div class="fill-height">
-    <v-navigation-drawer floating app permanent width="336" color="canvas" class="main-navigation">
+    <v-navigation-drawer
+      floating
+      app
+      permanent
+      width="336"
+      color="canvas"
+      class="main-navigation"
+    >
       <v-row class="fill-height br-1" no-gutters>
         <v-col cols="2">
           <SideNavigation />
@@ -25,28 +32,39 @@
         slider-color="primary"
         class="ml-4"
       >
-        <v-tab :to="{ name: 'operations' }" replace style="width: 175px;">
+        <v-tab :to="{ name: 'operations' }" replace style="width: 175px">
           <v-icon left small>mdi-swap-horizontal</v-icon>operations
           <span class="ml-1">({{ contract.tx_count || 0 }})</span>
         </v-tab>
-        <v-tab :to="{ name: 'storage' }" replace>
+        <v-tab :to="{ name: 'storage' }" replace v-if="isContract">
           <v-icon left small>mdi-database</v-icon>Storage
         </v-tab>
-        <v-tab :to="{ name: 'code' }" replace>
+        <v-tab :to="{ name: 'code' }" replace v-if="isContract">
           <v-icon left small>mdi-code-braces</v-icon>Code
         </v-tab>
-        <v-tab :to="{ name: 'interact' }" replace>
+        <v-tab :to="{ name: 'interact' }" replace v-if="isContract">
           <v-icon left small>mdi-play-box-outline</v-icon>Interact
         </v-tab>
-        <v-tab :to="{ name: 'tokens' }" replace v-if="tokens && tokens.length > 0">
+        <v-tab
+          :to="{ name: 'tokens' }"
+          replace
+          v-if="isContract && tokens && tokens.length > 0"
+        >
           <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
-          <span class="ml-1">({{ tokens.length|| 0 }})</span>
+          <span class="ml-1">({{ tokens.length || 0 }})</span>
         </v-tab>
-        <v-tab :to="{ name: 'fork' }" replace v-if="showFork">
+        <v-tab
+          :to="{ name: 'transfers' }"
+          replace
+          v-if="tokenBalances && tokenBalances.length > 0"
+        >
+          <v-icon left small>mdi-transfer</v-icon>Transfers
+        </v-tab>
+        <v-tab :to="{ name: 'fork' }" replace v-if="showFork && isContract">
           <v-icon left small>mdi-source-fork</v-icon>Fork
         </v-tab>
       </v-tabs>
-      <div class="mr-6 mt-6" style="width: 800px;">
+      <div class="mr-6 mt-6" style="width: 800px">
         <SearchBox :inplace="true"></SearchBox>
       </div>
     </v-toolbar>
@@ -90,20 +108,35 @@ export default {
     showFork: false,
   }),
   created() {
-    this.showFork = this.$route.name === "fork";
-    this.getContract();
-    this.getMigrations();
-    this.getTokens();
+    this.init();
   },
   computed: {
     loading() {
       return this.contractLoading || this.migrationsLoading;
+    },
+    isContract() {
+      return this.address.startsWith("KT");
+    },
+    tokenBalances() {
+      if (!this.contract) return [];
+      return this.contract.tokens;
     },
   },
   methods: {
     ...mapActions({
       showError: "showError",
     }),
+    init() {
+      this.showFork = this.$route.name === "fork";
+      if (this.isContract) {
+        this.getContract();
+        this.getMigrations();
+      } else {
+        this.getInfo();
+        this.migrationsLoading = false;
+      }
+      this.getTokens();
+    },
     getContract() {
       if (
         this.contract.network === this.network &&
@@ -154,6 +187,20 @@ export default {
         })
         .finally(() => (this.tokensLoading = false));
     },
+    getInfo() {
+      this.contractLoading = true;
+      this.api
+        .getAccountInfo(this.network, this.address)
+        .then((res) => {
+          if (!res) return;
+          this.contract = res;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.showError(err);
+        })
+        .finally(() => (this.contractLoading = false));
+    },
     onFork() {
       this.showFork = !this.showFork;
     },
@@ -161,10 +208,7 @@ export default {
   watch: {
     address() {
       cancelRequests();
-      this.getContract();
-      this.getMigrations();
-      this.getTransfers();
-      this.showFork = false;
+      this.init();
     },
     showFork: function (newValue) {
       this.$router.push({ name: newValue ? "fork" : "operations" });

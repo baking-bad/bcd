@@ -13,7 +13,7 @@
       <v-col cols="12">
         <StatisticsBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
       </v-col>
-      <v-col cols="12" v-if="dapp.categories.includes('DEX')">
+      <v-col cols="12" v-if="dapp.categories.includes('DEX') && dapp.dex_tokens">
         <DEXBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
       </v-col>
       <v-col cols="12" v-if="dapp.categories.includes('Token') && dapp.tokens">

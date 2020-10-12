@@ -40,4 +40,3 @@ export class AgoraApi {
         return this.get(`https://forum.tezosagora.org/posts/${postId}/replies.json`)
     }
 }
-
