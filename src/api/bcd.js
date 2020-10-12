@@ -770,8 +770,8 @@ export class BetterCallApi {
       })
   }
 
-  getProfileRepos() {
-    return getCancellable(this.api, `/profile/repos`, {
+  getProfileAccounts() {
+    return getCancellable(this.api, `/profile/accounts`, {
       headers: {
         'Authorization': getJwt()
       }
@@ -784,8 +784,22 @@ export class BetterCallApi {
       })
   }
 
-  getProfileRefs(name) {
-    return getCancellable(this.api, `/profile/refs?repo=${name}`, {
+  getProfileRepos(login) {
+    return getCancellable(this.api, `/profile/repos?login=${login}`, {
+      headers: {
+        'Authorization': getJwt()
+      }
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getProfileRefs(owner, repo) {
+    return getCancellable(this.api, `/profile/refs?owner=${owner}&repo=${repo}`, {
       headers: {
         'Authorization': getJwt()
       }

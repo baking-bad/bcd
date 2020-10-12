@@ -5,10 +5,18 @@
       <v-skeleton-loader :loading="loading" type="list-item-two-line@4">
         <div>
           <v-list disabled style="background-color: transparent">
-            <v-list-item selectable v-if="dapp.authors && dapp.authors.length" class="mx-0 px-0">
+            <v-list-item
+              selectable
+              v-if="dapp.authors && dapp.authors.length"
+              class="mx-0 px-0"
+            >
               <v-list-item-content>
-                <v-list-item-subtitle class="overline">Authors</v-list-item-subtitle>
-                <v-list-item-title class="info-item-title">{{ dapp.authors.join(', ') }}</v-list-item-title>
+                <v-list-item-subtitle class="overline"
+                  >Authors</v-list-item-subtitle
+                >
+                <v-list-item-title class="info-item-title">{{
+                  dapp.authors.join(", ")
+                }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <!-- <v-list-item selectable class="mx-0 px-0">
@@ -23,8 +31,12 @@
               class="mx-0 px-0"
             >
               <v-list-item-content>
-                <v-list-item-subtitle class="overline">Categories</v-list-item-subtitle>
-                <v-list-item-title class="info-item-title">{{ dapp.categories.join(', ') }}</v-list-item-title>
+                <v-list-item-subtitle class="overline"
+                  >Categories</v-list-item-subtitle
+                >
+                <v-list-item-title class="info-item-title">{{
+                  dapp.categories.join(", ")
+                }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item
@@ -33,16 +45,29 @@
               class="mx-0 px-0"
             >
               <v-list-item-content>
-                <v-list-item-subtitle class="overline">Interfaces</v-list-item-subtitle>
-                <v-list-item-title class="info-item-title">{{ dapp.interfaces.join(', ') }}</v-list-item-title>
+                <v-list-item-subtitle class="overline"
+                  >Interfaces</v-list-item-subtitle
+                >
+                <v-list-item-title class="info-item-title">{{
+                  dapp.interfaces.join(", ")
+                }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
           <span class="overline text--secondary">Social</span>
           <div class="d-flex" style="margin-left: -3px;">
             <template v-for="link in dapp.social_links">
-              <v-btn small :href="link" target="_blank" icon :key="link" :color="getSocialColor(link)" class="mr-1">
-                <v-icon :color="getSocialColor(link)">{{ getSocialIcon(link) }}</v-icon>
+              <v-btn
+                :href="link"
+                target="_blank"
+                icon
+                large
+                :key="link"
+                :color="getSocialColor(link)"
+              >
+                <v-icon :color="getSocialColor(link)">{{
+                  getSocialIcon(link)
+                }}</v-icon>
               </v-btn>
             </template>
           </div>
@@ -60,15 +85,24 @@
             v-for="contract in dapp.contracts"
             :key="contract.address"
             target="_blank"
-            :to="{name: 'contract', params: {address: contract.address, network: contract.network}}"
+            :to="{
+              name: 'contract',
+              params: { address: contract.address, network: contract.network },
+            }"
           >
             <v-list-item-content>
-              <v-list-item-title>{{ contract.alias ? contract.alias : contract.address }}</v-list-item-title>
+              <v-list-item-title>{{
+                contract.alias ? contract.alias : contract.address
+              }}</v-list-item-title>
               <v-list-item-subtitle
                 class="info-item-title"
                 v-if="contract.alias"
-              >{{ contract.address }}</v-list-item-subtitle>
-              <v-list-item-subtitle>Deployed at {{ contract.release_date | formatDate }}</v-list-item-subtitle>
+                >{{ contract.address }}</v-list-item-subtitle
+              >
+              <v-list-item-subtitle
+                >Deployed at
+                {{ contract.release_date | formatDate }}</v-list-item-subtitle
+              >
             </v-list-item-content>
           </v-list-item>
         </v-list>
