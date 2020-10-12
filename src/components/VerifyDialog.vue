@@ -25,7 +25,12 @@
           </v-stepper-step>
           <v-stepper-content step="1">
             <v-skeleton-loader :loading="loadingAccounts" type="list-item@3">
-              <v-list dense v-if="accounts && accounts.length" class="py-0">
+              <v-list
+                dense
+                v-if="accounts && accounts.length"
+                class="py-0 overflow-y-auto"
+                max-height="400"
+              >
                 <v-list-item-group v-model="selectedAccount">
                   <template v-for="(acc, i) in accounts">
                     <v-list-item :key="i" @click="onAccountSelected(acc.login)">
@@ -61,7 +66,12 @@
           </v-stepper-step>
           <v-stepper-content step="2">
             <v-skeleton-loader :loading="loadingRepos" type="list-item@3">
-              <v-list dense v-if="repos && repos.length" class="py-0">
+              <v-list
+                dense
+                v-if="repos && repos.length"
+                class="py-0 overflow-y-auto"
+                max-height="400"
+              >
                 <v-list-item-group v-model="selectedRepo">
                   <template v-for="(repo, i) in repos">
                     <v-list-item :key="i" @click="onRepoSelected(repo)">
@@ -97,7 +107,12 @@
           </v-stepper-step>
           <v-stepper-content step="3">
             <v-skeleton-loader :loading="loadingRefs" type="list-item@3">
-              <v-list dense v-if="refs && refs.length" class="py-0">
+              <v-list
+                dense
+                v-if="refs && refs.length"
+                class="py-0 overflow-y-auto"
+                max-height="400"
+              >
                 <v-list-item-group v-model="selectedTag">
                   <template v-for="(tag, i) in refs">
                     <v-list-item :key="i" @click="step = 3">
@@ -233,10 +248,13 @@ export default {
         });
     },
     onAccountSelected(item) {
+      this.selectedRepo = -1;
+      this.selectedTag = -1;
       this.step = 2;
       this.getRepos(item);
     },
     onRepoSelected(item) {
+      this.selectedTag = -1;
       this.step = 3;
       this.getRefs(item.user, item.project);
     },
