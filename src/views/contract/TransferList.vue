@@ -98,34 +98,38 @@
                 <div>
                   <span
                     class="caption text-uppercase font-weight-regular text--secondary"
-                    >From&nbsp;</span
                   >
+                    <span v-if="item.from"><span v-if="!item.to" class="accent--text">Burn&nbsp;</span>From&nbsp;</span>
+                    <span v-else class="accent--text">Mint&nbsp;</span>
+                  </span>
                   <router-link
-                    v-if="address != item.from"
+                    v-if="item.from && address != item.from"
                     text
                     v-html="item.from_alias || helpers.shortcut(item.from)"
                     style="text-transform: none; text-decoration: none"
                     class="px-1 text--primary hash"
                     :to="`/${item.network}/${item.from}`"
-                  /><span
-                    v-else
+                  />
+                  <span
+                    v-else-if="item.from"
                     v-html="item.from_alias || helpers.shortcut(item.from)"
                     style="text-transform: none; text-decoration: none"
                     class="px-1 text--secondary hash"
                   />&nbsp;
                   <span
+                    v-if="item.to"
                     class="caption text-uppercase font-weight-regular text--secondary"
                     >&nbsp;to&nbsp;</span
                   >
                   <router-link
-                    v-if="address != item.to"
+                    v-if="item.to && address != item.to"
                     text
                     :to="`/${item.network}/${item.to}`"
                     v-html="item.to_alias || helpers.shortcut(item.to)"
                     style="text-transform: none; text-decoration: none"
                     class="px-1 text--primary hash"
                   /><span
-                    v-else
+                    v-else-if="item.to"
                     v-html="item.to_alias || helpers.shortcut(item.to)"
                     style="text-transform: none; text-decoration: none"
                     class="px-1 text--secondary hash"
