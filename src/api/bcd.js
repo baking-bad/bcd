@@ -157,7 +157,7 @@ export class BetterCallApi {
   }
 
 
-  getAccountTransfers(network, address, token_id = -1, contracts=[], size = 10, last_id = '') {
+  getAccountTransfers(network, address, token_id = -1, contracts = [], size = 10, last_id = '') {
     let params = {};
     if (token_id > -1) {
       params['token_id'] = token_id
@@ -170,7 +170,7 @@ export class BetterCallApi {
     }
     if (contracts && contracts.length > 0) {
       params['contracts'] = contracts.join(',')
-    } 
+    }
     return getCancellable(this.api, `/tokens/${network}/transfers/${address}`, {
       params: params
     })
@@ -847,10 +847,11 @@ export class BetterCallApi {
       })
   }
 
-  verifyContract(network, address, repo, ref) {
+  verifyContract(network, address, account, repo, ref) {
     return this.api.post(`/profile/compilations/verification`, {
       network: network,
       address: address,
+      account: account,
       repo: repo,
       ref: ref,
     }, {
