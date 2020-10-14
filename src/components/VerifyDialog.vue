@@ -228,6 +228,7 @@ export default {
         .verifyContract(
           this.network,
           this.address,
+          this.accounts[this.selectedAccount].login,
           this.repos[this.selectedRepo].project,
           this.refs[this.selectedTag].name
         )
