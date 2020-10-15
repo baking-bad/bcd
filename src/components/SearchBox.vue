@@ -30,7 +30,9 @@
         >
         <v-icon v-else-if="item.type == 'bigmapdiff'">mdi-database-edit</v-icon>
         <v-icon v-else-if="item.type == 'subscription'">mdi-eye-outline</v-icon>
-        <v-icon v-else-if="item.type == 'token_metadata'">mdi-circle-multiple-outline</v-icon>
+        <v-icon v-else-if="item.type == 'token_metadata'"
+          >mdi-circle-multiple-outline</v-icon
+        >
         <v-icon v-else-if="item.type == 'recent'">mdi-history</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
@@ -184,6 +186,7 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     onSearch() {
+      console.log(this.model);
       if (!this.model || !this.model.body) return;
       const value = this.model.value || this.model;
       const network = this.model.body.network;
@@ -191,30 +194,46 @@ export default {
       addHistoryItem(
         this.buildHistoryItem(this.model, value || this.searchText)
       );
-      if ([this.model.type, this.model.body.recent_type].includes('operation') && checkOperation(value)) {
+      if (
+        [this.model.type, this.model.body.recent_type].includes("operation") &&
+        checkOperation(value)
+      ) {
         this.$nextTick(() => {
           this.model = null;
         });
         this.$router.push({ path: `/${network}/opg/${value}` });
-      } else if ([this.model.type, this.model.body.recent_type].includes('contract') && checkAddress(value)) {
+      } else if (
+        [this.model.type, this.model.body.recent_type].includes("contract") &&
+        checkAddress(value)
+      ) {
         this.$nextTick(() => {
           this.model = null;
         });
         this.$router.push({ path: `/${network}/${value}` });
-      } else if ([this.model.type, this.model.body.recent_type].includes('bigmapdiff') && checkKeyHash(value)) {
+      } else if (
+        [this.model.type, this.model.body.recent_type].includes("bigmapdiff") &&
+        checkKeyHash(value)
+      ) {
         const ptr = this.model.body.ptr;
         this.$nextTick(() => {
           this.model = null;
         });
         this.$router.push({ path: `/${network}/big_map/${ptr}/${value}` });
-      } else if ([this.model.type, this.model.body.recent_type].includes('subscription')) {
+      } else if (
+        [this.model.type, this.model.body.recent_type].includes("subscription")
+      ) {
         this.$nextTick(() => {
           this.model = null;
         });
         this.$router.push({
           path: `/${network}/${value}`,
         });
-      } else if ([this.model.type, this.model.body.recent_type].includes('token_metadata') && checkAddress(value)) {
+      } else if (
+        [this.model.type, this.model.body.recent_type].includes(
+          "token_metadata"
+        ) &&
+        checkAddress(value)
+      ) {
         this.$nextTick(() => {
           this.model = null;
         });
@@ -339,6 +358,10 @@ export default {
       }
 
       this._locked = false;
+    },
+    model() {
+      if (this._locked) return;
+      this.onSearch();
     },
   },
 };
