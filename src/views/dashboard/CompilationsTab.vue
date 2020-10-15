@@ -486,7 +486,7 @@ export default {
     },
     optionsVerifications: {
       handler: function (newValue) {
-        this.getDeployments(
+        this.getVerifications(
           newValue.itemsPerPage,
           (newValue.page - 1) * newValue.itemsPerPage
         );
