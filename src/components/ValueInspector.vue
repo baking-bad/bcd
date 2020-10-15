@@ -11,9 +11,16 @@
       :label="label"
       :value="value"
     ></v-textarea>
-    <v-text-field v-else :value="value" :suffix="suffix" readonly filled :label="label"></v-text-field>
+    <v-text-field
+      v-else
+      :value="value"
+      :suffix="suffix"
+      readonly
+      filled
+      :label="label"
+    ></v-text-field>
     <v-btn
-      v-if="value !== $route.params.address"
+      v-if="value !== $route.params.address && isAddress"
       text
       small
       link
@@ -32,7 +39,8 @@
       small
       link
       :to="{ path: `/${network}/big_map/${value}` }"
-    >View Big Map</v-btn>
+      >View Big Map</v-btn
+    >
     <v-btn
       v-if="isIpfsHash"
       text
@@ -57,10 +65,10 @@ export default {
     prim: String,
     label: String,
     network: String,
-    sameTab: Boolean
+    sameTab: Boolean,
   },
   components: {
-    Michelson
+    Michelson,
   },
   computed: {
     suffix() {
@@ -86,7 +94,10 @@ export default {
     },
     isIpfsHash() {
       return this.prim === "string" && isIpfs.multihash(this.value);
-    }
+    },
+    isAddress() {
+      return this.prim === "address" || this.prim === "contract";
+    },
   },
   methods: {
     handleAddress(s, external = false) {
@@ -105,7 +116,7 @@ export default {
     },
     handleIpfsHash(hash) {
       window.open(`https://cloudflare-ipfs.com/ipfs/${hash}`, "_blank");
-    }
-  }
+    },
+  },
 };
 </script>

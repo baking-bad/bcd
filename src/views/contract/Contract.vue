@@ -107,7 +107,7 @@ export default {
     tokens: null,
     showFork: false,
   }),
-  created() {
+  mounted() {
     this.init();
   },
   computed: {
@@ -127,6 +127,8 @@ export default {
       showError: "showError",
     }),
     init() {
+      this.tokens = null;
+      this.migrations = [];
       this.showFork = this.$route.name === "fork";
       if (this.isContract) {
         this.getContract();
@@ -208,7 +210,9 @@ export default {
   watch: {
     address() {
       cancelRequests();
-      this.init();
+      this.$nextTick(() => {
+        this.init();
+      });
     },
     showFork: function (newValue) {
       this.$router.push({ name: newValue ? "fork" : "operations" });
