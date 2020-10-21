@@ -68,7 +68,7 @@ make release
 
 #### Production `better-call.dev`
 * Requires local _nginx_ setup, uses `/var/www/bcd` folder
-* Uses `.env.production` and `config.json` configs
+* Uses `.env.production` and `config.production.json` configs
 * Command: `make deploy`
 
 #### Staging `you.better-call.dev`
@@ -92,12 +92,12 @@ npm i
 
 #### Local API `localhost:14000`
 * Requires https://github.com/baking-bad/bcdhub.git running in _development_ mode
-* Uses `.env.development` and `config.dev.json` configs
+* Uses `.env.development` and `config.development.json` configs
 * Command: `make dev`
 
 #### Sandbox API `localhost:42000`
 * Requires https://github.com/baking-bad/bbbox.git running in _bbbox_ mode
-* Uses `.env.box` and `config.box.json` configs
+* Uses `.env.box` and `config.sandbox.json` configs
 * Command: `make box`
 
 #### Staging API `you.better-call.dev`

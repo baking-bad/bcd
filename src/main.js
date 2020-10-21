@@ -75,7 +75,7 @@ Vue.filter('bytes', function (value) {
 })
 
 const getRuntimeConfig = async () => {
-  const runtimeConfig = await fetch(process.env.VUE_APP_CONFIG_PATH || '/config.json');
+  const runtimeConfig = await fetch(process.env.VUE_APP_CONFIG_PATH || '/config.production.json');
   return await runtimeConfig.json();
 }
 
