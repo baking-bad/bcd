@@ -87,7 +87,6 @@ export default {
   data: () => ({
     loading: true,
     tokens: [],
-    lastId: null,
     page: 0,
     total: 0,
     headers: [
@@ -111,10 +110,9 @@ export default {
       this.loading = true;
 
       this.api
-        .getTokensByVersion(network, version, this.lastId, PAGE_SIZE)
+        .getTokensByVersion(network, version, this.tokens.length, PAGE_SIZE)
         .then((res) => {
           if (!res) return;
-          this.lastId = res.last_id;
           this.total = res.total;
 
           this.tokens.push(...res.tokens);
@@ -149,14 +147,12 @@ export default {
   watch: {
     network: function (newValue) {
       this.tokens = [];
-      this.lastId = null;
       this.page = 0;
       this.total = 0;
       this.getTokensInfo(newValue, this.selectedVersion);
     },
     selectedVersion: function (newValue) {
       this.tokens = [];
-      this.lastId = null;
       this.page = 0;
       this.total = 0;
       this.getTokensInfo(this.network, newValue);
