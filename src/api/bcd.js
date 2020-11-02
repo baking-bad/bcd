@@ -445,16 +445,15 @@ export class BetterCallApi {
       })
   }
 
-  getTokensByVersion(network, version, lastId = null, size = 0) {
-    let params = ''
+  getTokensByVersion(network, version, offset = 0, size = 0) {
+    let params = {}
     if (size > 0) {
-      params += `size=${size}`
+      params['size'] = size
     }
-    if (lastId !== null) {
-      if (params !== '') params += '&'
-      params += `last_id=${lastId}`
+    if (offset > 0) {
+      params['offset'] = offset
     }
-    return getCancellable(this.api, `/tokens/${network}/version/${version}?${params}`, {})
+    return getCancellable(this.api, `/tokens/${network}/version/${version}`, {params:params})
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);

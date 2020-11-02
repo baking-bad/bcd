@@ -31,7 +31,7 @@
         </v-col>
       </v-row>
     </v-expansion-panel-header>
-    <v-expansion-panel-content class="pl-1 pt-2">
+    <v-expansion-panel-content class="py-2 pr-7 pl-1">
       <v-row no-gutters>
         <v-col cols="8">
           <v-list-item class="pl-1">
@@ -65,11 +65,11 @@
             <span>Raw JSON</span>
           </v-btn>
         </v-col>
-        <v-col cols="12" class="bmd px-2 py-4 my-2 ba-1">
+        <v-col cols="12" class="px-2 py-4 my-2 ba-1">
           <span class="overline ml-3">Key</span>
           <MiguelTreeView :miguel="diff.data.key" :network="network" openAll />   
         </v-col>
-        <v-col cols="12" class="bmd px-2 py-4 my-2 ba-1" v-if="diff.data.value">
+        <v-col cols="12" class="px-2 py-4 my-2 ba-1" v-if="diff.data.value">
           <span class="overline ml-3">Value</span>
           <MiguelTreeView :miguel="diff.data.value" :network="network" openAll />         
         </v-col>
