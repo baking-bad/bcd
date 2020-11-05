@@ -116,7 +116,7 @@ export class BetterCallApi {
       })
   }
 
-  getContractOperations(network, address, last_id = "", from = 0, to = 0, statuses = [], entrypoints = []) {
+  getContractOperations(network, address, last_id = "", from = 0, to = 0, statuses = [], entrypoints = [], with_storage_diff = true) {
     let params = {}
     if (last_id != "") {
       params.last_id = last_id
@@ -133,6 +133,7 @@ export class BetterCallApi {
     if (entrypoints.length > 0) {
       params.entrypoints = entrypoints.join(',')
     }
+    params.with_storage_diff = with_storage_diff
 
     return getCancellable(this.api, `/contract/${network}/${address}/operations`, {
       params: params,
@@ -453,7 +454,7 @@ export class BetterCallApi {
     if (offset > 0) {
       params['offset'] = offset
     }
-    return getCancellable(this.api, `/tokens/${network}/version/${version}`, {params:params})
+    return getCancellable(this.api, `/tokens/${network}/version/${version}`, { params: params })
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
