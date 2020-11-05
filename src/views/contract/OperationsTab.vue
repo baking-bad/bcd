@@ -255,7 +255,8 @@ export default {
           timestamps[0],
           timestamps[1],
           status,
-          entries
+          entries,
+          true
         )
         .then((res) => {
           if (!res) {
