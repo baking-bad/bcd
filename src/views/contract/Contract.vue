@@ -134,9 +134,9 @@ export default {
         this.getContract();
         this.getMigrations();
       } else {
-        this.getInfo();
         this.migrationsLoading = false;
       }
+      this.getInfo();
       this.getTokens();
     },
     getContract() {
@@ -195,7 +195,11 @@ export default {
         .getAccountInfo(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          this.contract = res;
+          if (this.isContract) {
+            Object.assign(this.contract, res);
+          } else {
+            this.contract = res;
+          }
         })
         .catch((err) => {
           console.log(err);
