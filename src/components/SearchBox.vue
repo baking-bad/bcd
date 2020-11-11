@@ -30,7 +30,7 @@
         >
         <v-icon v-else-if="item.type == 'bigmapdiff'">mdi-database-edit</v-icon>
         <v-icon v-else-if="item.type == 'subscription'">mdi-eye-outline</v-icon>
-        <v-icon v-else-if="item.type == 'token_metadata'"
+        <v-icon v-else-if="item.type == 'tzip'"
           >mdi-circle-multiple-outline</v-icon
         >
         <v-icon v-else-if="item.type == 'recent'">mdi-history</v-icon>
@@ -68,7 +68,7 @@
             <span class="text--secondary" style="font-size: 20px">→</span>
             <span>{{ item.body.key }}</span>
           </template>
-          <template v-else-if="item.type == 'token_metadata'">
+          <template v-else-if="item.type == 'tzip'">
             <span class="text--secondary">{{ item.body.name }}</span>
             <span class="text--secondary" style="font-size: 20px">→</span>
             <span>{{ item.body.symbol }}</span>
@@ -101,7 +101,7 @@
           <span v-else-if="item.type === 'bigmapdiff' && item.group">{{
             helpers.plural(item.group.count, "update")
           }}</span>
-          <span v-else-if="item.type === 'token_metadata' && item.group">{{
+          <span v-else-if="item.type === 'tzip' && item.group">{{
             helpers.plural(item.group.count, "token")
           }}</span>
           <span v-else-if="item.type === 'subscription'"
@@ -230,7 +230,7 @@ export default {
         });
       } else if (
         [this.model.type, this.model.body.recent_type].includes(
-          "token_metadata"
+          "tzip"
         ) &&
         checkAddress(value)
       ) {
