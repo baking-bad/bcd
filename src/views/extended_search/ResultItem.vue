@@ -44,7 +44,7 @@
                 <span class="hash" v-html="highlight(item.body.key)"></span>
               </router-link>
             </template>
-             <template v-if="item.type == 'token_metadata'">
+             <template v-if="item.type == 'tzip'">
               <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
                 <span v-if="item.body.name" v-html="highlight(item.body.name)" class="alias"></span>
                 <span v-if="item.body.name" class="text--secondary" style="font-size: 20px;"> → </span>
@@ -82,7 +82,7 @@
               <span v-if="item.group">{{ helpers.plural(item.group.count, "update") }}</span>
               <span v-if="!item.body.value">, <span class="error--text">removed</span></span>
             </span>
-            <span v-else-if="item.type === 'token_metadata'">
+            <span v-else-if="item.type === 'tzip'">
               <span>token</span>
             </span>
           </v-list-item-action-text>

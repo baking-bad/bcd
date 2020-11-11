@@ -267,7 +267,7 @@ export default {
       } else if (this.tab == 3) {
         return ["bigmapdiff"];
       } else if (this.tab == 4) {
-        return ["token_metadata"];
+        return ["tzip"];
       }
       return [];
     },
