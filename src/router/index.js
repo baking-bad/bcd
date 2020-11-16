@@ -20,6 +20,7 @@ import InteractTab from '@/views/contract/InteractTab.vue'
 import StorageTab from '@/views/contract/StorageTab.vue'
 import ContractTokensTab from '@/views/contract/TokensTab.vue'
 import TransfersTab from '@/views/contract/TransfersTab.vue'
+import MetadataTab from '@/views/contract/MetadataTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
@@ -200,6 +201,12 @@ const router = new Router({
           path: 'interact',
           name: 'interact',
           component: InteractTab,
+          props: true
+        },
+        {
+          path: 'metadata',
+          name: 'metadata',
+          component: MetadataTab,
           props: true
         },
         {

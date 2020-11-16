@@ -60,6 +60,9 @@
         >
           <v-icon left small>mdi-transfer</v-icon>Transfers
         </v-tab>
+        <v-tab :to="{ name: 'metadata' }" replace v-if="isContract && contract.metadata">
+          <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
+        </v-tab>
         <v-tab :to="{ name: 'fork' }" replace v-if="showFork && isContract">
           <v-icon left small>mdi-source-fork</v-icon>Fork
         </v-tab>
@@ -137,6 +140,7 @@ export default {
         this.migrationsLoading = false;
       }
       this.getInfo();
+      this.getMetadata();
       this.getTokens();
     },
     getContract() {
@@ -206,6 +210,18 @@ export default {
           this.showError(err);
         })
         .finally(() => (this.contractLoading = false));
+    },
+    getMetadata() {
+      this.api
+        .getAccountMetadata(this.network, this.address)
+        .then((res) => {
+          if (!res) return;
+          Object.assign(this.contract, { metadata: res });
+        })
+        .catch((err) => {
+          console.log(err);
+          this.showError(err);
+        })
     },
     onFork() {
       this.showFork = !this.showFork;

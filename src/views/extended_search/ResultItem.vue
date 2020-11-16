@@ -51,6 +51,11 @@
                 <span class="alias">{{ item.body.symbol }}</span>
               </router-link>
             </template>
+            <template v-if="item.type == 'metadata'">
+              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}/metadata`">
+                <span v-html="highlight(item.body.name)" class="alias"></span>
+              </router-link>
+            </template>
           </v-list-item-title>
 
           <v-list-item-subtitle>
@@ -84,6 +89,9 @@
             </span>
             <span v-else-if="item.type === 'tzip'">
               <span>token</span>
+            </span>
+            <span v-else-if="item.type === 'metadata'">
+              <span>metadata</span>
             </span>
           </v-list-item-action-text>
         </v-list-item-action>
