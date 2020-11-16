@@ -57,7 +57,7 @@
       </div>
 
       <template v-slot:extension>
-        <v-tabs v-model="tab" style="margin-left: 267px;">
+        <v-tabs v-model="tab" style="margin-left: 228px;">
           <v-tab>
             <v-icon left small>mdi-auto-fix</v-icon>Everywhere
           </v-tab>
@@ -72,6 +72,9 @@
           </v-tab>
           <v-tab>
             <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
+          </v-tab>
+           <v-tab>
+            <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
           </v-tab>
           <div class="d-flex ml-8" style="margin-top: 6px;">
             <v-btn
@@ -89,7 +92,7 @@
     </v-app-bar>
 
     <v-container fluid class="canvas fill-canvas pa-8">
-      <div style="width: 699px; margin-left: 267px">
+      <div style="width: 800px; margin-left: 228px">
         <template v-if="total > 0">
           <v-overlay :value="loading" color="data" absolute></v-overlay>
           <span
@@ -250,11 +253,17 @@ export default {
         ["key_hash", ""],
         ["address", "of the owner contract"],
       ],
-      "tokens": [
+      tokens: [
         ["name", ""],
         ["symbol", ""],
         ["contract", "contract which created token"],
         ["registry_address", "token metadata registry"],
+      ],
+      metadata: [
+        ["name", ""],
+        ["authors", ""],
+        ["description", ""],
+        ["homepage", ""],
       ],
     },
   }),
@@ -268,6 +277,8 @@ export default {
         return ["bigmapdiff"];
       } else if (this.tab == 4) {
         return ["tzip"];
+      } else if (this.tab == 5) {
+        return ["metadata"];
       }
       return [];
     },

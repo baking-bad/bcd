@@ -157,6 +157,15 @@ export class BetterCallApi {
       })
   }
 
+  getAccountMetadata(network, address) {
+    return getCancellable(this.api, `/account/${network}/${address}/metadata`, {})
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
 
   getAccountTransfers(network, address, token_id = -1, contracts = [], size = 10, last_id = '') {
     let params = {};
