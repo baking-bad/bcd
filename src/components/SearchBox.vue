@@ -34,6 +34,7 @@
           >mdi-circle-multiple-outline</v-icon
         >
         <v-icon v-else-if="item.type == 'recent'">mdi-history</v-icon>
+        <v-icon v-else-if="item.type == 'tezos_domain'">mdi-web</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title>
@@ -72,6 +73,9 @@
             <span class="text--secondary">{{ item.body.name }}</span>
             <span class="text--secondary" style="font-size: 20px">→</span>
             <span>{{ item.body.symbol }}</span>
+          </template>
+          <template v-else-if="item.type == 'tezos_domain'">
+            <span class="text--secondary">{{ item.body.name }}</span>
           </template>
           <template v-if="item.type == 'subscription'">
             <span class="text--secondary">{{ item.body.alias }}</span>
@@ -238,6 +242,16 @@ export default {
           this.model = null;
         });
         this.$router.push({ path: `/${network}/${value}/tokens` });
+      } else if (
+        [this.model.type, this.model.body.recent_type].includes(
+          "tezos_domain"
+        ) &&
+        checkAddress(value)
+      ) {
+        this.$nextTick(() => {
+          this.model = null;
+        });
+        this.$router.push({ path: `/${network}/${value}` });
       } else if (this.model.type == "recent") {
         this.$router.push({ name: "search", query: { text: value } });
       }

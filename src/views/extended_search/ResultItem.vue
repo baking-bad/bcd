@@ -56,6 +56,13 @@
                 <span v-html="highlight(item.body.name)" class="alias"></span>
               </router-link>
             </template>
+            <template v-if="item.type == 'tezos_domain'">
+              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
+                <span v-html="highlight(item.body.name)" class="alias"></span>
+                <span class="text--secondary" style="font-size: 20px;"> → </span>
+                <span class="hash">{{ item.body.address }}</span>
+              </router-link>
+            </template>
           </v-list-item-title>
 
           <v-list-item-subtitle>
@@ -92,6 +99,9 @@
             </span>
             <span v-else-if="item.type === 'metadata'">
               <span>metadata</span>
+            </span>
+            <span v-else-if="item.type === 'tezos_domain'">
+              <span>domain</span>
             </span>
           </v-list-item-action-text>
         </v-list-item-action>
