@@ -173,6 +173,16 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
+              <v-list-item v-if="domain">
+                <v-list-item-content>
+                  <v-list-item-subtitle class="overline"
+                    >Domain</v-list-item-subtitle
+                  >
+                  <v-list-item-title class="body-2">
+                    <span>{{ domain }}</span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
               <AccountBox
                 v-if="contract.manager"
                 title="Deployed by"
@@ -409,9 +419,13 @@ export default {
     sameLoading: false,
     showWatchSettings: false,
     showVerifyDialog: false,
+    domain: undefined,
   }),
   created() {
-    if (this.isContract) this.requestSameSimilar();
+    if (this.isContract) {
+      this.requestSameSimilar();
+    }
+    this.resolveDomain();
   },
   computed: {
     standard() {
@@ -536,6 +550,12 @@ export default {
     },
     onVerifyClick() {
       this.showVerifyDialog = !this.showVerifyDialog;
+    },
+    resolveDomain() {
+      this.api.resolveDomain(this.network, this.address).then((res) => {
+        if (!res && res.name && res.name !== "") return;
+        this.domain = res.name;
+      });
     },
   },
   watch: {
