@@ -759,6 +759,38 @@ export class BetterCallApi {
       })
   }
 
+  listDomains(network, offset = 0, size = 10) {
+    let params = {}
+    if (size > 0) {
+      params['size'] = size
+    }
+    if (offset > 0) {
+      params['offset'] = offset
+    }
+    return getCancellable(this.api, `/domains/${network}`, {
+      params: params
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  resolveDomain(network, address) {
+    return getCancellable(this.api, `/domains/${network}/resolve?address=${address}`, {})
+      .then((res) => {
+        if (res.status == 204) {
+          return {}
+        }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
   getTokenVolumeSeries(network, period, contract, token_id, slug = '') {
     let params = [];
     params.push(`contract=${contract}`)
