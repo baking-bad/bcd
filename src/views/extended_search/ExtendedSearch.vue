@@ -102,34 +102,7 @@
             <ResultItem :key="idx" :item="item" :words="getSearchWords()" />
           </template>
           <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
-        </template>
-        <template
-          v-else-if="(isAddress() || isOpgHash()) && !loading && tzkt.supportsAny(filters.networks)"
-        >
-          <v-card
-            flat
-            outlined
-            class="mt-8 pa-8 data d-flex flex-column justify-center align-center"
-          >
-            <v-img class="img-avatar" :src="getCatavaSrc()"></v-img>
-            <span class="headline grey--text">
-              Mysterious
-              <span v-if="isAddress()">address</span>
-              <span v-else>operation</span>
-            </span>
-            <span class="subtitle-1 grey--text">We couldn't find anything, but perhaps TzKT will</span>
-            <v-btn-toggle class="mt-2 d-flex flex-row" multiple>
-              <template v-for="network in filters.networks">
-                <v-btn
-                  :key="searchText + network"
-                  :href="getTzktHref(network)"
-                  target="_blank"
-                  small
-                >{{ network }}</v-btn>
-              </template>
-            </v-btn-toggle>
-          </v-card>
-        </template>
+        </template>     
         <template v-else-if="searchText == '' || searchText == null">
           <v-card flat outlined class="mt-8 pa-8 data">
             <div class="d-flex flex-row justify-start align-center">
@@ -354,12 +327,6 @@ export default {
     },
     isOpgHash() {
       return /^o[1-9A-HJ-NP-Za-km-z]{50}$/.test(this.searchText);
-    },
-    getTzktHref(network) {
-      return this.tzkt.resolve(network, this.searchText);
-    },
-    getCatavaSrc() {
-      return `https://services.tzkt.io/v1/avatars/${this.searchText}`;
     },
   },
   watch: {

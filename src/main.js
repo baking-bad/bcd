@@ -10,7 +10,6 @@ import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAd
 import { getJwt, logout, getBool } from "@/utils/auth.js";
 import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js"
 import { NodeRPC } from "@/api/rpc.js"
-import { TzKTApi } from "@/api/tzkt.js"
 import { BcdWs } from "@/api/ws.js";
 
 import '@mdi/font/css/materialdesignicons.css';
@@ -85,14 +84,13 @@ getRuntimeConfig().then(async function (config) {
   Object.assign(config, response);
 
   let rpc = new NodeRPC(config.rpc_endpoints);
-  let tzkt = new TzKTApi(config.tzkt_endpoints);
   let ws = new BcdWs(config.WS_URI);
 
   let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress, round }
 
   Vue.mixin({
     data() {
-      return { config, api, rpc, tzkt, ws, helpers }
+      return { config, api, rpc, ws, helpers }
     }
   });
 

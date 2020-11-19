@@ -100,21 +100,16 @@ export default {
     },
     hasAddress(s) {
       if (s !== undefined && /(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/.test(s)) {
-        return s.startsWith("KT") || this.tzkt.supports(this.network);
+        return true;
       }
       return false;
     },
     handleAddress(s) {
       const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
-      if (address.startsWith("KT")) {
-        let routeData = this.$router.resolve({
-          path: `/${this.network}/${address}`
-        });
-        window.open(routeData.href, "_blank");
-      } else {
-        let href = this.tzkt.resolve(this.network, address);
-        window.open(href, "_blank");
-      }
+      let routeData = this.$router.resolve({
+        path: `/${this.network}/${address}`
+      });
+      window.open(routeData.href, "_blank");     
     }
   },
   watch: {

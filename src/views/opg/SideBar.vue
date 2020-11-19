@@ -80,15 +80,6 @@
                 <v-list-item-action>
                   <v-list-item-action-text class="overline">Level</v-list-item-action-text>
                   <v-list-item-action-text class="body-2">
-                    <v-btn
-                      :href="tzkt.resolve(network, content.level)"
-                      target="_blank"
-                      icon
-                      small
-                      class="text--secondary"
-                    >
-                      <v-icon x-small>mdi-open-in-new</v-icon>
-                    </v-btn>
                     <span>{{ content.level }}</span>
                   </v-list-item-action-text>
                 </v-list-item-action>
