@@ -791,15 +791,17 @@ export class BetterCallApi {
       })
   }
 
-  getTokenVolumeSeries(network, period, contract, addresses, token_id) {
+  getTokenVolumeSeries(network, period, contract, token_id, slug = '') {
     let params = [];
     params.push(`contract=${contract}`)
-
-    params.push(`addresses=${addresses.join(',')}`)
 
     params.push(`period=${period}`)
 
     params.push(`token_id=${token_id}`)
+
+    if (slug !== '') {
+      params.push(`slug=${slug}`)
+    }
 
     return getCancellable(this.api, `/tokens/${network}/series?${params.join('&')}`, {})
       .then((res) => {

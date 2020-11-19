@@ -1,8 +1,7 @@
 <template>
   <v-row>
     <v-col cols="4">
-      <h3>DEX Turnover</h3>
-      <span class="text--secondary caption">* Total token transfers amount</span>
+      <h3>DEX Volume</h3>
     </v-col>
     <v-col cols="8" class="d-flex justify-end">
       <v-skeleton-loader :loading="loading" type="actions">
@@ -110,8 +109,8 @@ export default {
           "mainnet",
           period,
           token.contract,
-          this.contracts,
-          token.token_id
+          token.token_id,
+          this.dapp.slug,
         )
         .then((res) => {
           this.data[this.selectedToken] = this.prepareSeries(
