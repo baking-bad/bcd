@@ -493,7 +493,7 @@ export class BetterCallApi {
   }
 
   getOPG(hash) {
-    return getCancellable(this.api, `/opg/${hash}`, {})
+    return getCancellable(this.api, `/opg/${hash}?with_mempool=true`, {})
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
