@@ -60,7 +60,7 @@
         >
           <v-icon left small>mdi-transfer</v-icon>Transfers
         </v-tab>
-        <v-tab :to="{ name: 'metadata' }" replace v-if="isContract && contract.metadata">
+        <v-tab :to="{ name: 'metadata' }" replace v-if="isContract && contract.metadata && contract.metadata.name">
           <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
         </v-tab>
         <v-tab :to="{ name: 'fork' }" replace v-if="showFork && isContract">
