@@ -29,10 +29,6 @@
       <v-icon small class="mr-1" v-if="!sameTab">mdi-open-in-new</v-icon>
       <span>View</span>
     </v-btn>
-    <v-btn v-if="isKeyHash" text small link :to="`/${value}`" target="_blank">
-      <v-icon small class="mr-1">mdi-magnify</v-icon>
-      <span>Search address</span>
-    </v-btn>
     <v-btn
       v-else-if="prim === 'big_map'"
       text
@@ -80,18 +76,6 @@ export default {
     isPreFormatted() {
       return this.prim === "string" && /\n/.test(this.value);
     },
-    isKeyHash() {
-      return (
-        this.prim === "key_hash" ||
-        (this.prim === "address" && this.value.startsWith("tz"))
-      );
-    },
-    isContract() {
-      return (
-        (this.prim === "address" || this.prim === "contract") &&
-        this.value.startsWith("KT")
-      );
-    },
     isIpfsHash() {
       return this.prim === "string" && isIpfs.multihash(this.value);
     },
@@ -100,18 +84,13 @@ export default {
     },
   },
   methods: {
-    handleAddress(s, external = false) {
-      const address = s.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
-      if (external) {
-        let href = this.tzkt.resolve(this.network, address);
-        window.open(href, "_blank");
+    handleAddress(span) {
+      const address = span.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
+      const path = { path: `/${this.network}/${address}` };
+      if (this.sameTab) {
+        this.$router.push(path);
       } else {
-        const path = { path: `/${this.network}/${address}` };
-        if (this.sameTab) {
-          this.$router.push(path);
-        } else {
-          window.open(this.$router.resolve(path).href, "_blank");
-        }
+        window.open(this.$router.resolve(path).href, "_blank");
       }
     },
     handleIpfsHash(hash) {

@@ -4,33 +4,20 @@
         <div class="ml-8 pl-8 flex-column d-flex align-center justify-center">
           <span class="display-2">This wasn't planned 😓</span>
           <div class="headline font-weight-light mt-3 d-flex flex-column align-center justify-center">
-            <template v-if="code === 404 && address && tzkt.supports(network)">
-              <span>We couldn't find what you are looking for, but...</span>
+            <span>If this error continues to appear, please contact us:</span>
+            <div class="mt-3">
               <v-btn 
-                depressed x-large class="mt-3" target="_blank" 
-                :href="tzkt.resolve(network, address)">
-                <span>Try tzkt</span>
-                <v-img 
-                  class="img-catava" 
-                  :src="`https://services.tzkt.io/v1/avatars/${address}`"></v-img>
+                v-for="(link, i) in links" 
+                :key="i"
+                icon
+                x-large
+                color="primary"
+                :href="link.href"
+                target="_blank"
+                rel="nofollow noopener">
+                <v-icon x-large>{{ link.icon }}</v-icon>
               </v-btn>
-            </template>
-            <template v-else>
-              <span>If this error continues to appear, please contact us:</span>
-              <div class="mt-3">
-                <v-btn 
-                  v-for="(link, i) in links" 
-                  :key="i"
-                  icon
-                  x-large
-                  color="primary"
-                  :href="link.href"
-                  target="_blank"
-                  rel="nofollow noopener">
-                  <v-icon x-large>{{ link.icon }}</v-icon>
-                </v-btn>
-              </div>
-            </template>
+            </div>
           </div>
         </div>
       </v-col>

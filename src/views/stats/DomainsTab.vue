@@ -123,7 +123,8 @@ export default {
         .then((res) => {
           if (!res) return;
           this.total = res.total;
-          this.domains.push(...res.domains);
+          if (res.domains)
+            this.domains.push(...res.domains);
         })
         .catch((err) => {
           console.log(err);
