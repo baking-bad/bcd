@@ -14,6 +14,7 @@
             </td>
             <td>
               <v-btn
+                v-if="item.address"
                 class="text--secondary hash"
                 :to="`/${network}/${item.address}`"
                 style="text-transform: none"

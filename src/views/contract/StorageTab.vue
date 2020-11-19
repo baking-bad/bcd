@@ -70,7 +70,7 @@
               </div>
             </v-col>
             <v-divider vertical></v-divider>
-            <v-col>
+            <v-col v-if="schema">
                <TypeDef :typedef="schema.typedef" first="storage" class="pt-3 pb-1 px-6" style="opacity: .8;" />            
             </v-col>
           </v-row>
