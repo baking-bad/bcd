@@ -2,12 +2,14 @@ export class BcdWs {
     constructor(host) {
         this.ws = new WebSocket(host);
 
-        this.ws.onclose = function (event) {
-            console.log("close: ", event.data);
+        this.ws.onclose = function () {
+            if (this.interval !== undefined)
+                clearInterval(this.interval);
         };
         this.ws.onerror = function (event) {
             console.log("error: ", event.data);
         };
+        this.interval = setInterval(this.ping, 30000, this.ws);
     }
 
     send(data) {
@@ -28,6 +30,12 @@ export class BcdWs {
             this.ws.onopen = callback;
         } else {
             callback();
+        }
+    }
+
+    ping(ws) {
+        if (ws && ws.readyState === 1) {
+            ws.send(`{ "action": "ping" }`)
         }
     }
 }
