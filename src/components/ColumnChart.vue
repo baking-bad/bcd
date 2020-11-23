@@ -1,26 +1,33 @@
 <template>
-  <highcharts ref="chart" :options="options"></highcharts>
+  <highcharts
+    :constructor-type="'stockChart'"
+    ref="chart"
+    :options="options"
+  ></highcharts>
 </template>
 
 <script>
 import { Chart } from "highcharts-vue";
+import Highcharts from "highcharts";
+import stockInit from "highcharts/modules/stock";
+
+stockInit(Highcharts);
 
 function kilobyteFormatter(value, digits = 4) {
   return (value / 1024).toLocaleString(undefined, {
-    maximumFractionDigits: digits
+    maximumFractionDigits: digits,
   });
 }
 
 function gasFormatter(value, digits = 6) {
   return (value / 10 ** 6).toLocaleString(undefined, {
-    maximumFractionDigits: digits
+    maximumFractionDigits: digits,
   });
 }
 
-
 function floorFormatter(value, digits = 6) {
-  return (value).toLocaleString(undefined, {
-    maximumFractionDigits: digits
+  return value.toLocaleString(undefined, {
+    maximumFractionDigits: digits,
   });
 }
 
@@ -34,51 +41,58 @@ export default {
     data: Array,
     title: String,
     name: String,
-    formatter: String
+    formatter: String,
+    zoom: Boolean,
   },
   components: {
-    highcharts: Chart
+    highcharts: Chart,
   },
   computed: {
     labelFormatterFunction() {
       if (this.formatter === "kilobyte") {
-        return function() {
+        return function () {
           return kilobyteFormatter(this.total, 0);
         };
       } else if (this.formatter === "gas") {
-        return function() {
+        return function () {
           return gasFormatter(this.total, 0);
         };
       }
-      return function() {
+      return function () {
         return defaultFormatter(this.total);
       };
     },
     tooltipFormatterFunction() {
       if (this.formatter === "kilobyte") {
-        return function() {
+        return function () {
           let value = kilobyteFormatter(this.y);
           return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value} KB</b><br/>`;
         };
       } else if (this.formatter === "gas") {
-        return function() {
+        return function () {
           let value = floorFormatter(this.y, 0);
           return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
         };
       }
-      return function() {
+      return function () {
         let value = defaultFormatter(this.y);
         return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
       };
     },
     options() {
       if (this.data == null) return {};
-      return {
+      let options = {
+        navigator: {
+          enabled: false,
+        },
+        scrollbar: {
+          enabled: false,
+        },
         xAxis: {
           type: "datetime",
           tickmarkPlacement: "off",
           title: {
-            enabled: false
+            enabled: false,
           },
           tickWidth: 0,
           lineWidth: 0,
@@ -93,22 +107,22 @@ export default {
             day: "%e %b",
             week: "%e %b",
             month: "%b '%y",
-            year: "%Y"
+            year: "%Y",
           },
           labels: {
             style: {
-              fontSize: "12px"
-            }
-          }
+              fontSize: "12px",
+            },
+          },
         },
         yAxis: {
           enabled: false,
           title: {
-            text: ""
+            text: "",
           },
           gridLineWidth: 0,
           labels: {
-            enabled: false
+            enabled: false,
           },
           stackLabels: {
             enabled: true,
@@ -116,10 +130,10 @@ export default {
               fontWeight: "medium",
               color: "var(--v-secondary-base)",
               fontSize: "12px",
-              textOutline: "none"
+              textOutline: "none",
             },
-            formatter: this.labelFormatterFunction
-          }
+            formatter: this.labelFormatterFunction,
+          },
         },
         title: {
           text: this.title,
@@ -127,8 +141,8 @@ export default {
           floating: true,
           y: 20,
           style: {
-            color: "var(--v-text-base)"
-          }
+            color: "var(--v-text-base)",
+          },
         },
         tooltip: {
           followTouchMove: false,
@@ -141,15 +155,15 @@ export default {
           style: {
             color: "var(--v-text-base)",
             pointerEvents: "none",
-            fontSize: "14px"
+            fontSize: "14px",
           },
-          pointFormatter: this.tooltipFormatterFunction
+          pointFormatter: this.tooltipFormatterFunction,
         },
         legend: {
-          enabled: false
+          enabled: false,
         },
         credits: {
-          enabled: false
+          enabled: false,
         },
         series: [
           {
@@ -158,24 +172,92 @@ export default {
             color: "var(--v-primary-base)",
             name: this.name,
             borderColor: "transparent",
-            label: {}
-          }
+            label: {},
+          },
         ],
         chart: {
           backgroundColor: "transparent",
           plotBackgroundColor: "transparent",
           marginTop: 50,
           style: {
-            fontFamily: "Roboto Condensed, sans-serif"
-          }
+            fontFamily: "Roboto Condensed, sans-serif",
+          },
         },
         plotOptions: {
           column: {
-            stacking: "normal"
-          }
-        }
+            stacking: "normal",
+          },
+        },
       };
-    }
-  }
+
+      if (this.zoom) {
+        options = Object.assign(options, {
+          rangeSelector: {
+            buttonPosition: {
+              y: -32,
+              x: -10,
+            },
+            buttonTheme: {
+              fill: "none",
+              stroke: "none",
+              "stroke-width": 0,
+              style: {
+                color: "var(--v-primary-base)",
+              },
+              states: {
+                hover: {
+                  fill: "var(--v-primary-base)",
+                  style: {
+                    color: "#fff",
+                  },
+                },
+                select: {
+                  fill: "var(--v-primary-base)",
+                  style: {
+                    color: "#fff",
+                  },
+                },
+                disabled: {
+                  style: {
+                    color: "#666",
+                  },
+                },
+              },
+            },
+            buttons: [
+              {
+                type: "month",
+                count: 6,
+                text: "6m",
+              },
+              {
+                type: "year",
+                count: 1,
+                text: "1Y",
+              },
+              {
+                type: "all",
+                count: 1,
+                text: "All",
+              },
+            ],
+            selected: 1,
+            labelStyle: {
+              color: "transparent",
+            },
+            inputEnabled: false,
+          },
+        });
+      } else {
+        options = Object.assign(options, {
+          rangeSelector: {
+            enabled: false,
+            inputEnabled: false,
+          },
+        });
+      }
+      return options;
+    },
+  },
 };
 </script>
