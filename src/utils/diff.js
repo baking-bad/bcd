@@ -57,7 +57,7 @@ function deducePrim(x) {
         if (x.value === '[]') {
             return 'list';
         }
-        if (/(DIP|DUP|CAR|FAILWITH|Pair|Left|Right|Unit|Elt)/.test(x.value)) {
+        if (/({|}|DIP|DUP|CAR|FAILWITH|Pair|Left|Right|Unit|Elt)/.test(x.value)) {
             return 'lambda';
         }
         if (/^"(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}"$/.test(x.value)) {
