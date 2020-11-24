@@ -96,7 +96,6 @@ export default {
     hash: String,
     ptr: String,
     keyhash: String,
-    mempool: Boolean,
   },
   components: {
     VueJsonPretty,
@@ -141,11 +140,7 @@ export default {
       const level = this.level && this.level > 0 ? this.level : "head";
 
       if (this.type === "operation") {
-        if (this.mempool) {
-          console.log("mempool")
-        } else {
           res = this.rpc.getOperation(this.network, level, this.hash);
-        }
       } else if (this.type === "big_map") {
         res = this.rpc.getBigMapValue(
           this.network,
