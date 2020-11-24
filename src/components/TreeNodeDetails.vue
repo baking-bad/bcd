@@ -2,7 +2,7 @@
   <v-dialog
     v-if="data"
     v-model="show"
-    width="800"
+    width="820"
     :fullscreen="fullscreen"
     scrollable
      :retain-focus="false"
