@@ -4,7 +4,16 @@
       <v-col cols="3">
         <v-select
           v-model="status"
-          :items="['applied', 'failed', 'backtracked', 'skipped', 'pending', 'lost', 'refused', 'branch_refused']"
+          :items="[
+            'applied',
+            'failed',
+            'backtracked',
+            'skipped',
+            'pending',
+            'lost',
+            'refused',
+            'branch_refused',
+          ]"
           chips
           small-chips
           filled
@@ -16,12 +25,11 @@
         >
           <template v-slot:selection="{ item, index }">
             <v-chip x-small v-if="index < 1">
-              <span>{{ item }}</span>
-            </v-chip>&nbsp;
-            <span
-              v-if="index === 1 "
-              class="grey--text caption"
-            >+{{ status.length - 1 }} others</span>
+              <span>{{ item }}</span> </v-chip
+            >&nbsp;
+            <span v-if="index === 1" class="grey--text caption"
+              >+{{ status.length - 1 }} others</span
+            >
           </template>
         </v-select>
       </v-col>
@@ -40,12 +48,11 @@
         >
           <template v-slot:selection="{ index }">
             <v-chip x-small v-if="index < 1">
-              <span>{{ shortestEntrypoint }}</span>
-            </v-chip>&nbsp;
-            <span
-              v-if="index === 1 "
-              class="grey--text caption"
-            >+{{ entrypoints.length - 1 }} others</span>
+              <span>{{ shortestEntrypoint }}</span> </v-chip
+            >&nbsp;
+            <span v-if="index === 1" class="grey--text caption"
+              >+{{ entrypoints.length - 1 }} others</span
+            >
           </template>
         </v-select>
       </v-col>
@@ -74,8 +81,12 @@
           </template>
           <v-date-picker v-model="datesBuf" scrollable range show-current>
             <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="datesModal = false">Cancel</v-btn>
-            <v-btn text color="primary" @click="$refs.menu.save(datesBuf)">OK</v-btn>
+            <v-btn text color="primary" @click="datesModal = false"
+              >Cancel</v-btn
+            >
+            <v-btn text color="primary" @click="$refs.menu.save(datesBuf)"
+              >OK</v-btn
+            >
           </v-date-picker>
         </v-menu>
       </v-col>
@@ -89,25 +100,34 @@
     <v-row>
       <v-col>
         <v-skeleton-loader
-          v-if="loading && items.length === 0"
           :loading="loading"
           type="list-item-two-line, list-item-two-line, list-item-two-line"
-        />
-        <EmptyState
-          v-if="!loading && items.length === 0"
-          icon="mdi-code-brackets"
-          title="Nothing found"
-          text="Empty set is also a result, otherwise try a broader query"
-        />
-        <v-expansion-panels v-if="items.length > 0" multiple hover flat class="bb-1">
-          <ContentItem
-            :data="item"
-            :address="address"
-            v-for="(item, key) in items"
-            :key="item.hash + '_' + item.counter + '_' + key"
+        >
+          <EmptyState
+            v-if="items.length === 0"
+            icon="mdi-code-brackets"
+            title="Nothing found"
+            text="Empty set is also a result, otherwise try a broader query"
           />
-        </v-expansion-panels>
-        <span v-intersect="onDownloadPage" v-if="!loading && !downloaded"></span>
+          <v-expansion-panels
+            v-else
+            multiple
+            hover
+            flat
+            class="bb-1"
+          >
+            <ContentItem
+              :data="item"
+              :address="address"
+              v-for="(item, key) in items"
+              :key="item.hash + '_' + item.counter + '_' + key"
+            />
+          </v-expansion-panels>
+          <span
+            v-intersect="onDownloadPage"
+            v-if="!loading && !downloaded"
+          ></span>
+        </v-skeleton-loader>
       </v-col>
     </v-row>
   </v-container>
@@ -149,10 +169,11 @@ export default {
   },
   computed: {
     loading() {
-      return this.operationsLoading || this.mempoolLoading;
+      return (this.operationsLoading || this.mempoolLoading) && this.items.length === 0;
     },
     items() {
       let operations = [];
+      if (this.operations.length === 0) return [];
       if (this.last_id !== null) operations = this.operations;
 
       if (this.config.MEMPOOL_ENABLED) {
@@ -186,7 +207,7 @@ export default {
     },
     isContract() {
       return this.address.startsWith("KT");
-    }
+    },
   },
   methods: {
     ...mapActions(["showError"]),

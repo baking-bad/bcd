@@ -16,7 +16,13 @@
         <v-spacer></v-spacer>
         <v-menu offset-y v-if="type === 'code'">
           <template v-slot:activator="{ on, attrs }">
-            <v-btn text outlined v-bind="attrs" v-on="on" class="mr-4 text--secondary">
+            <v-btn
+              text
+              outlined
+              v-bind="attrs"
+              v-on="on"
+              class="mr-4 text--secondary"
+            >
               <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
             </v-btn>
           </template>
@@ -29,7 +35,9 @@
               v-clipboard="() => getSection(item)"
               v-clipboard:success="showClipboardOK"
             >
-              <v-list-item-title class="text-capitalize">{{ item }}</v-list-item-title>
+              <v-list-item-title class="text-capitalize">{{
+                item
+              }}</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
@@ -52,12 +60,15 @@
         >
           <v-icon small class="mr-1">mdi-open-in-new</v-icon>In new tab
         </v-btn>
-        <v-btn text @click="close">
-          <v-icon>mdi-close</v-icon>Close
-        </v-btn>
+        <v-btn text @click="close"> <v-icon>mdi-close</v-icon>Close </v-btn>
       </v-card-title>
-      <v-progress-linear absolute v-if="!loaded" indeterminate color="primary"></v-progress-linear>
-      <v-card-text class="data" style="max-height: calc(100% - 52px);">
+      <v-progress-linear
+        absolute
+        v-if="!loaded"
+        indeterminate
+        color="primary"
+      ></v-progress-linear>
+      <v-card-text class="data" style="max-height: calc(100% - 52px)">
         <vue-json-pretty
           class="raw-json-viewer"
           v-if="loaded"
@@ -85,6 +96,7 @@ export default {
     hash: String,
     ptr: String,
     keyhash: String,
+    mempool: Boolean,
   },
   components: {
     VueJsonPretty,
@@ -129,7 +141,11 @@ export default {
       const level = this.level && this.level > 0 ? this.level : "head";
 
       if (this.type === "operation") {
-        res = this.rpc.getOperation(this.network, level, this.hash);
+        if (this.mempool) {
+          console.log("mempool")
+        } else {
+          res = this.rpc.getOperation(this.network, level, this.hash);
+        }
       } else if (this.type === "big_map") {
         res = this.rpc.getBigMapValue(
           this.network,
