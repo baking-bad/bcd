@@ -2,29 +2,31 @@ name: Build release and make notifications
 on:
   push:
     tags:
-      - '*.*.*'
+      - "*.*.*"
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
-    - uses: actions/checkout@master
-    - name: setup Node.js
-      uses: actions/setup-node@v1
-      with:
-        node-version: 10.x
-    - name: npm install, lint and build
-      run: |
-        npm install @vue/cli
-        npm run lint
-        npm run build
-    - name: archive dist
-      run: tar cfvz bcd.tar.gz dist
-    - name: automatic release
-      uses: "marvinpinto/action-automatic-releases@latest"
-      with:
-        repo_token: "${{ secrets.GITHUB_TOKEN }}"
-        prerelease: false
-        files: |
-          bcd.tar.gz
+      - uses: actions/checkout@master
+      - name: setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 10.x
+      - name: npm install, lint and build
+        run: |
+          npm install @vue/cli
+          npm run lint
+          npm run build
+      - name: archive dist
+        run: tar cfvz bcd.tar.gz dist
+      - name: automatic release
+        uses: "marvinpinto/action-automatic-releases@latest"
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            bcd.tar.gz
