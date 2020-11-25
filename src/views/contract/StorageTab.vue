@@ -10,7 +10,7 @@
             :items="storageVersions"
             item-text="version"
             item-value="level"
-            style="max-width: 175px;"
+            style="max-width: 175px"
             rounded
             dense
             background-color="data"
@@ -41,10 +41,12 @@
           </v-tooltip>
           <v-btn
             v-if="rawStorage && raw"
-            @click="() => {
-                  $clipboard(getStorageString());
-                  showClipboardOK();
-                }"
+            @click="
+              () => {
+                $clipboard(getStorageString());
+                showClipboardOK();
+              }
+            "
             class="ml-2"
             small
             text
@@ -52,11 +54,23 @@
             <v-icon class="mr-1" small>mdi-content-copy</v-icon>
             <span class="text--secondary">Copy</span>
           </v-btn>
-          <v-btn v-if="raw" @click="getStorage()" class="ml-2 text--secondary" small text>
+          <v-btn
+            v-if="raw"
+            @click="getStorage()"
+            class="ml-2 text--secondary"
+            small
+            text
+          >
             <v-icon class="mr-1" small>mdi-file-tree</v-icon>
             <span>Switch to Tree View</span>
           </v-btn>
-          <v-btn v-else @click="getStorageRaw()" class="ml-2 text--secondary" small text>
+          <v-btn
+            v-else
+            @click="getStorageRaw()"
+            class="ml-2 text--secondary"
+            small
+            text
+          >
             <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
             <span>Switch to Micheline</span>
           </v-btn>
@@ -71,7 +85,12 @@
             </v-col>
             <v-divider vertical></v-divider>
             <v-col v-if="schema">
-               <TypeDef :typedef="schema.typedef" first="storage" class="pt-3 pb-1 px-6" style="opacity: .8;" />            
+              <TypeDef
+                :typedef="schema.typedef"
+                first="storage"
+                class="pt-3 pb-1 px-6"
+                style="opacity: 0.8"
+              />
             </v-col>
           </v-row>
         </v-card-text>
@@ -147,6 +166,7 @@ export default {
         .getContractStorage(this.network, this.address, this.level)
         .then((res) => {
           if (!res) return;
+          this.findPointers(res);
           this.storage = res;
           this.raw = false;
           return this.api.getContractStorageSchema(this.network, this.address);
@@ -210,6 +230,24 @@ export default {
           this.showError(err);
         })
         .finally(() => (this.downloading = false));
+    },
+    findPointers(value) {
+      if (value.prim === "big_map") {
+        this.api
+          .getContractBigMapDiffsCount(this.network, value.value)
+          .then((res) => {
+            value.count = res.count;
+          })
+          .catch((err) => {
+            console.log(err);
+            this.showError(err);
+          });
+      }
+      if (value.children) {
+        for (let i = 0; i < value.children.length; i++) {
+          this.findPointers(value.children[i]);
+        }
+      }
     },
   },
   watch: {
