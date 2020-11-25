@@ -404,6 +404,17 @@ export class BetterCallApi {
       })
   }
 
+  getContractBigMapDiffsCount(network, ptr) {
+    return getCancellable(this.api, `/bigmap/${network}/${ptr}/count`, {})
+      .then((res) => {
+        if (!res) { return res; }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
   getContractBigMapKeys(network, ptr, q = '', offset = 0) {
     return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys?q=${q}&offset=${offset}`, {})
       .then((res) => {
