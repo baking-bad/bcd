@@ -6,6 +6,9 @@ import store from '@/store'
 import router from '@/router'
 import VueAnalytics from 'vue-analytics'
 
+import * as Sentry from "@sentry/browser";
+import { Vue as VueIntegration } from "@sentry/integrations";
+
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { getJwt, logout, getBool } from "@/utils/auth.js";
 import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js"
