@@ -94,6 +94,20 @@ getRuntimeConfig().then(async function (config) {
     }
   });
 
+  if (config.sentry_dsn !== "") {
+    Sentry.init({
+      dsn: config.sentry_dsn,
+      integrations: [new VueIntegration({
+        Vue,
+        attachProps: true,
+        tracing: true,
+        tracingOptions: {
+          trackComponents: true,
+        },
+      })],
+    });
+  }
+
   router.addRoutes([
     {
       path: '/@:slug([a-zA-Z0-9_]*)',
