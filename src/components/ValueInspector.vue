@@ -19,6 +19,7 @@
       filled
       :label="label"
     ></v-text-field>
+
     <v-btn
       v-if="value !== $route.params.address && isAddress"
       text
@@ -29,6 +30,7 @@
       <v-icon small class="mr-1" v-if="!sameTab">mdi-open-in-new</v-icon>
       <span>View</span>
     </v-btn>
+
     <v-btn
       v-else-if="prim === 'big_map'"
       text
@@ -37,8 +39,9 @@
       :to="{ path: `/${network}/big_map/${value}` }"
       >View Big Map</v-btn
     >
+
     <v-btn
-      v-if="isIpfsHash"
+      v-else-if="isIpfsHash"
       text
       small
       link
@@ -47,12 +50,35 @@
       <v-icon small class="mr-1">mdi-open-in-new</v-icon>
       <span>View IPFS</span>
     </v-btn>
+
+    <v-btn
+      v-else-if="isIpfsURI"
+      text
+      small
+      link
+      @click.prevent.stop="handleIpfsURI(value)"
+    >
+      <v-icon small class="mr-1">mdi-open-in-new</v-icon>
+      <span>View IPFS</span>
+    </v-btn>
+
+    <v-btn
+      v-if="isTezosStorage"
+      text
+      small
+      link
+      @click.prevent.stop="handleStorage(value)"
+    >
+      <v-icon small class="mr-1">mdi-open-in-new</v-icon>
+      <span>View Storage</span>
+    </v-btn>
   </div>
 </template>
 
 <script>
 import Michelson from "@/components/Michelson.vue";
 import isIpfs from "is-ipfs";
+import { checkAddress } from "@/utils/tz.js";
 
 export default {
   name: "ValueInspector",
@@ -79,6 +105,20 @@ export default {
     isIpfsHash() {
       return this.prim === "string" && isIpfs.multihash(this.value);
     },
+    isIpfsURI() {
+      return (
+        this.prim === "bytes" &&
+        this.hasProtocol(this.value, "ipfs:") &&
+        isIpfs.multihash(this.value.slice("ipfs://".length))
+      );
+    },
+    isTezosStorage() {
+      return (
+        this.prim === "bytes" &&
+        this.hasProtocol(this.value, "tezos-storage:") &&
+        checkAddress(this.value.slice("tezos-storage://".length))
+      );
+    },
     isAddress() {
       return this.prim === "address" || this.prim === "contract";
     },
@@ -93,8 +133,34 @@ export default {
         window.open(this.$router.resolve(path).href, "_blank");
       }
     },
+    handleStorage(value) {
+      const address = value.match(/(KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
+      const path = { path: `/${this.network}/${address}/storage` };
+      if (this.sameTab) {
+        this.$router.push(path);
+      } else {
+        window.open(this.$router.resolve(path).href, "_blank");
+      }
+    },
     handleIpfsHash(hash) {
       window.open(`https://cloudflare-ipfs.com/ipfs/${hash}`, "_blank");
+    },
+    handleIpfsURI(uri) {
+      window.open(
+        `https://cloudflare-ipfs.com/ipfs/${uri.slice("ipfs://".length)}`,
+        "_blank"
+      );
+    },
+    hasProtocol(value, protocol) {
+      let url;
+
+      try {
+        url = new URL(value);
+      } catch (_) {
+        return false;
+      }
+
+      return url.protocol === protocol;
     },
   },
 };
