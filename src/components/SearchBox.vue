@@ -33,6 +33,9 @@
         <v-icon v-else-if="item.type == 'tzip'"
           >mdi-circle-multiple-outline</v-icon
         >
+        <v-icon v-else-if="item.type == 'metadata'"
+          >mdi-puzzle-outline</v-icon
+        >
         <v-icon v-else-if="item.type == 'recent'">mdi-history</v-icon>
         <v-icon v-else-if="item.type == 'tezos_domain'">mdi-web</v-icon>
       </v-list-item-avatar>
@@ -74,6 +77,10 @@
             <span class="text--secondary" style="font-size: 20px">→</span>
             <span>{{ item.body.symbol }}</span>
           </template>
+          <template v-else-if="item.type == 'metadata'">
+            <span v-if="item.body.name">{{ item.body.name }}</span>
+            <span v-else v-html="helpers.shortcut(item.value)"></span>
+          </template>
           <template v-else-if="item.type == 'tezos_domain'">
             <span class="text--secondary">{{ item.body.name }}</span>
           </template>
@@ -94,7 +101,7 @@
           <span
             v-if="item.body.network"
             :class="item.body.network === 'mainnet' ? 'secondary--text' : ''"
-            >{{ item.body.network }}</span
+            >{{ item.body.network }}&nbsp;|&nbsp;</span
           >
           <span v-if="item.type === 'contract'">{{
             helpers.plural(item.body.tx_count - 1, "tx")

@@ -575,7 +575,7 @@ export default {
   min-height: 48px;
 }
 .contract-list {
-  max-height: calc(100vh - 75px - 4 * 48px);
+  max-height: calc(100vh - 75px - 6 * 48px);
   overflow-y: auto;
   border-radius: 0;
   padding: 0;
