@@ -78,34 +78,45 @@
       <h3 class="mb-1">Contracts</h3>
 
       <v-skeleton-loader :loading="loading" type="list-item-two-line@4">
-        <v-list style="background-color: transparent">
-          <v-list-item
-            three-line
-            class="mx-0 px-0"
-            v-for="contract in dapp.contracts"
-            :key="contract.address"
+        <v-data-table
+          :items="dapp.contracts"
+          :page.sync="contractsPage"
+          :items-per-page="3"
+          hide-default-header
+          hide-default-footer
+          class="elevation-0"
+          @page-count="contractsPageCount = $event"
+        >
+          <template v-slot:item="{ item }">
+            <v-list-item
+            two-line
+            :key="item.address"
             target="_blank"
+            class="contract-item"
             :to="{
               name: 'contract',
-              params: { address: contract.address, network: contract.network },
+              params: { address: item.address, network: item.network },
             }"
           >
             <v-list-item-content>
               <v-list-item-title>{{
-                contract.alias ? contract.alias : contract.address
+                item.alias ? item.alias : item.address
               }}</v-list-item-title>
               <v-list-item-subtitle
-                class="info-item-title"
-                v-if="contract.alias"
-                >{{ contract.address }}</v-list-item-subtitle
-              >
-              <v-list-item-subtitle
-                >Deployed at
-                {{ contract.release_date | formatDate }}</v-list-item-subtitle
+                >Deployed on
+                {{ item.release_date | formatDate }}</v-list-item-subtitle
               >
             </v-list-item-content>
           </v-list-item>
-        </v-list>
+          </template>
+        </v-data-table>
+        <div class="text-center pt-2">
+          <v-pagination
+            v-model="contractsPage"
+            :length="contractsPageCount"
+            :disabled="dapp.contracts.length <= 3"
+          ></v-pagination>
+        </div>
       </v-skeleton-loader>
     </v-col>
   </v-row>
@@ -119,6 +130,10 @@ export default {
     dapp: Object,
     loading: Boolean,
   },
+  data: () => ({
+    contractsPage: 1,
+    contractsPageCount: 0
+  }),
   methods: {
     getSocialIcon(link) {
       if (link.includes("twitter")) {
@@ -177,5 +192,8 @@ export default {
 .info-item-title {
   font-size: 14px;
   font-weight: 300;
+}
+.contract-item {
+  border-bottom: 1px solid var(--v-canvas-base);
 }
 </style>
