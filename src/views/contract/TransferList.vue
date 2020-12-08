@@ -14,7 +14,9 @@
           <v-list-item selectable>
             <v-list-item-content>
               <v-list-item-title class="overline">Decimals</v-list-item-title>
-              <v-list-item-subtitle>{{ token.decimals }}</v-list-item-subtitle>
+              <v-list-item-subtitle>{{
+                token.decimals ? token.decimals : "not set"
+              }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
@@ -34,7 +36,12 @@
             <v-list-item-content>
               <v-list-item-title class="overline">Transfered</v-list-item-title>
               <v-list-item-subtitle
-                >{{ helpers.round(token.transfered, token.decimals) }}
+                >{{
+                  helpers.round(
+                    token.transfered,
+                    token.decimals ? token.decimals : 0
+                  )
+                }}
                 {{ token.symbol }}</v-list-item-subtitle
               >
             </v-list-item-content>
@@ -80,9 +87,14 @@
                   {{
                     token
                       ? helpers
-                          .round(item.amount, token.decimals)
+                          .round(
+                            item.amount,
+                            token.decimals ? token.decimals : 0
+                          )
                           .toLocaleString(undefined, {
-                            maximumFractionDigits: token.decimals,
+                            maximumFractionDigits: token.decimals
+                              ? token.decimals
+                              : 0,
                           })
                       : item.amount
                   }}
@@ -99,7 +111,11 @@
                   <span
                     class="caption text-uppercase font-weight-regular text--secondary"
                   >
-                    <span v-if="item.from"><span v-if="!item.to" class="accent--text">Burn&nbsp;</span>From&nbsp;</span>
+                    <span v-if="item.from"
+                      ><span v-if="!item.to" class="accent--text"
+                        >Burn&nbsp;</span
+                      >From&nbsp;</span
+                    >
                     <span v-else class="accent--text">Mint&nbsp;</span>
                   </span>
                   <router-link
@@ -265,7 +281,14 @@ export default {
   },
   watch: {
     address: "getNextPage",
-    token: "getNextPage",
+    token: {
+      deep: true,
+      handler: function (){
+        this.downloaded = false;
+        this.items = [];
+        this.getNextPage();
+      },
+    },
   },
 };
 </script>

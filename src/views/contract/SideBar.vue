@@ -236,15 +236,18 @@
                     <v-list-item-title class="body-2">
                       <span>{{
                         helpers
-                          .round(token.balance, token.decimals)
+                          .round(token.balance, token.decimals ? token.decimals : 0)
                           .toLocaleString(undefined, {
-                            maximumFractionDigits: token.decimals,
+                            maximumFractionDigits: token.decimals ? token.decimals : 0,
                           })
                       }}</span
                       >&nbsp;
-                      <span v-if="token.symbol" class="overline">{{
-                        token.symbol
-                      }}</span>
+                     <span
+                        class="caption text-uppercase font-weight-regular text--disabled"
+                        >{{
+                          token.symbol ? token.symbol : `tok_${token.token_id}`
+                        }}</span
+                      >
                     </v-list-item-title>
                   </v-list-item-content>
                 </v-list-item>

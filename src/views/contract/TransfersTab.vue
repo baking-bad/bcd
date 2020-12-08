@@ -2,7 +2,12 @@
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-row v-if="balances" no-gutters>
       <v-col cols="9" class="pa-2">
-        <TransferList :address="address" :network="network" :token="token" :contract="token.contract" />
+        <TransferList
+          :address="address"
+          :network="network"
+          :token="token"
+          :contract="token.contract"
+        />
       </v-col>
       <v-col cols="3" class="pa-2">
         <v-card flat outlined rounded>
@@ -24,15 +29,23 @@
                     <v-list-item-subtitle>
                       <span>{{
                         helpers
-                          .round(item.balance, item.decimals)
+                          .round(
+                            item.balance,
+                            token.decimals ? token.decimals : 0
+                          )
                           .toLocaleString(undefined, {
-                            maximumFractionDigits: item.decimals,
+                            maximumFractionDigits: token.decimals
+                              ? token.decimals
+                              : 0,
                           })
                       }}</span
                       >&nbsp;
-                      <span v-if="item.symbol" class="overline">{{
-                        item.symbol
-                      }}</span>
+                      <span
+                        class="caption text-uppercase font-weight-regular text--disabled"
+                        >{{
+                          token.symbol ? token.symbol : `tok_${item.token_id}`
+                        }}</span
+                      >
                     </v-list-item-subtitle>
                   </v-list-item-content>
                 </v-list-item>
