@@ -47,13 +47,7 @@
               >{{ helpers.plural(item.count, "key") }}</span
             >
             <template v-else>
-              <span class="accent--text">big_map&nbsp;</span>
-              <span
-                v-if="item.children.length === 0 && diffMode"
-                class="text--disabled"
-                >0 diffs</span
-              >
-              <span v-else :class="item.type">{{ item.value }}</span>
+              <span class="caption gray--disabled">empty</span>
             </template>
           </template>
 
