@@ -491,10 +491,7 @@ export default {
         let wallet = new BeaconWallet({ name: appName });
         const networkMap = { sandboxnet: "custom" };
         const type = networkMap[network] || network;
-        const activeAccount = await wallet.client.getActiveAccount();
-        if (activeAccount && activeAccount.network.type !== type) {
-          await wallet.client.setActiveAccount(undefined);
-        }
+        await wallet.client.setActiveAccount(undefined);
         await wallet.requestPermissions({ network: { type, rpcUrl } });
         return wallet;
       } else if (provider === "thanos") {
