@@ -113,7 +113,7 @@ getRuntimeConfig().then(async function (config) {
 
   router.addRoutes([
     {
-      path: '/@:slug([a-zA-Z0-9_]*)',
+      path: '/@:slug([a-zA-Z0-9_.:-]*)',
       name: 'slug',
       beforeEnter: async function (to, from, next) {
         return await api.getContractBySlug(to.params.slug)
