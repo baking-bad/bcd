@@ -466,10 +466,7 @@ export default {
     contractLink() {
       let routeData = {};
       if (this.contract.slug) {
-        routeData = this.$router.resolve({
-          name: "slug",
-          params: { slug: this.contract.slug },
-        });
+        routeData = {href:`/@${this.contract.slug}`};
       } else {
         routeData = this.$router.resolve({
           name: "contract",
