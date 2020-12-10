@@ -94,7 +94,7 @@
     <v-container fluid class="canvas fill-canvas pa-8">
       <div style="width: 800px; margin-left: 228px">
         <template v-if="total > 0">
-          <v-overlay :value="loading" color="data" absolute></v-overlay>
+          <v-overlay :value="loading" color="data" style="z-index:4" absolute></v-overlay>
           <span
             class="text--secondary caption ml-4"
           >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
