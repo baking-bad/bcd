@@ -20,6 +20,11 @@
       :label="label"
     ></v-text-field>
 
+    <v-btn text small link @click.prevent.stop="$clipboard(value)">
+      <v-icon small class="mr-1">mdi-content-copy</v-icon>
+      <span>Copy Value</span>
+    </v-btn>
+
     <v-btn
       v-if="value !== $route.params.address && isAddress"
       text
