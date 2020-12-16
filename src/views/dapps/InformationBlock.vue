@@ -54,8 +54,8 @@
               </v-list-item-content>
             </v-list-item>
           </v-list>
-          <span class="overline text--secondary">Social</span>
-          <div class="d-flex" style="margin-left: -3px;">
+          <span class="overline text--secondary" v-if="dapp.social_links">Social</span>
+          <div class="d-flex" style="margin-left: -3px;" v-if="dapp.social_links">
             <template v-for="link in dapp.social_links">
               <v-btn
                 :href="link"
@@ -63,7 +63,6 @@
                 icon
                 large
                 :key="link"
-                :color="getSocialColor(link)"
               >
                 <v-icon :color="getSocialColor(link)">{{
                   getSocialIcon(link)
@@ -85,6 +84,7 @@
           hide-default-header
           hide-default-footer
           class="elevation-0"
+        
           @page-count="contractsPageCount = $event"
         >
           <template v-slot:item="{ item }">
@@ -114,7 +114,7 @@
           <v-pagination
             v-model="contractsPage"
             :length="contractsPageCount"
-            :disabled="dapp.contracts.length <= 3"
+            v-if="dapp.contracts.length > 3"
           ></v-pagination>
         </div>
       </v-skeleton-loader>
@@ -161,25 +161,25 @@ export default {
     },
     getSocialColor(link) {
       if (link.includes("twitter")) {
-        return "#1da1f2";
+        return "twitter";
       } else if (link.includes("youtube")) {
-        return "#ff0000";
+        return "youtube";
       } else if (link.includes("github")) {
-        return "#24292e";
+        return "github";
       } else if (link.includes("reddit")) {
-        return "#ff4500";
+        return "reddit";
       } else if (link.includes("linkedin")) {
-        return "#007bb5";
+        return "linkedin";
       } else if (link.includes("facebook")) {
-        return "#1877f2";
+        return "facebook";
       } else if (link.startsWith("tg://") || link.includes("t.me")) {
-        return "#0088cc";
+        return "telegram";
       } else if (link.includes("gitlab")) {
-        return "#F26D25";
+        return "gitlab";
       } else if (link.includes("github")) {
-        return "#24292F";
+        return "github";
       } else if (link.includes("instagram")) {
-        return "#e30181";
+        return "instagram";
       }
       return "grey";
     },
@@ -194,6 +194,6 @@ export default {
   font-weight: 300;
 }
 .contract-item {
-  border-bottom: 1px solid var(--v-canvas-base);
+  border-left: 3px solid var(--v-primary-base);
 }
 </style>
