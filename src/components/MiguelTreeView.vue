@@ -32,20 +32,21 @@
           <span class="ml-2" v-else></span>
 
           <template v-if="item.value_type === 'big_map'">
-            <v-btn
-              v-if="!diffMode && item.val && item.val >= 0"
-              :to="{ path: `/${network}/big_map/${item.value}` }"
-              outlined
-              small
-              color="accent"
-              class="px-3 mb-1"
-            >
-              <v-icon class x-small left>mdi-vector-link</v-icon>
-              <span class>Big Map {{ item.value }}</span> </v-btn
-            >&nbsp;&nbsp;&nbsp;
-            <span v-if="item.count" class="caption gray--disabled"
-              >{{ helpers.plural(item.count, "key") }}</span
-            >
+            <template v-if="!diffMode && item.val && item.val >= 0">
+              <v-btn
+                :to="{ path: `/${network}/big_map/${item.value}` }"
+                outlined
+                small
+                color="accent"
+                class="px-3 mb-1"
+              >
+                <v-icon class x-small left>mdi-vector-link</v-icon>
+                <span class>Big Map {{ item.value }}</span> </v-btn
+              >&nbsp;&nbsp;&nbsp;
+              <span v-if="item.count" class="caption gray--disabled"
+                >{{ helpers.plural(item.count, "key") }}</span
+              >
+            </template>
             <template v-else>
               <span class="caption gray--disabled">empty</span>
             </template>
