@@ -31,11 +31,11 @@
                         helpers
                           .round(
                             item.balance,
-                            token.decimals ? token.decimals : 0
+                            item.decimals ? item.decimals : 0
                           )
                           .toLocaleString(undefined, {
-                            maximumFractionDigits: token.decimals
-                              ? token.decimals
+                            maximumFractionDigits: item.decimals
+                              ? item.decimals
                               : 0,
                           })
                       }}</span
@@ -43,7 +43,7 @@
                       <span
                         class="caption text-uppercase font-weight-regular text--disabled"
                         >{{
-                          token.symbol ? token.symbol : `tok_${item.token_id}`
+                          item.symbol ? item.symbol : `tok_${item.token_id}`
                         }}</span
                       >
                     </v-list-item-subtitle>
