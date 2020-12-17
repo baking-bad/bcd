@@ -282,7 +282,7 @@ export class BetterCallApi {
         if (res.status != 200) {
           throw new RequestFailedError(res);
         }
-        return res.data;
+        return res.request.response;
       })
   }
 
