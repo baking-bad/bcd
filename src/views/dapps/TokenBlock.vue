@@ -6,12 +6,14 @@
     <v-col cols="12" v-if="dapp.tokens">
       <v-skeleton-loader :loading="loading" type="table">
         <v-data-table :headers="headers" :items="tokens" class="transparent">
-          <template
-            v-slot:item.supply="{ item }"
-          >{{ helpers.round(item.supply, item.decimals) }} {{item.symbol}}</template>
-          <template
-            v-slot:item.transfered="{ item }"
-          >{{ helpers.round(item.transfered, item.decimals) }} {{item.symbol}}</template>
+          <template v-slot:item.supply="{ item }"
+            >{{ helpers.round(item.supply, item.decimals) }}
+            {{ item.symbol }}</template
+          >
+          <template v-slot:item.transfered="{ item }"
+            >{{ helpers.round(item.transfered, item.decimals) }}
+            {{ item.symbol }}</template
+          >
         </v-data-table>
       </v-skeleton-loader>
     </v-col>
@@ -52,14 +54,14 @@ export default {
           text: "Contract",
           value: "contract",
         },
-        // {
-        //   text: "Supply",
-        //   value: "supply",
-        // },
         {
-          text: "Transfered",
-          value: "transfered",
+          text: "Supply",
+          value: "supply",
         },
+        // {
+        //   text: "Transfered",
+        //   value: "transfered",
+        // },
         {
           text: "Decimals",
           value: "decimals",
