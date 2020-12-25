@@ -11,27 +11,47 @@
             small
             :value="period"
             v-for="(text, period) in {
-                'month': 'Monthly',
-                'year': 'Annual'
+              month: 'Monthly',
+              year: 'Annual',
             }"
             :key="period"
-          >{{ text }}</v-btn>
+            >{{ text }}</v-btn
+          >
         </v-btn-toggle>
       </v-skeleton-loader>
     </v-col>
     <v-col cols="4" v-if="dapp.dex_tokens">
-      <v-skeleton-loader :loading="loading || loadingTokenSeries" type="list-item@4">
+      <v-skeleton-loader
+        :loading="loading || loadingTokenSeries"
+        type="list-item@4"
+      >
         <v-list class="py-0">
           <v-list-item-group v-model="selectedToken" color="primary" mandatory>
             <v-list-item>
               <v-list-item-content>
                 <v-list-item-title>Tezos</v-list-item-title>
               </v-list-item-content>
+              <v-list-item-action>
+                <v-list-item-action-text>
+                  {{ `${helpers.round(dapp.volume_24_hours, 6)} \uA729` }}
+                  (24h)
+                </v-list-item-action-text>
+              </v-list-item-action>
             </v-list-item>
             <v-list-item v-for="(token, i) in dapp.dex_tokens" :key="i">
               <v-list-item-content>
-                <v-list-item-title>{{ token.name }}</v-list-item-title>
+                <v-list-item-title>{{ token.name }} </v-list-item-title>
               </v-list-item-content>
+              <v-list-item-action>
+                <v-list-item-action-text>
+                  {{
+                    `${helpers.round(token.volume_24_hours, token.decimals)} ${
+                      token.symbol
+                    }`
+                  }}
+                  (24h)
+                </v-list-item-action-text>
+              </v-list-item-action>
             </v-list-item>
           </v-list-item-group>
         </v-list>
@@ -43,8 +63,12 @@
           <v-card-text class="data pa-0" v-if="this.data[this.selectedToken]">
             <ColumnChart
               :data="this.data[this.selectedToken].series"
-              :title="`<div class='text-center py-0'>Volume, ${token !== null ? token.symbol: '\uA729'}<div>
-                <div class='text--secondary caption text-center py-0'>Total ${this.data[this.selectedToken].total} ${token !== null ? token.symbol: '\uA729'}</div>`"
+              :title="`<div class='text-center py-0'>Volume, ${
+                token !== null ? token.symbol : '\uA729'
+              }<div>
+                <div class='text--secondary caption text-center py-0'>Total ${
+                  this.data[this.selectedToken].total
+                } ${token !== null ? token.symbol : '\uA729'}</div>`"
               name="Volume"
             ></ColumnChart>
           </v-card-text>
@@ -110,7 +134,7 @@ export default {
           period,
           token.contract,
           token.token_id,
-          this.dapp.slug,
+          this.dapp.slug
         )
         .then((res) => {
           this.data[this.selectedToken] = this.prepareSeries(
@@ -148,14 +172,11 @@ export default {
       let total = 0;
       series.forEach((x) => {
         total += x[1];
-        result.push([
-          x[0],
-          this.helpers.round(x[1], decimals),
-        ]);
+        result.push([x[0], this.helpers.round(x[1], decimals)]);
       });
       return {
         series: result,
-        total:  this.helpers.round(total, decimals),
+        total: this.helpers.round(total, decimals),
       };
     },
     getSeries(period, selectedToken) {
