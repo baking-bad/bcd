@@ -7,7 +7,7 @@
         <v-btn
             class="mr-4 text--secondary"
             v-clipboard="() => tezosClientCmdline"
-            v-clipboard:success="showClipboardOK"
+            v-clipboard:success="showClipboardOk"
             text
         >
           <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
@@ -25,10 +25,24 @@
 
 <script>
 export default {
-name: "SchemaCmdLine"
+  name: "SchemaCmdLine",
+  props: {
+    showCmd: Boolean,
+    tezosClientCmdline: String,
+    showClipboardOk: Function,
+  },
+  watch: {
+    showCmd(val) {
+      this.showCmdline = val;
+    },
+    showCmdline(val) {
+      this.$emit('cmdLineChange', val)
+    },
+  },
+  data() {
+    return {
+      showCmdline: false,
+    }
+  }
 }
 </script>
-
-<style scoped>
-
-</style>
