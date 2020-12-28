@@ -2,234 +2,14 @@
   <div>
     <v-card flat outlined>
       <v-card-text class="pa-0 pt-6 data">
-        <h2 class="ml-6 font-weight-regular" v-if="title">
-          <span class="mr-2 hash font-weight-thin">{{ title }}</span>
-          <span v-if="isStorage" class="secondary--text" v-html="helpers.shortcut(name)"></span>
-          <span v-else class="hash secondary--text">{{ name }}</span>
-        </h2>
-        <v-form class="pa-6 pr-4">
-          <div v-if="schema" class="pl-6 pt-4 pr-4 pb-4 mr-2 mb-6 canvas">
-            <div class="mb-6">
-              <span class="caption font-weight-medium text-uppercase text--disabled">{{ header }}</span>
-            </div>
-
-            <div class="mb-6" v-if="!isDeploy">
-              <v-btn-toggle v-model="selectedFillType" color="primary" dense mandatory>
-                <v-btn
-                  small
-                  :value="data.value"
-                  v-for="data in fillTypes"
-                  :key="data.value"
-                >{{ data.text }}</v-btn>
-              </v-btn-toggle>
-            </div>
-
-            <v-skeleton-loader :loading="!show" type="article" transition="fade-transition">
-              <v-jsf v-model="model" :schema="schema" v-if="show">
-                <template slot="custom-codemirror" slot-scope="{value, label, on}">
-                  <label class="codemirror-label">{{ label }}</label>
-                  <div class="mb-6 ba-1" style="border-radius: 3px;">
-                    <Michelson v-on="on" :code="value" mutable></Michelson>
-                  </div>
-                </template>
-                <template slot="custom-contract" slot-scope="props">
-                  <v-text-field
-                    :ref="props.fullKey"
-                    :label="props.label"
-                    v-on="props.on"
-                    dense
-                    outlined
-                    :value="props.value"
-                    :placeholder="props.label"
-                    :hint="props.schema.tag ? `\'Fill\' button finds the newest contract with this contract type. If contract's absent nothing is set.` : ``"
-                    persistent-hint
-                  >
-                    <template v-slot:append-outer v-if="props.schema.tag">
-                      <v-btn text small @click="getRandomContract(props)" class="text--secondary">
-                        <v-icon small left>mdi-format-horizontal-align-left</v-icon>fill
-                      </v-btn>
-                    </template>
-                  </v-text-field>
-                </template>
-              </v-jsf>
-              <div v-else></div>
-            </v-skeleton-loader>
-          </div>
-          <div class="px-6 pt-4 pb-0 mr-2 mb-6 canvas optional-settings">
-            <div class="mb-6">
-              <span
-                class="caption font-weight-medium text-uppercase text--disabled"
-              >Optional settings</span>
-            </div>
-            <div class="mb-6">
-              <v-btn-toggle
-                v-model="selectedNetwork"
-                color="primary"
-                dense
-                mandatory
-                v-if="isStorage || isDeploy"
-              >
-                <v-btn :value="n" :key="n" v-for="n in networks" small>{{ n }}</v-btn>
-              </v-btn-toggle>
-            </div>
-            <div class="d-flex">
-              <v-text-field
-                id="source"
-                name="source"
-                v-model="settings.source"
-                outlined
-                dense
-                label="source"
-                placeholder="address"
-                hint="Press 'fill' to paste your wallet address"
-              >
-                <template v-slot:append-outer>
-                  <v-menu offset-y>
-                    <template v-slot:activator="{ on, attrs }">
-                      <v-btn
-                        text
-                        small
-                        :loading="importing"
-                        class="text--secondary"
-                        v-bind="attrs"
-                        v-on="on"
-                      >
-                        <v-icon small left>mdi-format-horizontal-align-left</v-icon>
-                        <span>fill</span>
-                      </v-btn>
-                    </template>
-                    <v-list>
-                      <v-list-item
-                        v-for="(item, index) in importActions"
-                        :key="index"
-                        @click="item.callback()"
-                      >
-                        <v-list-item-title>{{ item.text }}</v-list-item-title>
-                        <v-list-item-avatar>
-                          <v-icon>{{ item.icon }}</v-icon>
-                        </v-list-item-avatar>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                </template>
-              </v-text-field>
-            </div>
-            <v-text-field
-              id="amount"
-              name="amount"
-              v-model="settings.amount"
-              outlined
-              dense
-              label="amount"
-              type="number"
-              placeholder="mutez"
-            ></v-text-field>
-          </div>
-          <div class="d-flex align-center">
-            <v-menu offset-y>
-              <template v-slot:activator="{ on, attrs }">
-                <v-btn
-                  outlined
-                  :loading="execution"
-                  class="px-6"
-                  color="accent"
-                  v-bind="attrs"
-                  v-on="on"
-                >
-                  <span>Execute</span>
-                  <v-icon small class="ml-1">mdi-creation</v-icon>
-                </v-btn>
-              </template>
-              <v-list>
-                <template v-for="(item, index) in executeActions">
-                  <v-list-item :key="index" @click="item.callback()" v-if="item.callback">
-                    <v-list-item-title>{{ item.text }}</v-list-item-title>
-                    <v-list-item-avatar>
-                      <v-icon>{{ item.icon }}</v-icon>
-                    </v-list-item-avatar>
-                  </v-list-item>
-                </template>
-              </v-list>
-            </v-menu>
-          </div>
-        </v-form>
-        <div v-show="alertData" class="pa-6 pt-0">
-          <v-alert type="error" prominent text class="ma-0">
-            <span class="text--primary">{{ alertData }}</span>
-          </v-alert>
-        </div>
-        <div v-show="injectedOpHash" class="pa-6 pt-0">
-          <v-alert type="success" prominent text class="ma-0">
-            <div class="d-flex justify-space-between align-center">
-              <span class="text--primary">Operation has been sucessfully injected</span>
-              <v-btn
-                text
-                class="text--secondary hash"
-                style="text-transform: none;"
-                :to="`/${network}/opg/${injectedOpHash}`"
-                target="_blank"
-              >
-                <span v-html="helpers.shortcut(injectedOpHash)"></span>
-              </v-btn>
-            </div>
-          </v-alert>
-        </div>
+        <SchemaHeader />
+        <SchemaForm />
+        <SchemaAlertData />
+        <SchemaAlertSuccess />
       </v-card-text>
     </v-card>
-    <v-dialog v-model="showResultOPG" width="1200" scrollable>
-      <v-card flat outlined>
-        <v-card-title class="sidebar d-flex justify-center pa-4">
-          <span class="body-1 font-weight-medium text-uppercase text--secondary">Simulation result</span>
-          <div
-            v-if="simulatedOperation && settings.source"
-            class="d-flex flex-column align-center ml-10"
-          >
-            <span class="overline">gas limit</span>
-            <span class="hash" style="font-size: 14px; line-height: 14px;">{{ gasLimit }}</span>
-          </div>
-          <div
-            v-if="simulatedOperation && settings.source"
-            class="d-flex flex-column align-center ml-10"
-          >
-            <span class="overline">storage limit</span>
-            <span class="hash" style="font-size: 14px; line-height: 14px;">{{ storageLimit }}</span>
-          </div>
-          <v-spacer></v-spacer>
-          <v-btn icon small @click="showResultOPG = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text class="pa-0">
-          <InternalOperation :data="simulatedOperation" noheader />
-          <template v-for="(intop, intid) in simulatedOperation.internal_operations">
-            <v-divider :key="'divider' + intid"></v-divider>
-            <InternalOperation :data="intop" :mainOperation="simulatedOperation" :key="intid" />
-          </template>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="showCmdline" width="800" scrollable :retain-focus="false">
-      <v-card flat outlined>
-        <v-card-title class="sidebar d-flex justify-center py-2">
-          <span class="body-1 font-weight-medium text-uppercase text--secondary">Tezos-client</span>
-          <v-spacer></v-spacer>
-          <v-btn
-            class="mr-4 text--secondary"
-            v-clipboard="() => tezosClientCmdline"
-            v-clipboard:success="showClipboardOK"
-            text
-          >
-            <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
-          </v-btn>
-          <v-btn icon small @click="showCmdline = false">
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </v-card-title>
-        <v-card-text class="pa-6">
-          <span class="hash">{{ tezosClientCmdline }}</span>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
+    <SchemaResultOPG />
+    <SchemaCmdLine />
     <RawJsonViewer
       :show.sync="showRawJSON"
       :raw="parametersJSON"
@@ -241,16 +21,29 @@
 <script>
 import { mapActions } from "vuex";
 import { Tezos } from "@taquito/taquito";
-import { BeaconWallet } from "@taquito/beacon-wallet";
+// import { BeaconWallet } from "@taquito/beacon-wallet";
 import { ThanosWallet } from "@thanos-wallet/dapp";
+import { DAppClient } from '@airgap/beacon-sdk'
 
 import InternalOperation from "@/components/InternalOperation.vue";
 import RawJsonViewer from "@/components/RawJsonViewer.vue";
 import Michelson from "@/components/Michelson.vue";
+import SchemaForm from "@/components/SchemaForm";
+import SchemaResultOPG from "@/components/SchemaResultOPG";
+import SchemaCmdLine from "@/components/SchemaCmdLine";
+import SchemaAlertSuccess from "@/components/SchemaAlertSuccess";
+import SchemaAlertData from "@/components/SchemaAlertData";
+import SchemaHeader from "@/components/SchemaHeader";
 
 export default {
   name: "Schema",
   components: {
+    SchemaHeader,
+    SchemaAlertData,
+    SchemaAlertSuccess,
+    SchemaCmdLine,
+    SchemaResultOPG,
+    SchemaForm,
     InternalOperation,
     RawJsonViewer,
     Michelson,
