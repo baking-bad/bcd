@@ -1,9 +1,9 @@
 <template>
   <div class="px-6 pt-4 pb-0 mr-2 mb-6 canvas optional-settings">
     <div class="mb-6">
-              <span
-                  class="caption font-weight-medium text-uppercase text--disabled"
-              >Optional settings</span>
+      <span
+          class="caption font-weight-medium text-uppercase text--disabled"
+      >Optional settings</span>
     </div>
     <div class="mb-6">
       <v-btn-toggle
@@ -20,7 +20,7 @@
       <v-text-field
           id="source"
           name="source"
-          v-model="settings.source"
+          v-model="source"
           outlined
           dense
           label="source"
@@ -61,7 +61,7 @@
     <v-text-field
         id="amount"
         name="amount"
-        v-model="settings.amount"
+        v-model="amount"
         outlined
         dense
         label="amount"
@@ -73,7 +73,33 @@
 
 <script>
 export default {
-name: "SchemaOptionalSettings"
+  name: "SchemaOptionalSettings",
+  props: {
+    settings: Object,
+    isStorage: Boolean,
+    isDeploy: Boolean,
+    importing: Boolean,
+    networks: Array,
+    importActions: Array,
+  },
+  watch: {
+    selectedNetwork(val) {
+      this.$emit('selectedNetwork', val);
+    },
+    source(val) {
+      this.$emit('settingsChange', {key: 'source', val});
+    },
+    amount(val) {
+      this.$emit('settingsChange', {key: 'amount', val});
+    },
+  },
+  data() {
+    return {
+      selectedNetwork: null,
+      source: null,
+      amount: null,
+    }
+  }
 }
 </script>
 

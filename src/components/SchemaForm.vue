@@ -33,10 +33,10 @@
                 outlined
                 :value="props.value"
                 :placeholder="props.label"
-                :hint="props.schema.tag ? `\'Fill\' button finds the newest contract with this contract type. If contract's absent nothing is set.` : ``"
+                :hint="schema.tag ? `\'Fill\' button finds the newest contract with this contract type. If contract's absent nothing is set.` : ``"
                 persistent-hint
             >
-              <template v-slot:append-outer v-if="props.schema.tag">
+              <template v-slot:append-outer v-if="schema.tag">
                 <v-btn text small @click="getRandomContract(props)" class="text--secondary">
                   <v-icon small left>mdi-format-horizontal-align-left</v-icon>fill
                 </v-btn>
@@ -47,17 +47,62 @@
         <div v-else></div>
       </v-skeleton-loader>
     </div>
-    <SchemaOptionalSettings />
-    <SchemaFormExecutionActions />
+    <SchemaOptionalSettings
+      :is-storage="isStorage"
+      :is-deploy="isDeploy"
+      :networks="networks"
+      :settings="settings"
+      :importing="importing"
+      :import-actions="importActions"
+      @selectedNetwork="(val) => this.$emit('selectedNetwork', val)"
+      @settingsChange="(args) => this.$emit('settingsChange', args)"
+    />
+    <SchemaFormExecutionActions
+      :execution="execution"
+      :execute-actions="executeActions"
+    />
   </v-form>
 </template>
 
 <script>
 import SchemaOptionalSettings from "@/components/SchemaOptionalSettings";
 import SchemaFormExecutionActions from "@/components/SchemaFormExecutionActions";
+import Michelson from "@/components/Michelson";
+
 export default {
 name: "SchemaForm",
-  components: {SchemaFormExecutionActions, SchemaOptionalSettings}
+  components: {
+    Michelson,
+    SchemaFormExecutionActions,
+    SchemaOptionalSettings
+  },
+  props: {
+    schema: Object,
+    settings: Object,
+    header: String,
+    isDeploy: Boolean,
+    isStorage: Boolean,
+    importing: Boolean,
+    execution: Boolean,
+    fillTypes: Array,
+    networks: Array,
+    importActions: Array,
+    executeActions: Array,
+  },
+  watch: {
+    selectedFillType(val) {
+      this.$emit('selectedFillType', val)
+    },
+    model(val) {
+      this.$emit('modelChange', val)
+    },
+  },
+  data() {
+    return {
+      selectedFillType: 'empty',
+      model: {},
+    };
+  },
 }
 </script>
 

@@ -8,8 +8,25 @@
             :is-storage="true"
             :storage-html="helpers.shortcut(name)"
             :storage-name="name"
+            :fill-types="fillTypes"
+            @selectedFillType="setSelectedFillType"
+            @modelChange="setModel"
         />
-        <SchemaForm />
+        <SchemaForm
+            :schema="schema"
+            :fill-types="fillTypes"
+            :header="header"
+            :is-deploy="isDeploy"
+            :is-storage="isStorage"
+            :networks="networks"
+            :settings="settings"
+            :importing="importing"
+            :import-actions="importActions"
+            :execution="execution"
+            :execute-actions="executeActions"
+            @selectedNetwork="setSelectedNetwork"
+            @settingsChange="setSettings"
+        />
         <SchemaAlertData />
         <SchemaAlertSuccess />
       </v-card-text>
@@ -27,13 +44,13 @@
 <script>
 import { mapActions } from "vuex";
 import { Tezos } from "@taquito/taquito";
-// import { BeaconWallet } from "@taquito/beacon-wallet";
+import { BeaconWallet } from "@taquito/beacon-wallet";
 import { ThanosWallet } from "@thanos-wallet/dapp";
-import { DAppClient } from '@airgap/beacon-sdk'
-
-import InternalOperation from "@/components/InternalOperation.vue";
+// import { DAppClient } from '@airgap/beacon-sdk'
+import Vue from 'vue';
+// import InternalOperation from "@/components/InternalOperation.vue";
 import RawJsonViewer from "@/components/RawJsonViewer.vue";
-import Michelson from "@/components/Michelson.vue";
+// import Michelson from "@/components/Michelson.vue";
 import SchemaForm from "@/components/SchemaForm";
 import SchemaResultOPG from "@/components/SchemaResultOPG";
 import SchemaCmdLine from "@/components/SchemaCmdLine";
@@ -50,9 +67,7 @@ export default {
     SchemaCmdLine,
     SchemaResultOPG,
     SchemaForm,
-    InternalOperation,
     RawJsonViewer,
-    Michelson,
   },
   props: {
     value: Object,
@@ -149,6 +164,18 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
+    setSelectedFillType(val) {
+      this.selectedFillType = val;
+    },
+    setModel(val) {
+      Vue.set(this, 'model', val);
+    },
+    setSelectedNetwork(val) {
+      this.selectedNetwork = val;
+    },
+    setSettings({key, val}) {
+      Vue.set(this.settings, key, val);
+    },
     async setExecuteActions() {
       this.executeActions = [
         {
