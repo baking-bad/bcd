@@ -2,7 +2,13 @@
   <div>
     <v-card flat outlined>
       <v-card-text class="pa-0 pt-6 data">
-        <SchemaHeader />
+        <SchemaHeader
+            v-if="title"
+            :title="title"
+            :is-storage="true"
+            :storage-html="helpers.shortcut(name)"
+            :storage-name="name"
+        />
         <SchemaForm />
         <SchemaAlertData />
         <SchemaAlertSuccess />
