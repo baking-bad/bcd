@@ -13,6 +13,7 @@
             @modelChange="setModel"
         />
         <SchemaForm
+            :show="show"
             :schema="schema"
             :schema-model="model"
             :schema-selected-fill-type="selectedFillType"
@@ -135,7 +136,7 @@ export default {
     model: {},
   }),
   async created() {
-    this.setExecuteActions();
+    await this.setExecuteActions();
     this.setFillTypes();
 
     this.importActions = [
@@ -147,7 +148,7 @@ export default {
     ];
 
     this.networks = Object.keys(this.config.rpc_endpoints);
-    this.selectedNetwork = this.network;
+    this.setSelectedNetwork(this.network);
   },
   computed: {
     storageLimit() {
@@ -290,7 +291,7 @@ export default {
             const src = this.settings.source || "%YOUR_ADDRESS%";
             const entrypoint = this.name;
             this.tezosClientCmdline = `transfer ${amount} from ${src} to ${this.address} --entrypoint '${entrypoint}' --arg '${arg}'`;
-            this.showCmdline = show;
+            this.setCmdline(show);
           }
           return res;
         })
@@ -324,7 +325,7 @@ export default {
             if (res.length > 1) {
               this.simulatedOperation.internal_operations = res.slice(1);
             }
-            this.showResultOPG = true;
+            this.setResultOPG(true);
           }
         })
         .catch((err) => {
@@ -361,7 +362,8 @@ export default {
       this.importing = true;
       try {
         let wallet = await this.getWallet(provider, this.network);
-        this.settings.source = await wallet.getPKH();
+        const publicKeyHash = await wallet.getPKH();
+        this.setSettings({key: 'source', val: publicKeyHash})
       } catch (err) {
         this.alertData = err.message;
         console.log(err);
@@ -483,7 +485,7 @@ export default {
         .search(props.schema.tag, ["contract"], 0, [this.network], [], {}, 0)
         .then((res) => {
           if (res.items) {
-            this.model[props.fullKey] = res.items[0].value;
+            Vue.set(this.model, props.fullKey, res.items[0].value);
           }
         })
         .catch((err) => {
