@@ -286,7 +286,7 @@ export default {
       handler: function (){
         this.downloaded = false;
         this.items = [];
-        this.last_id = '';
+        this.lastId = '';
         this.getNextPage();
       },
     },
