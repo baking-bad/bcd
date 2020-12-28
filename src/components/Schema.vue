@@ -46,7 +46,12 @@
       :storage-limit="storageLimit"
       @resultOPGchange="setResultOPG"
     />
-    <SchemaCmdLine />
+    <SchemaCmdLine
+      :showCmd="showCmdline"
+      :tezos-client-cmdline="tezosClientCmdline"
+      :show-clipboard-ok="showClipboardOK"
+      @cmdLineChange="setCmdline"
+    />
     <RawJsonViewer
       :show.sync="showRawJSON"
       :raw="parametersJSON"
@@ -192,6 +197,9 @@ export default {
     },
     setResultOPG(val) {
       this.showResultOPG = val;
+    },
+    setCmdline(val) {
+      this.showCmdline = val;
     },
     async setExecuteActions() {
       this.executeActions = [
