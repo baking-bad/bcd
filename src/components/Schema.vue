@@ -27,8 +27,15 @@
             @selectedNetwork="setSelectedNetwork"
             @settingsChange="setSettings"
         />
-        <SchemaAlertData />
-        <SchemaAlertSuccess />
+        <SchemaAlertData
+            v-show="alertData"
+            :alert-data="alertData"
+        />
+        <SchemaAlertSuccess
+            v-show="injectedOpHash"
+            :injected-op-hash="injectedOpHash"
+            :network="network"
+        />
       </v-card-text>
     </v-card>
     <SchemaResultOPG />
