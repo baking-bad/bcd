@@ -54,6 +54,7 @@
       :settings="settings"
       :importing="importing"
       :import-actions="importActions"
+      :schema-selected-network="schemaSelectedNetwork"
       @selectedNetwork="(val) => this.$emit('selectedNetwork', val)"
       @settingsChange="(args) => this.$emit('settingsChange', args)"
     />
@@ -68,6 +69,7 @@
 import SchemaOptionalSettings from "@/components/SchemaOptionalSettings";
 import SchemaFormExecutionActions from "@/components/SchemaFormExecutionActions";
 import Michelson from "@/components/Michelson";
+import Vue from 'vue';
 
 export default {
 name: "SchemaForm",
@@ -79,6 +81,9 @@ name: "SchemaForm",
   props: {
     schema: Object,
     settings: Object,
+    schemaModel: Object,
+    schemaSelectedFillType: String,
+    schemaSelectedNetwork: Object,
     header: String,
     isDeploy: Boolean,
     isStorage: Boolean,
@@ -95,6 +100,12 @@ name: "SchemaForm",
     },
     model(val) {
       this.$emit('modelChange', val)
+    },
+    schemaModel(val) {
+      Vue.set(this, 'model', val);
+    },
+    schemaSelectedFillType(val) {
+      Vue.set(this, 'selectedFillType', val);
     },
   },
   data() {
