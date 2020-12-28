@@ -81,6 +81,7 @@ export default {
     importing: Boolean,
     networks: Array,
     importActions: Array,
+    schemaSelectedNetwork: Object,
   },
   watch: {
     selectedNetwork(val) {
@@ -91,6 +92,13 @@ export default {
     },
     amount(val) {
       this.$emit('settingsChange', {key: 'amount', val});
+    },
+    schemaSelectedNetwork(val) {
+      this.selectedNetwork = val;
+    },
+    settings(val) {
+      this.source = val.source;
+      this.amount = val.amount;
     },
   },
   data() {

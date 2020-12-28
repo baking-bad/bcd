@@ -14,6 +14,9 @@
         />
         <SchemaForm
             :schema="schema"
+            :schema-model="model"
+            :schema-selected-fill-type="selectedFillType"
+            :schema-selected-network="selectedNetwork"
             :fill-types="fillTypes"
             :header="header"
             :is-deploy="isDeploy"
