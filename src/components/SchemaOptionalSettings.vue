@@ -81,7 +81,7 @@ export default {
     importing: Boolean,
     networks: Array,
     importActions: Array,
-    schemaSelectedNetwork: Object,
+    schemaSelectedNetwork: String,
   },
   watch: {
     selectedNetwork(val) {
