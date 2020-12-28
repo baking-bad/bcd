@@ -30,10 +30,10 @@
 
 <script>
 export default {
-name: "SchemaFormExecutionActions"
+  name: "SchemaFormExecutionActions",
+  props: {
+    execution: Boolean,
+    executeActions: Array,
+  }
 }
 </script>
-
-<style scoped>
-
-</style>
