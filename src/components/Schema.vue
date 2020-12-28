@@ -69,11 +69,8 @@ import { mapActions } from "vuex";
 import { Tezos } from "@taquito/taquito";
 import { BeaconWallet } from "@taquito/beacon-wallet";
 import { ThanosWallet } from "@thanos-wallet/dapp";
-// import { DAppClient } from '@airgap/beacon-sdk'
 import Vue from 'vue';
-// import InternalOperation from "@/components/InternalOperation.vue";
 import RawJsonViewer from "@/components/RawJsonViewer.vue";
-// import Michelson from "@/components/Michelson.vue";
 import SchemaForm from "@/components/SchemaForm";
 import SchemaResultOPG from "@/components/SchemaResultOPG";
 import SchemaCmdLine from "@/components/SchemaCmdLine";
@@ -205,37 +202,62 @@ export default {
     setCmdline(val) {
       this.showCmdline = val;
     },
+    simulateActionCallback() {
+      return this.isParameter ? () => this.simulateOperation() : null;
+    },
+    rawJsonActionCallback() {
+      if (this.isParameter) {
+        return () => this.generateParameters(true, true)
+      } else if (this.isDeploy) {
+        return null;
+      }
+      return () => this.prepareContractToFork(true);
+    },
+    tezosClientActionCallback() {
+      return this.isParameter
+          ? () => this.generateParameters(false, true)
+          : null;
+    },
+    beaconClientActionCallback() {
+      if (this.isParameter) {
+        return async () => this.callContract("beacon");
+      } else if (this.isDeploy) {
+        return async () => this.makeDeploy("beacon", this.script);
+      }
+
+      return async () => this.fork("beacon");
+    },
+    thanosActionCallback() {
+      return async () => {
+        if (this.isParameter) {
+          return this.callContract("thanos");
+        } else if (this.isDeploy) {
+          return async () => this.makeDeploy("thanos", this.script)
+        }
+        return async () => this.fork("thanos");
+      }
+    },
     async setExecuteActions() {
       this.executeActions = [
         {
           text: "Simulate",
           icon: "mdi-play-circle-outline",
-          callback: this.isParameter ? () => this.simulateOperation() : null,
+          callback: this.simulateActionCallback()
         },
         {
           text: "Raw JSON",
           icon: "mdi-code-json",
-          callback: this.isParameter
-            ? () => this.generateParameters(true, true)
-            : this.isDeploy
-            ? null
-            : () => this.prepareContractToFork(true),
+          callback: this.rawJsonActionCallback()
         },
         {
           text: "Tezos-client",
           icon: "mdi-console-line",
-          callback: this.isParameter
-            ? () => this.generateParameters(false, true)
-            : null,
+          callback: this.tezosClientActionCallback()
         },
         {
           text: "Beacon",
           icon: "mdi-lighthouse",
-          callback: this.isParameter
-            ? async () => this.callContract("beacon")
-            : this.isDeploy
-            ? async () => this.makeDeploy("beacon", this.script)
-            : async () => this.fork("beacon"),
+          callback: this.beaconClientActionCallback()
         },
       ];
 
@@ -244,12 +266,7 @@ export default {
           this.executeActions.push({
             text: "Thanos",
             icon: "mdi-hand-right",
-            callback: async () =>
-              this.isParameter
-                ? this.callContract("thanos")
-                : this.isDeploy
-                ? async () => this.makeDeploy("thanos", this.script)
-                : async () => this.fork("thanos"),
+            callback: this.thanosActionCallback()
           });
           this.importActions.push({
             text: "Thanos",
