@@ -38,7 +38,14 @@
         />
       </v-card-text>
     </v-card>
-    <SchemaResultOPG />
+    <SchemaResultOPG
+      :showResult="showResultOPG"
+      :simulated-operations="simulatedOperation"
+      :settings="settings"
+      :gas-limit="gasLimit"
+      :storage-limit="storageLimit"
+      @resultOPGchange="setResultOPG"
+    />
     <SchemaCmdLine />
     <RawJsonViewer
       :show.sync="showRawJSON"
@@ -182,6 +189,9 @@ export default {
     },
     setSettings({key, val}) {
       Vue.set(this.settings, key, val);
+    },
+    setResultOPG(val) {
+      this.showResultOPG = val;
     },
     async setExecuteActions() {
       this.executeActions = [
