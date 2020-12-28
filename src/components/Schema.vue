@@ -43,7 +43,7 @@
     </v-card>
     <SchemaResultOPG
       :showResult="showResultOPG"
-      :simulated-operations="simulatedOperation"
+      :simulated-operation="simulatedOperation"
       :settings="settings"
       :gas-limit="gasLimit"
       :storage-limit="storageLimit"
