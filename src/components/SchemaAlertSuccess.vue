@@ -19,10 +19,10 @@
 
 <script>
 export default {
-name: "SchemaAlertSuccess"
+  name: "SchemaAlertSuccess",
+  props: {
+    network: String,
+    injectedOpHash: String,
+  }
 }
 </script>
-
-<style scoped>
-
-</style>
