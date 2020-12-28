@@ -34,11 +34,31 @@
 </template>
 
 <script>
+import InternalOperation from "@/components/InternalOperation";
 export default {
-name: "SchemaResultOPG"
+name: "SchemaResultOPG",
+  components: {
+    InternalOperation
+  },
+  props: {
+    showResult: Boolean,
+    simulatedOperation: Object,
+    settings: Object,
+    gasLimit: Number,
+    storageLimit: Number,
+  },
+  watch: {
+    showResult(val) {
+      this.showResultOPG = val;
+    },
+    showResultOPG(val) {
+      this.$emit('resultOPGchange', val)
+    },
+  },
+  data() {
+    return {
+      showResultOPG: false,
+    }
+  }
 }
 </script>
-
-<style scoped>
-
-</style>
