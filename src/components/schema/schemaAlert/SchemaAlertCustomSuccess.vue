@@ -2,7 +2,7 @@
   <div class="pa-6 pt-0">
     <v-alert type="success" prominent text class="ma-0">
       <div class="d-flex justify-space-between align-center">
-        <span class="text--primary">{{ successText }}</span>
+        <span class="text--primary" v-html="successText"></span>
       </div>
     </v-alert>
   </div>
@@ -16,3 +16,4 @@ export default {
   }
 }
 </script>
+
