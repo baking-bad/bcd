@@ -32,8 +32,9 @@
             @settingsChange="setSettings"
         />
         <SchemaAlertData
-            v-show="alertData"
+            v-if="alertData"
             :alert-data="alertData"
+            @dismiss="showAlertData('')"
         />
         <SchemaAlertOpHashSuccess
             v-show="injectedOpHash"
@@ -116,7 +117,7 @@ export default {
     executeActions: [],
     execution: false,
     importing: false,
-    alertData: null,
+    alertData: '',
     injectedOpHash: null,
     simulatedOperation: {},
     showRawJSON: false,
@@ -207,6 +208,9 @@ export default {
     showSuccessMessage(text) {
       this.successText = text;
     },
+    showAlertData(text) {
+      this.alertData = text;
+    },
     rawJsonActionCallback() {
       if (this.isParameter) {
         return () => this.generateParameters(true, true)
@@ -267,42 +271,42 @@ export default {
         },
         OPERATION_REQUEST_ERROR: {
           handler: () => {
-            this.alertData = 'The operations was aborted.';
+            this.showAlertData('The operations was aborted.');
           }
         },
         SIGN_REQUEST_ERROR: {
           handler: () => {
-            this.alertData = 'The operations was aborted.';
+            this.showAlertData('The operations was aborted.');
           }
         },
         BROADCAST_REQUEST_ERROR: {
           handler: () => {
-            this.alertData = 'Problem with broadcasting operation...';
+            this.showAlertData('Problem with broadcasting operation...');
           }
         },
         INTERNAL_ERROR: {
           handler: () => {
-            this.alertData = 'Internal error, sorry 😔';
+            this.showAlertData('Internal error 😔');
           }
         },
         UNKNOWN: {
           handler: () => {
-            this.alertData = 'Unknown error, sorry 😔';
+            this.showAlertData('Unknown error 😔');
           }
         },
         CHANNEL_CLOSED: {
           handler: () => {
-            this.alertData = 'Channel closed.';
+            this.showAlertData('Channel closed.');
           }
         },
         NO_PERMISSIONS: {
           handler: () => {
-            this.alertData = 'No permissions.';
+            this.showAlertData('No permissions.');
           }
         },
         LOCAL_RATE_LIMIT_REACHED: {
           handler: () => {
-            this.alertData = 'No permissions';
+            this.showAlertData('No permissions.');
           }
         },
         OPERATION_REQUEST_SUCCESS: {
@@ -352,7 +356,7 @@ export default {
         })
         .catch((err) => {
           if (err.response) {
-            this.alertData = err.response.data.message;
+            this.showAlertData(err.response.data.message);
           } else {
             this.showError(err);
           }
@@ -385,7 +389,7 @@ export default {
         })
         .catch((err) => {
           if (err.response) {
-            this.alertData = err.response.data.message;
+            this.showAlertData(err.response.data.message);
           } else {
             this.showError(err);
           }
@@ -424,7 +428,8 @@ export default {
         });
         this.injectedOpHash = result.opHash;
       } catch (err) {
-        this.alertData = err.message;
+        await err;
+        this.showAlertData(err.message);
         console.log(err);
       } finally {
         this.execution = false;
@@ -447,7 +452,7 @@ export default {
         })
         .catch((err) => {
           if (err.response) {
-            this.alertData = err.response.data.message;
+            this.showAlertData(err.response.data.message);
           } else {
             this.showError(err);
           }
@@ -467,7 +472,7 @@ export default {
         });
         await this.deploy(data.code, data.storage);
       } catch (err) {
-        this.alertData = err.message;
+        this.showAlertData(err.message);
         console.log(err);
       } finally {
         this.execution = false;
@@ -484,7 +489,7 @@ export default {
         });
         await this.deploy(data.code, data.storage);
       } catch (err) {
-        this.alertData = err.message;
+        this.showAlertData(err.message);
         console.log(err);
       } finally {
         this.execution = false;
@@ -507,7 +512,7 @@ export default {
           this.$emit("onDeploy", originationOp);
         })
         .catch((err) => {
-          this.alertData = err.message;
+          this.showAlertData(err.message);
           console.log(err);
         });
     },
@@ -521,7 +526,7 @@ export default {
           }
         })
         .catch((err) => {
-          this.alertData = err.message;
+          this.showAlertData(err.message);
           console.log(err);
         })
         .finally(() => (this.show = true));
@@ -530,12 +535,12 @@ export default {
   watch: {
     execution: function (newValue) {
       if (newValue) {
-        this.alertData = null;
+        this.showAlertData('');
         this.injectedOpHash = null;
       }
     },
     name: function () {
-      this.alertData = null;
+      this.showAlertData('');
       this.parametersJSON = null;
       this.tezosClientCmdline = null;
       this.simulatedOperation = {};
