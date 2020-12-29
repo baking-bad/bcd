@@ -19,7 +19,7 @@
 
 <script>
 export default {
-  name: "SchemaAlertSuccess",
+  name: "SchemaAlertOpHashSuccess",
   props: {
     network: String,
     injectedOpHash: String,

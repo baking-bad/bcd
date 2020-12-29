@@ -85,7 +85,7 @@
 </template>
 
 <script>
-import Schema from "@/components/Schema.vue";
+import Schema from "@/components/schema/Schema.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
 
 export default {
