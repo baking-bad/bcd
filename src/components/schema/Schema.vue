@@ -35,11 +35,15 @@
             v-show="alertData"
             :alert-data="alertData"
         />
-        <SchemaAlertSuccess
+        <SchemaAlertOpHashSuccess
             v-show="injectedOpHash"
             :injected-op-hash="injectedOpHash"
             :network="network"
         />
+        <SchemaAlertCustomSuccess
+            v-if="successText"
+            :success-text="successText"
+          />
       </v-card-text>
     </v-card>
     <SchemaResultOPG
@@ -67,23 +71,25 @@
 <script>
 import { mapActions } from "vuex";
 import { Tezos } from "@taquito/taquito";
-import { BeaconWallet } from "@taquito/beacon-wallet";
 import { ThanosWallet } from "@thanos-wallet/dapp";
 import Vue from 'vue';
 import RawJsonViewer from "@/components/RawJsonViewer.vue";
-import SchemaForm from "@/components/SchemaForm";
-import SchemaResultOPG from "@/components/SchemaResultOPG";
-import SchemaCmdLine from "@/components/SchemaCmdLine";
-import SchemaAlertSuccess from "@/components/SchemaAlertSuccess";
-import SchemaAlertData from "@/components/SchemaAlertData";
-import SchemaHeader from "@/components/SchemaHeader";
+import SchemaForm from "./schemaForm/SchemaForm";
+import SchemaResultOPG from "./schemaDialog/SchemaResultOPG";
+import SchemaCmdLine from "./schemaDialog/SchemaCmdLine";
+import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
+import SchemaAlertData from "./schemaAlert/SchemaAlertData";
+import SchemaHeader from "./schemaComponents/SchemaHeader";
+import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
+import { DAppClient, TezosOperationType } from '@airgap/beacon-sdk'
 
 export default {
   name: "Schema",
   components: {
+    SchemaAlertCustomSuccess,
     SchemaHeader,
     SchemaAlertData,
-    SchemaAlertSuccess,
+    SchemaAlertOpHashSuccess,
     SchemaCmdLine,
     SchemaResultOPG,
     SchemaForm,
@@ -119,6 +125,9 @@ export default {
     showSimulationSettings: false,
     tezosClientCmdline: null,
     parametersJSON: null,
+    successText: '',
+    successTimeoutObj: null,
+    successTimeoutTime: 5000,
     settings: {
       source: null,
       sender: null,
@@ -205,6 +214,13 @@ export default {
     simulateActionCallback() {
       return this.isParameter ? () => this.simulateOperation() : null;
     },
+    showSuccessMessage(text) {
+      this.successText = text;
+      clearTimeout(this.successTimeoutObj);
+      this.successTimeoutObj = setTimeout(() => {
+        this.successText = '';
+      }, this.successTimeoutTime);
+    },
     rawJsonActionCallback() {
       if (this.isParameter) {
         return () => this.generateParameters(true, true)
@@ -255,7 +271,7 @@ export default {
           callback: this.tezosClientActionCallback()
         },
         {
-          text: "Beacon",
+          text: "DApp Client",
           icon: "mdi-lighthouse",
           callback: this.beaconClientActionCallback()
         },
@@ -360,10 +376,19 @@ export default {
       const rpcUrl = this.config.rpc_endpoints[network];
 
       if (provider === "beacon") {
-        let wallet = new BeaconWallet({ name: appName });
+        let wallet = new DAppClient({
+          name: appName,
+          eventHandlers: {
+            PERMISSION_REQUEST_SUCCESS: {
+              handler: () => {
+                this.showSuccessMessage('Permission granted successfully');
+              },
+            },
+          },
+        });
         const networkMap = { sandboxnet: "custom" };
         const type = networkMap[network] || network;
-        await wallet.client.setActiveAccount(undefined);
+        await wallet.setActiveAccount(undefined);
         await wallet.requestPermissions({ network: { type, rpcUrl } });
         return wallet;
       } else if (provider === "thanos") {
@@ -394,19 +419,16 @@ export default {
 
       this.execution = true;
       try {
-        let wallet = await this.getWallet(provider, this.network);
-        Tezos.setProvider({
-          rpc: this.config.rpc_endpoints[this.network],
-          wallet,
+        let client = await this.getWallet(provider, this.network);
+        const operation = {
+          kind: TezosOperationType.TRANSACTION,
+          to: this.address,
+          amount: String(parseInt(this.settings.amount || "0")),
+          parameters: JSON.parse(JSON.stringify(parameter)),
+        }
+        const result = await client.requestOperation({
+          operationDetails: [operation]
         });
-        const result = await Tezos.wallet
-          .transfer({
-            to: this.address,
-            amount: parseInt(this.settings.amount || "0"),
-            parameter: JSON.parse(JSON.stringify(parameter)),
-            mutez: true,
-          })
-          .send();
         this.injectedOpHash = result.opHash;
       } catch (err) {
         this.alertData = err.message;
