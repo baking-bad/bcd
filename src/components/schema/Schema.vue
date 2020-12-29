@@ -125,8 +125,6 @@ export default {
     tezosClientCmdline: null,
     parametersJSON: null,
     successText: '',
-    successTimeoutObj: null,
-    successTimeoutTime: 5000,
     settings: {
       source: null,
       sender: null,
@@ -207,10 +205,6 @@ export default {
     },
     showSuccessMessage(text) {
       this.successText = text;
-      clearTimeout(this.successTimeoutObj);
-      this.successTimeoutObj = setTimeout(() => {
-        this.successText = '';
-      }, this.successTimeoutTime);
     },
     rawJsonActionCallback() {
       if (this.isParameter) {
@@ -257,6 +251,69 @@ export default {
           callback: this.beaconClientActionCallback()
         },
       ];
+    },
+    getWalletEventHandlers() {
+      return {
+        PERMISSION_REQUEST_SUCCESS: {
+          handler: () => {
+            return null;
+          },
+        },
+        PERMISSION_REQUEST_ERROR: {
+          handler: () => {
+            this.importing = false;
+          }
+        },
+        OPERATION_REQUEST_ERROR: {
+          handler: () => {
+            this.alertData = 'The operations was aborted.';
+          }
+        },
+        SIGN_REQUEST_ERROR: {
+          handler: () => {
+            this.alertData = 'The operations was aborted.';
+          }
+        },
+        BROADCAST_REQUEST_ERROR: {
+          handler: () => {
+            this.alertData = 'Problem with broadcasting operation...';
+          }
+        },
+        INTERNAL_ERROR: {
+          handler: () => {
+            this.alertData = 'Internal error, sorry 😔';
+          }
+        },
+        UNKNOWN: {
+          handler: () => {
+            this.alertData = 'Unknown error, sorry 😔';
+          }
+        },
+        CHANNEL_CLOSED: {
+          handler: () => {
+            this.alertData = 'Channel closed.';
+          }
+        },
+        NO_PERMISSIONS: {
+          handler: () => {
+            this.alertData = 'No permissions.';
+          }
+        },
+        LOCAL_RATE_LIMIT_REACHED: {
+          handler: () => {
+            this.alertData = 'No permissions';
+          }
+        },
+        OPERATION_REQUEST_SUCCESS: {
+          handler: (data) => {
+            const link = `https://${data.account.network.type}.tzkt.io/${data.output.transactionHash}`;
+            const successMessage = `The transaction
+               has successfully been broadcasted
+                to the network with the following hash: <a href="${link}">${data.output.transactionHash}</a>`;
+            this.showSuccessMessage(successMessage);
+          }
+        }
+      }
     },
     setFillTypes() {
       if (this.isDeploy) return;
@@ -340,32 +397,13 @@ export default {
       const rpcUrl = this.config.rpc_endpoints[network];
       let wallet = new DAppClient({
         name: appName,
-        eventHandlers: {
-          PERMISSION_REQUEST_SUCCESS: {
-            handler: () => {
-              return null;
-            },
-          },
-        },
+        eventHandlers: this.getWalletEventHandlers(),
       });
       const networkMap = { sandboxnet: "custom" };
       const type = networkMap[network] || network;
       await wallet.setActiveAccount(undefined);
       await wallet.requestPermissions({ network: { type, rpcUrl } });
       return wallet;
-    },
-    async importSource() {
-      this.importing = true;
-      try {
-        let wallet = await this.getWallet(this.network);
-        const publicKeyHash = await wallet.getPKH();
-        this.setSettings({key: 'source', val: publicKeyHash})
-      } catch (err) {
-        this.alertData = err.message;
-        console.log(err);
-      } finally {
-        this.importing = false;
-      }
     },
     async callContract() {
       let parameter = await this.generateParameters(true);
