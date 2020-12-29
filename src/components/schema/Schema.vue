@@ -71,7 +71,6 @@
 <script>
 import { mapActions } from "vuex";
 import { Tezos } from "@taquito/taquito";
-import { ThanosWallet } from "@thanos-wallet/dapp";
 import Vue from 'vue';
 import RawJsonViewer from "@/components/RawJsonViewer.vue";
 import SchemaForm from "./schemaForm/SchemaForm";
@@ -144,14 +143,6 @@ export default {
   async created() {
     await this.setExecuteActions();
     this.setFillTypes();
-
-    this.importActions = [
-      {
-        text: "Beacon",
-        icon: "mdi-lighthouse",
-        callback: async () => this.importSource("beacon"),
-      },
-    ];
 
     this.networks = Object.keys(this.config.rpc_endpoints);
     this.setSelectedNetwork(this.network);
@@ -236,22 +227,12 @@ export default {
     },
     beaconClientActionCallback() {
       if (this.isParameter) {
-        return async () => this.callContract("beacon");
+        return async () => this.callContract();
       } else if (this.isDeploy) {
-        return async () => this.makeDeploy("beacon", this.script);
+        return async () => this.makeDeploy(this.script);
       }
 
-      return async () => this.fork("beacon");
-    },
-    thanosActionCallback() {
-      return async () => {
-        if (this.isParameter) {
-          return this.callContract("thanos");
-        } else if (this.isDeploy) {
-          return async () => this.makeDeploy("thanos", this.script)
-        }
-        return async () => this.fork("thanos");
-      }
+      return async () => this.fork();
     },
     async setExecuteActions() {
       this.executeActions = [
@@ -276,23 +257,6 @@ export default {
           callback: this.beaconClientActionCallback()
         },
       ];
-
-      try {
-        if (await ThanosWallet.isAvailable()) {
-          this.executeActions.push({
-            text: "Thanos",
-            icon: "mdi-hand-right",
-            callback: this.thanosActionCallback()
-          });
-          this.importActions.push({
-            text: "Thanos",
-            icon: "mdi-hand-right",
-            callback: async () => this.importSource("thanos"),
-          });
-        }
-      } catch (err) {
-        console.log(err);
-      }
     },
     setFillTypes() {
       if (this.isDeploy) return;
@@ -371,39 +335,29 @@ export default {
         })
         .finally(() => (this.execution = false));
     },
-    async getWallet(provider, network) {
+    async getWallet(network) {
       const appName = "Better Call Dev";
       const rpcUrl = this.config.rpc_endpoints[network];
-
-      if (provider === "beacon") {
-        let wallet = new DAppClient({
-          name: appName,
-          eventHandlers: {
-            PERMISSION_REQUEST_SUCCESS: {
-              handler: () => {
-                this.showSuccessMessage('Permission granted successfully');
-              },
+      let wallet = new DAppClient({
+        name: appName,
+        eventHandlers: {
+          PERMISSION_REQUEST_SUCCESS: {
+            handler: () => {
+              return null;
             },
           },
-        });
-        const networkMap = { sandboxnet: "custom" };
-        const type = networkMap[network] || network;
-        await wallet.setActiveAccount(undefined);
-        await wallet.requestPermissions({ network: { type, rpcUrl } });
-        return wallet;
-      } else if (provider === "thanos") {
-        let wallet = new ThanosWallet(appName);
-        const networkMap = { sandboxnet: "sandbox" };
-        await wallet.connect(networkMap[network] || network);
-        return wallet;
-      } else {
-        throw `Unsupported provider: ${provider}`;
-      }
+        },
+      });
+      const networkMap = { sandboxnet: "custom" };
+      const type = networkMap[network] || network;
+      await wallet.setActiveAccount(undefined);
+      await wallet.requestPermissions({ network: { type, rpcUrl } });
+      return wallet;
     },
-    async importSource(provider) {
+    async importSource() {
       this.importing = true;
       try {
-        let wallet = await this.getWallet(provider, this.network);
+        let wallet = await this.getWallet(this.network);
         const publicKeyHash = await wallet.getPKH();
         this.setSettings({key: 'source', val: publicKeyHash})
       } catch (err) {
@@ -413,13 +367,13 @@ export default {
         this.importing = false;
       }
     },
-    async callContract(provider) {
+    async callContract() {
       let parameter = await this.generateParameters(true);
       if (!parameter) return;
 
       this.execution = true;
       try {
-        let client = await this.getWallet(provider, this.network);
+        let client = await this.getWallet(this.network);
         const operation = {
           kind: TezosOperationType.TRANSACTION,
           to: this.address,
@@ -462,7 +416,7 @@ export default {
         })
         .finally(() => (this.execution = false));
     },
-    async fork(provider) {
+    async fork() {
       if (this.execution) return;
 
       this.execution = true;
@@ -472,7 +426,7 @@ export default {
           address: this.address,
           storage: this.model,
         });
-        await this.deploy(provider, data.code, data.storage);
+        await this.deploy(data.code, data.storage);
       } catch (err) {
         this.alertData = err.message;
         console.log(err);
@@ -480,7 +434,7 @@ export default {
         this.execution = false;
       }
     },
-    async makeDeploy(provider) {
+    async makeDeploy() {
       if (this.execution) return;
 
       this.execution = true;
@@ -489,7 +443,7 @@ export default {
           script: JSON.stringify(this.script),
           storage: this.model,
         });
-        await this.deploy(provider, data.code, data.storage);
+        await this.deploy(data.code, data.storage);
       } catch (err) {
         this.alertData = err.message;
         console.log(err);
@@ -497,8 +451,8 @@ export default {
         this.execution = false;
       }
     },
-    async deploy(provider, code, storage) {
-      let wallet = await this.getWallet(provider, this.selectedNetwork);
+    async deploy(code, storage) {
+      let wallet = await this.getWallet(this.selectedNetwork);
       Tezos.setProvider({
         rpc: this.config.rpc_endpoints[this.selectedNetwork],
         wallet,
