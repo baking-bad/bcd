@@ -43,6 +43,7 @@
         <SchemaAlertCustomSuccess
             v-if="successText"
             :success-text="successText"
+            @dismiss="showSuccessMessage('')"
           />
       </v-card-text>
     </v-card>
@@ -308,8 +309,8 @@ export default {
           handler: (data) => {
             const link = `https://${data.account.network.type}.tzkt.io/${data.output.transactionHash}`;
             const successMessage = `The transaction
-               has successfully been broadcasted
-                to the network with the following hash: <a href="${link}">${data.output.transactionHash}</a>`;
+               has successfully been <a href="${link}">broadcasted</a>
+                to the network.`;
             this.showSuccessMessage(successMessage);
           }
         }
