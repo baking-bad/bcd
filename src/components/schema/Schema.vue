@@ -28,6 +28,7 @@
             :import-actions="importActions"
             :execution="execution"
             :execute-actions="executeActions"
+            @executeAction="stopGettingWallet"
             @selectedNetwork="setSelectedNetwork"
             @settingsChange="setSettings"
         />
@@ -126,6 +127,7 @@ export default {
     showSimulationSettings: false,
     tezosClientCmdline: null,
     parametersJSON: null,
+    isGettingWalletProgress: false,
     successText: '',
     settings: {
       source: null,
@@ -184,6 +186,12 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
+    stopGettingWallet() {
+      if (this.isGettingWalletProgress) {
+        this.execution = false;
+        this.importing = false;
+      }
+    },
     setSelectedFillType(val) {
       this.selectedFillType = val;
     },
@@ -443,7 +451,9 @@ export default {
 
       this.execution = true;
       try {
+        this.isGettingWalletProgress = true;
         let client = await this.getWallet(this.network);
+        this.isGettingWalletProgress = false;
         const operation = {
           kind: TezosOperationType.TRANSACTION,
           destination: this.address,
