@@ -64,7 +64,7 @@
         v-model="amount"
         outlined
         dense
-        label="amount"
+        :label="isStorage ? 'balance' : 'amount'"
         type="number"
         placeholder="mutez"
     ></v-text-field>
