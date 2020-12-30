@@ -419,8 +419,11 @@ export default {
       const accounts = localStorage.getItem('beacon:accounts');
       if (isLast && accounts) {
         const parsedAccounts = JSON.parse(accounts);
-        const account = parsedAccounts[parsedAccounts.length - 1].accountIdentifier;
-        localStorage.setItem('beacon:active-account', account);
+        const connectionTimes = parsedAccounts.map(item => item.connectedAt);
+        const recentConnectionTime = Math.max(...connectionTimes);
+        const accountRecentConnectionTime = parsedAccounts.find(item => item.connectedAt === recentConnectionTime);
+        const accountID = accountRecentConnectionTime.accountIdentifier;
+        localStorage.setItem('beacon:active-account', accountID);
       } else {
         localStorage.setItem('beacon:active-account', undefined);
       }
