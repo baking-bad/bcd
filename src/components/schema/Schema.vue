@@ -224,14 +224,14 @@ export default {
           ? () => this.generateParameters(false, true)
           : null;
     },
-    beaconClientActionCallback() {
+    beaconClientActionCallback(isLast) {
       if (this.isParameter) {
-        return async () => this.callContract();
+        return async () => this.callContract(isLast);
       } else if (this.isDeploy) {
-        return async () => this.makeDeploy(this.script);
+        return async () => this.makeDeploy(isLast);
       }
 
-      return async () => this.fork();
+      return async () => this.fork(isLast);
     },
     async setExecuteActions() {
       this.executeActions = [
@@ -251,9 +251,14 @@ export default {
           callback: this.tezosClientActionCallback()
         },
         {
-          text: "DApp Client",
+          text: "Wallet",
           icon: "mdi-lighthouse",
-          callback: this.beaconClientActionCallback()
+          callback: this.beaconClientActionCallback(false)
+        },
+        {
+          text: "Last used wallet",
+          icon: "mdi-lighthouse",
+          callback: this.beaconClientActionCallback(true)
         },
       ];
     },
@@ -410,7 +415,19 @@ export default {
       await wallet.requestPermissions({ network: { type, rpcUrl } });
       return wallet;
     },
-    async callContract() {
+    setUpActiveAccount(isLast) {
+      const accounts = localStorage.getItem('beacon:accounts');
+      if (isLast && accounts) {
+        const parsedAccounts = JSON.parse(accounts);
+        const account = parsedAccounts[parsedAccounts.length - 1].accountIdentifier;
+        localStorage.setItem('beacon:active-account', account);
+      } else {
+        localStorage.setItem('beacon:active-account', undefined);
+      }
+    },
+    async callContract(isLast) {
+      this.setUpActiveAccount(isLast);
+
       let parameter = await this.generateParameters(true);
       if (!parameter) return;
 
@@ -460,7 +477,9 @@ export default {
         })
         .finally(() => (this.execution = false));
     },
-    async fork() {
+    async fork(isLast) {
+      this.setUpActiveAccount(isLast);
+
       if (this.execution) return;
 
       this.execution = true;
@@ -478,7 +497,9 @@ export default {
         this.execution = false;
       }
     },
-    async makeDeploy() {
+    async makeDeploy(isLast) {
+      this.setUpActiveAccount(isLast);
+
       if (this.execution) return;
 
       this.execution = true;
