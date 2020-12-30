@@ -226,12 +226,21 @@ export default {
     },
     beaconClientActionCallback(isLast) {
       if (this.isParameter) {
-        return async () => this.callContract(isLast);
+        return async () => {
+          this.setUpActiveAccount(isLast);
+          await this.callContract(isLast);
+        }
       } else if (this.isDeploy) {
-        return async () => this.makeDeploy(isLast);
+        return async () => {
+          this.setUpActiveAccount(isLast);
+          await this.makeDeploy(isLast);
+        }
       }
 
-      return async () => this.fork(isLast);
+      return async () => {
+        this.setUpActiveAccount(isLast);
+        await this.fork(isLast);
+      }
     },
     async setExecuteActions() {
       this.executeActions = [
@@ -428,9 +437,7 @@ export default {
         localStorage.setItem('beacon:active-account', undefined);
       }
     },
-    async callContract(isLast) {
-      this.setUpActiveAccount(isLast);
-
+    async callContract() {
       let parameter = await this.generateParameters(true);
       if (!parameter) return;
 
@@ -480,9 +487,7 @@ export default {
         })
         .finally(() => (this.execution = false));
     },
-    async fork(isLast) {
-      this.setUpActiveAccount(isLast);
-
+    async fork() {
       if (this.execution) return;
 
       this.execution = true;
@@ -500,9 +505,7 @@ export default {
         this.execution = false;
       }
     },
-    async makeDeploy(isLast) {
-      this.setUpActiveAccount(isLast);
-
+    async makeDeploy() {
       if (this.execution) return;
 
       this.execution = true;
