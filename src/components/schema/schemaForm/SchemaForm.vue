@@ -61,6 +61,7 @@
     <SchemaFormExecutionActions
       :execution="execution"
       :execute-actions="executeActions"
+      @executeAction="$emit('executeAction')"
     />
   </v-form>
 </template>

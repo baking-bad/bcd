@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-center">
+  <div class="d-flex align-center" @click="$emit('executeAction')">
     <v-menu offset-y>
       <template v-slot:activator="{ on, attrs }">
         <v-btn
