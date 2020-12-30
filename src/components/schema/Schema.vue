@@ -128,6 +128,7 @@ export default {
     tezosClientCmdline: null,
     parametersJSON: null,
     isGettingWalletProgress: false,
+    isLastWalletOption: false,
     successText: '',
     settings: {
       source: null,
@@ -236,18 +237,33 @@ export default {
       if (this.isParameter) {
         return async () => {
           this.setUpActiveAccount(isLast);
-          await this.callContract(isLast);
+          await this.callContract();
         }
       } else if (this.isDeploy) {
         return async () => {
           this.setUpActiveAccount(isLast);
-          await this.makeDeploy(isLast);
+          await this.makeDeploy();
         }
       }
 
       return async () => {
         this.setUpActiveAccount(isLast);
-        await this.fork(isLast);
+        await this.fork();
+      }
+    },
+    beaconWalletGetAddress() {
+      return async () => {
+        this.setUpActiveAccount(false);
+        let client = await this.getWallet(this.network);
+        const account = await client.getActiveAccount();
+        return account.address;
+      }
+    },
+    lastWalletAddress() {
+      return () => {
+        const accounts = localStorage.getItem('beacon:accounts');
+        const accountRecentConnectionTime = this.getLastUsedAccount(accounts);
+        return accountRecentConnectionTime.address;
       }
     },
     async setExecuteActions() {
@@ -272,17 +288,49 @@ export default {
           icon: "mdi-lighthouse",
           callback: this.beaconClientActionCallback(false)
         },
-        {
+      ];
+      this.importActions.push(
+          {
+            text: "Wallet",
+            icon: "mdi-lighthouse",
+            callback: this.beaconWalletGetAddress()
+          }
+      );
+      if (localStorage.getItem('beacon:active-account')) {
+        this.executeActions.push({
           text: "Last used wallet",
           icon: "mdi-lighthouse",
           callback: this.beaconClientActionCallback(true)
-        },
-      ];
+        });
+        this.importActions.push(
+            {
+              text: "Last used wallet",
+              icon: "mdi-lighthouse",
+              callback: this.lastWalletAddress()
+            }
+        );
+        this.isLastWalletOption = true;
+      }
     },
     getWalletEventHandlers() {
       return {
         PERMISSION_REQUEST_SUCCESS: {
           handler: () => {
+            if (!this.isLastWalletOption) {
+              this.executeActions.push({
+                text: "Last used wallet",
+                icon: "mdi-lighthouse",
+                callback: this.beaconClientActionCallback(true)
+              });
+              this.importActions.push(
+                  {
+                    text: "Last used wallet",
+                    icon: "mdi-lighthouse",
+                    callback: this.lastWalletAddress()
+                  }
+              );
+              this.isLastWalletOption = true;
+            }
             return null;
           },
         },
@@ -420,6 +468,7 @@ export default {
         .finally(() => (this.execution = false));
     },
     async getWallet(network) {
+      this.isGettingWalletProgress = true;
       const appName = "Better Call Dev";
       const rpcUrl = this.config.rpc_endpoints[network];
       let wallet = new DAppClient({
@@ -430,15 +479,19 @@ export default {
       const type = networkMap[network] || network;
       await wallet.setActiveAccount(undefined);
       await wallet.requestPermissions({ network: { type, rpcUrl } });
+      this.isGettingWalletProgress = false;
       return wallet;
+    },
+    getLastUsedAccount(accounts) {
+      const parsedAccounts = JSON.parse(accounts);
+      const connectionTimes = parsedAccounts.map(item => item.connectedAt);
+      const recentConnectionTime = Math.max(...connectionTimes);
+      return parsedAccounts.find(item => item.connectedAt === recentConnectionTime);
     },
     setUpActiveAccount(isLast) {
       const accounts = localStorage.getItem('beacon:accounts');
       if (isLast && accounts) {
-        const parsedAccounts = JSON.parse(accounts);
-        const connectionTimes = parsedAccounts.map(item => item.connectedAt);
-        const recentConnectionTime = Math.max(...connectionTimes);
-        const accountRecentConnectionTime = parsedAccounts.find(item => item.connectedAt === recentConnectionTime);
+        const accountRecentConnectionTime = this.getLastUsedAccount(accounts);
         const accountID = accountRecentConnectionTime.accountIdentifier;
         localStorage.setItem('beacon:active-account', accountID);
       } else {
@@ -451,9 +504,7 @@ export default {
 
       this.execution = true;
       try {
-        this.isGettingWalletProgress = true;
         let client = await this.getWallet(this.network);
-        this.isGettingWalletProgress = false;
         const operation = {
           kind: TezosOperationType.TRANSACTION,
           destination: this.address,

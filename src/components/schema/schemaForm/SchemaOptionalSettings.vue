@@ -46,7 +46,7 @@
               <v-list-item
                   v-for="(item, index) in importActions"
                   :key="index"
-                  @click="item.callback()"
+                  @click="setSource(item)"
               >
                 <v-list-item-title>{{ item.text }}</v-list-item-title>
                 <v-list-item-avatar>
@@ -99,6 +99,11 @@ export default {
     settings(val) {
       this.source = val.source;
       this.amount = val.amount;
+    },
+  },
+  methods: {
+    async setSource(item) {
+      this.source = await item.callback();
     },
   },
   data() {
