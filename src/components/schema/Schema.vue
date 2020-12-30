@@ -420,7 +420,6 @@ export default {
         const operation = {
           kind: TezosOperationType.TRANSACTION,
           destination: this.address,
-          to: this.address,
           amount: String(parseInt(this.settings.amount || "0")),
           parameters: JSON.parse(JSON.stringify(parameter)),
         }
