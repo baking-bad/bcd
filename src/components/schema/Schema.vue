@@ -584,7 +584,7 @@ export default {
         this.execution = false;
       }
     },
-    async deploy(code, storage) {
+    async deploy(code) {
       const client = await this.getWallet(this.selectedNetwork);
       const operation = {
         kind: TezosOperationType.ORIGINATION,
