@@ -73,7 +73,6 @@
 
 <script>
 import { mapActions } from "vuex";
-import { Tezos } from "@taquito/taquito";
 import Vue from 'vue';
 import RawJsonViewer from "@/components/RawJsonViewer.vue";
 import SchemaForm from "./schemaForm/SchemaForm";
@@ -583,26 +582,23 @@ export default {
         this.execution = false;
       }
     },
-    async deploy(code, storage) {
-      let wallet = await this.getWallet(this.selectedNetwork);
-      Tezos.setProvider({
-        rpc: this.config.rpc_endpoints[this.selectedNetwork],
-        wallet,
-      });
-      Tezos.wallet
-        .originate({
-          code: code,
-          init: storage,
-        })
-        .send()
-        .then((originationOp) => {
-          this.injectedOpHash = originationOp.opHash;
-          this.$emit("onDeploy", originationOp);
-        })
-        .catch((err) => {
-          this.showAlertData(err.message);
-          console.log(err);
+    async deploy(code) {
+      const client = await this.getWallet(this.selectedNetwork);
+      const operation = {
+        kind: TezosOperationType.ORIGINATION,
+        script: code,
+        balance: 0,
+      }
+      try {
+        const result = await client.requestOperation({
+          operationDetails: [operation]
         });
+        this.injectedOpHash = result.opHash;
+        this.$emit("onDeploy", result);
+      } catch (err) {
+        this.showAlertData(err.message);
+        console.log(err);
+      }
     },
     getRandomContract(props) {
       this.show = false;
