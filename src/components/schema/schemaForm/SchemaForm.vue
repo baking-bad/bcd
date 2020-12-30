@@ -37,7 +37,7 @@
                 persistent-hint
             >
               <template v-slot:append-outer v-if="schema.tag">
-                <v-btn text small @click="getRandomContract(props)" class="text--secondary">
+                <v-btn text small @click="$emit('getRandomContract', props)" class="text--secondary">
                   <v-icon small left>mdi-format-horizontal-align-left</v-icon>fill
                 </v-btn>
               </template>

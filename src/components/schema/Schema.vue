@@ -28,9 +28,11 @@
             :import-actions="importActions"
             :execution="execution"
             :execute-actions="executeActions"
+            @getRandomContract="getRandomContract"
             @executeAction="stopGettingWallet"
             @selectedNetwork="setSelectedNetwork"
             @settingsChange="setSettings"
+            @selectedFillType="setSelectedFillType"
         />
         <SchemaAlertData
             v-if="alertData"
@@ -582,12 +584,12 @@ export default {
         this.execution = false;
       }
     },
-    async deploy(code) {
+    async deploy(code, storage) {
       const client = await this.getWallet(this.selectedNetwork);
       const operation = {
         kind: TezosOperationType.ORIGINATION,
-        script: code,
-        balance: 0,
+        script: JSON.stringify(code),
+        balance: this.settings.amount ? String(this.settings.amount) : "0",
       }
       try {
         const result = await client.requestOperation({
