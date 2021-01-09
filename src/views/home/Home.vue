@@ -1,11 +1,16 @@
 <template>
   <v-container class="fill-height canvas" fluid>
     <HomeToolbar />
-    <v-row no-gutters style="height:calc(100% - 64);">
+    <v-row no-gutters style="height: calc(100% - 64)">
       <v-col cols="12">
         <v-row>
-          <v-col cols="12" class="d-flex align-center justify-center primary--text">
-            <span style="font-family: Script1-Casual; font-size: 72px;">Better Call Dev</span>
+          <v-col
+            cols="12"
+            class="d-flex align-center justify-center primary--text"
+          >
+            <span style="font-family: Script1-Casual; font-size: 72px"
+              >Better Call Dev</span
+            >
           </v-col>
         </v-row>
         <v-row justify="center" no-gutters>
@@ -13,19 +18,22 @@
             <SearchBox />
           </v-col>
           <v-col cols="12" align="center">
-            <v-btn 
+            <v-btn
               large
               depressed
               color="border"
               class="text--secondary mr-5"
-              to="/dapps"><v-icon left color="error">mdi-fire</v-icon>Explore DApps</v-btn>
+              to="/dapps"
+              ><v-icon left color="error">mdi-fire</v-icon>Explore DApps</v-btn
+            >
             <v-btn
               large
               depressed
               color="border"
               class="text--secondary mr-5"
               to="/search"
-            >Advanced Search</v-btn>
+              >Advanced Search</v-btn
+            >
             <v-btn
               large
               depressed
@@ -33,7 +41,8 @@
               class="text--secondary"
               :loading="pickingRandom"
               @click="pickRandom"
-            >Pick Random</v-btn>
+              >Pick Random</v-btn
+            >
           </v-col>
         </v-row>
       </v-col>
@@ -48,7 +57,10 @@
             <v-col class="pl-12"></v-col>
             <v-col>Unique contracts</v-col>
             <v-col>
-              <router-link style="text-decoration: none;" :to="`/stats/mainnet/fa12`">
+              <router-link
+                style="text-decoration: none"
+                :to="`/stats/mainnet/fa12`"
+              >
                 <span class="secondary--text">FA tokens</span>
               </router-link>
             </v-col>
@@ -68,7 +80,11 @@
                 small
                 text
                 :to="`/stats/${item.network}/general`"
-                :class="item.network === 'mainnet' ? 'secondary--text' : 'text--primary'"
+                :class="
+                  item.network === 'mainnet'
+                    ? 'secondary--text'
+                    : 'text--primary'
+                "
               >
                 <span>{{ item.network }}</span>
               </v-btn>
@@ -76,7 +92,9 @@
             <v-col>{{ item.unique_contracts }}</v-col>
             <v-col>{{ item.fa_count }}</v-col>
             <v-col>{{ item.contract_calls }}</v-col>
-            <v-col class="body-2 text-left pl-12">{{ helpers.formatDatetime(item.time) }}</v-col>
+            <v-col class="body-2 text-left pl-12">{{
+              helpers.formatDatetime(item.time)
+            }}</v-col>
           </v-row>
         </v-col>
       </v-row>
@@ -116,6 +134,7 @@ export default {
   },
   data: () => ({
     stats: [],
+    indices: {},
     connecting: true,
     pickingRandom: false,
     hasOpenCallback: false,
@@ -158,15 +177,27 @@ export default {
     },
     onMessage(data) {
       if (data.body) {
-        this.stats = data.body.sort(function(a, b) {
-          if (a.network === "mainnet") {
-            return -1;
-          } else if (b.network === "mainnet") {
-            return 1;
-          } else {
-            return b.network.localeCompare(a.network);
+        if (this.stats.length == 0) {
+          this.stats = data.body.sort(function (a, b) {
+            if (a.network === "mainnet") {
+              return -1;
+            } else if (b.network === "mainnet") {
+              return 1;
+            } else {
+              return b.network.localeCompare(a.network);
+            }
+          });
+          for (let i = 0; i < this.stats.length; i++) {
+            this.indices[this.stats[i].network] = i
           }
-        });
+        } else {
+          for (let i = 0; i < data.body.length; i++){
+            let idx = this.indices[data.body[i].network];
+            if (idx !== undefined) {
+              Object.assign(this.stats[idx], data.body[i]);
+            }
+          }
+        }
       }
     },
     onOpen() {
