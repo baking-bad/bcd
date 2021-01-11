@@ -12,6 +12,7 @@
       <v-col cols="3" class="pa-2">
         <TransfersCard
           @selectedToken="updateSelectedToken"
+          :default-selected-token="selectedToken"
           :balances="balances"
         />
       </v-col>
