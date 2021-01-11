@@ -9,10 +9,10 @@
                   <span v-if="item.name">{{ item.name }}</span>
                   <span v-else-if="item.symbol">{{ item.symbol }}</span>
                   <v-row v-else>
-                    <v-col cols="6">
+                    <v-col class="pt-0 pb-0" cols="6">
                       <span v-html="helpers.shortcut(item.contract)"></span>
                     </v-col>
-                    <v-col class="text-right" cols="6">
+                    <v-col class="text-right pt-0 pb-0" cols="6">
                                             <span>{{
                                                 helpers
                                                     .round(
@@ -56,7 +56,7 @@
 export default {
   name: "TransfersCard",
   props: {
-    balances: Object,
+    balances: Array,
     defaultSelectedToken: Number,
   },
   watch: {
