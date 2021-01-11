@@ -8,33 +8,37 @@
                 <v-list-item-title>
                   <span v-if="item.name">{{ item.name }}</span>
                   <span v-else-if="item.symbol">{{ item.symbol }}</span>
-                  <span v-else
-                  >{{ item.contract.substring(0, 10) }} ... ({{
-                      item.token_id
-                    }})</span
-                  >
+                  <v-row v-else>
+                    <v-col cols="6">
+                      <span v-html="helpers.shortcut(item.contract)"></span>
+                    </v-col>
+                    <v-col class="text-right" cols="6">
+                                            <span>{{
+                                                helpers
+                                                    .round(
+                                                        item.balance,
+                                                        item.decimals ? item.decimals : 0
+                                                    )
+                                                    .toLocaleString(undefined, {
+                                                      maximumFractionDigits: item.decimals
+                                                          ? item.decimals
+                                                          : 0,
+                                                    })
+                                              }}</span
+                                            >&nbsp;
+                      <span
+                          class="caption text-uppercase font-weight-regular text--disabled"
+                      >{{
+                          item.symbol ? item.symbol : item.token_id
+                        }}</span
+                      >
+                    </v-col>
+                  </v-row>
                 </v-list-item-title>
 
                 <v-list-item-subtitle>
-                      <span>{{
-                          helpers
-                              .round(
-                                  item.balance,
-                                  item.decimals ? item.decimals : 0
-                              )
-                              .toLocaleString(undefined, {
-                                maximumFractionDigits: item.decimals
-                                    ? item.decimals
-                                    : 0,
-                              })
-                        }}</span
-                      >&nbsp;
-                  <span
-                      class="caption text-uppercase font-weight-regular text--disabled"
-                  >{{
-                      item.symbol ? item.symbol : `tok_${item.token_id}`
-                    }}</span
-                  >
+                  <span class="caption text--disabled">token ID:</span>
+                  <span> {{item.token_id}}</span>
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>

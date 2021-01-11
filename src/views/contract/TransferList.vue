@@ -154,7 +154,7 @@
               </v-col>
               <v-col cols="2">
                 <v-btn
-                  class="text--secondary hash"
+                  class="text--secondary hash hash-link"
                   text
                   style="text-transform: none"
                   :to="{
@@ -294,10 +294,12 @@ export default {
 };
 </script>
 
-
 <style scoped>
 .item {
   background-color: var(--v-canvas-base);
   opacity: 0.8;
+}
+.hash-link {
+  max-width: 100%;
 }
 </style>
