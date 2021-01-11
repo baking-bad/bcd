@@ -53,8 +53,12 @@ export default {
   name: "TransfersCard",
   props: {
     balances: Object,
+    defaultSelectedToken: Number,
   },
   watch: {
+    defaultSelectedToken(newVal) {
+      this.selectedToken = newVal;
+    },
     selectedToken: {
       handler(newVal) {
         this.$emit('selectedToken', newVal)
@@ -62,6 +66,9 @@ export default {
       deep: true,
       immediate: true
     }
+  },
+  created() {
+    this.selectedToken = this.defaultSelectedToken
   },
   data() {
     return {
