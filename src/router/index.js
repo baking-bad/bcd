@@ -22,7 +22,7 @@ import CodeTab from '@/views/contract/CodeTab.vue'
 import InteractTab from '@/views/contract/InteractTab.vue'
 import StorageTab from '@/views/contract/StorageTab.vue'
 import ContractTokensTab from '@/views/contract/TokensTab.vue'
-import TransfersTab from '@/views/contract/TransfersTab.vue'
+import TransfersTab from '@/views/contract/TransfersTab/TransfersTab.vue'
 import MetadataTab from '@/views/contract/MetadataTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
 
