@@ -14,6 +14,8 @@ import DomainsTab from '@/views/stats/DomainsTab.vue'
 
 import Diff from '@/views/diff/Diff.vue'
 
+import Docs from '@/views/docs/Docs.vue'
+
 import Contract from '@/views/contract/Contract.vue'
 import OperationsTab from '@/views/contract/OperationsTab.vue'
 import CodeTab from '@/views/contract/CodeTab.vue'
@@ -145,6 +147,14 @@ const router = new Router({
         default: Diff,
       },
       name: 'diff',
+      props: { default: true },
+    },
+    {
+      path: '/docs',
+      components: {
+        default: Docs
+      },
+      name: 'docs',
       props: { default: true },
     },
     { // backward compatibility
