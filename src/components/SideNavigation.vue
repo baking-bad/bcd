@@ -90,7 +90,7 @@
           <span v-if="$vuetify.theme.dark">Disable dark theme</span>
           <span v-else>Enable dark theme</span>
         </v-tooltip>
-        <v-tooltip right v-if="isAuthorized && !config.SINGLE_USER_MODE">
+        <v-tooltip right v-if="isAuthorized && !config.SANDBOX_MODE">
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click="clickLogout" class="mt-6">
               <v-icon color="grey lighten-2">mdi-logout</v-icon>
