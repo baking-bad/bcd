@@ -14,6 +14,13 @@
       <template v-slot:label="{ item }">
         <div :class="`${item.kind} pl-1`">
           <span
+              v-if="item.name.length ===`''`.length"
+              class="text--accent-1"
+          >
+            empty:
+          </span>
+          <span
+            v-else
             class="key"
             :class="item.name.startsWith('@') ? 'text--secondary' : ''"
             >{{ item.name }}:</span
@@ -29,6 +36,7 @@
           >
             <v-icon class="accent--text" small>mdi-open-in-new</v-icon>
           </v-btn>
+          <span class="ml-2 text--accent-1" v-else-if="item.value === ''">empty</span>
           <span class="ml-2" v-else></span>
 
           <template v-if="item.value_type === 'big_map'">
