@@ -33,7 +33,7 @@ Reloaded each time you press F5 in the browser.
 * `HOME_PAGE` redirect to this page unless it's `home`
 
 #### Sandbox environment
-* `SINGLE_USER_MODE` activate single user mode
+* `SANDBOX_MODE` activate single user mode
 * `JUPYTER_PATH` base URL for Jupyter notebook server
 
 
