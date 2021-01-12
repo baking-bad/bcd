@@ -8,11 +8,8 @@ import { init as initRedoc } from 'redoc/bundles/redoc.standalone.js';
 export default {
   name: "Diff",
   mounted() {
-    const SWAGGER_API = this.isTrue
-        ? 'http://localhost:14000/v1/swagger.json'
-        : `${this.config.API_URI}swagger.json`; // while development
     initRedoc(
-        SWAGGER_API,
+        `${this.config.API_URI}swagger.json`,
         this.redocOptions,
         this.$refs['redoc-container']
     )
@@ -21,8 +18,7 @@ export default {
     return {
       redocOptions: {
         scrollYOffset: 0,
-      },
-      isTrue: true // while development
+      }
     }
   },
 };
