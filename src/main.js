@@ -76,15 +76,20 @@ Vue.filter('bytes', function (value) {
   return `${value} bytes`;
 })
 
-const getRuntimeConfig = async () => {
-  const runtimeConfig = await fetch(process.env.VUE_APP_CONFIG_PATH || '/config.production.json');
-  return await runtimeConfig.json();
+let config = {
+  API_URI: process.env.VUE_APP_API_URI || `https://${window.location.host}/v1`,
+  WS_URI: process.env.VUE_APP_WS_URI || `wss://${window.location.host}/v1/ws`,
+  HOME_PAGE: 'home'
 }
 
-getRuntimeConfig().then(async function (config) {
-  let api = new BetterCallApi(config.API_URI);
-  let response = await api.getConfig();
+let api = new BetterCallApi(config.API_URI);
+
+api.getConfig().then(response => {
   Object.assign(config, response);
+
+  if (config.SANDBOX_MODE) {
+    config.HOME_PAGE = 'dashboard';
+  }
 
   let rpc = new NodeRPC(config.rpc_endpoints);
   let ws = new BcdWs(config.WS_URI);
@@ -133,7 +138,7 @@ getRuntimeConfig().then(async function (config) {
   router.beforeEach((to, from, next) => {
     const privatePages = ['/dashboard', '/dashboard/'];
     const authRequired = privatePages.includes(to.path);
-    const loggedIn = config.SINGLE_USER_MODE || getJwt() !== null;
+    const loggedIn = config.SANDBOX_MODE || getJwt() !== null;
 
     store.dispatch('setIsAuthorized', loggedIn)
     if (authRequired && !loggedIn) {
@@ -193,4 +198,4 @@ getRuntimeConfig().then(async function (config) {
     vuetify,
     render: h => h(App),
   }).$mount('#app');
-})
+});

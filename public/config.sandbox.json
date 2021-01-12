@@ -1,9 +1,0 @@
-{
-    "API_URI": "http://localhost:8000/v1/",
-    "WS_URI": "ws://localhost:8000/v1/ws",
-    "SINGLE_USER_MODE": true,
-    "JUPYTER_PATH": "http://localhost:8008/",
-    "GA_ENABLED": false,
-    "MEMPOOL_ENABLED": false,
-    "HOME_PAGE": "dashboard"
-}

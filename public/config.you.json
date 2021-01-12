@@ -1,7 +1,0 @@
-{
-  "API_URI": "https://you.better-call.dev/v1/",
-  "WS_URI": "wss://you.better-call.dev/v1/ws",
-  "GA_ENABLED": false,
-  "MEMPOOL_ENABLED": true,
-  "HOME_PAGE": "home"
-}
