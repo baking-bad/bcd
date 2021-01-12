@@ -1,5 +1,5 @@
 <template>
-  <div ref="redoc-container"></div>
+  <div id="docs" ref="redoc-container"></div>
 </template>
 
 <script>
@@ -28,14 +28,34 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-#redoc-container {
-  .menu-content {
-    top: 0 !important;
-    height: 100% !important;
+<style lang="scss">
+body {
+  #docs {
+    .menu-content {
+      $topPadding: 40px;
+      padding-top: $topPadding;
+      div[role="search"] {
+        margin-top: $topPadding/2;
+      }
+    }
   }
-  .api-content {
-    background: #FAFAFA;
+  & > div.theme--dark {
+    #docs {
+      .menu-content {
+        background: darken(#F5F5F5, 100);
+        label {
+          &.active {
+            background: darken(#F5F5F5, 50);
+          }
+          &:hover {
+            background: darken(#F5F5F5, 80);
+          }
+        }
+      }
+      span {
+        color: lighten(rgb(51, 51, 51), 100)
+      }
+    }
   }
 }
 </style>
