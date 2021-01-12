@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import RedocWrapper from '@hnluu8/vue-redoc-wrapper'
+import RedocWrapper from '@ungarson/vue-redoc-wrapper'
 
 export default {
   name: "Diff",
