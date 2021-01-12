@@ -42,7 +42,7 @@ body {
   & > div.theme--dark {
     #docs {
       .menu-content {
-        background: darken(#F5F5F5, 100);
+        background: black;
         label {
           &.active {
             background: darken(#F5F5F5, 50);
@@ -52,8 +52,23 @@ body {
           }
         }
       }
-      span {
-        color: lighten(rgb(51, 51, 51), 100)
+      .api-content {
+        a {
+          &::before {
+            background-color: white;
+          }
+        }
+      }
+      span,
+      p,
+      h2 {
+        color: white;
+      }
+      h3,
+      h4,
+      h5,
+      h6 {
+        color: darken(white, 25);
       }
     }
   }
