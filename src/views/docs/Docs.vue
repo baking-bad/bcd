@@ -1,22 +1,30 @@
 <template>
-  <redoc-wrapper :spec-or-spec-url="'http://localhost:14000/v1/swagger.json'" :options="redocOptions"/>
+  <div ref="redoc-container"></div>
 </template>
 
 <script>
-import RedocWrapper from '@ungarson/vue-redoc-wrapper'
+import { init as initRedoc } from 'redoc/bundles/redoc.standalone.js';
 
 export default {
   name: "Diff",
-  components: {
-    RedocWrapper
+  mounted() {
+    const SWAGGER_API = this.isTrue
+        ? 'http://localhost:14000/v1/swagger.json'
+        : `${this.config.API_URI}swagger.json`; // while development
+    initRedoc(
+        SWAGGER_API,
+        this.redocOptions,
+        this.$refs['redoc-container']
+    )
   },
   data() {
     return {
       redocOptions: {
         scrollYOffset: 0,
       },
+      isTrue: true // while development
     }
-  }
+  },
 };
 </script>
 
