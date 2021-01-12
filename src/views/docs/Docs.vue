@@ -38,6 +38,19 @@ body {
         margin-top: $topPadding/2;
       }
     }
+    code {
+      span.property,
+      span:not(.boolean)
+      span:not(.string) {
+        color: black;
+      }
+      span:not(.property).string {
+        color: darken(rgb(160, 251, 170), 50);
+      }
+      span:not(.property).boolean {
+        color: rgb(230, 68, 65);
+      }
+    }
   }
   & > div.theme--dark {
     #docs {
@@ -58,6 +71,16 @@ body {
             background-color: white;
           }
         }
+      }
+      code {
+        span.property,
+        span:not(.boolean)
+        span:not(.string) {
+          color: black;
+        }
+      }
+      h1 {
+        color: lighten(rgb(50, 50, 159), 25);
       }
       span,
       p,
