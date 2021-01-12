@@ -48,7 +48,7 @@
               >
             </template>
             <template v-else>
-              <span class="caption gray--disabled">empty</span>
+              <span class="caption gray--disabled">{{helpers.plural(item.children.length, "diff")}}</span>
             </template>
           </template>
 
