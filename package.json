@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^1.1.0",
+    "@hnluu8/vue-redoc-wrapper": "^0.1.15",
     "@koumoul/vjsf": "^1.10.3",
     "@sentry/browser": "^5.27.6",
     "@sentry/integrations": "^5.27.6",
