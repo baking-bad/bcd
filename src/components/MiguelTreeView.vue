@@ -78,6 +78,7 @@ export default {
     network: String,
     openAll: Boolean,
     diffMode: Boolean,
+    compactPair: Boolean,
   },
   data: () => ({
     showTreeNodeDetails: false,
@@ -85,7 +86,7 @@ export default {
   }),
   computed: {
     tree() {
-      return getTree(this.miguel, true);
+      return getTree(this.miguel, true, this.compactPair);
     },
     openNodes() {
       return this.tree.map((x) => this.getChangedItems(x), this).flat();
