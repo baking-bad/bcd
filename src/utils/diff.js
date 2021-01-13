@@ -77,7 +77,15 @@ function unwrap(x) {
     return String(x).replace(/^"(.*)"$/, '$1');
 }
 
-function parseItem(x) {
+function compactizePairs(x) {
+    return x;
+}
+
+function parseItem(x, compactPair) {
+    if (compactPair) {
+        compactizePairs(x);
+    }
+
     let item = {
         name: x.name || x.type,
         children: [],
@@ -174,7 +182,7 @@ function parseTuple(x, isRoot = false) {
     }];
 }
 
-function parseItems(x, isRoot = false) {
+function parseItems(x, isRoot = false, compactPair) {
     if (x.type === 'list' || x.type === 'set' || x.type === 'tuple' || x.type === 'union') {
         return parseTuple(x, isRoot);
     }
@@ -184,17 +192,17 @@ function parseItems(x, isRoot = false) {
     if ((x.type === 'namedtuple' || x.type === 'namedunion') && isRoot) {  // TODO: why isRoot == true only?
         return parseNamedTuple(x);
     }
-    return parseItem(x)
+    return parseItem(x, compactPair)
 }
 
-export function getTree(data, isRoot = false) {
+export function getTree(data, isRoot = false, compactPair = false) {
     let res = [];
     if (data instanceof Array) {
         data.forEach(x => {
-            res.push(...parseItems(x, isRoot));
+            res.push(...parseItems(x, isRoot, compactPair));
         })
     } else if (data instanceof Object) {
-        res.push(...parseItems(data, isRoot));
+        res.push(...parseItems(data, isRoot, compactPair));
     }
     return res;
 }
