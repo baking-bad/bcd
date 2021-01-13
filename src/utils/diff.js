@@ -78,16 +78,16 @@ function unwrap(x) {
 }
 
 function compactizePairs(x) {
-    return x;
+    const pairs = x.name.split('Pair');
+    let reduced = pairs.reduce((a, b) => {
+        return a += `${b.trim().split(' ')[0]}:`
+    }, '');
+    return reduced.slice(1, -1).trim();
 }
 
 function parseItem(x, compactPair) {
-    if (compactPair) {
-        compactizePairs(x);
-    }
-
     let item = {
-        name: x.name || x.type,
+        name: compactPair ? compactizePairs(x) : (x.name || x.type),
         children: [],
         value: getValue(x),
         type: "value",
@@ -102,7 +102,7 @@ function parseItem(x, compactPair) {
 
     if (x.children) {
         item.type = 'object';
-        item.children = getTree(x.children);
+        item.children = getTree(x.children, false, compactPair);
         item.value = `${item.children.length} items`;
     }
 
@@ -110,7 +110,7 @@ function parseItem(x, compactPair) {
     return [item];
 }
 
-function parseMap(x) {
+function parseMap(x, compactPair) {
     const label = x.prim === 'big_map' ? 'diffs' : 'items'
     let item = {
         name: x.name || x.type,
@@ -127,7 +127,7 @@ function parseMap(x) {
     }
 
     if (x.children) {
-        item.children = getTree(x.children);
+        item.children = getTree(x.children, false, compactPair);
         item.value = `${item.children.length} ${label}`;
     }
 
@@ -184,13 +184,13 @@ function parseTuple(x, isRoot = false) {
 
 function parseItems(x, isRoot = false, compactPair) {
     if (x.type === 'list' || x.type === 'set' || x.type === 'tuple' || x.type === 'union') {
-        return parseTuple(x, isRoot);
+        return parseTuple(x, isRoot, compactPair);
     }
     if (x.type === 'map' || x.type === 'big_map') {
-        return parseMap(x);
+        return parseMap(x, compactPair);
     }
     if ((x.type === 'namedtuple' || x.type === 'namedunion') && isRoot) {  // TODO: why isRoot == true only?
-        return parseNamedTuple(x);
+        return parseNamedTuple(x, compactPair);
     }
     return parseItem(x, compactPair)
 }
