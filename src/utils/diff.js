@@ -78,6 +78,9 @@ function unwrap(x) {
 }
 
 function compactizePairs(x) {
+    if (!('name' in x)) {
+        return x.type;
+    }
     const pairs = x.name.split('Pair');
     let reduced = pairs.reduce((a, b) => {
         return a += `${b.trim().split(' ')[0]}:`
