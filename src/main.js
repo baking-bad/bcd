@@ -190,7 +190,12 @@ api.getConfig().then(response => {
     });
   }
 
-  let vuetify = makeVuetify(getBool('dark', true));
+  const isDark = getBool('dark', true);
+  if (isDark) {
+    document.body.classList.add('dark-theme-background');
+  }
+
+  let vuetify = makeVuetify(isDark);
 
   new Vue({
     router,

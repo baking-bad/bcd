@@ -74,6 +74,10 @@ html {
   min-height: calc(100% - 75px);
 }
 
+.dark-theme-background {
+  background-color: var(--v-canvas-base) !important;
+}
+
 .toolbar {
   background-color: var(--v-canvas-base) !important;
   border-bottom: 1px solid var(--v-border-base) !important;
