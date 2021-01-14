@@ -95,7 +95,7 @@ export default {
       return this.$store.state.profile;
     },
     apiDocsUrl() {
-      return `${this.config.API_URI}docs/index.html`;
+      return `${window.location.origin}/docs`;
     }
   },
   methods: {
