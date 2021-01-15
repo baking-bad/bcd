@@ -36,7 +36,7 @@
           >
             <v-icon class="accent--text" small>mdi-open-in-new</v-icon>
           </v-btn>
-          <span class="ml-2 text--accent-1" v-else-if="item.value === ''">empty</span>
+          <span class="ml-2 key" v-else-if="item.value === ''">@empty</span>
           <span class="ml-2" v-else></span>
 
           <template v-if="item.value_type === 'big_map'">
