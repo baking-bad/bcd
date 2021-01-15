@@ -72,12 +72,12 @@
         <template v-for="(item, id) in items">
           <v-list-item class="item__list-item" :class="statusHeaderClass(item.status)" :key="id">
             <v-row>
-              <v-col cols="2" class="d-flex align-center">
+              <v-col cols="2" class="d-flex align-center justify-center">
                 <span class="body-2 text--secondary">{{
                   helpers.formatDatetime(item.timestamp)
                 }}</span>
               </v-col>
-              <v-col cols="2" class="d-flex align-center justify-end pr-6">
+              <v-col cols="4" class="d-flex align-center justify-center pr-6">
                 <span class="body-2">
                   {{
                     token
@@ -101,7 +101,7 @@
                   >
                 </span>
               </v-col>
-              <v-col cols="5" class="d-flex align-center">
+              <v-col cols="4" class="d-flex align-center">
                 <div>
                   <span
                     class="caption text-uppercase font-weight-regular text--secondary"
@@ -147,7 +147,7 @@
                   />
                 </div>
               </v-col>
-              <v-col cols="2">
+              <v-col cols="2" class="d-flex align-center justify-end">
                 <v-btn
                   class="text--secondary hash hash-link"
                   text
@@ -158,7 +158,7 @@
                   }"
                   target="_blank"
                 >
-                  <span v-html="helpers.shortcut(item.hash)"></span>
+                  <v-icon :color="getStatusColor(item.status)">mdi-open-in-new</v-icon>
                 </v-btn>
               </v-col>
             </v-row>
