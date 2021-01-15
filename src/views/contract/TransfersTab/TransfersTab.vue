@@ -1,7 +1,7 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-row v-if="balances" no-gutters>
-      <v-col cols="9" class="pa-2">
+      <v-col cols="8" class="pa-2">
         <TransferList
           :address="address"
           :network="network"
@@ -9,7 +9,7 @@
           :contract="token.contract"
         />
       </v-col>
-      <v-col cols="3" class="pa-2">
+      <v-col cols="4" class="pa-2">
         <TransfersCard
           @selectedToken="updateSelectedToken"
           :default-selected-token="selectedToken"

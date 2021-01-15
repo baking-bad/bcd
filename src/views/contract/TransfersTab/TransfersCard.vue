@@ -7,10 +7,10 @@
               <v-list-item-content>
                 <v-list-item-title>
                   <v-row>
-                    <v-col class="pt-0 pb-0" cols="6">
+                    <v-col class="pt-0 pb-0" cols="5">
                       <span v-html="helpers.shortcut(item.contract)"></span>
                     </v-col>
-                    <v-col class="text-right pt-0 pb-0 item-amount" cols="6">
+                    <v-col class="text-right pt-0 pb-0 item-amount" cols="7">
                       <span class="item-amount__value" :title="getItemValue(item)">
                         {{getItemValue(item)}}
                       </span>&nbsp;
@@ -87,16 +87,5 @@ export default {
 <style lang="scss" scoped>
 .item-amount {
   padding-left: 2rem;
-  &__value {
-    display: inline-block;
-    width: 1.5rem;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    vertical-align: middle;
-    &:hover {
-      width: auto;
-      text-overflow: unset;
-    }
-  }
 }
 </style>
