@@ -70,13 +70,8 @@
     <v-card flat outlined v-if="items.length > 0">
       <v-list class="py-0 item">
         <template v-for="(item, id) in items">
-          <v-list-item :key="id">
+          <v-list-item class="item__list-item" :class="statusHeaderClass(item.status)" :key="id">
             <v-row>
-              <v-col cols="1" class="d-flex align-center justify-center">
-                <v-icon :color="getStatusColor(item.status)">{{
-                  getIcon(item.status)
-                }}</v-icon>
-              </v-col>
               <v-col cols="2" class="d-flex align-center">
                 <span class="body-2 text--secondary">{{
                   helpers.formatDatetime(item.timestamp)
@@ -182,6 +177,7 @@
 import { mapActions } from "vuex";
 
 import EmptyState from "@/components/EmptyState.vue";
+import {getContentItemHeaderClass} from "@/utils/styles";
 
 export default {
   name: "TransferList",
@@ -208,6 +204,9 @@ export default {
     ...mapActions({
       showError: "showError",
     }),
+    statusHeaderClass(status) {
+      return getContentItemHeaderClass(status);
+    },
     getNextPage() {
       if (!this.token) return;
       if (this.downloaded || this.loading) return;
@@ -257,14 +256,6 @@ export default {
           .finally(() => (this.loading = false));
       }
     },
-    getIcon(status) {
-      if (status === "applied") {
-        return "mdi-check";
-      } else if (status === "failed") {
-        return "mdi-close";
-      }
-      return "mdi-information-outline";
-    },
     getStatusColor(status) {
       if (status === "applied") {
         return "primary";
@@ -294,7 +285,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .item {
   background-color: var(--v-canvas-base);
   opacity: 0.8;
