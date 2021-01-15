@@ -15,9 +15,9 @@
         <div :class="`${item.kind} pl-1`">
           <span
               v-if="item.name.length ===`''`.length"
-              class="text--accent-1"
+              class="key"
           >
-            empty:
+            @empty:
           </span>
           <span
             v-else
