@@ -11,14 +11,12 @@
                       <span v-html="helpers.shortcut(item.contract)"></span>
                     </v-col>
                     <v-col class="text-right pt-0 pb-0 item-amount" cols="7">
-                      <span class="item-amount__value" :title="getItemValue(item)">
+                      <span class="item-amount__value" :title="`${getItemValue(item)} ${getTokenSymbol(item)}`">
                         {{getItemValue(item)}}
                       </span>&nbsp;
                       <span
                           class="caption text-uppercase font-weight-regular text--disabled">
-                        {{
-                          item.symbol ? item.symbol : item.token_id
-                        }}
+                        {{ getTokenSymbol(item) }}
                       </span>
                     </v-col>
                   </v-row>
@@ -71,7 +69,16 @@ export default {
                 ? item.decimals
                 : 0,
           })
-    }
+    },
+    getTokenSymbol(item) {
+      if (item.name) {
+        return item.name
+      } else if (item.symbol) {
+        return item.symbol
+      }
+
+      return item.token_id
+    },
   },
   created() {
     this.selectedToken = this.defaultSelectedToken
@@ -87,5 +94,8 @@ export default {
 <style lang="scss" scoped>
 .item-amount {
   padding-left: 2rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
