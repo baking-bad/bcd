@@ -10,12 +10,17 @@
                     <v-col class="pt-0 pb-0" cols="5">
                       <span v-html="helpers.shortcut(item.contract)"></span>
                     </v-col>
-                    <v-col class="text-right pt-0 pb-0 item-amount" cols="7">
-                      <span class="item-amount__value" :title="`${getItemValue(item)} ${getTokenSymbol(item)}`">
+                    <v-col
+                        class="text-right pt-0 pb-0 item-amount"
+                        cols="7"
+                        :title="`${getItemValue(item)} ${getTokenSymbol(item)}`"
+                    >
+                      <span class="item-amount__value">
                         {{getItemValue(item)}}
                       </span>&nbsp;
                       <span
-                          class="caption text-uppercase font-weight-regular text--disabled">
+                          class="caption text-uppercase font-weight-regular text--disabled"
+                      >
                         {{ getTokenSymbol(item) }}
                       </span>
                     </v-col>
