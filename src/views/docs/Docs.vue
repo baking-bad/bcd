@@ -69,10 +69,14 @@ body {
         }
       }
       code {
+        background-color: transparent;
         span.property,
         span:not(.boolean)
         span:not(.string) {
-          color: black;
+          color: white;
+        }
+        span:not(.property).string {
+          color: darken(rgb(160, 251, 170), 40);
         }
       }
       h1 {
