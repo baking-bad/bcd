@@ -6,32 +6,20 @@
             <v-list-item :key="i" two-line>
               <v-list-item-content>
                 <v-list-item-title>
-                  <span v-if="item.name">{{ item.name }}</span>
-                  <span v-else-if="item.symbol">{{ item.symbol }}</span>
-                  <v-row v-else>
+                  <v-row>
                     <v-col class="pt-0 pb-0" cols="6">
                       <span v-html="helpers.shortcut(item.contract)"></span>
                     </v-col>
-                    <v-col class="text-right pt-0 pb-0" cols="6">
-                                            <span>{{
-                                                helpers
-                                                    .round(
-                                                        item.balance,
-                                                        item.decimals ? item.decimals : 0
-                                                    )
-                                                    .toLocaleString(undefined, {
-                                                      maximumFractionDigits: item.decimals
-                                                          ? item.decimals
-                                                          : 0,
-                                                    })
-                                              }}</span
-                                            >&nbsp;
+                    <v-col class="text-right pt-0 pb-0 item-amount" cols="6">
+                      <span class="item-amount__value" :title="getItemValue(item)">
+                        {{getItemValue(item)}}
+                      </span>&nbsp;
                       <span
-                          class="caption text-uppercase font-weight-regular text--disabled"
-                      >{{
+                          class="caption text-uppercase font-weight-regular text--disabled">
+                        {{
                           item.symbol ? item.symbol : item.token_id
-                        }}</span
-                      >
+                        }}
+                      </span>
                     </v-col>
                   </v-row>
                 </v-list-item-title>
@@ -71,6 +59,20 @@ export default {
       immediate: true
     }
   },
+  methods: {
+    getItemValue(item) {
+      return this.helpers
+          .round(
+              item.balance,
+              item.decimals ? item.decimals : 0
+          )
+          .toLocaleString(undefined, {
+            maximumFractionDigits: item.decimals
+                ? item.decimals
+                : 0,
+          })
+    }
+  },
   created() {
     this.selectedToken = this.defaultSelectedToken
   },
@@ -81,3 +83,20 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.item-amount {
+  padding-left: 2rem;
+  &__value {
+    display: inline-block;
+    width: 1.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    &:hover {
+      width: auto;
+      text-overflow: unset;
+    }
+  }
+}
+</style>

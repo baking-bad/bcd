@@ -128,7 +128,7 @@
 
 <script>
 import InternalOperation from "@/components/InternalOperation.vue";
-
+import { getContentItemHeaderClass } from '@/utils/styles';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 
@@ -190,12 +190,7 @@ export default {
       return null;
     },
     statusHeaderClass() {
-      if (this.value.status === "skipped") return "backtracked";
-      if (this.value.status === "backtracked") return "backtracked";
-      if (this.value.status === "pending") return "mempool";
-      if (this.value.status === "lost") return "mempool";
-      if (this.value.status !== "applied") return "failed";
-      return this.value.status;
+      return getContentItemHeaderClass(this.value.status);
     },
     totalLockedWithdrawn() {
       return this.getTotalAmount(1) - this.getTotalAmount(-1);
@@ -273,22 +268,6 @@ export default {
 </style>
 
 <style lang="scss" scoped>
-.applied {
-  border-left: 3px solid var(--v-success-base);
-}
-
-.backtracked {
-  border-left: 3px solid var(--v-warning-base);
-}
-
-.failed {
-  border-left: 3px solid var(--v-error-base);
-}
-
-.mempool {
-  border-left: 3px solid var(--v-border-base);
-}
-
 .op-panel {
   background-color: var(--v-data-base) !important;
 }
