@@ -66,7 +66,6 @@
         </template>
       </v-row>
     </v-card>
-
     <v-card flat outlined v-if="items.length > 0">
       <v-list class="py-0 item">
         <template v-for="(item, id) in items">
@@ -104,46 +103,38 @@
               <v-col cols="4" class="d-flex align-center">
                 <div>
                   <span
-                    class="caption text-uppercase font-weight-regular text--secondary"
+                    class="accent--text"
+                    v-if="!item.to && address === item.from"
                   >
-                    <span v-if="item.from"
-                      ><span v-if="!item.to" class="accent--text"
-                        >Burn&nbsp;</span
-                      >From&nbsp;</span
-                    >
-                    <span v-else class="accent--text">Mint&nbsp;</span>
+                    Burn&nbsp;
                   </span>
+                  <span
+                    class="caption text-uppercase font-weight-regular text--secondary"
+                    v-else-if="item.from && item.from !== address"
+                  >
+                    From&nbsp;
+                  </span>
+                  <span v-else-if="!item.from && address === item.to" class="accent--text">Mint&nbsp;</span>
                   <router-link
-                    v-if="item.from && address != item.from"
+                    v-if="item.from && address !== item.from"
                     text
                     v-html="item.from_alias || helpers.shortcut(item.from)"
                     style="text-transform: none; text-decoration: none"
                     class="px-1 text--primary hash"
                     :to="`/${item.network}/${item.from}`"
-                  />
-                  <span
-                    v-else-if="item.from"
-                    v-html="item.from_alias || helpers.shortcut(item.from)"
-                    style="text-transform: none; text-decoration: none"
-                    class="px-1 text--secondary hash"
                   />&nbsp;
                   <span
-                    v-if="item.to"
+                    v-if="item.to && address !== item.to"
                     class="caption text-uppercase font-weight-regular text--secondary"
                     >&nbsp;to&nbsp;</span
                   >
                   <router-link
-                    v-if="item.to && address != item.to"
+                    v-if="item.to && address !== item.to"
                     text
                     :to="`/${item.network}/${item.to}`"
                     v-html="item.to_alias || helpers.shortcut(item.to)"
                     style="text-transform: none; text-decoration: none"
                     class="px-1 text--primary hash"
-                  /><span
-                    v-else-if="item.to"
-                    v-html="item.to_alias || helpers.shortcut(item.to)"
-                    style="text-transform: none; text-decoration: none"
-                    class="px-1 text--secondary hash"
                   />
                 </div>
               </v-col>
@@ -158,7 +149,7 @@
                   }"
                   target="_blank"
                 >
-                  <v-icon :color="getStatusColor(item.status)">mdi-open-in-new</v-icon>
+                  <v-icon color="lightgrey" small>mdi-open-in-new</v-icon>
                 </v-btn>
               </v-col>
             </v-row>
@@ -168,7 +159,6 @@
       </v-list>
       <span v-intersect="onDownloadPage" v-if="!loading && !downloaded"></span>
     </v-card>
-
     <EmptyState v-else icon="mdi-transfer" text title="No transfers yet" />
   </v-skeleton-loader>
 </template>
