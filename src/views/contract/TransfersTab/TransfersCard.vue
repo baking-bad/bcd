@@ -8,7 +8,7 @@
                 <v-list-item-title>
                   <v-row>
                     <v-col class="pt-0 pb-0" cols="5">
-                      <span v-html="helpers.shortcut(item.contract)"></span>
+                      <span v-html="getName(item) ? getName(item) : helpers.shortcut(item.contract)"></span>
                     </v-col>
                     <v-col
                         class="text-right pt-0 pb-0 item-amount"
@@ -75,14 +75,16 @@ export default {
                 : 0,
           })
     },
-    getTokenSymbol(item) {
+    getName(item) {
       if (item.name) {
         return item.name
       } else if (item.symbol) {
         return item.symbol
       }
-
-      return item.token_id
+    },
+    getTokenSymbol(item) {
+      const name = this.getName(item)
+      return name ? name : item.token_id
     },
   },
   created() {
