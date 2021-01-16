@@ -198,6 +198,8 @@ export default {
             let idx = this.indices[data.body[i].network];
             if (idx !== undefined) {
               Object.assign(this.stats[idx], data.body[i]);
+            } else {
+              this.stats.push(data.body[i])
             }
           }
         }
