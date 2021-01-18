@@ -1,6 +1,6 @@
 <template>
   <v-list>
-    <v-subheader class="title">Reserved fields</v-subheader>
+    <v-subheader class="title">Other fields</v-subheader>
     <v-list-item
         v-for="(field, idx) in metadata"
         :key="idx"
@@ -20,7 +20,7 @@
 
 <script>
 export default {
-  name: "ReservedFields",
+  name: "OtherFields",
   props: {
     metadata: Object,
   },

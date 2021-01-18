@@ -2,7 +2,8 @@
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-skeleton-loader :loading="loading" type="card">
       <BriefInfo :metadata="metadata" />
-      <ReservedFields class="mt-3" :metadata="metadata" />
+      <ReservedFields class="mt-3" v-if="availableReservedFields" :metadata="reservedMetadata" />
+      <OtherFields class="mt-3" v-if="unknownFields" :metadata="otherMetadata" />
       <EventsList class="mt-3" :metadata="metadata" />
     </v-skeleton-loader>
   </v-container>
@@ -12,16 +13,43 @@
 import BriefInfo from "@/views/contract/MetadataTab/BriefInfo";
 import ReservedFields from "@/views/contract/MetadataTab/ReservedFields";
 import EventsList from "@/views/contract/MetadataTab/EventsList";
+import OtherFields from "@/views/contract/MetadataTab/OtherFields";
 
 export default {
   name: "Metadata",
-  components: {EventsList, ReservedFields, BriefInfo},
+  components: {OtherFields, EventsList, ReservedFields, BriefInfo},
   props: { contract: Object },
   data: () => {
     return {
       metadata: {},
       loading: true,
+      reservedFields: [
+        'name',
+        'description',
+        'version',
+        'license',
+        'authors',
+        'homepage',
+        'source',
+        'interfaces',
+        'errors',
+        'views'
+      ],
     };
+  },
+  computed: {
+    availableReservedFields() {
+      return this.reservedFields.filter(field => field in this.metadata);
+    },
+    unknownFields() {
+      return Object.keys(this.metadata).filter(key => !~this.reservedFields.indexOf(key))
+    },
+    reservedMetadata() {
+      return this.availableReservedFields.map(key => ({key, value: this.metadata[key]}))
+    },
+    otherMetadata() {
+      return this.unknownFields.map(key => ({key, value: this.metadata[key]}))
+    },
   },
   mounted() {
     if (this.contract.metadata !== undefined) {
