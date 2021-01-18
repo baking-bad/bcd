@@ -13,6 +13,7 @@
           v-if="unknownFields"
           :metadata="otherMetadata"
           name="Other Fields"
+          is-treeview
       />
       <EventsList class="mt-3" :metadata="metadata" />
     </v-skeleton-loader>
@@ -57,7 +58,9 @@ export default {
       return this.availableReservedFields.map(key => ({key, value: this.metadata[key]}))
     },
     otherMetadata() {
-      return this.unknownFields.map(key => ({key, value: this.metadata[key]}))
+      const otherMetadata = {};
+      this.unknownFields.forEach(key => otherMetadata[key] = this.metadata[key])
+      return otherMetadata
     },
   },
   mounted() {
