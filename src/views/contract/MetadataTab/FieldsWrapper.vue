@@ -11,9 +11,10 @@
           {{
             field.key
           }}:
-          <span class="grey--text">
+          <span class="grey--text" v-if="typeof field.value !== 'object'">
             {{ field.value }}
           </span>
+          <vue-json-pretty v-else :data="field.value"/>
         </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
@@ -21,11 +22,17 @@
 </template>
 
 <script>
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
+
 export default {
   name: "FieldsWrapper",
   props: {
-    metadata: Object,
+    metadata: Array,
     name: String
+  },
+  components: {
+    VueJsonPretty,
   },
 }
 </script>
