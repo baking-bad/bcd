@@ -3,23 +3,25 @@
 </template>
 
 <script>
-import { init as initRedoc } from 'redoc/bundles/redoc.standalone.js';
+import { init as initRedoc } from "redoc/bundles/redoc.standalone.js";
 
 export default {
   name: "Diff",
   mounted() {
     initRedoc(
-        `${this.config.API_URI}/swagger.json`,
-        this.redocOptions,
-        this.$refs['redoc-container']
-    )
+      `${this.config.API_URI}/swagger.json`,
+      this.redocOptions,
+      this.$refs["redoc-container"]
+    );
   },
   data() {
     return {
       redocOptions: {
         scrollYOffset: 0,
-      }
-    }
+        expandResponses: "200",
+        hideDownloadButton: true,
+      },
+    };
   },
 };
 </script>
@@ -55,10 +57,10 @@ body {
         background: black;
         label {
           &.active {
-            background: darken(#F5F5F5, 50);
+            background: darken(#f5f5f5, 50);
           }
           &:hover {
-            background: darken(#F5F5F5, 80);
+            background: darken(#f5f5f5, 80);
           }
         }
       }
