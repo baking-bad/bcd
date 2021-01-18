@@ -9,7 +9,7 @@ export default {
   name: "Diff",
   mounted() {
     initRedoc(
-        `${this.config.API_URI}swagger.json`,
+        `${this.config.API_URI}/swagger.json`,
         this.redocOptions,
         this.$refs['redoc-container']
     )
