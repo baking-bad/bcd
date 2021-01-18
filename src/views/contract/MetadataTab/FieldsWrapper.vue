@@ -1,17 +1,19 @@
 <template>
   <v-list>
-    <v-subheader class="title">Reserved fields</v-subheader>
+    <v-subheader class="title">{{ name }}</v-subheader>
     <v-list-item
         v-for="(field, idx) in metadata"
         :key="idx"
         selectable
     >
-      <v-list-item-content>
+      <v-list-item-content class="pt-0 pb-0">
         <v-list-item-title class="overline">
           {{
             field.key
           }}:
-          {{ field.value }}
+          <span class="grey--text">
+            {{ field.value }}
+          </span>
         </v-list-item-title>
       </v-list-item-content>
     </v-list-item>
@@ -20,9 +22,14 @@
 
 <script>
 export default {
-  name: "ReservedFields",
+  name: "FieldsWrapper",
   props: {
     metadata: Object,
+    name: String
   },
 }
 </script>
+
+<style scoped>
+
+</style>
