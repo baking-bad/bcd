@@ -25,7 +25,8 @@
                 color="border"
                 class="text--secondary mr-5"
                 to="/dapps"
-                ><v-icon left color="error">mdi-fire</v-icon>Explore DApps</v-btn
+                ><v-icon left color="error">mdi-fire</v-icon>Explore
+                DApps</v-btn
               >
               <v-btn
                 large
@@ -141,6 +142,7 @@ export default {
     connecting: true,
     pickingRandom: false,
     hasOpenCallback: false,
+    synced: false,
   }),
   mounted() {
     if (this.$route.name != this.config.HOME_PAGE) {
@@ -179,28 +181,29 @@ export default {
         });
     },
     onMessage(data) {
-      if (data.body) {
-        if (this.stats.length == 0) {
-          this.stats = data.body.sort(function (a, b) {
-            if (a.network === "mainnet") {
-              return -1;
-            } else if (b.network === "mainnet") {
-              return 1;
-            } else {
-              return b.network.localeCompare(a.network);
-            }
-          });
-          for (let i = 0; i < this.stats.length; i++) {
-            this.indices[this.stats[i].network] = i
+      if (data.body === undefined) {
+        return;
+      }
+
+      if (!this.synced && this.config.networks.length == data.body.length) {
+        this.stats = data.body.sort(function (a, b) {
+          if (a.network === "mainnet") {
+            return -1;
+          } else if (b.network === "mainnet") {
+            return 1;
+          } else {
+            return b.network.localeCompare(a.network);
           }
-        } else {
-          for (let i = 0; i < data.body.length; i++){
-            let idx = this.indices[data.body[i].network];
-            if (idx !== undefined) {
-              Object.assign(this.stats[idx], data.body[i]);
-            } else {
-              this.stats.push(data.body[i])
-            }
+        });
+        for (let i = 0; i < this.stats.length; i++) {
+          this.indices[this.stats[i].network] = i;
+        }
+        this.synced = true;
+      } else if (this.synced) {
+        for (let i = 0; i < data.body.length; i++) {
+          let idx = this.indices[data.body[i].network];
+          if (idx !== undefined) {
+            Object.assign(this.stats[idx], data.body[i]);
           }
         }
       }
