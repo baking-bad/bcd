@@ -9,7 +9,7 @@ export default {
   name: "Diff",
   mounted() {
     initRedoc(
-      `${this.config.API_URI}/swagger.json`,
+      `http://localhost:14000/v1/swagger.json`,
       this.redocOptions,
       this.$refs["redoc-container"]
     );
@@ -59,22 +59,35 @@ body {
   }
   & > div.theme--dark {
     #docs {
-      .menu-content {
-        background: black;
-        label {
-          &.active {
-            background: darken(#f5f5f5, 50);
-          }
-          &:hover {
-            background: darken(#f5f5f5, 80);
+      background: var(--v-primary-base);
+      .redoc-wrap {
+        .menu-content {
+          background: var(--v-sidenav-base);
+          label {
+            &.active {
+              background: var(--v-data-base);
+            }
+            &:hover {
+              background: var(--v-data-base);
+            }
           }
         }
-      }
-      .api-content {
-        a {
-          &::before {
-            background-color: white;
+        .api-content {
+          a {
+            &::before {
+              background-color: white;
+            }
           }
+          & > div {
+            & > div:first-child {
+              & > div:last-child:not(:first-child) {
+                background: var(--v-sidenav-base);
+              }
+            }
+          }
+        }
+        & > div:last-child {
+          background: var(--v-sidenav-base);
         }
       }
       code {
