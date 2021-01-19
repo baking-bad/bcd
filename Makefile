@@ -7,6 +7,9 @@ dev:
 you:
 	npm run serve -- --mode you
 
+test:
+	npm run serve -- --mode test
+
 image:
 	docker build -t bakingbad/bcdhub-gui:latest .
 
