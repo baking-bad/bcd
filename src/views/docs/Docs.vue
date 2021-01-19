@@ -84,6 +84,16 @@ body {
       h2 {
         color: white;
       }
+      table {
+        span {
+          color: rgb(124, 124, 187);
+        }
+      }
+      div[role="button"] {
+        span {
+          color: rgb(50, 50, 159);
+        }
+      }
       h3,
       h4,
       h5,
