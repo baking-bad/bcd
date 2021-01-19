@@ -62,7 +62,7 @@ body {
       background: var(--v-sidenav-base);
       .redoc-wrap {
         .menu-content {
-          background: var(--v-primary-base);
+          background: var(--v-sidebar-base);
           label {
             &.active {
               background: var(--v-data-base);
@@ -98,11 +98,81 @@ body {
                   color: lighten(rgb(50, 50, 159), 25);
                 }
                 table {
+                  $trBorderColor: rgba(124, 124, 187, 0.5);
                   tr {
-                    td[colspan="2"] {
-                      div {
-                        color: white;
-                        background: var(--v-data-base);
+                    border-left: 1px solid red;
+                    &:first-of-type {
+                      & > .eGbWXV {
+                        border-left: none;
+                        background-image:
+                            linear-gradient(
+                                    transparent 0%,
+                                    transparent 22px,
+                                    $trBorderColor 22px,
+                                    $trBorderColor 100%
+                            );
+                      }
+                      & > .ekuXnN {
+                        border-left-width: 0px;
+                        background-position: left top;
+                        background-repeat: no-repeat;
+                        background-size: 1px 100%;
+                        background-image:
+                            linear-gradient(
+                                    transparent 0%,
+                                    transparent 22px,
+                                    $trBorderColor 22px,
+                                    $trBorderColor 100%
+                            );
+                      }
+                    }
+                    &.last {
+                      &:first-child {
+                        & > .eGbWXV {
+                          background: none;
+                          border-left-color: transparent;
+                        }
+                      }
+                      & > .eGbWXV {
+                        border-left: none;
+                        background-image:
+                            linear-gradient(
+                                    $trBorderColor 0%,
+                                    $trBorderColor 22px,
+                                    transparent 22px,
+                                    transparent 100%
+                            );
+                      }
+                      & > .ekuXnN {
+                        border-left-width: 0px;
+                        background-position: left top;
+                        background-repeat: no-repeat;
+                        background-size: 1px 100%;
+                        background-image:
+                            linear-gradient(
+                                    $trBorderColor 0%,
+                                    $trBorderColor 22px,
+                                    transparent 22px,
+                                    transparent 100%
+                            );
+                      }
+                    }
+                    td {
+                      &[colspan="2"] {
+                        div {
+                          color: white;
+                          background: var(--v-data-base);
+                        }
+                      }
+                      .phsGg {
+                        &::after,
+                        &::before {
+                          background: $trBorderColor;
+                        }
+                      }
+                      &.eGbWXV,
+                      &.ekuXnN {
+                        border-left: 1px solid $trBorderColor;
                       }
                     }
                   }
@@ -112,16 +182,30 @@ body {
                 background: var(--v-sidenav-base);
               }
               button.fWqjRd {
-                background: var(--v-primary-base);
+                background: rgba(117, 163, 79, 0.3)
               }
               button.ZMFUf {
-                background: var(--v-error-darken3);
+                background: rgba(159, 0, 16, 0.3);
               }
+            }
+            .react-tabs__tab-panel {
+              background: var(--v-canvas-base);
+            }
+            .react-tabs__tab-list {
+              li {
+                border: 1px solid rgba(7, 9, 11, 0.25);
+                &:not(.react-tabs__tab--selected) {
+                  background: var(--v-canvas-base);
+                }
+              }
+            }
+            button.sc-prOVx {
+              background: var(--v-canvas-base);
             }
           }
           & > div:not(:first-child) {
-            & > div:first-child {
-              background: var(--v-sidenav-darken1);
+            div:first-child:not(:last-child) {
+              background: var(--v-canvas-base);
               h1,
               h2 {
                 font-weight: bold;
