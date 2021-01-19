@@ -58,9 +58,19 @@ body {
     }
   }
   & > div.theme--dark {
+    background: var(--v-sidenav-base) !important;
     #docs {
       background: var(--v-sidenav-base);
       .redoc-wrap {
+        input {
+          color: white;
+        }
+        div[data-role="search:results"] {
+          li {
+            background: var(--v-data-darken1);
+          }
+          background: var(--v-data-darken1);
+        }
         .menu-content {
           background: var(--v-sidebar-base);
           label {
