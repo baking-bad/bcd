@@ -171,7 +171,8 @@ body {
                         }
                       }
                       &.eGbWXV,
-                      &.ekuXnN {
+                      &.ekuXnN,
+                      &.eviNgt {
                         border-left: 1px solid $trBorderColor;
                       }
                     }
