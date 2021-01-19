@@ -5,11 +5,7 @@
       v-bind:key="getInterfaceLink(interfaceName)"
       :href="getInterfaceLink(interfaceName)"
       class="mr-3"
-    >
-      {{
-        interfaceName
-      }}
-    </a>
+    >{{interfaceName}}</a>
     <span
       v-for="interfaceName in unlinkableInterfaces"
       v-bind:key="interfaceName"
