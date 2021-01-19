@@ -80,6 +80,29 @@ body {
           }
           & > div {
             & > div:first-child {
+              & > div:first-child {
+                h1,
+                h2,
+                h3,
+                h4,
+                h5,
+                h6 {
+                  color: black;
+                }
+                h1 {
+                  font-weight: bold;
+                }
+                span,
+                p {
+                  color: var(--v-sidenav-base)
+                }
+                button.fWqjRd {
+                  background-color: rgba(29, 129, 39, 0.25);
+                }
+                button.ZMFUf {
+                  background-color: rgba(212, 31, 28, 0.25);
+                }
+              }
               & > div:last-child:not(:first-child) {
                 background: var(--v-sidenav-base);
               }
@@ -95,9 +118,6 @@ body {
           color: darken(rgb(160, 251, 170), 40);
         }
       }
-      h1 {
-        color: lighten(rgb(50, 50, 159), 25);
-      }
       span,
       p,
       h2 {
@@ -112,12 +132,6 @@ body {
         span {
           color: rgb(50, 50, 159);
         }
-      }
-      h3,
-      h4,
-      h5,
-      h6 {
-        color: darken(white, 25);
       }
     }
   }
