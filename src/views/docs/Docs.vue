@@ -44,6 +44,7 @@ body {
     }
     code {
       background-color: transparent;
+      color: white;
       span.property,
       span:not(.boolean),
       span:not(.string) {
@@ -53,7 +54,7 @@ body {
         color: darken(rgb(160, 251, 170), 50);
       }
       span:not(.property).boolean {
-        color: rgb(230, 68, 65);
+        color: var(--v-error-lighten2);
       }
     }
   }
@@ -108,7 +109,7 @@ body {
                   color: lighten(rgb(50, 50, 159), 25);
                 }
                 table {
-                  $trBorderColor: rgba(124, 124, 187, 0.5);
+                  $trBorderColor: var(--v-border-base);
                   tr {
                     border-left: 1px solid red;
                     &:first-of-type {
@@ -239,7 +240,7 @@ body {
       }
       code {
         span:not(.property).string {
-          color: darken(rgb(160, 251, 170), 40);
+          color: var(--v-tree-base);
         }
       }
       span,
