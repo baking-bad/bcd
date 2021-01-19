@@ -59,10 +59,10 @@ body {
   }
   & > div.theme--dark {
     #docs {
-      background: var(--v-primary-base);
+      background: var(--v-sidenav-base);
       .redoc-wrap {
         .menu-content {
-          background: var(--v-sidenav-base);
+          background: var(--v-primary-base);
           label {
             &.active {
               background: var(--v-data-base);
@@ -81,30 +81,59 @@ body {
           & > div {
             & > div:first-child {
               & > div:first-child {
+                color: white;
                 h1,
                 h2,
                 h3,
                 h4,
                 h5,
                 h6 {
-                  color: black;
-                }
-                h1 {
-                  font-weight: bold;
+                  color: white;
                 }
                 span,
                 p {
-                  color: var(--v-sidenav-base)
+                  color: white;
                 }
-                button.fWqjRd {
-                  background-color: rgba(29, 129, 39, 0.25);
+                a {
+                  color: lighten(rgb(50, 50, 159), 25);
                 }
-                button.ZMFUf {
-                  background-color: rgba(212, 31, 28, 0.25);
+                table {
+                  tr {
+                    td[colspan="2"] {
+                      div {
+                        color: white;
+                        background: var(--v-data-base);
+                      }
+                    }
+                  }
                 }
               }
               & > div:last-child:not(:first-child) {
                 background: var(--v-sidenav-base);
+              }
+              button.fWqjRd {
+                background: var(--v-primary-base);
+              }
+              button.ZMFUf {
+                background: var(--v-error-darken3);
+              }
+            }
+          }
+          & > div:not(:first-child) {
+            & > div:first-child {
+              background: var(--v-sidenav-darken1);
+              h1,
+              h2 {
+                font-weight: bold;
+              }
+            }
+            &:not(.hBHSsv) {
+              padding-left: 2.5rem;
+              & > div {
+                & > div {
+                  padding-top: 1.5rem;
+                  padding-bottom: 1.5rem;
+                }
               }
             }
           }
