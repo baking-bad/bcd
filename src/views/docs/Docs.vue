@@ -29,6 +29,12 @@ export default {
 <style lang="scss">
 body {
   #docs {
+    .api-content > div {
+      padding: .5rem 0;
+    }
+    .api-content > div h1 {
+      margin-bottom: 0;
+    }
     .menu-content {
       $topPadding: 40px;
       padding-top: $topPadding;
