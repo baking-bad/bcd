@@ -32,7 +32,7 @@ export default {
   methods: {
     init: function() {
       return initRedoc(
-        `${this.config.API_URI}/swagger.json`,
+        `http://localhost:14000/v1/swagger.json`,
         this.redocOptions,
         this.$refs["redoc-container"]
       );
@@ -93,6 +93,7 @@ export default {
             },
             text: {
               primary: this.theme.text,
+              secondary: 'red'
             },
             border: {
               dark: this.$vuetify.theme.themes.dark.border,
@@ -183,6 +184,51 @@ body {
     li[role="tab"].react-tabs__tab--selected {
       background-color: #555;
       border-color: #555;
+    }
+  }
+  & > div.theme--dark {
+    #docs {
+      table {
+        td {
+          &[colspan="2"] {
+            & > div {
+              color: white;
+              background: var(--v-data-base) !important;
+            }
+          }
+        }
+      }
+      .api-content {
+        & > div {
+          & > div {
+            & > div:last-child:not(:first-child) {
+              & > div:first-child > div:last-child {
+                background: var(--v-data-base);
+                & > div:first-child > div:last-child > div {
+                  border: 0;
+                  background: var(--v-data-base);
+                }
+              }
+            }
+          }
+        }
+      }
+      div[data-role="search:results"] {
+        li {
+          background: var(--v-data-darken1);
+        }
+        background: var(--v-data-darken1);
+      }
+    }
+  }
+  & > div.theme--light {
+    #docs {
+      div[data-role="search:results"] {
+        li {
+          background-color: rgb(220, 220, 220);
+        }
+        background-color: rgb(220, 220, 220);
+      }
     }
   }
 }
