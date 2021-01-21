@@ -36,7 +36,7 @@ import 'vue-json-pretty/lib/styles.css';
 export default {
   name: "FieldsWrapper",
   props: {
-    metadata: Array,
+    metadata: Object,
     isTreeview: {
       type: Boolean,
       default: false,
