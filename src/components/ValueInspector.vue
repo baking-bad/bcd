@@ -20,7 +20,7 @@
       :label="label"
     ></v-text-field>
 
-    <v-btn text small link @click.prevent.stop="$clipboard(value)">
+    <v-btn text small link @click.prevent.stop="copyText(value)">
       <v-icon small class="mr-1">mdi-content-copy</v-icon>
       <span>Copy Value</span>
     </v-btn>
@@ -129,6 +129,13 @@ export default {
     },
   },
   methods: {
+    copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text);
+      } else {
+        window.clipboardData.setData("Text", text);
+      }
+    },
     handleAddress(span) {
       const address = span.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
       const path = { path: `/${this.network}/${address}` };
