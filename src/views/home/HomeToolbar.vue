@@ -49,7 +49,7 @@
       <span v-else>Enable dark theme</span>
     </v-tooltip>
 
-    <v-btn icon class="ml-2 text--secondary" :href="apiDocsUrl" target="_blank">
+    <v-btn icon class="ml-2 text--secondary" to="/docs">
       <v-icon>mdi-api</v-icon>
     </v-btn>
 

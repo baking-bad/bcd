@@ -74,7 +74,7 @@
       <div class="d-flex flex-column align-center justify-center pa-5">
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" icon :href="apiDocsUrl" target="_blank">
+            <v-btn v-on="on" icon to="/docs">
               <v-icon color="grey lighten-2">mdi-api</v-icon>
             </v-btn>
           </template>
