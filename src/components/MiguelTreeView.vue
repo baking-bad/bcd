@@ -66,7 +66,7 @@
 
 <script>
 import { getTree } from "@/utils/diff.js";
-import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
+import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails.vue";
 
 export default {
   name: "MiguelTreeView",

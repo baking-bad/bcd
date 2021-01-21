@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import AccountBox from "@/components/AccountBox.vue";
+import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import TransferList from "@/views/contract/TransferList.vue";
 
 export default {

@@ -52,7 +52,7 @@
 
 <script>
 import { mapActions } from "vuex";
-import ColumnChart from "@/components/ColumnChart.vue";
+import ColumnChart from "@/components/Charts/ColumnChart.vue";
 
 export default {
   name: "StatisticsBlock",

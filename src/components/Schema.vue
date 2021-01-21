@@ -245,7 +245,7 @@ import { BeaconWallet } from "@taquito/beacon-wallet";
 import { ThanosWallet } from "@thanos-wallet/dapp";
 
 import InternalOperation from "@/components/InternalOperation.vue";
-import RawJsonViewer from "@/components/RawJsonViewer.vue";
+import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import Michelson from "@/components/Michelson.vue";
 
 export default {

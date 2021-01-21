@@ -60,7 +60,7 @@
 
 <script>
 import {mapActions} from "vuex";
-import RawJsonViewer from "@/components/RawJsonViewer";
+import RawJsonViewer from "@/components/Dialogs/RawJsonViewer";
 
 export default {
   name: "BriefInfo",
