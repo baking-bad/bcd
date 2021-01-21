@@ -93,7 +93,6 @@ export default {
             },
             text: {
               primary: this.theme.text,
-              secondary: 'red'
             },
             border: {
               dark: this.$vuetify.theme.themes.dark.border,
