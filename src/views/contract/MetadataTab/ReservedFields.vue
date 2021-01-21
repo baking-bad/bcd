@@ -9,9 +9,9 @@
       <v-list-item-content class="pt-0 pb-0">
         <v-list-item-title class="d-flex">
           <span class="key-field">
-            {{
+            "{{
               field.key
-            }}:
+            }}":
           </span>
           <LicenseField
               class="value-field ml-3"
@@ -44,7 +44,7 @@
               :value="field.value"
           />
           <span v-else class="value-field ml-3">
-            {{ field.value }}
+            "{{ field.value }}"
           </span>
         </v-list-item-title>
       </v-list-item-content>
@@ -71,17 +71,17 @@ export default {
 
 <style lang="scss" scoped>
 .v-list-item {
-  min-height: 1.5rem;
+  min-height: 1.25rem;
   font-family: Monaco,Menlo,Consolas,Bitstream Vera Sans Mono,monospace;
   .key-field,
   .value-field {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
   }
   .key-field {
     color: #9e9e9e;
   }
   .value-field {
-    color: var(--v-anchor-base);
+    color: var(--v-tree-base);
   }
 }
 </style>
