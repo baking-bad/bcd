@@ -20,10 +20,10 @@
 </template>
 
 <script>
-import BriefInfo from "@/views/contract/MetadataTab/BriefInfo";
-import EventsList from "@/views/contract/MetadataTab/EventsList";
-import FieldsWrapper from "@/views/contract/MetadataTab/FieldsWrapper";
-import ReservedFields from "@/views/contract/MetadataTab/ReservedFields";
+import BriefInfo from "@/views/contract/MetadataTab/ListBlocks/BriefInfo";
+import EventsList from "@/views/contract/MetadataTab/ListBlocks/EventsList";
+import FieldsWrapper from "@/views/contract/MetadataTab/CustomFields/FieldsWrapper";
+import ReservedFields from "@/views/contract/MetadataTab/ListBlocks/ReservedFields";
 
 export default {
   name: "Metadata",
