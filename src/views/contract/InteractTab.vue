@@ -23,33 +23,11 @@
           :loading="loading"
           type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
         >
-          <v-card flat outlined style="max-width: 500px;">
-            <v-navigation-drawer floating permanent style="max-height: 80vh; width: 100%;">
-              <v-expansion-panels
-                flat
-                accordion
-                mandatory
-                active-class="entrypoint-selected"
-                v-model="selected"
-              >
-                <v-expansion-panel
-                  v-for="(item, i) in entrypoints"
-                  :key="i"
-                  :class="i > 0 ? 'bt-1' : ''"
-                  class="entrypoint-panel"
-                >
-                  <v-expansion-panel-header>
-                    <div class="d-flex">
-                      <span class="hash">{{ item.name }}</span>
-                    </div>
-                  </v-expansion-panel-header>
-                  <v-expansion-panel-content>
-                    <TypeDef :typedef="item.typedef" first="parameter"/>
-                  </v-expansion-panel-content>
-                </v-expansion-panel>
-              </v-expansion-panels>
-            </v-navigation-drawer>
-          </v-card>
+          <EntrypointsCard
+            @selected="(newVal) => this.selected = newVal"
+            :entrypoints="entrypoints"
+            :selected-outside="selected"
+          />
         </v-skeleton-loader>
       </v-col>
     </v-row>
@@ -58,11 +36,9 @@
 
 <script>
 import { mapActions } from "vuex";
-
 import Schema from "@/components/Schema.vue";
-import TypeDef from "@/views/contract/TypeDef.vue";
-
 import { applyStyles } from '@/utils/styles.js';
+import EntrypointsCard from "@/components/Cards/EntrypointsCard";
 
 export default {
   name: "InteractTab",
@@ -71,8 +47,8 @@ export default {
     network: String,
   },
   components: {
+    EntrypointsCard,
     Schema,
-    TypeDef,
   },
   data: () => ({
     loading: true,
@@ -82,9 +58,16 @@ export default {
   }),
   computed: {
     selectedItem() {
-      if (this.selected < 0 || this.entrypoints.length < this.selected)
+      if (this.selected < 0 || this.entrypoints.length < this.selected) {
         return null;
-      return this.entrypoints[this.selected];
+      }
+      if (typeof this.selected === "number") {
+        return this.entrypoints[this.selected];
+      }
+      const entrypointQuery = this.$route.query.entrypoint;
+      if (entrypointQuery) {
+        return this.entrypoints.find(item => item.name === entrypointQuery)
+      }
     },
   },
   created() {
@@ -120,7 +103,7 @@ export default {
     address: "getEntrypoints",
     selectedItem: function (newValue) {
       if (newValue === null) return;
-      if (this.$route.query.entrypoint != newValue.name) {
+      if (this.$route.query.entrypoint !== newValue.name) {
         this.$router.replace({ query: { entrypoint: newValue.name } });
       }
       this.model = Object.assign({}, newValue.default_model);
