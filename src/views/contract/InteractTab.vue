@@ -65,9 +65,7 @@ export default {
         return this.entrypoints[this.selected];
       }
       const entrypointQuery = this.$route.query.entrypoint;
-      if (entrypointQuery) {
-        return this.entrypoints.find(item => item.name === entrypointQuery)
-      }
+      return this.entrypoints.find(item => item.name === entrypointQuery)
     },
   },
   created() {
