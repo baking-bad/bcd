@@ -1,27 +1,125 @@
 <template>
-  <div id="docs" ref="redoc-container"></div>
+<div>
+  <div class="fill-height">
+    <v-navigation-drawer floating app permanent width="56" color="canvas" class="main-navigation">
+      <SideNavigation />
+    </v-navigation-drawer>
+  </div>
+  <v-container class="pa-0 ma-0" fluid>
+    <div id="docs" ref="redoc-container"></div>
+  </v-container>
+</div>
 </template>
 
 <script>
+import SideNavigation from "@/components/SideNavigation.vue";
 import { init as initRedoc } from "redoc/bundles/redoc.standalone.js";
 
+
 export default {
-  name: "Diff",
-  mounted() {
-    initRedoc(
-      `${this.config.API_URI}/swagger.json`,
-      this.redocOptions,
-      this.$refs["redoc-container"]
-    );
+  name: "Docs",
+  components: {
+    SideNavigation,
   },
-  data() {
-    return {
-      redocOptions: {
+  mounted() {
+    this.init();
+  },
+  watch: {
+    theme() {
+      this.init();
+    }
+  },
+  methods: {
+    init: function() {
+      return initRedoc(
+        `${this.config.API_URI}/swagger.json`,
+        this.redocOptions,
+        this.$refs["redoc-container"]
+      );
+    }
+  },
+  computed: {
+    theme() {
+      return this.$vuetify.theme.themes[this.$vuetify.theme.isDark ? 'dark' : 'light'];
+    },
+    redocOptions() {
+      return {        
         scrollYOffset: 0,
         expandResponses: "200",
         hideDownloadButton: true,
-      },
-    };
+        theme: {
+          schema: {
+            linesColor: this.theme.border,
+            typeNameColor: this.theme.secondary,
+            nestedBackground: this.theme.data
+          },
+          logo: {
+            gutter: '2rem'
+          },
+          sidebar: {
+            backgroundColor: this.theme.sidebar,
+            textColor: this.theme.text,
+            level1Items: {
+              textTransform: 'uppercase'
+            },
+          },
+          rightPanel: {
+            backgroundColor: this.theme.sidenav,
+            textColor: this.$vuetify.theme.themes.dark.text
+          },
+          codeBlock: {
+              backgroundColor: this.$vuetify.theme.themes.dark.data
+          },
+          colors: {
+            primary: {
+              main: this.theme.primary,
+              dark: this.$vuetify.theme.themes.dark.primary,
+              light: this.$vuetify.theme.themes.light.primary,
+            },
+            success: {
+              main: this.theme.success,              
+              dark: this.$vuetify.theme.themes.dark.success,
+              light: this.$vuetify.theme.themes.light.success,
+            },
+            warning: {
+              main: this.theme.warning,
+              dark: this.$vuetify.theme.themes.dark.warning,
+              light: this.$vuetify.theme.themes.light.warning,
+            },
+            error: {
+              main: this.theme.error,
+              dark: this.$vuetify.theme.themes.dark.error,
+              light: this.$vuetify.theme.themes.light.error,
+            },
+            text: {
+              primary: this.theme.text,
+            },
+            border: {
+              dark: this.$vuetify.theme.themes.dark.border,
+              light: this.$vuetify.theme.themes.light.border,
+            },
+            gray: {
+
+            },
+            http: {
+              get: this.theme.primary,
+              post: 'rgb(14, 124, 134)'
+            }
+          },
+          typography: {
+            headings: {
+              fontFamily: 'Roboto, sans-serif'
+            },
+            code: {
+              fontSize: '14px'
+            },
+            links: {
+              color: this.theme.secondary
+            }
+          }
+        }
+      };
+    }
   },
 };
 </script>
@@ -29,235 +127,62 @@ export default {
 <style lang="scss">
 body {
   #docs {
+    .redoc-wrap {
+      background-color: var(--v-canvas-base);
+    }
     .api-content > div {
-      padding: .5rem 0;
+      padding: 2rem 0;
     }
     .api-content > div h1 {
       margin-bottom: 0;
     }
-    .menu-content {
-      $topPadding: 40px;
-      padding-top: $topPadding;
-      div[role="search"] {
-        margin-top: $topPadding/2;
-      }
-    }
     code {
-      background-color: transparent;
-      color: white;
-      span.property,
-      span:not(.boolean),
-      span:not(.string) {
-        color: white;
+      background-color: #2a2a2a;
+      color: #888;
+      span.token.punctuation {
+        color: #888;
       }
-      span:not(.property).string {
-        color: darken(rgb(160, 251, 170), 50);
-      }
-      span:not(.property).boolean {
-        color: var(--v-error-lighten2);
+      span.token.boolean, span.ellipsis {
+        color: violet;
       }
     }
-  }
-  & > div.theme--dark {
-    background: var(--v-sidenav-base) !important;
-    #docs {
-      background: var(--v-sidenav-base);
-      .redoc-wrap {
-        input {
-          color: white;
-        }
-        div[data-role="search:results"] {
-          li {
-            background: var(--v-data-darken1);
-          }
-          background: var(--v-data-darken1);
-        }
-        .menu-content {
-          background: var(--v-sidebar-base);
-          label {
-            &.active {
-              background: var(--v-data-base);
-            }
-            &:hover {
-              background: var(--v-data-base);
-            }
-          }
-        }
-        .api-content {
-          a {
-            &::before {
-              background-color: white;
-            }
-          }
-          & > div {
-            & > div:first-child {
-              & > div:first-child {
-                color: white;
-                h1,
-                h2,
-                h3,
-                h4,
-                h5,
-                h6 {
-                  color: white;
-                }
-                span,
-                p {
-                  color: white;
-                }
-                a {
-                  color: lighten(rgb(50, 50, 159), 25);
-                }
-                table {
-                  $trBorderColor: var(--v-border-base);
-                  tr {
-                    border-left: 1px solid red;
-                    &:first-of-type {
-                      & > .eGbWXV {
-                        border-left: none;
-                        background-image:
-                            linear-gradient(
-                                    transparent 0%,
-                                    transparent 22px,
-                                    $trBorderColor 22px,
-                                    $trBorderColor 100%
-                            );
-                      }
-                      & > .ekuXnN {
-                        border-left-width: 0px;
-                        background-position: left top;
-                        background-repeat: no-repeat;
-                        background-size: 1px 100%;
-                        background-image:
-                            linear-gradient(
-                                    transparent 0%,
-                                    transparent 22px,
-                                    $trBorderColor 22px,
-                                    $trBorderColor 100%
-                            );
-                      }
-                    }
-                    &.last {
-                      &:first-child {
-                        & > .eGbWXV {
-                          background: none;
-                          border-left-color: transparent;
-                        }
-                      }
-                      & > .eGbWXV {
-                        border-left: none;
-                        background-image:
-                            linear-gradient(
-                                    $trBorderColor 0%,
-                                    $trBorderColor 22px,
-                                    transparent 22px,
-                                    transparent 100%
-                            );
-                      }
-                      & > .ekuXnN {
-                        border-left-width: 0px;
-                        background-position: left top;
-                        background-repeat: no-repeat;
-                        background-size: 1px 100%;
-                        background-image:
-                            linear-gradient(
-                                    $trBorderColor 0%,
-                                    $trBorderColor 22px,
-                                    transparent 22px,
-                                    transparent 100%
-                            );
-                      }
-                    }
-                    td {
-                      &[colspan="2"] {
-                        div {
-                          color: white;
-                          background: var(--v-data-base);
-                        }
-                      }
-                      .phsGg {
-                        &::after,
-                        &::before {
-                          background: $trBorderColor;
-                        }
-                      }
-                      &.eGbWXV,
-                      &.ekuXnN,
-                      &.eviNgt {
-                        border-left: 1px solid $trBorderColor;
-                      }
-                    }
-                  }
-                }
-              }
-              & > div:last-child:not(:first-child) {
-                background: var(--v-sidenav-base);
-              }
-              button.fWqjRd {
-                background: rgba(117, 163, 79, 0.3)
-              }
-              button.ZMFUf {
-                background: rgba(159, 0, 16, 0.3);
-              }
-            }
-            .react-tabs__tab-panel {
-              background: var(--v-canvas-base);
-            }
-            .react-tabs__tab-list {
-              li {
-                border: 1px solid rgba(7, 9, 11, 0.25);
-                &:not(.react-tabs__tab--selected) {
-                  background: var(--v-canvas-base);
-                }
-              }
-            }
-            button.sc-prOVx {
-              background: var(--v-canvas-base);
-            }
-          }
-          & > div:not(:first-child) {
-            div:first-child:not(:last-child) {
-              background: var(--v-canvas-base);
-              h1,
-              h2 {
-                font-weight: bold;
-              }
-            }
-            &:not(.hBHSsv) {
-              padding-left: 2.5rem;
-              & > div {
-                & > div {
-                  padding-top: 1.5rem;
-                  padding-bottom: 1.5rem;
-                }
-              }
-            }
-          }
-        }
-        & > div:last-child {
-          background: var(--v-sidenav-base);
-        }
+    td {
+      border-color: var(--v-border-base);
+    }
+    h1 {
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+    h2 {
+      color: var(--v-text-darken2);
+    }
+    h3 {
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+    h5 {
+      color: var(--v-text-darken2);
+      border-color: var(--v-border-base);
+      span {
+        color: var(--v-text-darken4);
       }
-      code {
-        span:not(.property).string {
-          color: var(--v-tree-base);
-        }
-      }
-      span,
-      p,
-      h2 {
-        color: white;
-      }
-      table {
-        span {
-          color: rgb(124, 124, 187);
-        }
-      }
-      div[role="button"] {
-        span {
-          color: rgb(50, 50, 159);
-        }
-      }
+    }
+    ul[role="navigation"] ~ div > a {
+      border-color: var(--v-border-base) !important;
+    }
+    label[type="tag"] {
+      opacity: .7;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: .0333333333em!important;
+      line-height: 1.25rem;
+    }
+    div[role="tabpanel"] {
+      margin-top: 10px;
+    }
+    li[role="tab"].react-tabs__tab--selected {
+      background-color: #555;
+      border-color: #555;
     }
   }
 }
