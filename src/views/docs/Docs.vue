@@ -32,7 +32,7 @@ export default {
   methods: {
     init: function() {
       return initRedoc(
-        `http://localhost:14000/v1/swagger.json`,
+        `${this.config.API_URI}/swagger.json`,
         this.redocOptions,
         this.$refs["redoc-container"]
       );
