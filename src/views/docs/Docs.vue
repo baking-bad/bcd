@@ -15,7 +15,6 @@
 import SideNavigation from "@/components/SideNavigation.vue";
 import { init as initRedoc } from "redoc/bundles/redoc.standalone.js";
 
-
 export default {
   name: "Docs",
   components: {
@@ -32,7 +31,7 @@ export default {
   methods: {
     init: function() {
       return initRedoc(
-        `${this.config.API_URI}/swagger.json`,
+        `http://localhost:14000/v1/swagger.json`,
         this.redocOptions,
         this.$refs["redoc-container"]
       );
