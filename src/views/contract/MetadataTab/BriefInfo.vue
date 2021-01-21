@@ -48,14 +48,6 @@
           {{ i }}
         </v-chip>
       </div>
-      <v-list-item v-if="metadata.authors" selectable>
-        <v-list-item-content>
-          <v-list-item-title class="overline">Authors</v-list-item-title>
-          <v-list-item-subtitle>{{
-              metadata.authors.join(", ")
-            }}</v-list-item-subtitle>
-        </v-list-item-content>
-      </v-list-item>
     </v-list>
     <RawJsonViewer
         :show.sync="showRaw"

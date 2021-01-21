@@ -1,14 +1,20 @@
 <template>
   <span>
     <a
-        v-for="author in value"
-        v-bind:key="getAuthorName(author)"
-        :href="getAuthorLink(author)"
+      v-for="(author, pos) in linkableNames"
+      v-bind:key="getAuthorName(author) + `${pos}`"
+      :href="getAuthorLink(author)"
     >
       {{
         getAuthorName(author)
       }}
     </a>
+    <span
+      v-for="(author, pos) in unlinkableNames"
+      v-bind:key="getAuthorName(author) + `${pos * -1}`"
+    >
+      {{getAuthorName(author)}}
+    </span>
   </span>
 </template>
 
@@ -18,13 +24,25 @@ export default {
   props: {
     value: Array,
   },
+  computed: {
+    linkableNames() {
+      return this.value.filter(item => item.indexOf('<') !== -1)
+    },
+    unlinkableNames() {
+      return this.value.filter(item => item.indexOf('<') === -1)
+    }
+  },
   methods: {
     isEmail(email) {
       const re = /\S+@\S+\.\S+/;
       return re.test(email);
     },
     getAuthorName(author) {
-      return author.substring(0, author.indexOf('<') - 1)
+      const linkStart = author.indexOf('<') - 1;
+      if (~linkStart) {
+        return author
+      }
+      return author.substring(0, linkStart)
     },
     getAuthorLink(author) {
       const link = author.substring(author.indexOf('<') + 1, author.length - 1);
