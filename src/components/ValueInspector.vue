@@ -84,6 +84,7 @@
 import Michelson from "@/components/Michelson.vue";
 import isIpfs from "is-ipfs";
 import { checkAddress } from "@/utils/tz.js";
+import {mapActions} from "vuex";
 
 export default {
   name: "ValueInspector",
@@ -129,11 +130,17 @@ export default {
     },
   },
   methods: {
+    ...mapActions(["showClipboardOK"]),
     copyText(text) {
       if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text);
+        navigator.clipboard.writeText(text).then(() => this.showClipboardOK());
       } else {
-        window.clipboardData.setData("Text", text);
+        try {
+          window.clipboardData.setData("Text", text);
+          this.showClipboardOK();
+        } catch (e) {
+          //
+        }
       }
     },
     handleAddress(span) {
