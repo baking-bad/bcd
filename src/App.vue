@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import ErrorSnackbar from "@/components/ErrorSnackbar.vue";
-import SuccessSnackbar from "@/components/SuccessSnackbar.vue";
+import ErrorSnackbar from "@/components/Snackbar/ErrorSnackbar.vue";
+import SuccessSnackbar from "@/components/Snackbar/SuccessSnackbar.vue";
 
 export default {
   name: "App",
