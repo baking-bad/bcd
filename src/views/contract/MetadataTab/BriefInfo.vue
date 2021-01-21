@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <v-container class="pa-0">
     <v-list>
       <v-list-item v-if="metadata.name" selectable>
         <v-list-item-content>
