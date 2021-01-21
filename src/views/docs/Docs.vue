@@ -167,6 +167,9 @@ body {
         color: var(--v-text-darken4);
       }
     }
+    ul {
+      padding: 0;
+    }
     ul[role="navigation"] ~ div > a {
       border-color: var(--v-border-base) !important;
     }
