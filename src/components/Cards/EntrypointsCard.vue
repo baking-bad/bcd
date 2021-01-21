@@ -58,8 +58,11 @@ export default {
           this.$emit('selected', newVal)
         }
       },
-      deep: true,
-      immediate: true,
+    }
+  },
+  created() {
+    if (typeof this.selectedOutside === "number") {
+      this.selected = this.selectedOutside
     }
   },
   data() {
