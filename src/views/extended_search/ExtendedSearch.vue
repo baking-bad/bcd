@@ -142,7 +142,7 @@ import { mapActions } from "vuex";
 import SearchFilters from "@/views/extended_search/SearchFilters.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import ResultItem from "@/views/extended_search/ResultItem.vue";
-import EmptyState from "@/components/EmptyState.vue";
+import EmptyState from "@/components/Cards/EmptyState.vue";
 
 export default {
   name: "ExtendedSearch",

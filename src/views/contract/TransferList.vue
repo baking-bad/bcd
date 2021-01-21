@@ -181,7 +181,7 @@
 <script>
 import { mapActions } from "vuex";
 
-import EmptyState from "@/components/EmptyState.vue";
+import EmptyState from "@/components/Cards/EmptyState.vue";
 
 export default {
   name: "TransferList",
