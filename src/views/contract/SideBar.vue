@@ -163,13 +163,13 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-              <v-list-item v-if="contract.total_withdrawn">
+              <v-list-item v-if="contract.balance">
                 <v-list-item-content>
                   <v-list-item-subtitle class="overline"
-                    >Total withdrawn</v-list-item-subtitle
+                    >Balance</v-list-item-subtitle
                   >
                   <v-list-item-title class="body-2">
-                    <span>{{ contract.total_withdrawn | uxtz }}</span>
+                    <span>{{ contract.balance | uxtz }}</span>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -198,60 +198,6 @@
                 :alias="contract.delegate_alias"
                 gutters
               />
-            </v-list>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-
-        <v-expansion-panel class="ma-0 bb-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span
-              class="caption font-weight-bold text-uppercase text--secondary"
-              >Balances</span
-            >
-          </v-expansion-panel-header>
-          <v-expansion-panel-content color="data">
-            <v-list class="contract-list">
-              <v-list-item v-if="contract.balance >= 0">
-                <v-list-item-content>
-                  <v-list-item-subtitle class="overline"
-                    >Tezos</v-list-item-subtitle
-                  >
-                  <v-list-item-title class="body-2">
-                    <span>{{ contract.balance | uxtz }}</span>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <template v-for="(token, i) in contract.tokens">
-                <v-divider :key="`divider-balance-${i}`"></v-divider>
-                <v-list-item :key="i">
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="overline"
-                      ><span v-if="token.name">{{ token.name }}</span>
-                      <span v-else
-                        >{{ token.contract.substring(0, 10) }} ... ({{
-                          token.token_id
-                        }})</span
-                      ></v-list-item-subtitle
-                    >
-                    <v-list-item-title class="body-2">
-                      <span>{{
-                        helpers
-                          .round(token.balance, token.decimals ? token.decimals : 0)
-                          .toLocaleString(undefined, {
-                            maximumFractionDigits: token.decimals ? token.decimals : 0,
-                          })
-                      }}</span
-                      >&nbsp;
-                     <span
-                        class="caption text-uppercase font-weight-regular text--disabled"
-                        >{{
-                          token.symbol ? token.symbol : `tok_${token.token_id}`
-                        }}</span
-                      >
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </template>
             </v-list>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -575,7 +521,7 @@ export default {
   min-height: 48px;
 }
 .contract-list {
-  max-height: calc(100vh - 75px - 6 * 48px);
+  max-height: calc(100vh - 75px - 5 * 48px);
   overflow-y: auto;
   border-radius: 0;
   padding: 0;

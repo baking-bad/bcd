@@ -30,10 +30,10 @@
         >
         <v-icon v-else-if="item.type == 'bigmapdiff'">mdi-database-edit</v-icon>
         <v-icon v-else-if="item.type == 'subscription'">mdi-eye-outline</v-icon>
-        <v-icon v-else-if="item.type == 'tzip'"
+        <v-icon v-else-if="item.type == 'token_metadata'"
           >mdi-circle-multiple-outline</v-icon
         >
-        <v-icon v-else-if="item.type == 'metadata'"
+        <v-icon v-else-if="item.type == 'tzip'"
           >mdi-puzzle-outline</v-icon
         >
         <v-icon v-else-if="item.type == 'recent'">mdi-history</v-icon>
@@ -42,10 +42,14 @@
       <v-list-item-content>
         <v-list-item-title>
           <template v-if="item.type == 'contract'">
+            <span class="text--secondary hash">Contracts</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
           <template v-else-if="item.type == 'operation'">
+            <span class="text--secondary hash">Operations</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
             <template v-if="item.body.destination.startsWith('KT')">
               <span
                 v-if="item.body.destination_alias"
@@ -68,24 +72,30 @@
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
           <template v-else-if="item.type == 'bigmapdiff'">
-            <span class="text--secondary">{{ item.body.ptr }}</span>
+            <span class="text--secondary hash">Big_map {{ item.body.ptr }}</span>
             <span class="text--secondary" style="font-size: 20px">→</span>
             <span>{{ item.body.key }}</span>
           </template>
           <template v-else-if="item.type == 'tzip'">
-            <span class="text--secondary">{{ item.body.name }}</span>
+            <span class="text--secondary hash">Metadata</span>
             <span class="text--secondary" style="font-size: 20px">→</span>
-            <span>{{ item.body.symbol }}</span>
+            <span>{{ item.body.name }}</span>
           </template>
-          <template v-else-if="item.type == 'metadata'">
+          <template v-else-if="item.type == 'token_metadata'">
+            <span class="text--secondary hash">Tokens</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
             <span v-if="item.body.name">{{ item.body.name }}</span>
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
           <template v-else-if="item.type == 'tezos_domain'">
-            <span class="text--secondary">{{ item.body.name }}</span>
+            <span class="text--secondary hash">Domains</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
+            <span class="hash">{{ item.body.name }}</span>
           </template>
           <template v-if="item.type == 'subscription'">
-            <span class="text--secondary">{{ item.body.alias }}</span>
+            <span class="text--secondary hash">Subscriptions</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
+            <span>{{ item.body.alias }}</span>
           </template>
           <template v-if="item.type == 'recent'">
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
@@ -112,7 +122,7 @@
           <span v-else-if="item.type === 'bigmapdiff' && item.group">{{
             helpers.plural(item.group.count, "update")
           }}</span>
-          <span v-else-if="item.type === 'tzip' && item.group">{{
+          <span v-else-if="item.type === 'token_metadata' && item.group">{{
             helpers.plural(item.group.count, "token")
           }}</span>
           <span v-else-if="item.type === 'subscription'"
@@ -241,7 +251,7 @@ export default {
         });
       } else if (
         [this.model.type, this.model.body.recent_type].includes(
-          "tzip"
+          "token_metadata"
         ) &&
         checkAddress(value)
       ) {
@@ -250,6 +260,16 @@ export default {
         });
         this.$router.push({ path: `/${network}/${value}/tokens` });
       } else if (
+        [this.model.type, this.model.body.recent_type].includes(
+          "tzip"
+        ) &&
+        checkAddress(value)
+      ) {
+        this.$nextTick(() => {
+          this.model = null;
+        });
+        this.$router.push({ path: `/${network}/${value}/metadata` });
+      }else if (
         [this.model.type, this.model.body.recent_type].includes(
           "tezos_domain"
         ) &&

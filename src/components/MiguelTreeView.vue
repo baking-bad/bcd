@@ -14,10 +14,10 @@
       <template v-slot:label="{ item }">
         <div :class="`${item.kind} pl-1`">
           <span
-              v-if="item.name.length ===`''`.length"
+              v-if="item.name.length == 0"
               class="key"
           >
-            @empty:
+            <span class="text--secondary">@empty</span>:
           </span>
           <span
             v-else
@@ -36,7 +36,6 @@
           >
             <v-icon class="accent--text" small>mdi-open-in-new</v-icon>
           </v-btn>
-          <span class="ml-2 key" v-else-if="item.value === ''">@empty</span>
           <span class="ml-2" v-else></span>
 
           <template v-if="item.value_type === 'big_map'">
@@ -60,7 +59,7 @@
             </template>
           </template>
 
-          <span v-else :class="item.type">{{ item.value }}</span>
+          <span v-else :class="item.type">{{ item.value }}<span class="text--secondary" v-if="item.value === ''">@empty</span></span>
         </div>
       </template>
     </v-treeview>
