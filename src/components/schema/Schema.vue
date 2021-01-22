@@ -506,6 +506,7 @@ export default {
       this.execution = true;
       try {
         let client = await this.getWallet(this.network);
+        console.log('client: ', client)
         const operation = {
           kind: TezosOperationType.TRANSACTION,
           destination: this.address,
@@ -584,11 +585,14 @@ export default {
         this.execution = false;
       }
     },
-    async deploy(code) {
+    async deploy(code, storage) {
       const client = await this.getWallet(this.selectedNetwork);
       const operation = {
         kind: TezosOperationType.ORIGINATION,
-        script: JSON.stringify(code),
+        script: {
+          code,
+          storage
+        },
         balance: this.settings.amount ? String(this.settings.amount) : "0",
       }
       try {
