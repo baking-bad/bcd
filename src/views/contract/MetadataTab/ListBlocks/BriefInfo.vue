@@ -37,7 +37,7 @@
           </div>
         </v-list-item-action>
       </v-list-item>
-      <div class="pl-2 mb-4">
+      <div class="pl-2 mb-4" v-if="metadata.interfaces">
         <v-chip
             v-for="(i, idx) in metadata.interfaces"
             :key="idx"

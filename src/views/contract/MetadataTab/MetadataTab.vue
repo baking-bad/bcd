@@ -15,6 +15,7 @@
           is-treeview
       />
       <EventsList
+          v-if="metadata.events"
           :metadata="metadata"
       />
     </v-skeleton-loader>

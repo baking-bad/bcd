@@ -39,7 +39,7 @@ export default {
     },
     getAuthorName(author) {
       const linkStart = author.indexOf('<') - 1;
-      if (~linkStart) {
+      if (linkStart === -2) {
         return author
       }
       return author.substring(0, linkStart)
