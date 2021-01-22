@@ -521,7 +521,7 @@ export default {
         this.injectedOpHash = result.opHash;
       } catch (err) {
         await err;
-        this.showAlertData(err.message);
+        this.showAlertData(err.description);
         console.log(err);
       } finally {
         this.execution = false;
@@ -588,7 +588,7 @@ export default {
         });
         await this.deploy(data.code, data.storage);
       } catch (err) {
-        this.showAlertData(err.message);
+        this.showAlertData(err.description);
         console.log(err);
       } finally {
         this.execution = false;
