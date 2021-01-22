@@ -84,7 +84,7 @@ import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
 import SchemaAlertData from "./schemaAlert/SchemaAlertData";
 import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
-import { DAppClient, TezosOperationType } from '@airgap/beacon-sdk'
+import { DAppClient, TezosOperationType, AbortedBeaconError, BroadcastBeaconError } from '@airgap/beacon-sdk'
 
 export default {
   name: "Schema",
@@ -217,9 +217,11 @@ export default {
     },
     showSuccessMessage(text) {
       this.successText = text;
+      this.alertData = '';
     },
     showAlertData(text) {
       this.alertData = text;
+      this.successText = '';
     },
     rawJsonActionCallback() {
       if (this.isParameter) {
@@ -562,11 +564,18 @@ export default {
         });
         await this.deploy(data.code, data.storage);
       } catch (err) {
-        this.showAlertData(err.message);
-        console.log(err);
+        this.showAlertData(this.makeHumanableErrorMessage(err));
       } finally {
         this.execution = false;
       }
+    },
+    makeHumanableErrorMessage(err) {
+      if (err instanceof AbortedBeaconError) {
+        return `Connection with the wallet has been aborted.`;
+      } else if (err instanceof BroadcastBeaconError) {
+        return `Something is wrong with either the network or the transaction.`
+      }
+      return `Error.`;
     },
     async makeDeploy() {
       if (this.execution) return;
@@ -602,8 +611,7 @@ export default {
         this.injectedOpHash = result.opHash;
         this.$emit("onDeploy", result);
       } catch (err) {
-        this.showAlertData(err.message);
-        console.log(err);
+        this.showAlertData(this.makeHumanableErrorMessage(err));
       }
     },
     getRandomContract(props) {
