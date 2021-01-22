@@ -74,7 +74,7 @@
       <div class="d-flex flex-column align-center justify-center pa-5">
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" icon :href="apiDocsUrl" target="_blank">
+            <v-btn v-on="on" icon to="/docs">
               <v-icon color="grey lighten-2">mdi-api</v-icon>
             </v-btn>
           </template>
@@ -90,7 +90,7 @@
           <span v-if="$vuetify.theme.dark">Disable dark theme</span>
           <span v-else>Enable dark theme</span>
         </v-tooltip>
-        <v-tooltip right v-if="isAuthorized && !config.SINGLE_USER_MODE">
+        <v-tooltip right v-if="isAuthorized && !config.SANDBOX_MODE">
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click="clickLogout" class="mt-6">
               <v-icon color="grey lighten-2">mdi-logout</v-icon>
@@ -120,7 +120,7 @@ export default {
       return this.$store.state.profile;
     },
     apiDocsUrl() {
-      return `${this.config.API_URI}docs/index.html`;
+      return `${window.location.origin}/docs`;
     },
   },
   data: () => ({

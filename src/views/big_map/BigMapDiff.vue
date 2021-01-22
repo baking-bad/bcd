@@ -5,7 +5,7 @@
         <v-col cols="8" class="d-flex align-center justify-start text-truncate">
           <v-list-item>
             <v-list-item-content>
-              <v-list-item-title class="hash">{{ diff.data.key_string }}</v-list-item-title>
+              <v-list-item-title class="hash">{{ diff.data.key_string ? diff.data.key_string : '@empty' }}</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-col>

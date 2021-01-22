@@ -14,7 +14,7 @@
     <v-divider></v-divider>
 
     <v-skeleton-loader
-      :loading="!bigmap.address"
+      :loading="loading"
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
     >
       <v-expansion-panels flat tile mandatory active-class="opened-panel">
@@ -50,6 +50,7 @@
                 </v-list-item-content>
               </v-list-item>
               <AccountBox
+                v-if="bigmap.address"
                 title="Owner contract"
                 :address="bigmap.address"
                 :alias="bigmap.contract_alias"
@@ -117,7 +118,7 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="ma-0 bb-1">
+        <v-expansion-panel class="ma-0 bb-1" v-if="bigmap.typedef">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span class="caption font-weight-bold text-uppercase text--secondary">Type</span>
           </v-expansion-panel-header>
@@ -164,6 +165,7 @@ export default {
   data: () => ({
     actions: [],
     totalBytes: NaN,
+    loading: true,
   }),
   computed: {
     removed() {
@@ -177,10 +179,12 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     getBigMapActions() {
+      this.loading = true;
       this.api
         .getContractBigMapActions(this.network, this.ptr)
         .then((res) => {
           if (!res) return;
+          if (!res.items) return;
           this.actions = res.items;
         })
         .catch((err) => {
@@ -188,6 +192,9 @@ export default {
           if (err.code !== 204) {
             this.showError(err);
           }
+        })
+        .finally(() => {
+          this.loading = false;
         });
     },
     getTotalBytes() {

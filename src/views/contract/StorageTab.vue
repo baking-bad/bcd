@@ -80,7 +80,12 @@
             <v-col cols="8">
               <Michelson v-if="raw" :code="rawStorage"></Michelson>
               <div v-else class="py-4 data">
-                <MiguelTreeView :miguel="storage" :network="network" openAll />
+                <MiguelTreeView
+                    :miguel="storage"
+                    :network="network"
+                    openAll
+                    compact-pair
+                />
               </div>
             </v-col>
             <v-divider vertical></v-divider>

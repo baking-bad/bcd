@@ -1,6 +1,6 @@
 {
   "name": "better-call-dev",
-  "version": "3.2.2",
+  "version": "3.3.1",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -15,7 +15,7 @@
     "@taquito/beacon-wallet": "^6.3.2-beta.0",
     "@taquito/taquito": "^6.3.2-beta.0",
     "@thanos-wallet/dapp": "^0.5.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bs58check": "^2.1.2",
     "codemirror": "^5.52.0",
     "dayjs": "^1.8.23",
@@ -27,6 +27,8 @@
     "is-ipfs": "^1.0.3",
     "json-view": "^0.4.0",
     "lz-string": "^1.4.4",
+    "null": "^2.0.0",
+    "redoc": "^2.0.0-rc.45",
     "v-clipboard": "^2.2.2",
     "vue": "^2.6.10",
     "vue-analytics": "^5.22.1",

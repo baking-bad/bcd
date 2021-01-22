@@ -14,6 +14,13 @@
       <template v-slot:label="{ item }">
         <div :class="`${item.kind} pl-1`">
           <span
+              v-if="item.name.length ===`''`.length"
+              class="key"
+          >
+            @empty:
+          </span>
+          <span
+            v-else
             class="key"
             :class="item.name.startsWith('@') ? 'text--secondary' : ''"
             >{{ item.name }}:</span
@@ -29,6 +36,7 @@
           >
             <v-icon class="accent--text" small>mdi-open-in-new</v-icon>
           </v-btn>
+          <span class="ml-2 key" v-else-if="item.value === ''">@empty</span>
           <span class="ml-2" v-else></span>
 
           <template v-if="item.value_type === 'big_map'">
@@ -48,7 +56,7 @@
               >
             </template>
             <template v-else>
-              <span class="caption gray--disabled">empty</span>
+              <span class="caption gray--disabled">{{helpers.plural(item.children.length, "diff")}}</span>
             </template>
           </template>
 
@@ -78,6 +86,7 @@ export default {
     network: String,
     openAll: Boolean,
     diffMode: Boolean,
+    compactPair: Boolean,
   },
   data: () => ({
     showTreeNodeDetails: false,
@@ -85,7 +94,7 @@ export default {
   }),
   computed: {
     tree() {
-      return getTree(this.miguel, true);
+      return getTree(this.miguel, true, this.compactPair);
     },
     openNodes() {
       return this.tree.map((x) => this.getChangedItems(x), this).flat();

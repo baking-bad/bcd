@@ -31,3 +31,10 @@ export function applyStyles(node) {
         applyStyles(node.items);
     }
 }
+
+export function getContentItemHeaderClass(status) {
+    if (status === "skipped" || status === "backtracked") return "item-header-backtracked";
+    if (status === "pending" || status === "lost") return "item-header-mempool";
+    if (status !== "applied") return "item-header-failed";
+    return `item-header-${status}`;
+}

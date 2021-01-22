@@ -66,23 +66,17 @@
         </template>
       </v-row>
     </v-card>
-
     <v-card flat outlined v-if="items.length > 0">
       <v-list class="py-0 item">
         <template v-for="(item, id) in items">
-          <v-list-item :key="id">
+          <v-list-item class="item__list-item" :class="statusHeaderClass(item.status)" :key="id">
             <v-row>
-              <v-col cols="1" class="d-flex align-center justify-center">
-                <v-icon :color="getStatusColor(item.status)">{{
-                  getIcon(item.status)
-                }}</v-icon>
-              </v-col>
-              <v-col cols="2" class="d-flex align-center">
+              <v-col cols="2" class="d-flex align-center justify-center">
                 <span class="body-2 text--secondary">{{
                   helpers.formatDatetime(item.timestamp)
                 }}</span>
               </v-col>
-              <v-col cols="2" class="d-flex align-center justify-end pr-6">
+              <v-col cols="4" class="d-flex align-center justify-center pr-6">
                 <span class="body-2">
                   {{
                     token
@@ -106,55 +100,47 @@
                   >
                 </span>
               </v-col>
-              <v-col cols="5" class="d-flex align-center">
+              <v-col cols="4" class="d-flex align-center">
                 <div>
                   <span
-                    class="caption text-uppercase font-weight-regular text--secondary"
+                    class="accent--text"
+                    v-if="!item.to && address === item.from"
                   >
-                    <span v-if="item.from"
-                      ><span v-if="!item.to" class="accent--text"
-                        >Burn&nbsp;</span
-                      >From&nbsp;</span
-                    >
-                    <span v-else class="accent--text">Mint&nbsp;</span>
+                    Burn&nbsp;
                   </span>
+                  <span
+                    class="caption text-uppercase font-weight-regular text--secondary"
+                    v-else-if="item.from && item.from !== address"
+                  >
+                    From&nbsp;
+                  </span>
+                  <span v-else-if="!item.from && address === item.to" class="accent--text">Mint&nbsp;</span>
                   <router-link
-                    v-if="item.from && address != item.from"
+                    v-if="item.from && address !== item.from"
                     text
                     v-html="item.from_alias || helpers.shortcut(item.from)"
                     style="text-transform: none; text-decoration: none"
                     class="px-1 text--primary hash"
                     :to="`/${item.network}/${item.from}`"
-                  />
-                  <span
-                    v-else-if="item.from"
-                    v-html="item.from_alias || helpers.shortcut(item.from)"
-                    style="text-transform: none; text-decoration: none"
-                    class="px-1 text--secondary hash"
                   />&nbsp;
                   <span
-                    v-if="item.to"
+                    v-if="item.to && address !== item.to"
                     class="caption text-uppercase font-weight-regular text--secondary"
                     >&nbsp;to&nbsp;</span
                   >
                   <router-link
-                    v-if="item.to && address != item.to"
+                    v-if="item.to && address !== item.to"
                     text
                     :to="`/${item.network}/${item.to}`"
                     v-html="item.to_alias || helpers.shortcut(item.to)"
                     style="text-transform: none; text-decoration: none"
                     class="px-1 text--primary hash"
-                  /><span
-                    v-else-if="item.to"
-                    v-html="item.to_alias || helpers.shortcut(item.to)"
-                    style="text-transform: none; text-decoration: none"
-                    class="px-1 text--secondary hash"
                   />
                 </div>
               </v-col>
-              <v-col cols="2">
+              <v-col cols="2" class="d-flex align-center justify-end">
                 <v-btn
-                  class="text--secondary hash"
+                  class="text--secondary hash hash-link"
                   text
                   style="text-transform: none"
                   :to="{
@@ -163,7 +149,7 @@
                   }"
                   target="_blank"
                 >
-                  <span v-html="helpers.shortcut(item.hash)"></span>
+                  <v-icon color="lightgrey" small>mdi-open-in-new</v-icon>
                 </v-btn>
               </v-col>
             </v-row>
@@ -173,7 +159,6 @@
       </v-list>
       <span v-intersect="onDownloadPage" v-if="!loading && !downloaded"></span>
     </v-card>
-
     <EmptyState v-else icon="mdi-transfer" text title="No transfers yet" />
   </v-skeleton-loader>
 </template>
@@ -182,6 +167,7 @@
 import { mapActions } from "vuex";
 
 import EmptyState from "@/components/EmptyState.vue";
+import {getContentItemHeaderClass} from "@/utils/styles";
 
 export default {
   name: "TransferList",
@@ -208,6 +194,9 @@ export default {
     ...mapActions({
       showError: "showError",
     }),
+    statusHeaderClass(status) {
+      return getContentItemHeaderClass(status);
+    },
     getNextPage() {
       if (!this.token) return;
       if (this.downloaded || this.loading) return;
@@ -257,14 +246,6 @@ export default {
           .finally(() => (this.loading = false));
       }
     },
-    getIcon(status) {
-      if (status === "applied") {
-        return "mdi-check";
-      } else if (status === "failed") {
-        return "mdi-close";
-      }
-      return "mdi-information-outline";
-    },
     getStatusColor(status) {
       if (status === "applied") {
         return "primary";
@@ -286,7 +267,7 @@ export default {
       handler: function (){
         this.downloaded = false;
         this.items = [];
-        this.last_id = '';
+        this.lastId = '';
         this.getNextPage();
       },
     },
@@ -294,10 +275,12 @@ export default {
 };
 </script>
 
-
-<style scoped>
+<style lang="scss" scoped>
 .item {
   background-color: var(--v-canvas-base);
   opacity: 0.8;
+}
+.hash-link {
+  max-width: 100%;
 }
 </style>

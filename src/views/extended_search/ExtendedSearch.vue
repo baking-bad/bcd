@@ -230,7 +230,6 @@ export default {
         ["name", ""],
         ["symbol", ""],
         ["contract", "contract which created token"],
-        ["registry_address", "token metadata registry"],
       ],
       metadata: [
         ["name", ""],
@@ -249,9 +248,9 @@ export default {
       } else if (this.tab == 3) {
         return ["bigmapdiff"];
       } else if (this.tab == 4) {
-        return ["tzip"];
+        return ["token_metadata"];
       } else if (this.tab == 5) {
-        return ["metadata"];
+        return ["tzip"];
       }
       return [];
     },
