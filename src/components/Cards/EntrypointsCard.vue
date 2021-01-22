@@ -19,7 +19,14 @@
               <span class="hash">{{ item.name }}</span>
             </div>
           </v-expansion-panel-header>
-          <v-expansion-panel-content>
+          <v-expansion-panel-content v-if="isImplementations">
+            <ImplementationsList
+                v-for="(implementations, i) in item.implementations"
+                v-bind:key="`implementation${i}`"
+                :implementations="implementations"
+            />
+          </v-expansion-panel-content>
+          <v-expansion-panel-content v-else>
             <TypeDef :typedef="item.typedef" first="parameter"/>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -30,13 +37,18 @@
 
 <script>
 import TypeDef from "@/views/contract/TypeDef";
+import ImplementationsList from "@/components/Lists/ImplementationsList";
 
 export default {
   name: "EntrypointsCard",
-  components: {TypeDef},
+  components: {ImplementationsList, TypeDef},
   props: {
     entrypoints: Array,
     selectedOutside: Number,
+    isImplementations: {
+      type: Boolean,
+      default: false,
+    },
     cardMaxWidth: {
       type: Number,
       default: 500

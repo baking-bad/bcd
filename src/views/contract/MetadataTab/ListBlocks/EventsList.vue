@@ -5,6 +5,7 @@
         class="ml-3 mr-3"
         :card-max-width="-1"
         :entrypoints="metadata.events"
+        :is-implementations="true"
     />
   </v-list>
 </template>
