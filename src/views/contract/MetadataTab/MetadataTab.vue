@@ -14,20 +14,22 @@
           name="Other Fields"
           is-treeview
       />
-      <EventsList class="mt-3" :metadata="metadata" />
+      <EntrypointsCard
+        :entrypoints="metadata.events"
+      />
     </v-skeleton-loader>
   </v-container>
 </template>
 
 <script>
 import BriefInfo from "@/views/contract/MetadataTab/ListBlocks/BriefInfo";
-import EventsList from "@/views/contract/MetadataTab/ListBlocks/EventsList";
 import FieldsWrapper from "@/views/contract/MetadataTab/CustomFields/FieldsWrapper";
 import ReservedFields from "@/views/contract/MetadataTab/ListBlocks/ReservedFields";
+import EntrypointsCard from "@/components/Cards/EntrypointsCard";
 
 export default {
   name: "Metadata",
-  components: {ReservedFields, FieldsWrapper, EventsList, BriefInfo},
+  components: {EntrypointsCard, ReservedFields, FieldsWrapper, BriefInfo},
   props: { contract: Object },
   data: () => {
     return {
