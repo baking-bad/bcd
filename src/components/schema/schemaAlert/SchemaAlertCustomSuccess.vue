@@ -4,7 +4,7 @@
       <div class="d-flex align-center">
         <span class="text--primary" v-html="successText"></span>
         <v-btn
-            elevation="2"
+            text
             @click="$emit('dismiss')"
         >
           Dismiss

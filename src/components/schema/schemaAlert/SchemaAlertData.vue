@@ -4,7 +4,7 @@
       <div class="d-flex justify-space-between align-center">
         <span class="text--primary">{{ alertData }}</span>
         <v-btn
-            elevation="2"
+            text
             @click="$emit('dismiss')"
         >
           Dismiss
