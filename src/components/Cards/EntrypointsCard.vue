@@ -1,5 +1,5 @@
 <template>
-  <v-card flat outlined :style="`max-width:${cardMaxWidth}px;`">
+  <v-card flat outlined :style="`max-width:${cardMaxWidth >= 0 ? cardMaxWidth + 'px' : '100%'};`">
     <v-navigation-drawer floating permanent :style="`max-height: ${navigationMaxHeight}vh; width: 100%;`">
       <v-expansion-panels
           flat
