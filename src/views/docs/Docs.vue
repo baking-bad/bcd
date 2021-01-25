@@ -143,7 +143,7 @@ body {
         color: #888;
       }
       span.token.boolean, span.ellipsis {
-        color: violet;
+        color:rgb(14, 124, 134);
       }
     }
     td {
@@ -182,6 +182,12 @@ body {
     }
     div[role="tabpanel"] {
       margin-top: 10px;
+    }
+    div[role="button"] > div {
+      color: #000;
+      &> span {
+        color: #000;
+      }
     }
     li[role="tab"].react-tabs__tab--selected {
       background-color: #555;

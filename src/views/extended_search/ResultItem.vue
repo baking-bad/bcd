@@ -5,12 +5,16 @@
         <v-list-item-content>
           <v-list-item-title>
             <template v-if="item.type == 'contract'">
+              <span class="hash">Contracts</span>
+              <span class="text--secondary" style="font-size: 20px;"> → </span>
               <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
                 <span v-if="item.body.alias" v-html="highlight(item.body.alias)" class="alias"></span>
                 <span v-else v-html="highlight(item.value)" class="hash"></span>
               </router-link>
             </template>
             <template v-else-if="item.type == 'operation'">
+              <span class="hash">Operations</span>
+              <span class="text--secondary" style="font-size: 20px;"> → </span>
               <template v-if="item.body.destination.startsWith('KT')">
                 <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.body.destination}`">
                   <span
@@ -36,7 +40,7 @@
             <template v-else-if="item.type == 'bigmapdiff'">
               <router-link class="serp-link" target="_blank" 
                 :to="`/${item.body.network}/big_map/${item.body.ptr}`">
-                <span class="hash text--secondary">{{ item.body.ptr }}</span>
+                <span class="hash text--primary">Big_map {{ item.body.ptr }}</span>
               </router-link>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
               <router-link class="serp-link" target="_blank" 
@@ -45,28 +49,30 @@
               </router-link>
             </template>
              <template v-else-if="item.type == 'token_metadata'">
-              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
+              <span class="hash">Tokens</span>
+              <span class="text--secondary" style="font-size: 20px;"> → </span>
+              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">                
                 <span v-if="item.body.name" v-html="highlight(item.body.name)" class="alias"></span>
-                <span v-if="item.body.name" class="text--secondary" style="font-size: 20px;"> → </span>
-                <span class="alias">{{ item.body.symbol }}</span>
               </router-link>
             </template>
             <template v-else-if="item.type == 'tzip'">
+              <span class="hash">Metadata</span>
+              <span class="text--secondary" style="font-size: 20px;"> → </span>
               <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}/metadata`">
-                <span v-html="highlight(item.body.name)" class="alias"></span>
+                <span v-html="highlight(item.body.name)" class="hash"></span>
               </router-link>
             </template>
             <template v-else-if="item.type == 'tezos_domain'">
+              <span class="hash">Domains</span>
+              <span class="text--secondary" style="font-size: 20px;"> → </span>
               <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
-                <span v-html="highlight(item.body.name)" class="alias"></span>
-                <span class="text--secondary" style="font-size: 20px;"> → </span>
-                <span class="hash">{{ item.body.address }}</span>
+                <span v-html="highlight(item.body.name)" class="hash"></span>
               </router-link>
             </template>
           </v-list-item-title>
 
           <v-list-item-subtitle>
-            <span class="overline">{{ item.body.network }}</span>
+            <span class="overline" :class="item.body.network === 'mainnet' ? 'secondary--text' : ''">{{ item.body.network }}</span>
             <span v-if="item.type === 'contract' && item.group">
               <span class="overline text--primary">, {{ item.group.count - 1 }} same</span>
             </span>
@@ -93,15 +99,6 @@
             <span v-else-if="item.type === 'bigmapdiff'">
               <span v-if="item.group">{{ helpers.plural(item.group.count, "update") }}</span>
               <span v-if="!item.body.value">, <span class="error--text">removed</span></span>
-            </span>
-            <span v-else-if="item.type === 'token_metadata'">
-              <span>token</span>
-            </span>
-            <span v-else-if="item.type === 'tzip'">
-              <span>metadata</span>
-            </span>
-            <span v-else-if="item.type === 'tezos_domain'">
-              <span>domain</span>
             </span>
           </v-list-item-action-text>
         </v-list-item-action>
