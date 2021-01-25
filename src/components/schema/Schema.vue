@@ -117,6 +117,7 @@ export default {
     networks: [],
     importActions: [],
     executeActions: [],
+    wallet: null,
     execution: false,
     importing: false,
     alertData: '',
@@ -150,6 +151,8 @@ export default {
 
     this.networks = Object.keys(this.config.rpc_endpoints);
     this.setSelectedNetwork(this.network);
+
+    this.resetBeaconActiveAccount();
   },
   computed: {
     storageLimit() {
@@ -193,6 +196,10 @@ export default {
         this.execution = false;
         this.importing = false;
       }
+    },
+    resetBeaconActiveAccount() {
+      localStorage.setItem('beacon:active-peer', '');
+      localStorage.setItem('beacon:active-account', '');
     },
     setSelectedFillType(val) {
       this.selectedFillType = val;
@@ -239,34 +246,28 @@ export default {
     beaconClientActionCallback(isLast) {
       if (this.isParameter) {
         return async () => {
-          this.setUpActiveAccount(isLast);
-          await this.callContract();
+          await this.callContract(isLast);
         }
       } else if (this.isDeploy) {
         return async () => {
-          this.setUpActiveAccount(isLast);
           await this.makeDeploy();
         }
       }
 
       return async () => {
-        this.setUpActiveAccount(isLast);
         await this.fork();
       }
     },
-    beaconWalletGetAddress() {
+    beaconWalletGetAddress(isLast) {
       return async () => {
-        this.setUpActiveAccount(false);
-        let client = await this.getWallet(this.network);
+        if (isLast) {
+          const lastAccount = this.getLastUsedAccount();
+          return lastAccount.address;
+        }
+        let client = this.wallet ? this.wallet : await this.getWallet(this.network);
+        await this.getNewPermissions(false);
         const account = await client.getActiveAccount();
         return account.address;
-      }
-    },
-    lastWalletAddress() {
-      return () => {
-        const accounts = localStorage.getItem('beacon:accounts');
-        const accountRecentConnectionTime = this.getLastUsedAccount(accounts);
-        return accountRecentConnectionTime.address;
       }
     },
     async setExecuteActions() {
@@ -296,10 +297,11 @@ export default {
           {
             text: "Wallet",
             icon: "mdi-lighthouse",
-            callback: this.beaconWalletGetAddress()
+            callback: this.beaconWalletGetAddress(false)
           }
       );
-      if (localStorage.getItem('beacon:active-account')) {
+      const accounts = localStorage.getItem('beacon:accounts');
+      if (accounts && JSON.parse(accounts).length > 0) {
         this.executeActions.push({
           text: "Last used wallet",
           icon: "mdi-lighthouse",
@@ -309,7 +311,7 @@ export default {
             {
               text: "Last used wallet",
               icon: "mdi-lighthouse",
-              callback: this.lastWalletAddress()
+              callback: this.beaconWalletGetAddress(true)
             }
         );
         this.isLastWalletOption = true;
@@ -329,7 +331,7 @@ export default {
                   {
                     text: "Last used wallet",
                     icon: "mdi-lighthouse",
-                    callback: this.lastWalletAddress()
+                    callback: this.beaconWalletGetAddress(true)
                   }
               );
               this.isLastWalletOption = true;
@@ -470,53 +472,51 @@ export default {
         })
         .finally(() => (this.execution = false));
     },
-    async getWallet(network) {
-      this.isGettingWalletProgress = true;
-      const appName = "Better Call Dev";
-      const rpcUrl = this.config.rpc_endpoints[network];
-      let wallet = new DAppClient({
-        name: appName,
-        eventHandlers: this.getWalletEventHandlers(),
-      });
-      const networkMap = { sandboxnet: "custom" };
-      const type = networkMap[network] || network;
-      await wallet.setActiveAccount(undefined);
-      await wallet.requestPermissions({ network: { type, rpcUrl } });
-      this.isGettingWalletProgress = false;
-      return wallet;
-    },
-    getLastUsedAccount(accounts) {
+    getLastUsedAccount() {
+      const accounts = localStorage.getItem('beacon:accounts');
       const parsedAccounts = JSON.parse(accounts);
       const connectionTimes = parsedAccounts.map(item => item.connectedAt);
       const recentConnectionTime = Math.max(...connectionTimes);
       return parsedAccounts.find(item => item.connectedAt === recentConnectionTime);
     },
-    setUpActiveAccount(isLast) {
-      const accounts = localStorage.getItem('beacon:accounts');
-      if (isLast && accounts) {
-        const accountRecentConnectionTime = this.getLastUsedAccount(accounts);
-        const accountID = accountRecentConnectionTime.accountIdentifier;
-        localStorage.setItem('beacon:active-account', accountID);
-      } else {
-        localStorage.setItem('beacon:active-account', undefined);
-      }
+    async getWallet() {
+      this.wallet = new DAppClient({
+        name: "Better Call Dev",
+        eventHandlers: this.getWalletEventHandlers(),
+      });
+      return this.wallet;
     },
-    async callContract() {
+    async getNewPermissions(isLast) {
+      this.isGettingWalletProgress = true;
+      const rpcUrl = this.config.rpc_endpoints[this.network];
+      const networkMap = { sandboxnet: "custom" };
+      const type = networkMap[this.network] || this.network;
+      if (!isLast) {
+        await this.wallet.clearActiveAccount();
+      } else {
+        this.wallet.setActiveAccount(this.getLastUsedAccount());
+      }
+      await this.wallet.requestPermissions({ network: { type, rpcUrl } });
+      this.isGettingWalletProgress = false;
+    },
+    async callContract(isLast) {
       let parameter = await this.generateParameters(true);
       if (!parameter) return;
 
       this.execution = true;
       try {
-        let client = await this.getWallet(this.network);
-        console.log('client: ', client)
-        const operation = {
-          kind: TezosOperationType.TRANSACTION,
-          destination: this.address,
-          amount: String(parseInt(this.settings.amount || "0")),
-          parameters: JSON.parse(JSON.stringify(parameter)),
+        if (this.wallet && !isLast) {
+          await this.getNewPermissions(isLast);
         }
+        let client = this.wallet ? this.wallet : await this.getWallet(this.network);
+        await this.getNewPermissions(isLast);
         const result = await client.requestOperation({
-          operationDetails: [operation]
+          operationDetails: [{
+            kind: TezosOperationType.TRANSACTION,
+            destination: this.address,
+            amount: String(parseInt(this.settings.amount || "0")),
+            parameters: JSON.parse(JSON.stringify(parameter)),
+          }]
         });
         this.injectedOpHash = result.opHash;
       } catch (err) {
