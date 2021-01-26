@@ -1,3 +1,5 @@
+import BigNumber from "bignumber.js";
+
 var bs58check = require("bs58check");
 var dayjs = require("dayjs");
 
@@ -77,6 +79,29 @@ export function urlExtractBase58(url) {
     }
 }
 
+export function numberToLocalizeString(number, maximumFractionDigits) {
+    if (maximumFractionDigits >= 0 && maximumFractionDigits <= 20) {
+        return number.toLocaleString(undefined, {
+            maximumFractionDigits
+        });
+    } else {
+        const stringed = String(number);
+        const intPart = stringed.substring(0, stringed.indexOf('.'));
+        const fractionString = stringed.substring(stringed.indexOf('.') + 1)
+        if (maximumFractionDigits === 0) {
+            return intPart;
+        }
+        if (fractionString.length > maximumFractionDigits) {
+            return stringed.substring(0, stringed.indexOf('.') + 1 + maximumFractionDigits);
+        } else if (fractionString.length <= maximumFractionDigits) {
+            return stringed;
+        }
+    }
+}
+
 export function round(value, decimals) {
+    if (decimals > 20) {
+        return parseFloat(new BigNumber(value).toFixed(decimals));
+    }
     return parseFloat((value / 10 ** decimals).toFixed(decimals));
 }
