@@ -250,12 +250,12 @@ export default {
         }
       } else if (this.isDeploy) {
         return async () => {
-          await this.makeDeploy();
+          await this.makeDeploy(isLast);
         }
       }
 
       return async () => {
-        await this.fork();
+        await this.fork(isLast);
       }
     },
     beaconWalletGetAddress(isLast) {
@@ -444,20 +444,24 @@ export default {
       await this.wallet.requestPermissions({ network: { type, rpcUrl } });
       this.isGettingWalletProgress = false;
     },
+    async getClient(isLast) {
+      let client;
+      if (this.wallet && !isLast) {
+        await this.getNewPermissions(isLast);
+        client = this.wallet ? this.wallet : await this.getWallet(this.network);
+      } else {
+        client = this.wallet ? this.wallet : await this.getWallet(this.network);
+        await this.getNewPermissions(isLast);
+      }
+      return client;
+    },
     async callContract(isLast) {
       let parameter = await this.generateParameters(true);
       if (!parameter) return;
 
       this.execution = true;
       try {
-        let client;
-        if (this.wallet && !isLast) {
-          await this.getNewPermissions(isLast);
-          client = this.wallet ? this.wallet : await this.getWallet(this.network);
-        } else {
-          client = this.wallet ? this.wallet : await this.getWallet(this.network);
-          await this.getNewPermissions(isLast);
-        }
+        let client = await this.getClient(isLast);
         const result = await client.requestOperation({
           operationDetails: [{
             kind: TezosOperationType.TRANSACTION,
@@ -498,7 +502,7 @@ export default {
         })
         .finally(() => (this.execution = false));
     },
-    async fork() {
+    async fork(isLast) {
       if (this.execution) return;
 
       this.execution = true;
@@ -508,7 +512,7 @@ export default {
           address: this.address,
           storage: this.model,
         });
-        await this.deploy(data.code, data.storage);
+        await this.deploy(isLast, data.code, data.storage);
       } catch (err) {
         this.showAlertData(this.makeHumanableErrorMessage(err));
       } finally {
@@ -523,7 +527,7 @@ export default {
       }
       return err.description;
     },
-    async makeDeploy() {
+    async makeDeploy(isLast) {
       if (this.execution) return;
 
       this.execution = true;
@@ -532,15 +536,15 @@ export default {
           script: JSON.stringify(this.script),
           storage: this.model,
         });
-        await this.deploy(data.code, data.storage);
+        await this.deploy(isLast, data.code, data.storage);
       } catch (err) {
         this.showAlertData(err.description);
       } finally {
         this.execution = false;
       }
     },
-    async deploy(code, storage) {
-      const client = await this.getWallet(this.selectedNetwork);
+    async deploy(isLast, code, storage) {
+      const client = await this.getClient(isLast);
       const operation = {
         kind: TezosOperationType.ORIGINATION,
         script: {
