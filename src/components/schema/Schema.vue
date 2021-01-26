@@ -86,6 +86,14 @@ import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
 import { DAppClient, TezosOperationType, AbortedBeaconError, BroadcastBeaconError } from '@airgap/beacon-sdk'
 
+const walletsToIcons = {
+  "Thanos Wallet": "mdi-alpha-t-box",
+  "Beacon Extension": "mdi-alpha-b-box",
+  "Galleon": "mdi-alpha-g-box",
+  "Kukai": "mdi-alpha-k-box",
+  default: "mdi-alpha-w-box",
+};
+
 export default {
   name: "Schema",
   components: {
@@ -130,7 +138,6 @@ export default {
     tezosClientCmdline: null,
     parametersJSON: null,
     isGettingWalletProgress: false,
-    isLastWalletOption: false,
     successText: '',
     settings: {
       source: null,
@@ -290,7 +297,7 @@ export default {
         },
         {
           text: "Wallet",
-          icon: "mdi-lighthouse",
+          icon: this.getIconForWalletName(),
           callback: this.beaconClientActionCallback(false)
         },
       ];
@@ -306,28 +313,51 @@ export default {
         this.addLastUsedOption();
       }
     },
+    getIconForWalletName(name) {
+      return name in walletsToIcons ? walletsToIcons[name] : walletsToIcons.default;
+    },
+    removeLastUsedOption() {
+      this.executeActions = this.executeActions.filter(item => !item.isLastOption);
+    },
+    getLastUsedWalletInfo() {
+      const lastAccount = this.getLastUsedAccount();
+      const peers = localStorage.getItem('beacon:postmessage-peers-dapp');
+      if (!peers) {
+        return {
+          text: "Last used wallet",
+          icon: this.getIconForWalletName()
+        }
+      } else {
+        const text = JSON.parse(peers)
+            .find(item => item.extensionId === lastAccount.origin.id)
+            .name;
+        const icon = this.getIconForWalletName(text);
+        return { text, icon }
+      }
+    },
     addLastUsedOption() {
+      const { text, icon } = this.getLastUsedWalletInfo();
+      this.removeLastUsedOption();
       this.executeActions.push({
-        text: "Last used wallet",
-        icon: "mdi-lighthouse",
+        text,
+        icon,
+        isLastOption: true,
         callback: this.beaconClientActionCallback(true)
       });
       this.importActions.push(
           {
-            text: "Last used wallet",
-            icon: "mdi-lighthouse",
+            text,
+            icon,
+            isLastOption: true,
             callback: this.beaconWalletGetAddress(true)
           }
       );
-      this.isLastWalletOption = true;
     },
     getWalletEventHandlers() {
       return {
         PERMISSION_REQUEST_SUCCESS: {
           handler: () => {
-            if (!this.isLastWalletOption) {
-              this.addLastUsedOption();
-            }
+            this.addLastUsedOption();
             return null;
           },
         },
@@ -525,7 +555,7 @@ export default {
       } else if (err instanceof BroadcastBeaconError) {
         return `Something is wrong with either the network or the transaction.`
       }
-      return err.description;
+      return err.message;
     },
     async makeDeploy(isLast) {
       if (this.execution) return;
