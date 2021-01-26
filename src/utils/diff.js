@@ -187,13 +187,13 @@ function parseTuple(x, isRoot = false) {
 
 function parseItems(x, isRoot = false, compactPair) {
     if (x.type === 'list' || x.type === 'set' || x.type === 'tuple' || x.type === 'union') {
-        return parseTuple(x, isRoot, compactPair);
+        return parseTuple(x, isRoot);
     }
     if (x.type === 'map' || x.type === 'big_map') {
         return parseMap(x, compactPair);
     }
     if ((x.type === 'namedtuple' || x.type === 'namedunion') && isRoot) {  // TODO: why isRoot == true only?
-        return parseNamedTuple(x, compactPair);
+        return parseNamedTuple(x);
     }
     return parseItem(x, compactPair)
 }
