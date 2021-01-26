@@ -146,7 +146,7 @@ export default {
     model: {},
   }),
   async created() {
-    await this.setExecuteActions();
+    this.setExecuteActions();
     this.setFillTypes();
 
     this.networks = Object.keys(this.config.rpc_endpoints);
@@ -263,14 +263,15 @@ export default {
         if (isLast) {
           const lastAccount = this.getLastUsedAccount();
           return lastAccount.address;
+        } else {
+          const client = this.wallet ? this.wallet : await this.getWallet(this.network);
+          await this.getNewPermissions(false);
+          const account = await client.getActiveAccount();
+          return account.address;
         }
-        let client = this.wallet ? this.wallet : await this.getWallet(this.network);
-        await this.getNewPermissions(false);
-        const account = await client.getActiveAccount();
-        return account.address;
       }
     },
-    async setExecuteActions() {
+    setExecuteActions() {
       this.executeActions = [
         {
           text: "Simulate",
@@ -302,87 +303,33 @@ export default {
       );
       const accounts = localStorage.getItem('beacon:accounts');
       if (accounts && JSON.parse(accounts).length > 0) {
-        this.executeActions.push({
-          text: "Last used wallet",
-          icon: "mdi-lighthouse",
-          callback: this.beaconClientActionCallback(true)
-        });
-        this.importActions.push(
-            {
-              text: "Last used wallet",
-              icon: "mdi-lighthouse",
-              callback: this.beaconWalletGetAddress(true)
-            }
-        );
-        this.isLastWalletOption = true;
+        this.addLastUsedOption();
       }
+    },
+    addLastUsedOption() {
+      this.executeActions.push({
+        text: "Last used wallet",
+        icon: "mdi-lighthouse",
+        callback: this.beaconClientActionCallback(true)
+      });
+      this.importActions.push(
+          {
+            text: "Last used wallet",
+            icon: "mdi-lighthouse",
+            callback: this.beaconWalletGetAddress(true)
+          }
+      );
+      this.isLastWalletOption = true;
     },
     getWalletEventHandlers() {
       return {
         PERMISSION_REQUEST_SUCCESS: {
           handler: () => {
             if (!this.isLastWalletOption) {
-              this.executeActions.push({
-                text: "Last used wallet",
-                icon: "mdi-lighthouse",
-                callback: this.beaconClientActionCallback(true)
-              });
-              this.importActions.push(
-                  {
-                    text: "Last used wallet",
-                    icon: "mdi-lighthouse",
-                    callback: this.beaconWalletGetAddress(true)
-                  }
-              );
-              this.isLastWalletOption = true;
+              this.addLastUsedOption();
             }
             return null;
           },
-        },
-        PERMISSION_REQUEST_ERROR: {
-          handler: () => {
-            this.importing = false;
-          }
-        },
-        OPERATION_REQUEST_ERROR: {
-          handler: () => {
-            this.showAlertData('The operations was aborted.');
-          }
-        },
-        SIGN_REQUEST_ERROR: {
-          handler: () => {
-            this.showAlertData('The operations was aborted.');
-          }
-        },
-        BROADCAST_REQUEST_ERROR: {
-          handler: () => {
-            this.showAlertData('Problem with broadcasting operation...');
-          }
-        },
-        INTERNAL_ERROR: {
-          handler: () => {
-            this.showAlertData('Internal error 😔');
-          }
-        },
-        UNKNOWN: {
-          handler: () => {
-            this.showAlertData('Unknown error 😔');
-          }
-        },
-        CHANNEL_CLOSED: {
-          handler: () => {
-            this.showAlertData('Channel closed.');
-          }
-        },
-        NO_PERMISSIONS: {
-          handler: () => {
-            this.showAlertData('No permissions.');
-          }
-        },
-        LOCAL_RATE_LIMIT_REACHED: {
-          handler: () => {
-            this.showAlertData('No permissions.');
-          }
         },
         OPERATION_REQUEST_SUCCESS: {
           handler: (data) => {
@@ -435,7 +382,6 @@ export default {
           } else {
             this.showError(err);
           }
-          console.log(err);
         })
         .finally(() => (this.execution = false));
     },
@@ -468,7 +414,6 @@ export default {
           } else {
             this.showError(err);
           }
-          console.log(err);
         })
         .finally(() => (this.execution = false));
     },
@@ -505,11 +450,14 @@ export default {
 
       this.execution = true;
       try {
+        let client;
         if (this.wallet && !isLast) {
           await this.getNewPermissions(isLast);
+          client = this.wallet ? this.wallet : await this.getWallet(this.network);
+        } else {
+          client = this.wallet ? this.wallet : await this.getWallet(this.network);
+          await this.getNewPermissions(isLast);
         }
-        let client = this.wallet ? this.wallet : await this.getWallet(this.network);
-        await this.getNewPermissions(isLast);
         const result = await client.requestOperation({
           operationDetails: [{
             kind: TezosOperationType.TRANSACTION,
@@ -522,7 +470,6 @@ export default {
       } catch (err) {
         await err;
         this.showAlertData(err.description);
-        console.log(err);
       } finally {
         this.execution = false;
       }
@@ -548,7 +495,6 @@ export default {
           } else {
             this.showError(err);
           }
-          console.log(err);
         })
         .finally(() => (this.execution = false));
     },
@@ -575,7 +521,7 @@ export default {
       } else if (err instanceof BroadcastBeaconError) {
         return `Something is wrong with either the network or the transaction.`
       }
-      return `Error.`;
+      return err.description;
     },
     async makeDeploy() {
       if (this.execution) return;
@@ -589,7 +535,6 @@ export default {
         await this.deploy(data.code, data.storage);
       } catch (err) {
         this.showAlertData(err.description);
-        console.log(err);
       } finally {
         this.execution = false;
       }
@@ -625,7 +570,6 @@ export default {
         })
         .catch((err) => {
           this.showAlertData(err.message);
-          console.log(err);
         })
         .finally(() => (this.show = true));
     },
@@ -662,7 +606,6 @@ export default {
             this.$forceUpdate();
           })
           .catch((err) => {
-            console.log(err);
             this.showError(err);
           })
           .finally(() => {
@@ -682,7 +625,6 @@ export default {
             this.$forceUpdate();
           })
           .catch((err) => {
-            console.log(err);
             this.showError(err);
           })
           .finally(() => {
