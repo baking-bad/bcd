@@ -441,7 +441,7 @@ export default {
 
     .v-list-item__title {
       margin-right: auto;
-      font-family: "Roboto Mono";
+      font-family: "Roboto Mono", monospace;
     }
     .v-list-item__subtitle {
       margin-right: auto;

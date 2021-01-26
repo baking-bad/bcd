@@ -152,8 +152,6 @@ export default {
         return "mdi-telegram";
       } else if (link.includes("gitlab")) {
         return "mdi-gitlab";
-      } else if (link.includes("github")) {
-        return "mdi-github";
       } else if (link.includes("instagram")) {
         return "mdi-instagram";
       }
@@ -176,8 +174,6 @@ export default {
         return "telegram";
       } else if (link.includes("gitlab")) {
         return "gitlab";
-      } else if (link.includes("github")) {
-        return "github";
       } else if (link.includes("instagram")) {
         return "instagram";
       }

@@ -128,7 +128,6 @@ export default {
   padding-right: 10px;
   padding-left: 10px;
   line-height: 20px;
-  vertical-align: top;
   font-size: 12px;
   font-family: "Roboto Mono", monospace;
   white-space: pre-wrap;
