@@ -361,6 +361,15 @@ export default {
             return null;
           },
         },
+        PERMISSION_REQUEST_ERROR: { handler: () => null },
+        OPERATION_REQUEST_ERROR: { handler: () => null },
+        SIGN_REQUEST_ERROR: { handler: () => null },
+        BROADCAST_REQUEST_ERROR: { handler: () => null },
+        INTERNAL_ERROR: { handler: () => null },
+        UNKNOWN: { handler: () => null },
+        CHANNEL_CLOSED: { handler: () => null },
+        NO_PERMISSIONS: { handler: () => null },
+        LOCAL_RATE_LIMIT_REACHED: { handler: () => null },
         OPERATION_REQUEST_SUCCESS: {
           handler: (data) => {
             const link = `https://${data.account.network.type}.tzkt.io/${data.output.transactionHash}`;
