@@ -9,7 +9,7 @@
               cols="12"
               class="d-flex align-center justify-center primary--text"
             >
-              <span style="font-family: Script1-Casual; font-size: 72px"
+              <span style="font-family: Script1-Casual, monospace; font-size: 72px"
                 >Better Call Dev</span
               >
             </v-col>

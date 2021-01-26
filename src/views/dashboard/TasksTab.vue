@@ -20,7 +20,7 @@
         <template v-slot:header="{ props: { headers } }">
           <thead>
             <tr>
-              <th v-for="(h, idx) in headers" :key="idx" class="ml-4">
+              <th v-for="(h, idx) in headers" scope="col" :key="idx" class="ml-4">
                 <span class="ml-4">{{ h.text }}</span>
               </th>
             </tr>

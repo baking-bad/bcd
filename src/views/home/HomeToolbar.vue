@@ -35,7 +35,7 @@
           </v-avatar>
         </v-btn>
       </template>
-      <b>{{ profile.login }}</b> dashboard
+      <strong>{{ profile.login }}</strong> dashboard
     </v-tooltip>
 
     <v-tooltip bottom>
