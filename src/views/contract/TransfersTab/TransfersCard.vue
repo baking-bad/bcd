@@ -21,7 +21,7 @@
                       <span
                           class="caption text-uppercase font-weight-regular text--disabled"
                       >
-                        {{ getTokenSymbol(item) }}
+                        {{ item.symbol ? item.symbol : '' }}
                       </span>
                     </v-col>
                   </v-row>
@@ -81,10 +81,6 @@ export default {
       } else if (item.symbol) {
         return item.symbol
       }
-    },
-    getTokenSymbol(item) {
-      const name = this.getName(item)
-      return name ? name : item.token_id
     },
   },
   created() {
