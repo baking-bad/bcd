@@ -83,7 +83,8 @@ function compactizePairs(x) {
     }
     const pairs = x.name.split('Pair');
     let reduced = pairs.reduce((a, b) => {
-        return a += `${b.trim().split(' ')[0]}:`
+        a = a + `${b.trim().split(' ')[0]}:`
+        return a;
     }, '');
     return reduced.slice(1, -1).trim();
 }
@@ -149,8 +150,8 @@ function parseTuple(x, isRoot = false) {
     if (isRoot) {        
         if (x.children) {
             let res = [];
-            x.children.forEach((x, idx) => {
-                let node = getTree(x)
+            x.children.forEach((xChild, idx) => {
+                let node = getTree(xChild)
                 node[0].name = String(idx);
                 res.push(...node);
             })
@@ -168,8 +169,8 @@ function parseTuple(x, isRoot = false) {
 
     let children = [];
     if (x.children) {
-        x.children.forEach((x, idx) => {
-            let node = getTree(x)
+        x.children.forEach((xChild, idx) => {
+            let node = getTree(xChild)
             node[0].name = String(idx);
             children.push(node[0]);
         })
@@ -185,7 +186,7 @@ function parseTuple(x, isRoot = false) {
     }];
 }
 
-function parseItems(x, isRoot = false, compactPair) {
+function parseItems(x, compactPair, isRoot = false) {
     if (x.type === 'list' || x.type === 'set' || x.type === 'tuple' || x.type === 'union') {
         return parseTuple(x, isRoot);
     }
@@ -202,10 +203,10 @@ export function getTree(data, isRoot = false, compactPair = false) {
     let res = [];
     if (data instanceof Array) {
         data.forEach(x => {
-            res.push(...parseItems(x, isRoot, compactPair));
+            res.push(...parseItems(x, compactPair, isRoot));
         })
     } else if (data instanceof Object) {
-        res.push(...parseItems(data, isRoot, compactPair));
+        res.push(...parseItems(data, compactPair, isRoot));
     }
     return res;
 }
