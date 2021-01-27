@@ -87,15 +87,10 @@ export function numberToLocalizeString(number, maximumFractionDigits) {
     } else {
         const stringed = String(number);
         const intPart = stringed.substring(0, stringed.indexOf('.'));
-        const fractionString = stringed.substring(stringed.indexOf('.') + 1)
         if (maximumFractionDigits === 0) {
             return intPart;
         }
-        if (fractionString.length > maximumFractionDigits) {
-            return stringed.substring(0, stringed.indexOf('.') + 1 + maximumFractionDigits);
-        } else if (fractionString.length <= maximumFractionDigits) {
-            return stringed;
-        }
+        return new BigNumber(number).precision(intPart.length + maximumFractionDigits);
     }
 }
 
