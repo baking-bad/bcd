@@ -705,7 +705,7 @@ export default {
 
 <style>
 .v-btn-toggle {
-  flex-direction: column;
+  flex-direction: row;
 }
 
 .vjsf-property fieldset,
@@ -760,9 +760,5 @@ export default {
   pointer-events: none;
   transition: 0.3s cubic-bezier(0.25, 0.8, 0.5, 1);
   min-height: 6px;
-}
-
-.v-btn-toggle {
-  flex-direction: row;
 }
 </style>
