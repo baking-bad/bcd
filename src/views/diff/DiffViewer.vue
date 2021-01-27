@@ -116,6 +116,7 @@ export default {
         tr.appendChild(r_td);
 
         table.appendChild(tr);
+        table.setAttribute('aria-hidden', 'false');
       }
     }
   }
