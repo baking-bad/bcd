@@ -10,7 +10,6 @@
         </v-col>
       </v-row>
     </v-navigation-drawer>
-
     <v-toolbar flat class="pl-8" color="toolbar" height="75">
       <v-tabs center-active background-color="transparent" slider-color="primary">
         <v-tab :to="{ name: 'events' }" exact-active-class="active-tab" replace>
@@ -31,7 +30,6 @@
         <SearchBox :inplace="true"></SearchBox>
       </div>
     </v-toolbar>
-
     <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
       <router-view :changed="changedItem" />
     </v-container>
