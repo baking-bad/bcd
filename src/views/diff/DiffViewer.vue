@@ -38,7 +38,7 @@
     </v-card-title>
     <v-card-text class="pa-0 data">
       <div style="overflow-x: auto;">
-        <table class="diff-table">
+        <table class="diff-table" aria-hidden="true">
           <tbody id="table"></tbody>
         </table>
       </div>
