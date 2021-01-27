@@ -26,9 +26,6 @@
         <v-tab :to="{ name: 'tasks' }" exact-active-class="active-tab" replace>
           <v-icon left small>mdi-brain</v-icon>Tasks
         </v-tab>
-        <!-- <v-tab disabled>
-          <v-icon left small>mdi-file-code-outline</v-icon>Deploy
-        </v-tab>-->
       </v-tabs>
       <div class="mr-4 mt-6" style="width: 800px;">
         <SearchBox :inplace="true"></SearchBox>

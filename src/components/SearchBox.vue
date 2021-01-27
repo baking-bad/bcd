@@ -206,80 +206,44 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    pushTo(path) {
+      this.$nextTick(() => {
+        this.model = null;
+      });
+      this.$router.push({ path });
+    },
+    isModelsArrayInclude(value) {
+      return [this.model.type, this.model.body.recent_type].includes(value);
+    },
+    isShouldSentToValue(value) {
+      return (
+          (
+              (
+                  this.isModelsArrayInclude("contract") ||
+                  this.isModelsArrayInclude("tezos_domain")
+              ) &&
+              checkAddress(value)
+          ) || this.isModelsArrayInclude("subscription")
+      );
+    },
     onSearch() {
-      console.log(this.model);
       if (!this.model || !this.model.body) return;
       const value = this.model.value || this.model;
       const network = this.model.body.network;
 
-      addHistoryItem(
-        this.buildHistoryItem(this.model, value || this.searchText)
-      );
-      if (
-        [this.model.type, this.model.body.recent_type].includes("operation") &&
-        checkOperation(value)
-      ) {
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({ path: `/${network}/opg/${value}` });
-      } else if (
-        [this.model.type, this.model.body.recent_type].includes("contract") &&
-        checkAddress(value)
-      ) {
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({ path: `/${network}/${value}` });
-      } else if (
-        [this.model.type, this.model.body.recent_type].includes("bigmapdiff") &&
-        checkKeyHash(value)
-      ) {
+      addHistoryItem(this.buildHistoryItem(this.model, value || this.searchText));
+      if (this.isModelsArrayInclude("operation") && checkOperation(value)) {
+        this.pushTo(`/${network}/opg/${value}`);
+      } else if (this.isShouldSentToValue(value)) {
+        this.pushTo(`/${network}/${value}`);
+      } else if (this.isModelsArrayInclude("bigmapdiff") && checkKeyHash(value)) {
         const ptr = this.model.body.ptr;
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({ path: `/${network}/big_map/${ptr}/${value}` });
-      } else if (
-        [this.model.type, this.model.body.recent_type].includes("subscription")
-      ) {
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({
-          path: `/${network}/${value}`,
-        });
-      } else if (
-        [this.model.type, this.model.body.recent_type].includes(
-          "token_metadata"
-        ) &&
-        checkAddress(value)
-      ) {
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({ path: `/${network}/${value}/tokens` });
-      } else if (
-        [this.model.type, this.model.body.recent_type].includes(
-          "tzip"
-        ) &&
-        checkAddress(value)
-      ) {
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({ path: `/${network}/${value}/metadata` });
-      }else if (
-        [this.model.type, this.model.body.recent_type].includes(
-          "tezos_domain"
-        ) &&
-        checkAddress(value)
-      ) {
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({ path: `/${network}/${value}` });
-      } else if (this.model.type == "recent") {
+        this.pushTo(`/${network}/big_map/${ptr}/${value}`);
+      } else if (this.isModelsArrayInclude("token_metadata") && checkAddress(value)) {
+        this.pushTo(`/${network}/${value}/tokens`);
+      } else if (this.isModelsArrayInclude("tzip") && checkAddress(value)) {
+        this.pushTo(`/${network}/${value}/metadata`);
+      } else if (this.model.type === "recent") {
         this.$router.push({ name: "search", query: { text: value } });
       }
     },
@@ -298,7 +262,7 @@ export default {
           historyItem.shortcut = value;
         }
 
-        if (model.type == "operation" && model.body.entrypoint) {
+        if (model.type === "operation" && model.body.entrypoint) {
           historyItem.second = `Called ${model.body.entrypoint}`;
         }
       }
