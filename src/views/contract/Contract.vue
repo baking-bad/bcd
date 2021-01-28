@@ -60,7 +60,11 @@
         >
           <v-icon left small>mdi-transfer</v-icon>Transfers
         </v-tab>
-        <v-tab :to="{ name: 'metadata' }" replace v-if="isContract && contract.metadata && contract.metadata.name">
+        <v-tab
+          :to="{ name: 'metadata' }"
+          replace
+          v-if="isContract && contract.metadata"
+        >
           <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
         </v-tab>
         <v-tab :to="{ name: 'fork' }" replace v-if="showFork && isContract">
@@ -221,7 +225,7 @@ export default {
         .catch((err) => {
           console.log(err);
           this.showError(err);
-        })
+        });
     },
     onFork() {
       this.showFork = !this.showFork;
@@ -235,7 +239,12 @@ export default {
       });
     },
     showFork: function (newValue) {
-      this.$router.push({ name: newValue ? "fork" : "operations" });
+      const currentRouteName = this.$route.name;
+      if (newValue && currentRouteName !== "fork") {
+        this.$router.push({ name: "fork" });
+      } else if (!newValue && currentRouteName !== "operations") {
+        this.$router.push({ name: "operations" });
+      }
     },
   },
 };

@@ -36,7 +36,7 @@
 
 <script>
 import { mapActions } from "vuex";
-import Schema from "@/components/Schema.vue";
+import Schema from "@/components/schema/Schema.vue";
 import { applyStyles } from '@/utils/styles.js';
 import EntrypointsCard from "@/components/Cards/EntrypointsCard";
 

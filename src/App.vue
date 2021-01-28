@@ -74,6 +74,10 @@ html {
   min-height: calc(100% - 75px);
 }
 
+.dark-theme-background {
+  background-color: var(--v-canvas-base) !important;
+}
+
 .toolbar {
   background-color: var(--v-canvas-base) !important;
   border-bottom: 1px solid var(--v-border-base) !important;
@@ -113,5 +117,21 @@ input:-webkit-autofill:focus,
 input:-webkit-autofill:active  {
   -webkit-box-shadow: 0 0 0 30px var(--v-data-base) inset !important;
   -webkit-text-fill-color: var(--v-text-base) !important;
+}
+
+.item-header-applied {
+  border-left: 3px solid var(--v-success-base);
+}
+
+.item-header-backtracked {
+  border-left: 3px solid var(--v-warning-base);
+}
+
+.item-header-failed {
+  border-left: 3px solid var(--v-error-base);
+}
+
+.item-header-mempool {
+  border-left: 3px solid var(--v-border-base);
 }
 </style>

@@ -38,7 +38,7 @@
     </v-card-title>
     <v-card-text class="pa-0 data">
       <div style="overflow-x: auto;">
-        <table class="diff-table">
+        <table class="diff-table" aria-hidden="true">
           <tbody id="table"></tbody>
         </table>
       </div>
@@ -116,6 +116,7 @@ export default {
         tr.appendChild(r_td);
 
         table.appendChild(tr);
+        table.setAttribute('aria-hidden', 'false');
       }
     }
   }
@@ -128,7 +129,6 @@ export default {
   padding-right: 10px;
   padding-left: 10px;
   line-height: 20px;
-  vertical-align: top;
   font-size: 12px;
   font-family: "Roboto Mono", monospace;
   white-space: pre-wrap;

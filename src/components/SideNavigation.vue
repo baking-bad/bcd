@@ -22,7 +22,7 @@
       style="height: 63px"
     >
       <v-avatar color="primary" size="38" class="elevation-1">
-        <span class="sidenav--text" style="font-family: 'Roboto Condensed;'">BCD</span>
+        <span class="sidenav--text" style="font-family: 'Roboto Condensed', monospace;">BCD</span>
       </v-avatar>
     </router-link>
 
@@ -74,7 +74,7 @@
       <div class="d-flex flex-column align-center justify-center pa-5">
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" icon :href="apiDocsUrl" target="_blank">
+            <v-btn v-on="on" icon to="/docs">
               <v-icon color="grey lighten-2">mdi-api</v-icon>
             </v-btn>
           </template>
@@ -120,7 +120,7 @@ export default {
       return this.$store.state.profile;
     },
     apiDocsUrl() {
-      return `${this.config.API_URI}docs/index.html`;
+      return `${window.location.origin}/docs`;
     },
   },
   data: () => ({

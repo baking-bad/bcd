@@ -30,10 +30,10 @@
         >
         <v-icon v-else-if="item.type == 'bigmapdiff'">mdi-database-edit</v-icon>
         <v-icon v-else-if="item.type == 'subscription'">mdi-eye-outline</v-icon>
-        <v-icon v-else-if="item.type == 'tzip'"
+        <v-icon v-else-if="item.type == 'token_metadata'"
           >mdi-circle-multiple-outline</v-icon
         >
-        <v-icon v-else-if="item.type == 'metadata'"
+        <v-icon v-else-if="item.type == 'tzip'"
           >mdi-puzzle-outline</v-icon
         >
         <v-icon v-else-if="item.type == 'recent'">mdi-history</v-icon>
@@ -42,10 +42,14 @@
       <v-list-item-content>
         <v-list-item-title>
           <template v-if="item.type == 'contract'">
+            <span class="text--secondary hash">Contracts</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
           <template v-else-if="item.type == 'operation'">
+            <span class="text--secondary hash">Operations</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
             <template v-if="item.body.destination.startsWith('KT')">
               <span
                 v-if="item.body.destination_alias"
@@ -68,24 +72,30 @@
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
           <template v-else-if="item.type == 'bigmapdiff'">
-            <span class="text--secondary">{{ item.body.ptr }}</span>
+            <span class="text--secondary hash">Big_map {{ item.body.ptr }}</span>
             <span class="text--secondary" style="font-size: 20px">→</span>
             <span>{{ item.body.key }}</span>
           </template>
           <template v-else-if="item.type == 'tzip'">
-            <span class="text--secondary">{{ item.body.name }}</span>
+            <span class="text--secondary hash">Metadata</span>
             <span class="text--secondary" style="font-size: 20px">→</span>
-            <span>{{ item.body.symbol }}</span>
+            <span>{{ item.body.name }}</span>
           </template>
-          <template v-else-if="item.type == 'metadata'">
+          <template v-else-if="item.type == 'token_metadata'">
+            <span class="text--secondary hash">Tokens</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
             <span v-if="item.body.name">{{ item.body.name }}</span>
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
           <template v-else-if="item.type == 'tezos_domain'">
-            <span class="text--secondary">{{ item.body.name }}</span>
+            <span class="text--secondary hash">Domains</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
+            <span class="hash">{{ item.body.name }}</span>
           </template>
           <template v-if="item.type == 'subscription'">
-            <span class="text--secondary">{{ item.body.alias }}</span>
+            <span class="text--secondary hash">Subscriptions</span>
+            <span class="text--secondary" style="font-size: 20px">→</span>
+            <span>{{ item.body.alias }}</span>
           </template>
           <template v-if="item.type == 'recent'">
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
@@ -112,7 +122,7 @@
           <span v-else-if="item.type === 'bigmapdiff' && item.group">{{
             helpers.plural(item.group.count, "update")
           }}</span>
-          <span v-else-if="item.type === 'tzip' && item.group">{{
+          <span v-else-if="item.type === 'token_metadata' && item.group">{{
             helpers.plural(item.group.count, "token")
           }}</span>
           <span v-else-if="item.type === 'subscription'"
@@ -196,70 +206,44 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    pushTo(path) {
+      this.$nextTick(() => {
+        this.model = null;
+      });
+      this.$router.push({ path });
+    },
+    isModelsArrayInclude(value) {
+      return [this.model.type, this.model.body.recent_type].includes(value);
+    },
+    isShouldSentToValue(value) {
+      return (
+          (
+              (
+                  this.isModelsArrayInclude("contract") ||
+                  this.isModelsArrayInclude("tezos_domain")
+              ) &&
+              checkAddress(value)
+          ) || this.isModelsArrayInclude("subscription")
+      );
+    },
     onSearch() {
-      console.log(this.model);
       if (!this.model || !this.model.body) return;
       const value = this.model.value || this.model;
       const network = this.model.body.network;
 
-      addHistoryItem(
-        this.buildHistoryItem(this.model, value || this.searchText)
-      );
-      if (
-        [this.model.type, this.model.body.recent_type].includes("operation") &&
-        checkOperation(value)
-      ) {
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({ path: `/${network}/opg/${value}` });
-      } else if (
-        [this.model.type, this.model.body.recent_type].includes("contract") &&
-        checkAddress(value)
-      ) {
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({ path: `/${network}/${value}` });
-      } else if (
-        [this.model.type, this.model.body.recent_type].includes("bigmapdiff") &&
-        checkKeyHash(value)
-      ) {
+      addHistoryItem(this.buildHistoryItem(this.model, value || this.searchText));
+      if (this.isModelsArrayInclude("operation") && checkOperation(value)) {
+        this.pushTo(`/${network}/opg/${value}`);
+      } else if (this.isShouldSentToValue(value)) {
+        this.pushTo(`/${network}/${value}`);
+      } else if (this.isModelsArrayInclude("bigmapdiff") && checkKeyHash(value)) {
         const ptr = this.model.body.ptr;
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({ path: `/${network}/big_map/${ptr}/${value}` });
-      } else if (
-        [this.model.type, this.model.body.recent_type].includes("subscription")
-      ) {
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({
-          path: `/${network}/${value}`,
-        });
-      } else if (
-        [this.model.type, this.model.body.recent_type].includes(
-          "tzip"
-        ) &&
-        checkAddress(value)
-      ) {
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({ path: `/${network}/${value}/tokens` });
-      } else if (
-        [this.model.type, this.model.body.recent_type].includes(
-          "tezos_domain"
-        ) &&
-        checkAddress(value)
-      ) {
-        this.$nextTick(() => {
-          this.model = null;
-        });
-        this.$router.push({ path: `/${network}/${value}` });
-      } else if (this.model.type == "recent") {
+        this.pushTo(`/${network}/big_map/${ptr}/${value}`);
+      } else if (this.isModelsArrayInclude("token_metadata") && checkAddress(value)) {
+        this.pushTo(`/${network}/${value}/tokens`);
+      } else if (this.isModelsArrayInclude("tzip") && checkAddress(value)) {
+        this.pushTo(`/${network}/${value}/metadata`);
+      } else if (this.model.type === "recent") {
         this.$router.push({ name: "search", query: { text: value } });
       }
     },
@@ -278,7 +262,7 @@ export default {
           historyItem.shortcut = value;
         }
 
-        if (model.type == "operation" && model.body.entrypoint) {
+        if (model.type === "operation" && model.body.entrypoint) {
           historyItem.second = `Called ${model.body.entrypoint}`;
         }
       }
@@ -421,7 +405,7 @@ export default {
 
     .v-list-item__title {
       margin-right: auto;
-      font-family: "Roboto Mono";
+      font-family: "Roboto Mono", monospace;
     }
     .v-list-item__subtitle {
       margin-right: auto;

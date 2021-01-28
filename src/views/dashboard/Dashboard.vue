@@ -10,7 +10,6 @@
         </v-col>
       </v-row>
     </v-navigation-drawer>
-
     <v-toolbar flat class="pl-8" color="toolbar" height="75">
       <v-tabs center-active background-color="transparent" slider-color="primary">
         <v-tab :to="{ name: 'events' }" exact-active-class="active-tab" replace>
@@ -26,15 +25,11 @@
         <v-tab :to="{ name: 'tasks' }" exact-active-class="active-tab" replace>
           <v-icon left small>mdi-brain</v-icon>Tasks
         </v-tab>
-        <!-- <v-tab disabled>
-          <v-icon left small>mdi-file-code-outline</v-icon>Deploy
-        </v-tab>-->
       </v-tabs>
       <div class="mr-4 mt-6" style="width: 800px;">
         <SearchBox :inplace="true"></SearchBox>
       </div>
     </v-toolbar>
-
     <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
       <router-view :changed="changedItem" />
     </v-container>

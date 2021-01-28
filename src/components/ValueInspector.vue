@@ -20,7 +20,7 @@
       :label="label"
     ></v-text-field>
 
-    <v-btn text small link @click.prevent.stop="$clipboard(value)">
+    <v-btn text small link @click.prevent.stop="copyText(value)">
       <v-icon small class="mr-1">mdi-content-copy</v-icon>
       <span>Copy Value</span>
     </v-btn>
@@ -84,6 +84,7 @@
 import Michelson from "@/components/Michelson.vue";
 import isIpfs from "is-ipfs";
 import { checkAddress } from "@/utils/tz.js";
+import {mapActions} from "vuex";
 
 export default {
   name: "ValueInspector",
@@ -129,6 +130,19 @@ export default {
     },
   },
   methods: {
+    ...mapActions(["showClipboardOK"]),
+    copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => this.showClipboardOK());
+      } else {
+        try {
+          window.clipboardData.setData("Text", text);
+          this.showClipboardOK();
+        } catch (e) {
+          //
+        }
+      }
+    },
     handleAddress(span) {
       const address = span.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
       const path = { path: `/${this.network}/${address}` };

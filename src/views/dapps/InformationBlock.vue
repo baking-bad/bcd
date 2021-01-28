@@ -19,12 +19,6 @@
                 }}</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <!-- <v-list-item selectable class="mx-0 px-0">
-              <v-list-item-content>
-                <v-list-item-subtitle class="overline">License</v-list-item-subtitle>
-                <v-list-item-title class="info-item-title">{{ dapp.license }}</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item> -->
             <v-list-item
               selectable
               v-if="dapp.categories && dapp.categories.length"
@@ -152,8 +146,6 @@ export default {
         return "mdi-telegram";
       } else if (link.includes("gitlab")) {
         return "mdi-gitlab";
-      } else if (link.includes("github")) {
-        return "mdi-github";
       } else if (link.includes("instagram")) {
         return "mdi-instagram";
       }
@@ -176,8 +168,6 @@ export default {
         return "telegram";
       } else if (link.includes("gitlab")) {
         return "gitlab";
-      } else if (link.includes("github")) {
-        return "github";
       } else if (link.includes("instagram")) {
         return "instagram";
       }

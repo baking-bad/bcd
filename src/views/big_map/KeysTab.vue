@@ -14,13 +14,6 @@
           hide-details
         ></v-text-field>
       </v-col>
-      <!-- <v-col cols="3" class="d-flex justify-center">
-        <v-checkbox v-model="showRemoved">
-          <template v-slot:label>
-            <span>Show removed keys</span>
-          </template>
-        </v-checkbox>
-      </v-col> -->
     </v-row>
 
     <v-row class="px-8 pt-6" no-gutters>
