@@ -74,7 +74,7 @@
 <script>
 import { mapActions } from "vuex";
 import Vue from 'vue';
-import RawJsonViewer from "@/components/RawJsonViewer.vue";
+import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import SchemaForm from "./schemaForm/SchemaForm";
 import SchemaResultOPG from "./schemaDialog/SchemaResultOPG";
 import SchemaCmdLine from "./schemaDialog/SchemaCmdLine";
