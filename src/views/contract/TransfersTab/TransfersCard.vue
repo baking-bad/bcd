@@ -13,7 +13,7 @@
                     <v-col
                         class="text-right pt-0 pb-0 item-amount"
                         cols="7"
-                        :title="`${getItemValue(item)} ${getTokenSymbol(item)}`"
+                        :title="`${getItemValue(item)} ${item.symbol ? item.symbol : ''}`"
                     >
                       <span class="item-amount__value">
                         {{getItemValue(item)}}
@@ -21,7 +21,7 @@
                       <span
                           class="caption text-uppercase font-weight-regular text--disabled"
                       >
-                        {{ getTokenSymbol(item) }}
+                        {{ item.symbol ? item.symbol : '' }}
                       </span>
                     </v-col>
                   </v-row>
@@ -81,10 +81,6 @@ export default {
       } else if (item.symbol) {
         return item.symbol
       }
-    },
-    getTokenSymbol(item) {
-      const name = this.getName(item)
-      return name ? name : item.token_id
     },
   },
   created() {

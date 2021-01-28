@@ -226,12 +226,11 @@ export default {
   }),
   methods: {
     getOrientedAmount(data, sign) {
-      if (this.address !== undefined && !isNaN(data.amount)) {
-        if (data.source === this.address && sign < 0) {
-          return data.amount;
-        } else if (data.destination === this.address && sign > 0) {
-          return data.amount;
-        }
+      if (this.address !== undefined && !isNaN(data.amount) && (
+          (data.source === this.address && sign < 0) ||
+          (data.destination === this.address && sign > 0)
+      )) {
+        return data.amount;
       }
       return 0;
     },

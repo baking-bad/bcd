@@ -33,7 +33,9 @@
               </v-list-item-content>
               <v-list-item-action>
                 <v-list-item-action-text>
-                  {{ `${helpers.round(dapp.volume_24_hours, 6)} \uA729` }}
+                  {{
+                    `${helpers.round(checkVol(dapp.volume_24_hours), 6)} \uA729`
+                  }}
                   (24h)
                 </v-list-item-action-text>
               </v-list-item-action>
@@ -45,9 +47,10 @@
               <v-list-item-action>
                 <v-list-item-action-text>
                   {{
-                    `${helpers.round(token.volume_24_hours, token.decimals)} ${
-                      token.symbol
-                    }`
+                    `${helpers.round(
+                      checkVol(token.volume_24_hours),
+                      token.decimals
+                    )} ${token.symbol}`
                   }}
                   (24h)
                 </v-list-item-action-text>
@@ -122,6 +125,13 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    checkVol(val) {
+      if (val === undefined || isNaN(val)) {
+        return 0;
+      }
+
+      return val;
+    },
     getTokenSeries(period) {
       if (this.selectedToken in this.data) return;
       if (this.tokens.length == 0) return;

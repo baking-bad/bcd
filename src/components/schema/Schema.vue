@@ -679,10 +679,6 @@ export default {
 </script>
 
 <style>
-.v-btn-toggle {
-  flex-direction: column;
-}
-
 .vjsf-property fieldset,
 .optional-settings fieldset {
   background-color: var(--v-data-base) !important;
