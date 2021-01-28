@@ -22,7 +22,7 @@
       style="height: 63px"
     >
       <v-avatar color="primary" size="38" class="elevation-1">
-        <span class="sidenav--text" style="font-family: 'Roboto Condensed;'">BCD</span>
+        <span class="sidenav--text" style="font-family: 'Roboto Condensed', monospace;">BCD</span>
       </v-avatar>
     </router-link>
 

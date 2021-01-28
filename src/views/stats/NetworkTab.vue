@@ -64,7 +64,7 @@
         <v-skeleton-loader :loading="loading" type="image">
           <v-card flat outlined>
             <v-card-title class="data d-flex align-center justify-center" style="font-size: 18px;">
-              <span style="font-family: 'Roboto Condensed'">Activated protocols</span>
+              <span style="font-family: 'Roboto Condensed', monospace">Activated protocols</span>
             </v-card-title>
             <v-card-text class="pa-0 data">
               <v-timeline>

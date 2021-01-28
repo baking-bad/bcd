@@ -80,17 +80,12 @@
                 <span class="body-2">
                   {{
                     token
-                      ? helpers
-                          .round(
-                            item.amount,
-                            token.decimals ? token.decimals : 0
-                          )
-                          .toLocaleString(undefined, {
-                            maximumFractionDigits: token.decimals
-                              ? token.decimals
-                              : 0,
-                          })
-                      : item.amount
+                        ? localizeNumber(helpers
+                            .round(
+                                item.amount,
+                                token.decimals ? token.decimals : 0
+                            ))
+                        : item.amount
                   }}
                   <span
                     class="caption text-uppercase font-weight-regular text--disabled"
@@ -165,8 +160,8 @@
 
 <script>
 import { mapActions } from "vuex";
-
 import EmptyState from "@/components/EmptyState.vue";
+import { numberToLocalizeString } from '@/utils/tz';
 import {getContentItemHeaderClass} from "@/utils/styles";
 
 export default {
@@ -196,6 +191,9 @@ export default {
     }),
     statusHeaderClass(status) {
       return getContentItemHeaderClass(status);
+    },
+    localizeNumber(number) {
+      return numberToLocalizeString(number, this.token.decimals ? this.token.decimals : 0)
     },
     getNextPage() {
       if (!this.token) return;
