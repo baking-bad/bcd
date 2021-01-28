@@ -1,15 +1,15 @@
 <template>
   <v-container class="pa-0">
     <v-list>
-      <v-list-item v-if="metadata.name" selectable>
+      <v-list-item selectable>
         <v-list-item-content>
           <v-list-item-title class="headline"
-          ><span>{{ metadata.name }}</span
+          ><span>{{ metadata.name ? metadata.name : 'Unnamed' }}</span
           >&nbsp;<span v-if="metadata.version" class="overline">{{
               metadata.version
             }}</span></v-list-item-title
           >
-          <v-list-item-subtitle>{{
+          <v-list-item-subtitle class="white-space-normal">{{
               metadata.description
             }}</v-list-item-subtitle>
         </v-list-item-content>

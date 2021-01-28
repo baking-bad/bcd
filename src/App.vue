@@ -91,6 +91,10 @@ html {
   background-color: var(--v-data-base) !important;
 }
 
+.white-space-normal {
+  white-space: normal !important;
+}
+
 ::-webkit-scrollbar {
   width: 12px;
 }

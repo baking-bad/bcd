@@ -1,10 +1,10 @@
 <template>
   <v-list class="mt-3">
-    <v-subheader class="title">Events</v-subheader>
+    <v-subheader class="title">{{ name }}</v-subheader>
     <EntrypointsCard
         class="ml-3 mr-3"
         :card-max-width="-1"
-        :entrypoints="metadata.events"
+        :entrypoints="implementsList"
         :is-implementations="true"
     />
   </v-list>
@@ -12,12 +12,12 @@
 
 <script>
 import EntrypointsCard from "@/components/Cards/EntrypointsCard";
-
 export default {
-  name: "EventsList",
+  name: "ImplementationsList",
   components: {EntrypointsCard},
   props: {
-    metadata: Object,
+    name: String,
+    implementsList: Array,
   }
 }
 </script>

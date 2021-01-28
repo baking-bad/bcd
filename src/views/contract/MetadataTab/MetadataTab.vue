@@ -14,9 +14,15 @@
           name="Other Fields"
           is-treeview
       />
-      <EventsList
+      <ImplementationsList
           v-if="metadata.events"
-          :metadata="metadata"
+          :implementsList="metadata.events"
+          name="Events"
+      />
+      <ImplementationsList
+          v-if="metadata.views"
+          :implementsList="metadata.views"
+          name="Views"
       />
     </v-skeleton-loader>
   </v-container>
@@ -26,11 +32,11 @@
 import BriefInfo from "@/views/contract/MetadataTab/ListBlocks/BriefInfo";
 import FieldsWrapper from "@/views/contract/MetadataTab/CustomFields/FieldsWrapper";
 import ReservedFields from "@/views/contract/MetadataTab/ListBlocks/ReservedFields";
-import EventsList from "@/views/contract/MetadataTab/ListBlocks/EventsList";
+import ImplementationsList from "@/views/contract/MetadataTab/ListBlocks/ImplementationsList";
 
 export default {
   name: "Metadata",
-  components: {EventsList, ReservedFields, FieldsWrapper, BriefInfo},
+  components: {ImplementationsList, ReservedFields, FieldsWrapper, BriefInfo},
   props: { contract: Object },
   data: () => {
     return {
