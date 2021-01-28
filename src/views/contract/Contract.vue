@@ -239,7 +239,12 @@ export default {
       });
     },
     showFork: function (newValue) {
-      this.$router.push({ name: newValue ? "fork" : "operations" });
+      const currentRouteName = this.$route.name;
+      if (newValue && currentRouteName !== "fork") {
+        this.$router.push({ name: "fork" });
+      } else if (!newValue && currentRouteName !== "operations") {
+        this.$router.push({ name: "operations" });
+      }
     },
   },
 };
