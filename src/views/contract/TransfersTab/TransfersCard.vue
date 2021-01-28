@@ -13,7 +13,7 @@
                     <v-col
                         class="text-right pt-0 pb-0 item-amount"
                         cols="7"
-                        :title="`${getItemValue(item)} ${getTokenSymbol(item)}`"
+                        :title="`${getItemValue(item)} ${item.symbol ? item.symbol : ''}`"
                     >
                       <span class="item-amount__value">
                         {{getItemValue(item)}}
