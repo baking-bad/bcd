@@ -316,8 +316,9 @@ export default {
     getIconForWalletName(name) {
       return name in walletsToIcons ? walletsToIcons[name] : walletsToIcons.default;
     },
-    removeLastUsedOption() {
+    removeLastUsedOptions() {
       this.executeActions = this.executeActions.filter(item => !item.isLastOption);
+      this.importActions = this.importActions.filter(item => !item.isLastOption);
     },
     getLastUsedWalletInfo() {
       const lastAccount = this.getLastUsedAccount();
@@ -337,7 +338,7 @@ export default {
     },
     addLastUsedOption() {
       const { text, icon } = this.getLastUsedWalletInfo();
-      this.removeLastUsedOption();
+      this.removeLastUsedOptions();
       this.executeActions.push({
         text,
         icon,
