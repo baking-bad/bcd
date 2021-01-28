@@ -8,9 +8,6 @@
             :is-storage="true"
             :storage-html="helpers.shortcut(name)"
             :storage-name="name"
-            :fill-types="fillTypes"
-            @selectedFillType="setSelectedFillType"
-            @modelChange="setModel"
         />
         <SchemaForm
             :show="show"
@@ -33,6 +30,7 @@
             @selectedNetwork="setSelectedNetwork"
             @settingsChange="setSettings"
             @selectedFillType="setSelectedFillType"
+            @modelChange="setModel"
         />
         <SchemaAlertData
             v-if="alertData"
@@ -91,7 +89,7 @@ const walletsToIcons = {
   "Beacon Extension": "mdi-alpha-b",
   "Galleon": "mdi-alpha-g",
   "Kukai": "mdi-alpha-k",
-  default: "mdi-alpha-w",
+  "default": "mdi-alpha-w",
 };
 
 export default {

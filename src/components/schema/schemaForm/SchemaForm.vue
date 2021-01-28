@@ -118,7 +118,3 @@ name: "SchemaForm",
   },
 }
 </script>
-
-<style scoped>
-
-</style>
