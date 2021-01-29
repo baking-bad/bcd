@@ -2,8 +2,10 @@
   <v-card flat outlined>
     <v-card-text class="pa-0 pt-6 data">
       <SchemaHeader
-          v-if="title"
-          :title="title"
+          :title="implementation.implementationName"
+      />
+      <SchemaImplementationForm
+          :parameters="implementation.info"
       />
       <SchemaAlertData
           v-if="alertData"
@@ -23,13 +25,15 @@
 import SchemaHeader from "@/components/schema/schemaComponents/SchemaHeader";
 import SchemaAlertData from "@/components/schema/schemaAlert/SchemaAlertData";
 import SchemaAlertCustomSuccess from "@/components/schema/schemaAlert/SchemaAlertCustomSuccess";
+import SchemaImplementationForm from "@/views/contract/MetadataTab/SchemaImplementation/SchemaImplementationForm";
 export default {
   name: "SchemaImplementation",
-  components: {SchemaAlertCustomSuccess, SchemaAlertData, SchemaHeader},
+  components: {SchemaImplementationForm, SchemaAlertCustomSuccess, SchemaAlertData, SchemaHeader},
   props: {
     title: String,
     alertData: String,
     successText: String,
+    implementation: Object,
   },
   methods: {
     showAlertData(msg) {

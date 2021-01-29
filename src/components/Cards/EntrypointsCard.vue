@@ -2,7 +2,7 @@
   <v-row>
     <v-col v-if="executable && selectedImplementation" cols="6">
       <SchemaImplementation
-        :title="selectedImplementation.implementationName"
+        :implementation="selectedImplementation"
       />
     </v-col>
     <v-col :cols="executable ? 6 : 12">
