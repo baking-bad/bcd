@@ -81,13 +81,8 @@ export default {
     color: #9e9e9e;
   }
   .value-field {
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    white-space: normal;
     color: var(--v-tree-base);
-    &:hover {
-      white-space: normal;
-    }
   }
 }
 </style>

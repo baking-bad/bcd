@@ -23,6 +23,7 @@
           v-if="metadata.views"
           :implementsList="metadata.views"
           name="Views"
+          executable
       />
     </v-skeleton-loader>
   </v-container>

@@ -6,6 +6,7 @@
         :card-max-width="-1"
         :entrypoints="implementsList"
         :is-implementations="true"
+        :executable="executable"
     />
   </v-list>
 </template>
@@ -18,6 +19,10 @@ export default {
   props: {
     name: String,
     implementsList: Array,
+    executable: {
+      type: Boolean,
+      default: false,
+    }
   }
 }
 </script>
