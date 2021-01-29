@@ -1,8 +1,8 @@
 <template>
   <v-row>
-    <v-col v-if="executable" cols="6">
+    <v-col v-if="executable && selectedImplementation" cols="6">
       <SchemaImplementation
-        :title="entrypoints[selected].name"
+        :title="selectedImplementation.implementationName"
       />
     </v-col>
     <v-col :cols="executable ? 6 : 12">
@@ -31,6 +31,7 @@
                     v-for="(implementations, i) in item.implementations"
                     v-bind:key="`implementation${i}`"
                     :implementations="implementations"
+                    @selectImplementation="setSelectedImplementation"
                 />
               </v-expansion-panel-content>
               <v-expansion-panel-content v-else>
@@ -79,6 +80,7 @@ export default {
       handler(newVal, oldVal) {
         if (newVal !== oldVal) {
           this.$emit('selected', newVal)
+          this.setDefaultImplementation()
         }
       },
     }
@@ -86,11 +88,28 @@ export default {
   created() {
     if (typeof this.selectedOutside === "number") {
       this.selected = this.selectedOutside
+      this.setDefaultImplementation()
+    }
+  },
+  methods: {
+    setDefaultImplementation() {
+      if (this.entrypoints[this.selected].implementations) {
+        const firstImplementationsList = this.entrypoints[this.selected].implementations[0];
+        const firstImplementationName = Object.keys(firstImplementationsList)[0];
+        this.selectedImplementation = {
+          implementationName: firstImplementationName,
+          info: firstImplementationsList[firstImplementationName]
+        }
+      }
+    },
+    setSelectedImplementation(selectedImplementation) {
+      this.selectedImplementation = selectedImplementation;
     }
   },
   data() {
     return {
       selected: null,
+      selectedImplementation: null,
     }
   }
 }

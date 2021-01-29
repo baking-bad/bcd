@@ -1,8 +1,9 @@
 <template>
   <div class="d-flex flex-column parameters">
-    <div v-for="(_, implementationName) in implementations"
+    <div v-for="(info, implementationName) in implementations"
          :key="implementationName"
-         class="mb-2"
+         class="mb-2 cursor-pointer"
+         @click="$emit('selectImplementation', {info, implementationName})"
     >
       <span class="font-weight-light value">{{implementationName}}</span>
     </div>
