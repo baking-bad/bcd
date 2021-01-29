@@ -1,7 +1,9 @@
 <template>
   <v-row>
     <v-col v-if="executable" cols="6">
-      <Schema/>
+      <SchemaImplementation
+        :title="entrypoints[selected].name"
+      />
     </v-col>
     <v-col :cols="executable ? 6 : 12">
       <v-card flat outlined :style="`max-width:${cardMaxWidth >= 0 ? cardMaxWidth + 'px' : '100%'};`">
@@ -45,11 +47,11 @@
 <script>
 import TypeDef from "@/views/contract/TypeDef";
 import ImplementationsList from "@/components/Lists/ImplementationsList";
-import Schema from "@/components/schema/Schema";
+import SchemaImplementation from "@/views/contract/MetadataTab/SchemaImplementation/SchemaImplementation";
 
 export default {
   name: "EntrypointsCard",
-  components: {Schema, ImplementationsList, TypeDef},
+  components: {SchemaImplementation, ImplementationsList, TypeDef},
   props: {
     entrypoints: Array,
     selectedOutside: Number,
