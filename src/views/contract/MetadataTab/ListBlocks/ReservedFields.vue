@@ -1,12 +1,12 @@
 <template>
-  <v-list>
+  <v-list class="pb-4">
     <v-subheader class="title">Reserved Fields</v-subheader>
     <v-list-item
         v-for="(field, idx) in metadata"
         :key="idx"
         selectable
     >
-      <v-list-item-content class="pt-0 pb-0">
+      <v-list-item-content class="pt-1 pb-0">
         <v-list-item-title class="d-flex">
           <span class="key-field">
             "{{

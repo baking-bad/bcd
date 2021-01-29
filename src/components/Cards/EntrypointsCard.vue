@@ -1,7 +1,7 @@
 <template>
   <v-row>
-    <v-col cols="6">
-      <Schema v-if="executable" />
+    <v-col v-if="executable" cols="6">
+      <Schema/>
     </v-col>
     <v-col :cols="executable ? 6 : 12">
       <v-card flat outlined :style="`max-width:${cardMaxWidth >= 0 ? cardMaxWidth + 'px' : '100%'};`">
