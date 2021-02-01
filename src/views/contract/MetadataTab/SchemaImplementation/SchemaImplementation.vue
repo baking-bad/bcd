@@ -27,6 +27,7 @@ import SchemaHeader from "@/components/schema/schemaComponents/SchemaHeader";
 import SchemaAlertData from "@/components/schema/schemaAlert/SchemaAlertData";
 import SchemaAlertCustomSuccess from "@/components/schema/schemaAlert/SchemaAlertCustomSuccess";
 import SchemaImplementationForm from "@/views/contract/MetadataTab/SchemaImplementation/SchemaImplementationForm";
+
 export default {
   name: "SchemaImplementation",
   components: {SchemaImplementationForm, SchemaAlertCustomSuccess, SchemaAlertData, SchemaHeader},
@@ -43,6 +44,10 @@ export default {
         "properties": this.getSchemaProperties(this.implementation.info)
       }
     }
+  },
+  async mounted() {
+    const a = await this.api.getMetadataViews(`delphinet`, `KT1Nu6FHWrpWF3wAkKkWs1Tb1MMTgNesFrUn`);
+    return a;
   },
   methods: {
     showAlertData(msg) {

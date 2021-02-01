@@ -981,4 +981,24 @@ export class BetterCallApi {
         return res.data
       })
   }
+
+  getMetadataViews(network, address) {
+      return this.api.get(`/contract/${network}/${address}/views/schema`)
+          .then((res) => {
+             if (res.status !== 200) {
+                 throw new RequestFailedError(res);
+             }
+             return res.data;
+          });
+  }
+
+  executeMetadataView(network, address, data) {
+      return this.api.post(`/contract/${network}/${address}/views/execute`, data)
+          .then((res) => {
+              if (res.status !== 200) {
+                  throw new RequestFailedError(res);
+              }
+              return res.data;
+          });
+  }
 }
