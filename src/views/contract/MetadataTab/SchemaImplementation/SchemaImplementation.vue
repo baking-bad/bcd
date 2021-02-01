@@ -6,6 +6,7 @@
       />
       <SchemaImplementationForm
           :parameters="implementation.info"
+          :schema="parametersSchema"
       />
       <SchemaAlertData
           v-if="alertData"
@@ -35,12 +36,31 @@ export default {
     successText: String,
     implementation: Object,
   },
+  computed: {
+    parametersSchema() {
+      return {
+        "type": "object",
+        "properties": this.getSchemaProperties(this.implementation.info)
+      }
+    }
+  },
   methods: {
     showAlertData(msg) {
       this.alertData = msg;
     },
     showSuccessMessage(msg) {
       this.successText = msg;
+    },
+    getSchemaProperties(implementation) {
+      let properties = {};
+      Object.keys(implementation).forEach(key => {
+        properties[key] = {
+          type: "string",
+          title: key,
+          "x-display": "custom-contract"
+        }
+      })
+      return properties;
     }
   }
 }
