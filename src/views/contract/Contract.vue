@@ -159,12 +159,9 @@ export default {
         .getContract(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          this.contract = res;
+          Vue.set(this, 'contract', res);
         })
         .catch((err) => {
-          const matches = err.message.match(/\d+/);
-          if (matches !== null && matches.length === 1)
-            this.errorCode = parseInt(matches[0]);
           this.showError(err.message);
         })
         .finally(() => (this.contractLoading = false));
@@ -178,7 +175,6 @@ export default {
           this.migrations = res;
         })
         .catch((err) => {
-          console.log(err);
           this.showError(err);
         })
         .finally(() => (this.migrationsLoading = false));
@@ -192,7 +188,6 @@ export default {
           this.tokens = res;
         })
         .catch((err) => {
-          console.log(err);
           this.showError(err);
         })
         .finally(() => (this.tokensLoading = false));
@@ -204,13 +199,12 @@ export default {
         .then((res) => {
           if (!res) return;
           if (this.isContract) {
-            Object.assign(this.contract, res);
+            Vue.set(this, 'contract', Object.assign(this.contract, res));
           } else {
-            this.contract = res;
+            Vue.set(this, 'contract', res);
           }
         })
         .catch((err) => {
-          console.log(err);
           this.showError(err);
         })
         .finally(() => (this.contractLoading = false));
@@ -223,7 +217,6 @@ export default {
           Vue.set(this.contract, 'metadata', res);
         })
         .catch((err) => {
-          console.log(err);
           this.showError(err);
         });
     },
