@@ -90,7 +90,7 @@
 import SearchBox from "@/components/SearchBox.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/contract/SideBar.vue";
-
+import Vue from 'vue';
 import { mapActions } from "vuex";
 import { cancelRequests } from "@/utils/cancellation.js";
 
@@ -220,7 +220,7 @@ export default {
         .getAccountMetadata(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          Object.assign(this.contract, { metadata: res });
+          Vue.set(this.contract, 'metadata', res);
         })
         .catch((err) => {
           console.log(err);

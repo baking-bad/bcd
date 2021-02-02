@@ -70,6 +70,8 @@
 </template>
 
 <script>
+import Vue from 'vue';
+
 export default {
   name: "Metadata",
   props: { contract: Object },
@@ -80,21 +82,24 @@ export default {
     };
   },
   mounted() {
-    if (this.contract.metadata !== undefined) {
-      this.loading = false;
-      this.metadata = this.contract.metadata;
-    }
+    this.checkMetadata(this.contract);
   },
   watch: {
     contract: {
       deep: true,
-      handler: function (value) {
-        if (value.metadata !== undefined) {
-          this.metadata = value.metadata;
-          this.loading = false;
-        }
-      },
+      immediate: true,
+      handler(value) {
+        this.checkMetadata(value);
+      }
     },
+  },
+  methods: {
+    checkMetadata(obj) {
+      if ('metadata' in obj) {
+        Vue.set(this, 'metadata', obj.metadata);
+        this.loading = false;
+      }
+    }
   },
 };
 </script>
