@@ -23,8 +23,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 
 
-import VJsf from '@koumoul/vjsf/lib/VJsf.js'
-import '@koumoul/vjsf/lib/VJsf.css'
+import VJsf from '@baking-bad/vjsf/lib/VJsf.js'
+import '@baking-bad/vjsf/lib/VJsf.css'
 
 import draggable from 'vuedraggable';
 Vue.component('draggable', draggable);
