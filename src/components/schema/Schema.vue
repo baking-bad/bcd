@@ -686,7 +686,7 @@ export default {
 }
 
 /* fixing "+" button */
-.vjsf-property button.v-btn {
+.vjsf-property .v-input__slot button.v-btn {
   box-shadow: none !important;
   background-color: transparent !important;
   border-radius: 3px !important;
@@ -700,7 +700,7 @@ export default {
   color: var(--v-text-base) !important;
   opacity: 0.7;
 }
-.vjsf-property .v-btn > .v-btn__content::after {
+.vjsf-property .v-input__slot .v-btn > .v-btn__content::after {
   content: "add" !important;
   color: var(--v-text-base) !important;
 }
