@@ -2,7 +2,7 @@
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-row no-gutters>
       <v-col class="pa-2">
-        <TransferList :address="address" :network="network" :token="token" />
+        <MetadataToken />
       </v-col>
       <v-col cols="3" class="pa-2">
         <v-card flat outlined rounded>
@@ -42,25 +42,17 @@
 
 <script>
 import AccountBox from "@/components/AccountBox.vue";
-import TransferList from "@/views/contract/TransferList.vue";
+import MetadataToken from "@/views/contract/TokensTab/MetadataToken";
 
 export default {
   name: "ContractTokensTab",
   props: {
     tokens: Array,
     network: String,
-    address: String,
   },
   components: {
+    MetadataToken,
     AccountBox,
-    TransferList
-  },
-  computed: {
-    token() {
-      if (this.selectedToken < 0 || this.selectedToken >= this.tokens.length)
-        return null;
-      return this.tokens[this.selectedToken];
-    },
   },
   data: () => ({
     loading: false,
