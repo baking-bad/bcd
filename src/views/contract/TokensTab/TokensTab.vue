@@ -2,7 +2,7 @@
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-row no-gutters>
       <v-col class="pa-2">
-        <MetadataToken />
+        <MetadataToken :token="token"/>
       </v-col>
       <v-col cols="3" class="pa-2">
         <v-card flat outlined rounded>
@@ -42,7 +42,7 @@
 
 <script>
 import AccountBox from "@/components/AccountBox.vue";
-import MetadataToken from "@/views/contract/TokensTab/MetadataToken";
+import MetadataToken from "@/views/contract/TokensTab/Metadata/MetadataToken";
 
 export default {
   name: "ContractTokensTab",
@@ -53,6 +53,13 @@ export default {
   components: {
     MetadataToken,
     AccountBox,
+  },
+  computed: {
+    token() {
+      if (this.selectedToken < 0 || this.selectedToken >= this.tokens.length)
+        return null;
+      return this.tokens[this.selectedToken];
+    },
   },
   data: () => ({
     loading: false,
