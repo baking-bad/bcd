@@ -1,8 +1,39 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-row no-gutters>
-      <v-col class="pa-2">
+      <v-col cols="9" class="pa-2">
         <MetadataToken :token="token"/>
+        <div v-if="token && holders[token.token_id]">
+          <v-row
+              v-for="holder_address in Object.keys(sortedCurrentHolder)"
+              v-bind:key="holder_address"
+              no-gutters
+              class="py-1"
+          >
+            <v-col cols="6">
+              <v-list-item class="fill-height pa-0">
+                <v-list-item-content>
+                  <v-list-item-title
+                      class="font-weight-light hash text--secondary"
+                  >
+                    <span>{{ holder_address }}</span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-col>
+            <v-col cols="6">
+              <v-list-item class="fill-height pa-0">
+                <v-list-item-content>
+                  <v-list-item-title
+                      class="font-weight-light hash text--secondary"
+                  >
+                    <span>{{ holders[token.token_id][holder_address] }}</span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-col>
+          </v-row>
+        </div>
       </v-col>
       <v-col cols="3" class="pa-2">
         <v-card flat outlined rounded>
@@ -60,15 +91,26 @@ export default {
         return null;
       return this.tokens[this.selectedToken];
     },
+    sortedCurrentHolder() {
+      return Object.fromEntries(Object.entries(this.holders[this.token.token_id])
+          .sort((item1, item2) => Number(item2[1]) - Number(item1[1])));
+    },
   },
   data: () => ({
     loading: false,
     selectedToken: -1,
+    holders: {},
   }),
   watch: {
     tokens: function () {
       this.selectedToken = 0;
-    }
+    },
+    async token(newVal) {
+      if (!this.holders[newVal.token_id]) {
+        const data = await this.api.getTokenHoldersList(this.network, newVal.contract, newVal.token_id);
+        this.$set(this.holders, newVal.token_id, data);
+      }
+    },
   },
 };
 </script>

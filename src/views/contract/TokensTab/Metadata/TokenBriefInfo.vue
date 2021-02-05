@@ -4,8 +4,8 @@
       <v-list-item selectable>
         <v-list-item-content>
           <v-list-item-title class="headline"
-          ><span title="name">{{ token.name ? token.name : 'Unnamed' }}</span
-          >&nbsp;<span v-if="token.symbol" class="overline" title="symbol">{{
+          ><span :title="`name: ${token.name}`">{{ token.name ? token.name : 'Unnamed' }}</span
+          >&nbsp;<span v-if="token.symbol" class="overline" :title="`symbol: ${token.symbol}`">{{
               token.symbol
             }}</span></v-list-item-title
           >
