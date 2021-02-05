@@ -3,37 +3,11 @@
     <v-row no-gutters>
       <v-col cols="9" class="pa-2">
         <MetadataToken :token="token"/>
-        <div v-if="token && holders[token.token_id]">
-          <v-row
-              v-for="holder_address in Object.keys(sortedCurrentHolder)"
-              v-bind:key="holder_address"
-              no-gutters
-              class="py-1"
-          >
-            <v-col cols="6">
-              <v-list-item class="fill-height pa-0">
-                <v-list-item-content>
-                  <v-list-item-title
-                      class="font-weight-light hash text--secondary"
-                  >
-                    <span>{{ holder_address }}</span>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-col>
-            <v-col cols="6">
-              <v-list-item class="fill-height pa-0">
-                <v-list-item-content>
-                  <v-list-item-title
-                      class="font-weight-light hash text--secondary"
-                  >
-                    <span>{{ holders[token.token_id][holder_address] }}</span>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-col>
-          </v-row>
-        </div>
+        <HoldersInfo
+            v-if="token && holders[token.token_id]"
+            class="mt-3"
+            :holders="sortedCurrentHolder"
+        />
       </v-col>
       <v-col cols="3" class="pa-2">
         <v-card flat outlined rounded>
@@ -74,6 +48,7 @@
 <script>
 import AccountBox from "@/components/AccountBox.vue";
 import MetadataToken from "@/views/contract/TokensTab/Metadata/MetadataToken";
+import HoldersInfo from "@/views/contract/TokensTab/Metadata/HoldersInfo";
 
 export default {
   name: "ContractTokensTab",
@@ -82,6 +57,7 @@ export default {
     network: String,
   },
   components: {
+    HoldersInfo,
     MetadataToken,
     AccountBox,
   },
