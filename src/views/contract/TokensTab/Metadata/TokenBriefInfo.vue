@@ -10,7 +10,7 @@
       &nbsp;     <span v-else v-html="helpers.shortcut(token.contract)"></span>
           </v-list-item-title>
           <v-list-item-subtitle class="white-space-normal">
-            {{ token.token_id }}
+            token ID: {{ token.token_id }}
           </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action class="mt-0">

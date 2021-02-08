@@ -30,7 +30,7 @@ export default {
       return this.token ?
           Object.fromEntries(Object.entries(this.token).filter(
               item => RESERVED_FIELDS.indexOf(item[0]) === -1
-          )) : null;
+          )).token_info : null;
     }
   }
 }

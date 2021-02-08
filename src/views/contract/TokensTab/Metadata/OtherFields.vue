@@ -1,6 +1,6 @@
 <template>
   <v-list class="fields-wrapper pb-3" ref="list">
-    <v-subheader class="title">Other Fields</v-subheader>
+    <v-subheader class="title">Token Info</v-subheader>
     <v-list-item>
       <v-treeview
         :items="treeview"
