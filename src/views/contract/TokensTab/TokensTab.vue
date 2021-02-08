@@ -13,9 +13,10 @@
       </v-col>
       <v-col cols="3" class="pa-2">
         <TokensList
+          v-if="selectedToken !== -1"
           :tokens="tokens"
           :preselectedToken="selectedToken"
-          @changeSelectedToken="setSelectedToken"
+          @changeSelectedToken="setSelectedTokenWithRoute"
         />
       </v-col>
     </v-row>
@@ -55,10 +56,10 @@ export default {
   }),
   watch: {
     tokens() {
-      this.setSelectedToken(this.$route.query.token_id ? Number(this.$route.query.token_id) : 0);
+      this.setSelectedTokenWithRoute(this.$route.query.token_id ? Number(this.$route.query.token_id) : 0);
     },
     async token(newVal) {
-      if (!this.holders[newVal.token_id]) {
+      if (newVal && !this.holders[newVal.token_id]) {
         const data = await this.api.getTokenHoldersList(this.network, newVal.contract, newVal.token_id);
         this.$set(this.holders, newVal.token_id, data);
       }
@@ -72,9 +73,9 @@ export default {
         this.$router.replace({query: {token_id}});
       }
     },
-    setSelectedToken(newVal) {
-      this.selectedToken = newVal;
+    setSelectedTokenWithRoute(newVal) {
       this.token = this.tokens.find(token => token.token_id === newVal);
+      this.selectedToken = this.tokens.findIndex(token => token.token_id === newVal);
       this.sendToRoute(this.token.token_id);
     },
   }

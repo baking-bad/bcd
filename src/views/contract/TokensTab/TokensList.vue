@@ -3,7 +3,7 @@
     <v-list class="py-0 item">
       <v-list-item-group v-model="selectedToken" mandatory>
         <template v-for="(token) in tokens">
-          <v-list-item :key="token.token_id">
+          <v-list-item :key="token.token_id" @click="changeSelectedToken(token.token_id)">
             <v-row>
               <v-col cols="8" class="pa-0 pl-3 pr-3">
                 <v-list-item-content>
@@ -61,16 +61,14 @@ export default {
       return this.tokens[this.selectedToken];
     },
   },
-  beforeMount() {
+  mounted() {
     this.selectedToken = this.preselectedToken;
   },
-  watch: {
-    preselectedToken(newVal) {
-      this.selectedToken = newVal;
-    },
-    selectedToken(newVal) {
-      this.$emit('changeSelectedToken', newVal);
-    },
+  methods: {
+    changeSelectedToken(id) {
+      this.selectedToken = this.tokens.findIndex(token => token.token_id === id);
+      this.$emit('changeSelectedToken', id);
+    }
   },
   data() {
     return {
