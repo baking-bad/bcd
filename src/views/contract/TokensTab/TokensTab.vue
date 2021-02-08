@@ -3,9 +3,8 @@
     <v-row no-gutters>
       <v-col cols="9" class="pa-2">
         <MetadataToken v-if="token" :token="token"/>
-        <v-skeleton-loader v-show="isHoldersListLoading" :loading="isHoldersListLoading" type="image" class="mt-3"/>
         <HoldersInfo
-            v-if="!isHoldersListLoading && token && holders[token.token_id] && Object.keys(holders[token.token_id]).length"
+            v-if="token && holders[token.token_id] && Object.keys(holders[token.token_id]).length"
             class="mt-3"
             :holders="sortedCurrentHolder"
             :token="token ? token.symbol : null"
@@ -49,7 +48,6 @@ export default {
     },
   },
   data: () => ({
-    isHoldersListLoading: false,
     token: null,
     selectedToken: -1,
     holders: {},
@@ -70,9 +68,7 @@ export default {
     },
     async token(newVal) {
       if (!this.holders[newVal.token_id]) {
-        this.isHoldersListLoading = true;
         const data = await this.api.getTokenHoldersList(this.network, newVal.contract, newVal.token_id);
-        this.isHoldersListLoading = false;
         this.$set(this.holders, newVal.token_id, data);
       }
     },
