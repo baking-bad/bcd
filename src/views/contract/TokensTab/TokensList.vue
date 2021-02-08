@@ -8,25 +8,28 @@
               <v-col cols="8" class="pa-0 pl-3 pr-3">
                 <v-list-item-content>
                   <v-list-item-title>
-                    {{ token.name }}
+                    <span v-if="token.name">{{ token.name }}</span>
+                    <span v-else v-html="helpers.shortcut(token.contract)"></span>
                   </v-list-item-title>
                   <v-list-item-subtitle>
                     <span
                         v-if="isTokenSupply"
                         class="caption text--disabled"
-                    >total_supply: </span>
-                    <span>
-                      {{ tokenSupply }}
-                    </span>
+                    >token ID: {{ token.token_id }}</span>
                   </v-list-item-subtitle>
                 </v-list-item-content>
               </v-col>
               <v-col cols="3" class="pa-0 pr-3">
-                <v-list-item-content class="fill-height">
-                  <span
-                      v-if="token.symbol"
-                      class="overline text-truncate"
-                  >{{ token.symbol }}</span>
+                <v-list-item-content class="fill-height" v-if="isTokenSupply">
+                  <v-list-item-title>
+                    {{ tokenSupply }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    <span
+                        v-if="isTokenSupply"
+                        class="caption text--disabled"
+                    >supply</span>
+                  </v-list-item-subtitle>
                 </v-list-item-content>
               </v-col>
             </v-row>
