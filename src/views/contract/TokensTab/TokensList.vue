@@ -58,6 +58,9 @@ export default {
       return this.tokens[this.selectedToken];
     },
   },
+  beforeMount() {
+    this.selectedToken = this.preselectedToken;
+  },
   watch: {
     preselectedToken(newVal) {
       this.selectedToken = newVal;
@@ -68,7 +71,7 @@ export default {
   },
   data() {
     return {
-      selectedToken: 0,
+      selectedToken: -1,
     }
   }
 }
