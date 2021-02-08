@@ -8,6 +8,7 @@
             class="mt-3"
             :holders="sortedCurrentHolder"
             :token="token ? token.symbol : null"
+            :network="network"
         />
       </v-col>
       <v-col cols="3" class="pa-2">

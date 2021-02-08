@@ -14,7 +14,11 @@
               <v-list-item-title
                   class="font-weight-light hash"
               >
-                <span :title="holder_address">{{ holder_address }}</span>
+                <AccountBox
+                    :title="holder_address"
+                    :address="holder_address"
+                    :network="network"
+                />
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -38,12 +42,15 @@
 
 <script>
 import ScrollBackToTop from "@/components/Buttons/ScrollBackToTop";
+import AccountBox from "@/components/AccountBox";
+
 export default {
   name: "HoldersInfo",
-  components: {ScrollBackToTop},
+  components: {AccountBox, ScrollBackToTop},
   props: {
     holders: Object,
     token: String,
+    network: String,
   },
   computed: {
     holdersToShow() {
