@@ -9,12 +9,12 @@
       <v-list-item-content class="pt-1 pb-0">
         <v-list-item-title class="d-flex">
           <span class="key-field">
-            "{{
+            {{
               idx
-            }}":
+            }}:
           </span>
           <span class="value-field ml-3">
-            "{{ field }}"
+            {{ field }}
           </span>
         </v-list-item-title>
       </v-list-item-content>
