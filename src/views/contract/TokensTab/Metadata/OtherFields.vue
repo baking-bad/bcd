@@ -39,7 +39,7 @@ export default {
   methods: {
     getValue(name, children) {
       if (children && children.length > 0) {
-        return `click to expand`;
+        return `object`;
       }
       return name.split(':')[1];
     }
