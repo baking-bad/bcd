@@ -2,41 +2,81 @@
   <v-list class="fields-wrapper" ref="list">
     <v-subheader class="title">Other Fields</v-subheader>
     <v-list-item>
-      <vue-json-pretty
-          :data="token"
-          :deep="1"
-      />
+      <v-treeview
+        :items="treeview"
+        hoverable
+        transition
+        open-on-click
+        return-object
+        class="no-arrow beautify-fonts"
+      >
+        <template v-slot:label="{ item }">
+          <span class="key">
+            {{item.name.split(':')[0].trim()}}:
+          </span>
+          <span :class="item.children ? 'value_white' : 'value'">
+            {{ getValue(item.name, item.children) }}
+          </span>
+        </template>
+      </v-treeview>
     </v-list-item>
   </v-list>
 </template>
 
 <script>
-import VueJsonPretty from 'vue-json-pretty';
-import 'vue-json-pretty/lib/styles.css';
+import { makeTreeview } from '@/utils/parsing';
 
 export default {
   name: "OtherFields",
-  components: {
-    VueJsonPretty
-  },
   props: {
     token: Object,
+  },
+  watch: {
+    token(newVal) {
+      this.treeview = makeTreeview(newVal);
+    }
+  },
+  methods: {
+    getValue(name, children) {
+      if (children && children.length > 0) {
+        return `click to expand`;
+      }
+      return name.split(':')[1];
+    }
+  },
+  data() {
+    return {
+      treeview: makeTreeview(this.token),
+    }
   }
 }
 </script>
 <style lang="scss">
-.fields-wrapper {
-  .v-list-item {
-    min-height: 32px;
-    &__title {
-      span {
-        font-size: 0.75rem;
-      }
+.v-treeview {
+  .key {
+    color: #9e9e9e;
+    font-size: 0.75rem;
+  }
+  .value {
+    color: var(--v-tree-base);
+    font-size: 0.75rem;
+    &_white {
+      font-size: 0.75rem;
+      color: white;
     }
   }
-  .vjs-tree {
-    font-size: 0.75rem;
-    color: #9e9e9e;
+  &.beautify-fonts {
+    font-family: Monaco, Menlo, Consolas, Bitstream Vera Sans Mono, monospace;
+  }
+  &.no-arrow {
+    .v-treeview-node__root {
+      & > button.v-treeview-node__toggle {
+        opacity: 0 !important;
+      }
+    }
+    .v-treeview-node__content {
+      margin-left: -30px !important;
+    }
   }
 }
 </style>

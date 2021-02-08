@@ -1,8 +1,8 @@
 <template>
   <div>
     <TokenBriefInfo :token="token"/>
-    <ReservedFields v-if="reservedFieldsData" class="mt-3" :token="reservedFieldsData"/>
-    <OtherFields v-if="otherFieldsData" class="mt-3" :token="otherFieldsData"/>
+    <ReservedFields v-if="reservedFieldsData && Object.keys(reservedFieldsData).length" class="mt-3" :token="reservedFieldsData"/>
+    <OtherFields v-if="otherFieldsData && Object.keys(otherFieldsData)" class="mt-3" :token="otherFieldsData"/>
   </div>
 </template>
 x
