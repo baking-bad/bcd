@@ -9,6 +9,7 @@
             v-show="!isHoldersListLoading && token && holders[token.token_id]"
             class="mt-3"
             :holders="sortedCurrentHolder"
+            :token="token.symbol"
         />
       </v-col>
       <v-col cols="3" class="pa-2">
