@@ -6,7 +6,7 @@
         :key="idx"
         selectable
     >
-      <v-list-item-content class="pt-1 pb-0">
+      <v-list-item-content class="pt-1 pb-0 pl-1">
         <v-list-item-title class="d-flex">
           <span class="key-field">
             {{

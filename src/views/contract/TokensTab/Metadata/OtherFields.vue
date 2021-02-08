@@ -8,7 +8,7 @@
         transition
         open-on-click
         return-object
-        class="no-arrow beautify-fonts"
+        class="no-padding-arrow beautify-fonts"
       >
         <template v-slot:label="{ item }">
           <div @click="showTreeInfo(item)">
@@ -96,14 +96,15 @@ export default {
   &.beautify-fonts {
     font-family: Monaco, Menlo, Consolas, Bitstream Vera Sans Mono, monospace;
   }
-  &.no-arrow {
+  &.no-padding-arrow {
+    $margin: -25px;
     .v-treeview-node__root {
       & > button.v-treeview-node__toggle {
-        opacity: 0 !important;
+        left: $margin;
       }
     }
     .v-treeview-node__content {
-      margin-left: -30px !important;
+      margin-left: $margin !important;
     }
   }
 }
