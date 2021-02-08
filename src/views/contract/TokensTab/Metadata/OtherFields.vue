@@ -1,5 +1,5 @@
 <template>
-  <v-list class="fields-wrapper" ref="list">
+  <v-list class="fields-wrapper pb-3" ref="list">
     <v-subheader class="title">Other Fields</v-subheader>
     <v-list-item>
       <v-treeview
