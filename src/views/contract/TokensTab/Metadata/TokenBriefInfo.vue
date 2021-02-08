@@ -3,15 +3,15 @@
     <v-list>
       <v-list-item selectable>
         <v-list-item-content>
-          <v-list-item-title class="headline"
-          ><span :title="`name: ${token.name}`">{{ token.name ? token.name : 'Unnamed' }}</span
-          >&nbsp;<span v-if="token.symbol" class="overline" :title="`symbol: ${token.symbol}`">{{
-              token.symbol
-            }}</span></v-list-item-title
-          >
-          <v-list-item-subtitle class="white-space-normal">{{
-              token.decimals
-            }} decimals</v-list-item-subtitle>
+          <v-list-item-title class="headline">
+            <span v-if="token.name" :title="`name: ${token.name}`">
+              {{ token.name }}
+            </span>
+      &nbsp;     <span v-else v-html="helpers.shortcut(token.contract)"></span>
+          </v-list-item-title>
+          <v-list-item-subtitle class="white-space-normal">
+            {{ token.token_id }}
+          </v-list-item-subtitle>
         </v-list-item-content>
         <v-list-item-action class="mt-0">
           <div class="d-flex flex-horizontal justify-center align-center">
