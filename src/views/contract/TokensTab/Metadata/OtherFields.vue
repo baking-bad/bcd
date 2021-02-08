@@ -11,23 +11,32 @@
         class="no-arrow beautify-fonts"
       >
         <template v-slot:label="{ item }">
-          <span class="key">
-            {{item.name.split(':')[0].trim()}}:
-          </span>
-          <span :class="item.children ? 'value_white' : 'value'">
-            {{ getValue(item.name, item.children) }}
-          </span>
+          <div @click="showTreeInfo(item)">
+            <span class="key">
+              {{item.name.split(':')[0].trim()}}:
+            </span>
+            <span :class="item.children ? 'value_white' : 'value'">
+              {{ getValue(item.name, item.children) }}
+            </span>
+          </div>
         </template>
       </v-treeview>
     </v-list-item>
+    <TreeNodeDetails
+        v-model="showTreeNodeDetails"
+        :data="dataTreeNode"
+        :network="'delphinet'"
+    />
   </v-list>
 </template>
 
 <script>
 import { makeTreeview } from '@/utils/parsing';
+import TreeNodeDetails from "@/components/TreeNodeDetails";
 
 export default {
   name: "OtherFields",
+  components: {TreeNodeDetails},
   props: {
     token: Object,
   },
@@ -42,11 +51,30 @@ export default {
         return `object`;
       }
       return name.split(':')[1];
+    },
+    showTreeInfo(item) {
+      if (item.children) {
+        return;
+      }
+
+      const splittedItem = item.name.split(':');
+      const name = splittedItem[0].trim();
+      const value = splittedItem[1].trim();
+      this.dataTreeNode.val = value;
+      this.dataTreeNode.name = name;
+      this.dataTreeNode.realPrim = name;
+      this.showTreeNodeDetails = true;
     }
   },
   data() {
     return {
       treeview: makeTreeview(this.token),
+      showTreeNodeDetails: false,
+      dataTreeNode: {
+        val: '',
+        name: '',
+        realPrim: '',
+      }
     }
   }
 }
