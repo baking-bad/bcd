@@ -53,18 +53,8 @@ export default {
     holders: {},
   }),
   watch: {
-    tokens(newTokens) {
-      if (this.$route.query.token_id) {
-        let {token_id} = this.$route.query;
-        if (Number(token_id) >= newTokens.length) {
-          token_id = newTokens.length - 1;
-        } else if (Number(token_id) < 0) {
-          token_id = 0;
-        }
-        this.setSelectedToken(Number(token_id));
-      } else {
-        this.setSelectedToken(0);
-      }
+    tokens() {
+      this.setSelectedToken(this.$route.query.token_id ? Number(this.$route.query.token_id) : 0);
     },
     async token(newVal) {
       if (!this.holders[newVal.token_id]) {
@@ -83,7 +73,7 @@ export default {
     },
     setSelectedToken(newVal) {
       this.selectedToken = newVal;
-      this.token = this.tokens[this.selectedToken];
+      this.token = this.tokens.find(token => token.token_id === newVal);
       this.sendToRoute(this.token.token_id);
     },
   }
