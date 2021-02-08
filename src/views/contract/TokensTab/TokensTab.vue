@@ -5,7 +5,7 @@
         <MetadataToken :token="token"/>
         <v-skeleton-loader v-show="isHoldersListLoading" :loading="isHoldersListLoading" type="image" class="mt-3"/>
         <HoldersInfo
-            v-show="!isHoldersListLoading && token && holders[token.token_id]"
+            v-show="!isHoldersListLoading && token && holders[token.token_id] && Object.keys(holders[token.token_id]).length"
             class="mt-3"
             :holders="sortedCurrentHolder"
             :token="token.symbol"
