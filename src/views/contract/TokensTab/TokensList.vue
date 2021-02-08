@@ -53,7 +53,7 @@ export default {
       return typeof this.token.total_supply === "number" ? this.token.total_supply : this.token.supply;
     },
     isTokenSupply() {
-      return typeof this.token.total_supply === "number" ||  typeof this.token.supply === "number";
+      return this.token && (typeof this.token.total_supply === "number" ||  typeof this.token.supply === "number");
     },
     token() {
       if (this.selectedToken < 0 || this.selectedToken >= this.tokens.length)
