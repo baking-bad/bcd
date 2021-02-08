@@ -2,13 +2,13 @@
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-row no-gutters>
       <v-col cols="9" class="pa-2">
-        <MetadataToken :token="token"/>
+        <MetadataToken v-if="token" :token="token"/>
         <v-skeleton-loader v-show="isHoldersListLoading" :loading="isHoldersListLoading" type="image" class="mt-3"/>
         <HoldersInfo
-            v-show="!isHoldersListLoading && token && holders[token.token_id] && Object.keys(holders[token.token_id]).length"
+            v-if="!isHoldersListLoading && token && holders[token.token_id] && Object.keys(holders[token.token_id]).length"
             class="mt-3"
             :holders="sortedCurrentHolder"
-            :token="token.symbol"
+            :token="token ? token.symbol : null"
         />
       </v-col>
       <v-col cols="3" class="pa-2">
@@ -40,8 +40,12 @@ export default {
   },
   computed: {
     sortedCurrentHolder() {
-      return Object.fromEntries(Object.entries(this.holders[this.token.token_id])
-          .sort((item1, item2) => Number(item2[1]) - Number(item1[1])));
+      if (this.token && this.holders[this.token.token_id]) {
+        return Object.fromEntries(Object.entries(this.holders[this.token.token_id])
+            .sort((item1, item2) => Number(item2[1]) - Number(item1[1])));
+      }
+
+      return null;
     },
   },
   data: () => ({
