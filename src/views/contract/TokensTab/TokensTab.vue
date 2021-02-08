@@ -3,8 +3,7 @@
     <v-row no-gutters>
       <v-col cols="9" class="pa-2">
         <MetadataToken :token="token"/>
-        <v-skeleton-loader v-show="isHoldersListLoading" :loading="isHoldersListLoading" type="image" class="mt-3">
-        </v-skeleton-loader>
+        <v-skeleton-loader v-show="isHoldersListLoading" :loading="isHoldersListLoading" type="image" class="mt-3"/>
         <HoldersInfo
             v-show="!isHoldersListLoading && token && holders[token.token_id]"
             class="mt-3"
@@ -13,62 +12,20 @@
         />
       </v-col>
       <v-col cols="3" class="pa-2">
-        <v-card flat outlined rounded>
-          <v-skeleton-loader :loading="loading" type="list-item@5">
-            <v-list class="py-0 item">
-              <AccountBox
-                v-if="tokens && tokens.length > 0 && tokens[0].registry_address"
-                title="Metadata Registry"
-                :address="tokens[0].registry_address"
-                :network="network"
-                gutters
-              />
-
-              <v-list-item-group v-model="selectedToken" mandatory>
-                <template v-for="(token) in tokens">
-                  <v-list-item :key="token.token_id">
-                    <v-row>
-                      <v-col cols="8" class="pa-0 pl-3 pr-3">
-                        <v-list-item-content>
-                          <v-list-item-title>
-                            {{ token.name }}
-                          </v-list-item-title>
-                          <v-list-item-subtitle>
-                            <span
-                                v-if="isTokenSupply"
-                                class="caption text--disabled"
-                            >total_supply: </span>
-                            <span>
-                              {{ tokenSupply }}
-                            </span>
-                          </v-list-item-subtitle>
-                        </v-list-item-content>
-                      </v-col>
-                      <v-col cols="3" class="pa-0 pr-3">
-                        <v-list-item-content class="fill-height">
-                          <span
-                              v-if="token.symbol"
-                              class="overline text-truncate"
-                          >{{ token.symbol }}</span>
-                        </v-list-item-content>
-                      </v-col>
-                    </v-row>
-                  </v-list-item>
-                  <v-divider :key="`divider-${token.token_id}`" />
-                </template>
-              </v-list-item-group>
-            </v-list>
-          </v-skeleton-loader>
-        </v-card>
+        <TokensList
+          :tokens="tokens"
+          :preselectedToken="selectedToken"
+          @changeSelectedToken="setSelectedToken"
+        />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import AccountBox from "@/components/AccountBox.vue";
 import MetadataToken from "@/views/contract/TokensTab/Metadata/MetadataToken";
-import HoldersInfo from "@/views/contract/TokensTab/Metadata/HoldersInfo";
+import HoldersInfo from "@/views/contract/TokensTab/HoldersInfo";
+import TokensList from "@/views/contract/TokensTab/TokensList";
 
 export default {
   name: "ContractTokensTab",
@@ -77,36 +34,25 @@ export default {
     network: String,
   },
   components: {
+    TokensList,
     HoldersInfo,
     MetadataToken,
-    AccountBox,
   },
   computed: {
-    tokenSupply() {
-      return typeof this.token.total_supply === "number" ? this.token.total_supply : this.token.supply;
-    },
-    isTokenSupply() {
-      return typeof this.token.total_supply === "number" ||  typeof this.token.supply === "number";
-    },
-    token() {
-      if (this.selectedToken < 0 || this.selectedToken >= this.tokens.length)
-        return null;
-      return this.tokens[this.selectedToken];
-    },
     sortedCurrentHolder() {
       return Object.fromEntries(Object.entries(this.holders[this.token.token_id])
           .sort((item1, item2) => Number(item2[1]) - Number(item1[1])));
     },
   },
   data: () => ({
-    loading: false,
     isHoldersListLoading: false,
+    token: null,
     selectedToken: -1,
     holders: {},
   }),
   watch: {
     tokens: function () {
-      this.selectedToken = 0;
+      this.setSelectedToken(0);
     },
     async token(newVal) {
       if (!this.holders[newVal.token_id]) {
@@ -117,6 +63,12 @@ export default {
       }
     },
   },
+  methods: {
+    setSelectedToken(newVal) {
+      this.selectedToken = newVal;
+      this.token = this.tokens[this.selectedToken];
+    },
+  }
 };
 </script>
 
