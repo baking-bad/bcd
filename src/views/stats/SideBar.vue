@@ -62,9 +62,12 @@ export default {
     BakingBadFooter,
   },
   created() {
-    this.states.forEach((x, idx) => {
-      if (x.network === this.$route.params.network) this.item = idx;
-    });
+    this.setItem();
+  },
+  watch: {
+    states() {
+      this.setItem();
+    }
   },
   data: () => ({
     item: 0,
@@ -76,11 +79,16 @@ export default {
         params: { network: state.network },
       });
     },
+    setItem() {
+      this.states.forEach((x, idx) => {
+        if (x.network === this.$route.params.network) this.item = idx;
+      });
+    }
   },
 };
 </script>
 
-<style scss>
+<style lang="scss">
 .opened-panel {
   border-bottom: none !important;
 }
