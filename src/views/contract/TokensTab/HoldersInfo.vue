@@ -27,7 +27,7 @@
             <v-list-item-content class="flex-nowrap">
               <v-row>
                 <v-col cols="6" class="pr-2 text-align-end">
-                  <span :title="holders[holder_address]">{{ holders[holder_address] }}</span>
+                  <span :title="holders[holder_address]">{{ getHolderAmount(holders[holder_address]) }}</span>
                 </v-col>
                 <v-col cols="6" class="pl-0">
                   <span class="caption text-uppercase font-weight-regular text--disabled"> {{token}}</span>
@@ -53,6 +53,7 @@ export default {
     holders: Object,
     token: String,
     network: String,
+    decimals: Number,
   },
   computed: {
     holdersTitle() {
@@ -64,6 +65,9 @@ export default {
     }
   },
   methods: {
+    getHolderAmount(amount) {
+      return amount / Math.pow(10, this.decimals);
+    },
     onScroll() {
       const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight;
       const isLeftHolders = Object.keys(this.holders).length > this.shownAmount;
