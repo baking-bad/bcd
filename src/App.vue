@@ -44,6 +44,7 @@ export default {
 <style>
 html {
   overflow-y: auto !important;
+  width: 100vw;
 }
 
 :focus {
@@ -112,8 +113,8 @@ html {
 
 /* Change the white to any color ;) */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
 input:-webkit-autofill:active  {
   -webkit-box-shadow: 0 0 0 30px var(--v-data-base) inset !important;
   -webkit-text-fill-color: var(--v-text-base) !important;
