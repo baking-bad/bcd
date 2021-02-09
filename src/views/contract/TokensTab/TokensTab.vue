@@ -61,7 +61,9 @@ export default {
   },
   watch: {
     tokens(newVal) {
-      this.setSelectedTokenWithRoute(this.$route.query.token_id ? Number(this.$route.query.token_id) : newVal[0].token_id);
+      if (newVal !== null) {
+        this.setSelectedTokenWithRoute(this.$route.query.token_id ? Number(this.$route.query.token_id) : newVal[0].token_id);
+      }
     },
     async token(newVal) {
       if (newVal && !this.holders[newVal.token_id]) {

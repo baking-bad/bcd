@@ -134,7 +134,7 @@ export default {
       showError: "showError",
     }),
     init() {
-      this.tokens = null;
+      this.$set(this, 'tokens', null);
       this.migrations = [];
       this.showFork = this.$route.name === "fork";
       if (this.isContract) {
@@ -185,7 +185,7 @@ export default {
         .getContractTokens(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          this.tokens = res;
+          this.$set(this, 'tokens', res);
         })
         .catch((err) => {
           this.showError(err);

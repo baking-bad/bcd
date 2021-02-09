@@ -64,6 +64,9 @@ export default {
   mounted() {
     this.selectedToken = this.preselectedToken;
   },
+  updated() {
+    this.selectedToken = this.preselectedToken;
+  },
   methods: {
     changeSelectedToken(id) {
       this.selectedToken = this.tokens.findIndex(token => token.token_id === id);
