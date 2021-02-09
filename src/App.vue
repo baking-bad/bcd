@@ -143,4 +143,8 @@ input:-webkit-autofill:active  {
   text-transform: lowercase !important;
   font-family: Roboto,sans-serif!important
 }
+
+.text-align-end {
+  text-align: end;
+}
 </style>

@@ -24,13 +24,15 @@
         </v-col>
         <v-col cols="6">
           <v-list-item class="fill-height pa-0">
-            <v-list-item-content>
-              <v-list-item-title
-                  class="font-weight-light hash text--secondary text-center"
-              >
-                <span :title="holders[holder_address]">{{ holders[holder_address] }}</span>
-                <span class="token-name"> {{token}}</span>
-              </v-list-item-title>
+            <v-list-item-content class="flex-nowrap">
+              <v-row>
+                <v-col cols="6" class="pr-2 text-align-end">
+                  <span :title="holders[holder_address]">{{ holders[holder_address] }}</span>
+                </v-col>
+                <v-col cols="6" class="pl-0">
+                  <span class="caption text-uppercase font-weight-regular text--disabled"> {{token}}</span>
+                </v-col>
+              </v-row>
             </v-list-item-content>
           </v-list-item>
         </v-col>
@@ -83,8 +85,5 @@ export default {
   &:last-child {
     border-bottom: none !important;
   }
-}
-.token-name {
-  font-size: 0.7em;
 }
 </style>
