@@ -50,7 +50,7 @@ export default {
       if (children && children.length > 0) {
         return `object`;
       }
-      return name.split(':').slice(1,).join('').trim();
+      return name.split(':').slice(1,).join(':').trim();
     },
     showTreeInfo(item) {
       if (item.children) {
@@ -59,7 +59,7 @@ export default {
 
       const splittedItem = item.name.split(':');
       const name = splittedItem[0].trim();
-      const value = splittedItem.slice(1,).join('').trim();
+      const value = splittedItem.slice(1,).join(':').trim();
       this.dataTreeNode.val = value;
       this.dataTreeNode.name = name;
       this.dataTreeNode.realPrim = name;
