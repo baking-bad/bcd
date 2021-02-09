@@ -334,7 +334,9 @@ export default {
             if (seqno === this.seqno) {
               this.suggests = this.getHistoryItems(text);
               this.suggests.push(...this.getPrivateItems(text));
-              this.suggests.push(...res.items);
+              if (res && res.items) {
+                this.suggests.push(...res.items);
+              }
             }
           })
           .catch((err) => {
