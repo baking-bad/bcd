@@ -54,9 +54,14 @@ export default {
     selectedToken: -1,
     holders: {},
   }),
+  mounted() {
+    if (this.tokens) {
+      this.setSelectedTokenWithRoute(this.tokens[0].token_id);
+    }
+  },
   watch: {
-    tokens() {
-      this.setSelectedTokenWithRoute(this.$route.query.token_id ? Number(this.$route.query.token_id) : 0);
+    tokens(newVal) {
+      this.setSelectedTokenWithRoute(this.$route.query.token_id ? Number(this.$route.query.token_id) : newVal[0].token_id);
     },
     async token(newVal) {
       if (newVal && !this.holders[newVal.token_id]) {
