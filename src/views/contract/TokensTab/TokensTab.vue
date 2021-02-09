@@ -68,7 +68,7 @@ export default {
   methods: {
     sendToRoute(token_id) {
       const isNoTokenId = typeof this.$route.query.token_id === "undefined";
-      const isAlreadyOnRoute = this.$route.query.token_id && Number(this.$route.query.token_id) === token_id;
+      const isAlreadyOnRoute = typeof this.$route.query.token_id !== "undefined" && Number(this.$route.query.token_id) === token_id;
       if (!isAlreadyOnRoute || isNoTokenId) {
         this.$router.replace({query: {token_id}});
       }
