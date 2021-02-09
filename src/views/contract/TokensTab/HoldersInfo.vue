@@ -1,6 +1,6 @@
 <template>
   <v-list class="pb-0" v-scroll="onScroll">
-    <v-subheader class="title">Holders</v-subheader>
+    <v-subheader class="title">{{ holdersTitle }}</v-subheader>
     <div class="bt-1 mt-1">
       <v-row
           v-for="holder_address in holdersToShow"
@@ -53,6 +53,10 @@ export default {
     network: String,
   },
   computed: {
+    holdersTitle() {
+      const holdersAmount = Object.keys(this.holders).length;
+      return `Holders (${holdersAmount})`;
+    },
     holdersToShow() {
       return Object.keys(this.holders).slice(0, this.shownAmount);
     }
