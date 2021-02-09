@@ -15,10 +15,8 @@
                   class="font-weight-light hash"
               >
                 <AccountBox
-                    :title="holder_address"
                     :address="holder_address"
                     :network="network"
-                    lower-title
                 />
               </v-list-item-title>
             </v-list-item-content>
@@ -30,7 +28,8 @@
               <v-list-item-title
                   class="font-weight-light hash text--secondary text-center"
               >
-                <span :title="holders[holder_address]">{{ holders[holder_address] }} {{token}}</span>
+                <span :title="holders[holder_address]">{{ holders[holder_address] }}</span>
+                <span class="token-name"> {{token}}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -84,5 +83,8 @@ export default {
   &:last-child {
     border-bottom: none !important;
   }
+}
+.token-name {
+  font-size: 0.7em;
 }
 </style>
