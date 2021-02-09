@@ -15,17 +15,6 @@
         </v-list-item-content>
         <v-list-item-action class="mt-0">
           <div class="d-flex flex-horizontal justify-center align-center">
-            <v-btn
-                class="mr-1 text--secondary"
-                v-clipboard="() => token"
-                v-clipboard:success="showClipboardOK"
-                v-clipboard:error="showClipboardFail"
-                small
-                text
-            >
-              <v-icon class="mr-1" small>mdi-content-copy</v-icon>
-              <span>Copy</span>
-            </v-btn>
             <v-btn @click="showRaw = true" small text class="text--secondary">
               <v-icon class="mr-1" small>mdi-code-json</v-icon>
               <span>Raw JSON</span>

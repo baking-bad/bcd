@@ -18,6 +18,7 @@
                     :title="holder_address"
                     :address="holder_address"
                     :network="network"
+                    lower-title
                 />
               </v-list-item-title>
             </v-list-item-content>
