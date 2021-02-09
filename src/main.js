@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Clipboard from 'v-clipboard'
 import App from './App.vue'
 
+import './styles';
+
 import store from '@/store'
 import router from '@/router'
 import VueAnalytics from 'vue-analytics'
@@ -15,7 +17,6 @@ import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js"
 import { NodeRPC } from "@/api/rpc.js"
 import { BcdWs } from "@/api/ws.js";
 
-import '@mdi/font/css/materialdesignicons.css';
 import { makeVuetify } from '@/plugins/vuetify';
 
 import dayjs from 'dayjs';
@@ -23,8 +24,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 
 
-import VJsf from '@baking-bad/vjsf/lib/VJsf.js'
-import '@baking-bad/vjsf/lib/VJsf.css'
+import VJsf from '@baking-bad/vjsf/lib/VJsf.js';
+import '@baking-bad/vjsf/lib/VJsf.css';
 
 import draggable from 'vuedraggable';
 Vue.component('draggable', draggable);
