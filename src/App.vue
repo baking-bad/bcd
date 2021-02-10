@@ -47,6 +47,10 @@ html {
   width: 100vw;
 }
 
+div.theme--dark.v-application {
+  background: var(--v-canvas-base);
+}
+
 :focus {
   outline: none !important;
 }
