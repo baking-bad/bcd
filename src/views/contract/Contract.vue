@@ -63,7 +63,7 @@
         <v-tab
           :to="{ name: 'metadata' }"
           replace
-          v-if="isContract && contract.metadata"
+          v-if="isContract && isContractMetadata"
         >
           <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
         </v-tab>
@@ -90,7 +90,6 @@
 import SearchBox from "@/components/SearchBox.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/contract/SideBar.vue";
-import Vue from 'vue';
 import { mapActions } from "vuex";
 import { cancelRequests } from "@/utils/cancellation.js";
 
@@ -118,6 +117,9 @@ export default {
     this.init();
   },
   computed: {
+    isContractMetadata() {
+      return this.contract && this.contract.metadata;
+    },
     loading() {
       return this.contractLoading || this.migrationsLoading;
     },
@@ -159,7 +161,7 @@ export default {
         .getContract(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          Vue.set(this, 'contract', res);
+          this.$set(this, 'contract', Object.assign(this.contract, res));
         })
         .catch((err) => {
           this.showError(err.message);
@@ -199,9 +201,9 @@ export default {
         .then((res) => {
           if (!res) return;
           if (this.isContract) {
-            Vue.set(this, 'contract', Object.assign(this.contract, res));
+            this.$set(this, 'contract', Object.assign(this.contract, res));
           } else {
-            Vue.set(this, 'contract', res);
+            this.$set(this, 'contract', res);
           }
         })
         .catch((err) => {
@@ -214,7 +216,7 @@ export default {
         .getAccountMetadata(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          Vue.set(this.contract, 'metadata', res);
+          this.$set(this.contract, 'metadata', res);
         })
         .catch((err) => {
           this.showError(err);
