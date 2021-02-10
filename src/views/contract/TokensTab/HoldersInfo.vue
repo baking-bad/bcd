@@ -66,7 +66,10 @@ export default {
   },
   methods: {
     getHolderAmount(amount) {
-      return amount / Math.pow(10, this.decimals);
+      if (this.decimals) {
+        return amount / Math.pow(10, this.decimals);
+      }
+      return amount;
     },
     onScroll() {
       const isBottom = (window.innerHeight + window.scrollY) >= document.body.offsetHeight;
