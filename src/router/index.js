@@ -28,6 +28,7 @@ import ForkTab from '@/views/contract/ForkTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
 import OpgContents from '@/views/opg/ContentsTab.vue'
+import OpgEvents from '@/views/opg/EventsTab.vue'
 
 import BigMap from '@/views/big_map/BigMap.vue'
 import BigMapKeys from '@/views/big_map/KeysTab.vue'
@@ -238,7 +239,7 @@ const router = new Router({
           components: {
             default: ForkTab,
           }
-        }, 
+        },
         {
           path: 'tokens',
           name: 'tokens',
@@ -328,6 +329,12 @@ const router = new Router({
           path: 'contents',
           name: 'opg_contents',
           component: OpgContents,
+          props: true
+        },
+        {
+          path: 'events',
+          name: 'opg_events',
+          component: OpgEvents,
           props: true
         }
       ]
