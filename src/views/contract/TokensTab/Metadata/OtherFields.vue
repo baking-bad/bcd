@@ -88,16 +88,22 @@ export default {
   .value {
     color: var(--v-tree-base);
     font-size: 0.75rem;
+    white-space: break-spaces;
     &_white {
       font-size: 0.75rem;
       color: white;
+    }
+  }
+  &-node__label {
+    & > div {
+      line-height: 1.25;
     }
   }
   &.beautify-fonts {
     font-family: Monaco, Menlo, Consolas, Bitstream Vera Sans Mono, monospace;
   }
   &.no-padding-arrow {
-    $margin: -25px;
+    $margin: -30px;
     .v-treeview-node__root {
       & > button.v-treeview-node__toggle {
         left: $margin;
