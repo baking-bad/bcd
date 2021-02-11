@@ -111,7 +111,6 @@ export default {
       const nextStart = (this.tokensPage - 1) * this.amountOfTokensToShow;
       const nextEnd = nextStart + this.amountOfTokensToShow;
       this.shownTokens = this.tokens.slice(nextStart, nextEnd);
-      console.log('this.shownTokens: ', this.shownTokens)
     },
     setTokensPage() {
       const isTokenId = typeof this.$route.query.token_id !== "undefined";
