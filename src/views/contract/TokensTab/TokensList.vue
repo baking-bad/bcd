@@ -3,7 +3,11 @@
     <v-list class="py-0 item">
       <v-list-item-group v-model="selectedToken" mandatory>
         <template v-for="(token) in tokens">
-          <v-list-item :key="token.token_id" @click="changeSelectedToken(token.token_id)">
+          <v-list-item
+              :key="token.token_id"
+              :class="!isSelectShown ? 'v-list-item--inactive v-item--inactive' : ''"
+              @click="changeSelectedToken(token.token_id)"
+          >
             <v-row>
               <v-col cols="8" class="pa-0 pl-3 pr-3">
                 <v-list-item-content>
@@ -46,6 +50,7 @@ export default {
   name: "TokensList",
   props: {
     tokens: Array,
+    currentToken: Object,
     preselectedToken: Number,
   },
   computed: {
@@ -64,19 +69,33 @@ export default {
   mounted() {
     this.selectedToken = this.preselectedToken;
   },
-  updated() {
-    this.selectedToken = this.preselectedToken;
-  },
   methods: {
     changeSelectedToken(id) {
       this.selectedToken = this.tokens.findIndex(token => token.token_id === id);
       this.$emit('changeSelectedToken', id);
+      this.isSelectShown = true;
     }
+  },
+  watch: {
+    tokens(val) {
+      this.isSelectShown = !!val.find(item => item.token_id === this.currentToken.token_id);
+      this.selectedToken = val.findIndex(token => token.token_id === this.preselectedToken);
+    },
   },
   data() {
     return {
       selectedToken: -1,
+      isSelectShown: true,
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.v-list-item--inactive,
+.v-item--inactive {
+  &::before {
+    background: transparent;
+  }
+}
+</style>

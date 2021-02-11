@@ -15,10 +15,16 @@
       <v-col cols="3" class="pa-2">
         <TokensList
           v-if="selectedToken !== -1"
-          :tokens="tokens"
+          :tokens="shownTokens"
+          :current-token="token"
           :preselectedToken="selectedToken"
           @changeSelectedToken="setSelectedTokenWithRoute"
         />
+        <v-pagination
+          v-model="tokensPage"
+          :length="tokensPageCount"
+          v-if="tokens && tokens.length > amountOfTokensToShow"
+        ></v-pagination>
       </v-col>
     </v-row>
   </v-container>
@@ -49,22 +55,38 @@ export default {
 
       return null;
     },
+    tokensPageCount() {
+      if (!this.tokens) {
+        return 1;
+      } else {
+        return Math.ceil(this.tokens.length / this.amountOfTokensToShow);
+      }
+    },
   },
   data: () => ({
+    isInitialized: false,
     token: null,
     selectedToken: -1,
     holders: {},
+    tokensPage: 1,
+    amountOfTokensToShow: 10,
+    shownTokens: null,
   }),
   mounted() {
-    if (this.tokens) {
-      this.setSelectedTokenWithRoute(this.tokens[0].token_id);
-    }
+    this.init();
   },
   watch: {
-    tokens(newVal) {
-      if (newVal !== null) {
-        this.setSelectedTokenWithRoute(this.$route.query.token_id ? Number(this.$route.query.token_id) : newVal[0].token_id);
+    tokens(newVal, oldVal) {
+      if (oldVal === null) {
+        this.init();
       }
+      if (newVal !== null) {
+        const tokenID = this.$route.query.token_id ? Number(this.$route.query.token_id) : newVal[0].token_id;
+        this.setSelectedTokenWithRoute(tokenID);
+      }
+    },
+    tokensPage() {
+      this.setShownTokens();
     },
     async token(newVal) {
       if (newVal && !this.holders[newVal.token_id]) {
@@ -74,6 +96,30 @@ export default {
     },
   },
   methods: {
+    init() {
+      if (this.isInitialized) {
+        return;
+      }
+
+      this.setTokensPage();
+      this.setShownTokens();
+      const tokenID = this.$route.query.token_id ? Number(this.$route.query.token_id) : this.shownTokens[0].token_id;
+      this.setSelectedTokenWithRoute(tokenID);
+      this.isInitialized = true;
+    },
+    setShownTokens() {
+      const nextStart = (this.tokensPage - 1) * this.amountOfTokensToShow;
+      const nextEnd = nextStart + this.amountOfTokensToShow;
+      this.shownTokens = this.tokens.slice(nextStart, nextEnd);
+      console.log('this.shownTokens: ', this.shownTokens)
+    },
+    setTokensPage() {
+      const isTokenId = typeof this.$route.query.token_id !== "undefined";
+      if (isTokenId) {
+        const position = this.tokens.findIndex(token => token.token_id === Number(this.$route.query.token_id));
+        this.tokensPage = Math.ceil(position / this.amountOfTokensToShow);
+      }
+    },
     sendToRoute(token_id) {
       const isNoTokenId = typeof this.$route.query.token_id === "undefined";
       const isAlreadyOnRoute = typeof this.$route.query.token_id !== "undefined" && Number(this.$route.query.token_id) === token_id;
@@ -82,8 +128,8 @@ export default {
       }
     },
     setSelectedTokenWithRoute(newVal) {
-      this.token = this.tokens.find(token => token.token_id === newVal);
-      this.selectedToken = this.tokens.findIndex(token => token.token_id === newVal);
+      this.token = this.shownTokens.find(token => token.token_id === newVal);
+      this.selectedToken = this.shownTokens.findIndex(token => token.token_id === newVal);
       this.sendToRoute(this.token.token_id);
     },
   }
