@@ -80,37 +80,39 @@ export default {
 }
 </script>
 <style lang="scss">
-.v-treeview {
-  .key {
-    color: #9e9e9e;
-    font-size: 0.75rem;
-  }
-  .value {
-    color: var(--v-tree-base);
-    font-size: 0.75rem;
-    white-space: break-spaces;
-    &_white {
+.fields-wrapper {
+  .v-treeview {
+    .key {
+      color: #9e9e9e;
       font-size: 0.75rem;
-      color: white;
     }
-  }
-  &-node__label {
-    & > div {
-      line-height: 1.25;
-    }
-  }
-  &.beautify-fonts {
-    font-family: Monaco, Menlo, Consolas, Bitstream Vera Sans Mono, monospace;
-  }
-  &.no-padding-arrow {
-    $margin: -30px;
-    .v-treeview-node__root {
-      & > button.v-treeview-node__toggle {
-        left: $margin;
+    .value {
+      color: var(--v-tree-base);
+      font-size: 0.75rem;
+      white-space: break-spaces;
+      &_white {
+        font-size: 0.75rem;
+        color: white;
       }
     }
-    .v-treeview-node__content {
-      margin-left: $margin !important;
+    &-node__label {
+      & > div {
+        line-height: 1.25;
+      }
+    }
+    &.beautify-fonts {
+      font-family: Monaco, Menlo, Consolas, Bitstream Vera Sans Mono, monospace;
+    }
+    &.no-padding-arrow {
+      $margin: -30px;
+      .v-treeview-node__root {
+        & > button.v-treeview-node__toggle {
+          left: $margin;
+        }
+      }
+      .v-treeview-node__content {
+        margin-left: $margin !important;
+      }
     }
   }
 }
