@@ -1,6 +1,6 @@
 <template>
   <span :title="value.details">
-    "{{ value.name }}"
+    {{ value.name }}
   </span>
 </template>
 

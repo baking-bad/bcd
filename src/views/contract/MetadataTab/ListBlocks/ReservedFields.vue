@@ -9,9 +9,9 @@
       <v-list-item-content class="pt-1 pb-0">
         <v-list-item-title class="d-flex">
           <span class="key-field">
-            "{{
+            {{
               field.key
-            }}":
+            }}:
           </span>
           <LicenseField
               class="value-field ml-3"
@@ -44,7 +44,7 @@
               :value="field.value"
           />
           <span v-else class="value-field ml-3">
-            "{{ field.value }}"
+            {{ field.value }}
           </span>
         </v-list-item-title>
       </v-list-item-content>
