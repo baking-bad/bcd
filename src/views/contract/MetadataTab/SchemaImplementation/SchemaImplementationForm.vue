@@ -43,11 +43,6 @@ export default {
       this.model = {};
     }
   },
-  methods: {
-    implementForm() {
-      console.log('implement model: ', this.model)
-    }
-  },
   data() {
     return {
       show: true,
