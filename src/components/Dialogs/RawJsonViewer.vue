@@ -199,7 +199,9 @@ export default {
 };
 </script>
 
-<style>
+<style lang="scss">
+@import '../styles/vue-json-pretty.css';
+
 .vjs-tree .vjs-value__string {
   color: var(--v-tree-base) !important;
 }

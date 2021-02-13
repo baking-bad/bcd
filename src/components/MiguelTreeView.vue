@@ -14,7 +14,7 @@
       <template v-slot:label="{ item }">
         <div :class="`${item.kind} pl-1`">
           <span
-              v-if="item.name.length == 0"
+              v-if="item.name.length === 0"
               class="key"
           >
             <span class="text--secondary">@empty</span>:
@@ -100,7 +100,10 @@ export default {
     },
     active() {
       if (this.activeNodes.length > 0) {
-        return this.activeNodes[0];
+        const node = this.activeNodes[0];
+        if (node.val || node.from) {
+          return node;
+        }
       }
       return null;
     },

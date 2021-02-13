@@ -63,7 +63,7 @@
         <v-tab
           :to="{ name: 'metadata' }"
           replace
-          v-if="isContract && contract.metadata"
+          v-if="isContract && isContractMetadata"
         >
           <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
         </v-tab>
@@ -90,7 +90,6 @@
 import SearchBox from "@/components/SearchBox.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/contract/SideBar.vue";
-
 import { mapActions } from "vuex";
 import { cancelRequests } from "@/utils/cancellation.js";
 
@@ -118,6 +117,9 @@ export default {
     this.init();
   },
   computed: {
+    isContractMetadata() {
+      return this.contract && this.contract.metadata;
+    },
     loading() {
       return this.contractLoading || this.migrationsLoading;
     },
@@ -159,12 +161,9 @@ export default {
         .getContract(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          this.contract = res;
+          this.$set(this, 'contract', Object.assign(this.contract, res));
         })
         .catch((err) => {
-          const matches = err.message.match(/\d+/);
-          if (matches !== null && matches.length === 1)
-            this.errorCode = parseInt(matches[0]);
           this.showError(err.message);
         })
         .finally(() => (this.contractLoading = false));
@@ -178,7 +177,6 @@ export default {
           this.migrations = res;
         })
         .catch((err) => {
-          console.log(err);
           this.showError(err);
         })
         .finally(() => (this.migrationsLoading = false));
@@ -192,7 +190,6 @@ export default {
           this.tokens = res;
         })
         .catch((err) => {
-          console.log(err);
           this.showError(err);
         })
         .finally(() => (this.tokensLoading = false));
@@ -204,13 +201,12 @@ export default {
         .then((res) => {
           if (!res) return;
           if (this.isContract) {
-            Object.assign(this.contract, res);
+            this.$set(this, 'contract', Object.assign(this.contract, res));
           } else {
-            this.contract = res;
+            this.$set(this, 'contract', res);
           }
         })
         .catch((err) => {
-          console.log(err);
           this.showError(err);
         })
         .finally(() => (this.contractLoading = false));
@@ -220,10 +216,9 @@ export default {
         .getAccountMetadata(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          Object.assign(this.contract, { metadata: res });
+          this.$set(this.contract, 'metadata', res);
         })
         .catch((err) => {
-          console.log(err);
           this.showError(err);
         });
     },

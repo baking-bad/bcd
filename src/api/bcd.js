@@ -150,6 +150,9 @@ export class BetterCallApi {
   getAccountInfo(network, address) {
     return getCancellable(this.api, `/account/${network}/${address}`, {})
       .then((res) => {
+        if (!res) {
+          return null;
+        }
         if (res.status != 200) {
           throw new RequestFailedError(res);
         }
@@ -160,13 +163,13 @@ export class BetterCallApi {
   getAccountMetadata(network, address) {
     return getCancellable(this.api, `/account/${network}/${address}/metadata`, {})
       .then((res) => {
-        if (res.status == 204) {
-          return null;
-        }
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
+          if (!res || res.status == 204) {
+              return null;
+          }
+          if (res.status != 200) {
+              throw new RequestFailedError(res);
+          }
+          return res.data
       })
   }
 
