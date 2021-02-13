@@ -112,8 +112,8 @@ html {
 
 /* Change the white to any color ;) */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
 input:-webkit-autofill:active  {
   -webkit-box-shadow: 0 0 0 30px var(--v-data-base) inset !important;
   -webkit-text-fill-color: var(--v-text-base) !important;
@@ -133,5 +133,8 @@ input:-webkit-autofill:active  {
 
 .item-header-mempool {
   border-left: 3px solid var(--v-border-base);
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
