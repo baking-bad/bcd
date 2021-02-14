@@ -44,6 +44,11 @@ export default {
 <style>
 html {
   overflow-y: auto !important;
+  width: 100vw;
+}
+
+div.theme--dark.v-application {
+  background: var(--v-canvas-base);
 }
 
 :focus {
