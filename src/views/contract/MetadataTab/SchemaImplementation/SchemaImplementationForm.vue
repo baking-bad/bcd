@@ -33,7 +33,7 @@
 import SchemaFormExecutionActions from "@/components/schema/schemaForm/SchemaFormExecutionActions";
 export default {
   name: "SchemaImplementationForm",
-  components: {SchemaFormExecutionActions},
+  components: { SchemaFormExecutionActions},
   props: {
     schema: Object,
     parameters: Object,

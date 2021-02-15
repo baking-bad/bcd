@@ -4,6 +4,7 @@
       <ImplementationsList
           name="Events"
           :implements-list="events"
+          :hidden-implementations-fields="hiddenImplementationsFields"
           executable
       />
     </v-container>
@@ -22,6 +23,7 @@ export default {
   data() {
     return {
       events: testEvents,
+      hiddenImplementationsFields: ['parameter', 'returnType'],
     }
   }
 }

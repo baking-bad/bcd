@@ -2,6 +2,7 @@
   <v-row>
     <v-col v-if="executable && selectedImplementation" cols="6">
       <SchemaImplementation
+          :hidden-implementations-fields="hiddenImplementationsFields"
           :implementation="selectedImplementation"
       />
     </v-col>
@@ -56,6 +57,7 @@ export default {
   props: {
     entrypoints: Array,
     selectedOutside: Number,
+    hiddenImplementationsFields: Array,
     executable: Boolean,
     isImplementations: {
       type: Boolean,

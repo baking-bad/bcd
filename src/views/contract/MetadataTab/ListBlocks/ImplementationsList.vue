@@ -7,6 +7,7 @@
         :entrypoints="implementsList"
         :is-implementations="true"
         :executable="executable"
+        :hidden-implementations-fields="hiddenImplementationsFields"
     />
   </v-list>
 </template>
@@ -19,6 +20,7 @@ export default {
   props: {
     name: String,
     implementsList: Array,
+    hiddenImplementationsFields: Array,
     executable: {
       type: Boolean,
       default: false,

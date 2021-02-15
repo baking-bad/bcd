@@ -35,6 +35,7 @@ export default {
     alertData: String,
     successText: String,
     implementation: Object,
+    hiddenImplementationsFields: Array,
   },
   computed: {
     parametersSchema() {
@@ -54,10 +55,13 @@ export default {
     getSchemaProperties(implementation) {
       let properties = {};
       Object.keys(implementation).forEach(key => {
-        properties[key] = {
-          type: "string",
-          title: key,
-          "x-display": "custom-contract"
+        if (this.hiddenImplementationsFields.indexOf(key) === -1) {
+          properties[key] = {
+            type: "string",
+            title: key,
+            value: implementation[key],
+            "x-display": "custom-contract"
+          }
         }
       })
       return properties;
