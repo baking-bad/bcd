@@ -8,6 +8,7 @@
         :is-implementations="true"
         :executable="executable"
         :hidden-implementations-fields="hiddenImplementationsFields"
+        :isOffChainEvents="isOffChainEvents"
     />
   </v-list>
 </template>
@@ -24,6 +25,7 @@ export default {
       type: Array,
       default: () => [],
     },
+    isOffChainEvents: Boolean,
     executable: {
       type: Boolean,
       default: false,

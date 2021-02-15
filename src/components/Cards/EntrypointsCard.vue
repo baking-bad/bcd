@@ -6,7 +6,12 @@
           :implementation="selectedImplementation"
       />
     </v-col>
-    <v-col :cols="executable ? 6 : 12">
+    <v-col v-else-if="isOffChainEvents && selectedImplementation" cols="6">
+      <EventsImplementation
+          :implementation="selectedImplementation"
+      />
+    </v-col>
+    <v-col :cols="executable || isOffChainEvents ? 6 : 12">
       <v-card flat outlined :style="`max-width:${cardMaxWidth >= 0 ? cardMaxWidth + 'px' : '100%'};`">
         <v-navigation-drawer floating permanent :style="`max-height: ${navigationMaxHeight}vh; width: 100%;`">
           <v-expansion-panels
@@ -50,15 +55,17 @@
 import TypeDef from "@/views/contract/TypeDef";
 import ImplementationsList from "@/components/Lists/ImplementationsList";
 import SchemaImplementation from "@/views/contract/MetadataTab/SchemaImplementation/SchemaImplementation";
+import EventsImplementation from "@/views/opg/tabs/EventsTab/EventsImplementation/EventsImplementation";
 
 export default {
   name: "EntrypointsCard",
-  components: {SchemaImplementation, ImplementationsList, TypeDef},
+  components: {EventsImplementation, SchemaImplementation, ImplementationsList, TypeDef},
   props: {
     entrypoints: Array,
     selectedOutside: Number,
     hiddenImplementationsFields: Array,
     executable: Boolean,
+    isOffChainEvents: Boolean,
     isImplementations: {
       type: Boolean,
       default: false,

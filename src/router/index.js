@@ -27,8 +27,8 @@ import MetadataTab from '@/views/contract/MetadataTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
-import OpgContents from '@/views/opg/ContentsTab.vue'
-import OpgEvents from '@/views/opg/EventsTab.vue'
+import OpgContents from '@/views/opg/tabs/ContentsTab/ContentsTab.vue'
+import OpgEvents from '@/views/opg/tabs/EventsTab/EventsTab.vue'
 
 import BigMap from '@/views/big_map/BigMap.vue'
 import BigMapKeys from '@/views/big_map/KeysTab.vue'

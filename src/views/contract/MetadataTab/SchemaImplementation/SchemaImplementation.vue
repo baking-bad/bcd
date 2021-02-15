@@ -32,8 +32,6 @@ export default {
   components: {SchemaImplementationForm, SchemaAlertCustomSuccess, SchemaAlertData, SchemaHeader},
   props: {
     title: String,
-    alertData: String,
-    successText: String,
     implementation: Object,
     hiddenImplementationsFields: Array,
   },
@@ -65,6 +63,12 @@ export default {
         }
       })
       return properties;
+    }
+  },
+  data() {
+    return {
+      alertData: String,
+      successText: String,
     }
   }
 }
