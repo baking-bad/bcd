@@ -185,7 +185,7 @@ export default {
         return;
       }
 
-      if (!this.synced && this.config.networks.length == data.body.length) {
+      if (!this.synced && data.body.length > 1) {
         this.stats = data.body.sort(function (a, b) {
           if (a.network === "mainnet") {
             return -1;
