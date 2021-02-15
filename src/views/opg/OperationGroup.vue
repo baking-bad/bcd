@@ -13,10 +13,13 @@
 
     <v-toolbar flat class color="toolbar" height="75">
       <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
-        <v-tab active>
+        <v-tab :to="{name: 'opg_contents'}">
           <v-icon left small>mdi-format-list-bulleted</v-icon>contents
           <span class="ml-1">({{ contentsLength }})</span>
-        </v-tab>        
+        </v-tab>
+        <v-tab :to="{name: 'opg_events'}">
+          <v-icon left small>mdi-move-resize-variant</v-icon>events
+        </v-tab>
       </v-tabs>
       <div class="mr-6 mt-6" style="width: 800px;">
         <SearchBox :inplace="true"></SearchBox>

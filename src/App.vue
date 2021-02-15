@@ -139,4 +139,8 @@ input:-webkit-autofill:active  {
 .item-header-mempool {
   border-left: 3px solid var(--v-border-base);
 }
+
+.cursor-pointer {
+  cursor: pointer;
+}
 </style>
