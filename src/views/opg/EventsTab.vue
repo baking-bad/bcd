@@ -3,17 +3,16 @@
     <v-container fluid class="pa-8">
       <ImplementationsList
           name="Events"
-          :implements-list="events"
-          :hidden-implementations-fields="hiddenImplementationsFields"
-          executable
+          implements-list="events"
+          hidden-implementations-fields="hiddenImplementationsFields"
+          events
       />
     </v-container>
   </div>
 </template>
 
 <script>
-import ImplementationsList from "@/views/contract/MetadataTab/ListBlocks/ImplementationsList";
-import { testEvents } from "@/utils/metadata";
+import ImplementationsList from "@/views/opg/ImplementationsList";
 
 export default {
   name: "EventsTab",
@@ -22,8 +21,6 @@ export default {
   },
   data() {
     return {
-      events: testEvents,
-      hiddenImplementationsFields: ['parameter', 'returnType'],
     }
   }
 }
