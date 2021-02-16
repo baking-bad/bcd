@@ -96,6 +96,7 @@ export default {
   },
   data: () => ({
     code: {},
+    renderingInterval: null,
     lastSubstring: 0,
     freezingAmount: 5000,
     isCodeRendered: false,
@@ -135,6 +136,9 @@ export default {
       return versions;
     }
   },
+  destroyed() {
+    clearInterval(this.renderingInterval);
+  },
   methods: {
     ...mapActions(["showError", "showClipboardOK", "showClipboardWarning"]),
     showSuccessCopy() {
@@ -152,11 +156,11 @@ export default {
     setCodeByParts() {
       const code = this.code[this.selectedProtocol];
       this.setLoadedCode(code);
-      let interval = setInterval(() => {
+      this.renderingInterval = setInterval(() => {
         if (!this.isCodeRendered) {
           this.setLoadedCode(code);
         } else {
-          clearInterval(interval);
+          clearInterval(this.renderingInterval);
         }
       }, 500);
     },
