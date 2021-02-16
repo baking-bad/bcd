@@ -19,7 +19,7 @@
             hide-details
           ></v-select>
           <v-spacer></v-spacer>
-          <v-btn 
+          <v-btn
             class="mr-1 text--secondary"
             v-clipboard="() => selectedCode"
             v-clipboard:success="showClipboardOK"
@@ -55,7 +55,7 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="pa-0">
-          <Michelson :code="selectedCode"></Michelson>
+          <Michelson :code="loadedCode"></Michelson>
         </v-card-text>
       </v-card>
     </div>
@@ -90,6 +90,9 @@ export default {
   },
   data: () => ({
     code: {},
+    lastSubstring: 0,
+    isCodeLoaded: false,
+    loadedCode: "",
     loading: true,
     selectedProtocol: "",
     showRaw: false
@@ -127,6 +130,25 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
+    setCodeByParts() {
+      const code = this.code[this.selectedProtocol];
+      const showAmount = 5000;
+      this.setLoadedCode(code, showAmount);
+      let interval = setInterval(() => {
+        if (!this.isCodeLoaded) {
+          this.setLoadedCode(code, showAmount);
+        } else {
+          clearInterval(interval);
+        }
+      }, 500);
+    },
+    setLoadedCode(code, showAmount) {
+      this.loadedCode += code.substring(this.lastSubstring, this.lastSubstring + showAmount);
+      if (this.lastSubstring + showAmount >= code.length) {
+        this.isCodeLoaded = true;
+      }
+      this.lastSubstring = this.lastSubstring + showAmount;
+    },
     getFallbackLevel(protocol = "") {
       if (protocol !== "" && this.migrations) {
         for (var i = 0; i < this.migrations.length; i++) {
@@ -149,10 +171,12 @@ export default {
         .getContractCode(this.network, this.address, protocol, level)
         .then(res => {
           if (!res) return;
-          this.code[protocol] = res;
+          this.$set(this.code, protocol, res);
+          this.$nextTick(() => {
+            this.setCodeByParts();
+          });
         })
         .catch(err => {
-          console.log(err);
           this.showError(err);
         })
         .finally(() => {
