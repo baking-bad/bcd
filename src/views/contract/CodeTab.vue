@@ -27,8 +27,8 @@
           <v-spacer></v-spacer>
           <v-btn
             class="mr-1 text--secondary"
-            v-clipboard="() => selectedCode"
-            v-clipboard:success="showClipboardOK"
+            v-clipboard="getValueToCopy"
+            v-clipboard:success="showSuccessCopy"
             small
             text
           >
@@ -136,7 +136,19 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["showError", "showClipboardOK"]),
+    ...mapActions(["showError", "showClipboardOK", "showClipboardWarning"]),
+    showSuccessCopy() {
+      if (this.selectedCode.length <= this.freezingAmount) {
+        this.showClipboardOK();
+      }
+    },
+    getValueToCopy() {
+      if (this.selectedCode.length > this.freezingAmount) {
+        this.showClipboardWarning();
+      }
+
+      return this.selectedCode;
+    },
     setCodeByParts() {
       const code = this.code[this.selectedProtocol];
       this.setLoadedCode(code);
