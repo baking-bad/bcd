@@ -1,38 +1,53 @@
 <template>
-  <v-card flat outlined>
-    <v-card-text class="pa-0 pt-6 data">
-      <SchemaHeader
-          :title="implementation.implementationName"
+  <v-container>
+    <v-card flat outlined>
+      <v-card-text class="pa-0 pt-6 data">
+        <SchemaHeader
+            :title="implementation.implementationName"
+        />
+        <SchemaForm
+            header="Parameters"
+            title="Call"
+            type="parameter"
+            fallback-text="This implementation doesn't have parameters"
+            :is-deploy="true"
+            :schema="implementation.info.schema"
+            :show="true"
+            :is-optional-settings="false"
+            @executeClick="implementSchema"
+            @modelChange="setModel"
+        />
+        <SchemaAlertData
+            v-if="alertData"
+            :alert-data="alertData"
+            @dismiss="showAlertData('')"
+        />
+      </v-card-text>
+    </v-card>
+    <v-dialog
+        v-model="showSuccess"
+        max-width="525"
+        persistent
+        dark
+        @click:outside="showSuccess = false"
+        @keydown.esc="showSuccess = false"
+    >
+      <MiguelTreeView
+        :miguel="successResponse"
       />
-      <SchemaForm
-          header="Parameters"
-          title="Call"
-          type="parameter"
-          fallback-text="This implementation doesn't have parameters"
-          :is-deploy="true"
-          :schema="implementation.info.schema"
-          :show="true"
-          :is-optional-settings="false"
-          @executeClick="implementSchema"
-          @modelChange="setModel"
-      />
-      <SchemaAlertData
-          v-if="alertData"
-          :alert-data="alertData"
-          @dismiss="showAlertData('')"
-      />
-    </v-card-text>
-  </v-card>
+    </v-dialog>
+  </v-container>
 </template>
 
 <script>
 import SchemaHeader from "@/components/schema/schemaComponents/SchemaHeader";
 import SchemaAlertData from "@/components/schema/schemaAlert/SchemaAlertData";
 import SchemaForm from "@/components/schema/schemaForm/SchemaForm";
+import MiguelTreeView from "@/components/MiguelTreeView";
 
 export default {
   name: "SchemaImplementation",
-  components: {SchemaForm, SchemaAlertData, SchemaHeader},
+  components: {MiguelTreeView, SchemaForm, SchemaAlertData, SchemaHeader},
   props: {
     title: String,
     implementation: Object,
@@ -62,6 +77,8 @@ export default {
           })
           .then((res) => {
             if (!res) return;
+            this.showSuccess = true;
+            this.successResponse = res;
           })
           .catch(() => {
             this.showAlertData('Cannot execute the view');
@@ -73,6 +90,8 @@ export default {
       model: {},
       alertData: '',
       successText: '',
+      showSuccess: false,
+      successResponse: null,
     }
   }
 }
