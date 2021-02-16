@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
     <p
-        v-if="selectedCode.length > freezingAmount && !isCodeRendered"
+        v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
         class="text--disabled"
     >
       Big code! Rendering is in progress...
