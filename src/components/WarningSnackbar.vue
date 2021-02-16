@@ -1,5 +1,5 @@
 <template>
-  <v-snackbar :value="$store.state.warning" class="warning-base" :timeout="2000" @input="hideWarning" top>
+  <v-snackbar :value="$store.state.warning" class="warning-base" :timeout="3000" @input="hideWarning" top>
     <v-icon class="mr-3">mdi-comment-alert-outline</v-icon>
     <span>{{ $store.state.warning }}</span>
     <v-btn text @click="hideWarning">OK</v-btn>
