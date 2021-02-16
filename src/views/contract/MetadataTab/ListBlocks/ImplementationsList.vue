@@ -7,6 +7,8 @@
         :entrypoints="implementsList"
         :is-implementations="true"
         :executable="executable"
+        :network="network"
+        :address="address"
     />
   </v-list>
 </template>
@@ -19,6 +21,8 @@ export default {
   props: {
     name: String,
     implementsList: Array,
+    network: String,
+    address: String,
     executable: {
       type: Boolean,
       default: false,

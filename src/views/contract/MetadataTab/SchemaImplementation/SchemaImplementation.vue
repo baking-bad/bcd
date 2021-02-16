@@ -13,6 +13,8 @@
           :schema="implementation.info.schema"
           :show="true"
           :is-optional-settings="false"
+          @executeClick="implementSchema"
+          @modelChange="setModel"
       />
       <SchemaAlertData
           v-if="alertData"
@@ -39,9 +41,17 @@ export default {
   components: {SchemaForm, SchemaAlertCustomSuccess, SchemaAlertData, SchemaHeader},
   props: {
     title: String,
-    alertData: String,
-    successText: String,
     implementation: Object,
+    network: String,
+    address: String,
+  },
+  watch: {
+    implementation(newVal, oldVal) {
+      if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
+        this.showSuccessMessage('');
+        this.showAlertData('');
+      }
+    }
   },
   methods: {
     showAlertData(msg) {
@@ -50,6 +60,31 @@ export default {
     showSuccessMessage(msg) {
       this.successText = msg;
     },
+    setModel(val) {
+      this.$set(this, 'model', val);
+    },
+    implementSchema() {
+      this.api
+          .executeMetadataView(this.network, this.address, {
+            name: this.implementation.name,
+            implementation: this.implementation.id,
+            data: this.model
+          })
+          .then((res) => {
+            if (!res) return;
+            this.showSuccessMessage('Success!');
+          })
+          .catch(() => {
+            this.showAlertData('Cannot execute the view');
+          })
+    }
+  },
+  data() {
+    return {
+      model: {},
+      alertData: '',
+      successText: '',
+    }
   }
 }
 </script>

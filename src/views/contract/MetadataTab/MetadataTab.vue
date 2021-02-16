@@ -22,6 +22,8 @@
       <ImplementationsList
           v-if="metadata.views && schema"
           :implementsList="metadata.views"
+          :network="network"
+          :address="address"
           name="Views"
           executable
       />

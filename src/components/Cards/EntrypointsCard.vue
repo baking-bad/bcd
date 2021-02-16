@@ -3,6 +3,8 @@
     <v-col v-if="executable && selectedImplementation" cols="6">
       <SchemaImplementation
         :implementation="selectedImplementation"
+        :network="network"
+        :address="address"
       />
     </v-col>
     <v-col :cols="executable ? 6 : 12">
@@ -69,6 +71,8 @@ export default {
       type: Number,
       default: 80,
     },
+    network: String,
+    address: String,
   },
   watch: {
     selectedOutside: {
@@ -98,7 +102,9 @@ export default {
         const firstImplementationName = Object.keys(firstImplementationsList)[0];
         this.selectedImplementation = {
           implementationName: firstImplementationName,
-          info: firstImplementationsList[firstImplementationName]
+          info: firstImplementationsList[firstImplementationName],
+          name: this.entrypoints[this.selected].name,
+          id: 0,
         }
       }
     },
