@@ -33,7 +33,7 @@
                     v-for="(implementations, i) in item.implementations"
                     v-bind:key="`implementation${i}`"
                     :implementations="implementations"
-                    @selectImplementation="setSelectedImplementation"
+                    @selectImplementation="(implementation) => setSelectedImplementation(implementation, i, item.name)"
                 />
               </v-expansion-panel-content>
               <v-expansion-panel-content v-else>
@@ -108,8 +108,10 @@ export default {
         }
       }
     },
-    setSelectedImplementation(selectedImplementation) {
+    setSelectedImplementation(selectedImplementation, id, name) {
       this.selectedImplementation = selectedImplementation;
+      this.selectedImplementation.id = id;
+      this.selectedImplementation.name = name;
     }
   },
   data() {
