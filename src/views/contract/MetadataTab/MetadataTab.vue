@@ -100,9 +100,7 @@ export default {
           try {
             const data = await this.api.getMetadataViewsSchema(this.network, this.address);
             this.$set(this, 'schema', data);
-            this.$nextTick(() => {
-              this.putSchemaToViews();
-            });
+            this.putSchemaToViews();
           } catch (err) {
             this.showError("Error when getting views");
           }
@@ -118,7 +116,6 @@ export default {
           const { implementation, schema, typedef } = relevantSchema;
           const key = Object.keys(view.implementations[implementation])[0];
           view.implementations[implementation][key].schema = schema;
-          view.implementations[implementation][key].schema["x-props"] = { "outlined": true, "dense": true, "label": "" };
           view.implementations[implementation][key].typedef = typedef;
         });
       })
