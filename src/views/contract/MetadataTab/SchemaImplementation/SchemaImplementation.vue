@@ -21,11 +21,6 @@
           :alert-data="alertData"
           @dismiss="showAlertData('')"
       />
-      <SchemaAlertCustomSuccess
-          v-if="successText"
-          :success-text="successText"
-          @dismiss="showSuccessMessage('')"
-      />
     </v-card-text>
   </v-card>
 </template>
@@ -33,12 +28,11 @@
 <script>
 import SchemaHeader from "@/components/schema/schemaComponents/SchemaHeader";
 import SchemaAlertData from "@/components/schema/schemaAlert/SchemaAlertData";
-import SchemaAlertCustomSuccess from "@/components/schema/schemaAlert/SchemaAlertCustomSuccess";
 import SchemaForm from "@/components/schema/schemaForm/SchemaForm";
 
 export default {
   name: "SchemaImplementation",
-  components: {SchemaForm, SchemaAlertCustomSuccess, SchemaAlertData, SchemaHeader},
+  components: {SchemaForm, SchemaAlertData, SchemaHeader},
   props: {
     title: String,
     implementation: Object,
@@ -48,7 +42,6 @@ export default {
   watch: {
     implementation(newVal, oldVal) {
       if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-        this.showSuccessMessage('');
         this.showAlertData('');
       }
     }
@@ -56,9 +49,6 @@ export default {
   methods: {
     showAlertData(msg) {
       this.alertData = msg;
-    },
-    showSuccessMessage(msg) {
-      this.successText = msg;
     },
     setModel(val) {
       this.$set(this, 'model', val);
@@ -72,7 +62,6 @@ export default {
           })
           .then((res) => {
             if (!res) return;
-            this.showSuccessMessage('Success!');
           })
           .catch(() => {
             this.showAlertData('Cannot execute the view');
