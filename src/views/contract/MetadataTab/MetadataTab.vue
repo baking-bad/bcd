@@ -20,7 +20,7 @@
           name="Events"
       />
       <ImplementationsList
-          v-if="metadata.views && Object.keys(schema).length"
+          v-if="metadata.views && schema"
           :implementsList="metadata.views"
           name="Views"
           executable
@@ -39,11 +39,15 @@ import {mapActions} from "vuex";
 export default {
   name: "Metadata",
   components: {ImplementationsList, ReservedFields, FieldsWrapper, BriefInfo},
-  props: { contract: Object },
+  props: {
+    contract: Object,
+    network: String,
+    address: String,
+  },
   data: () => {
     return {
       metadata: {},
-      schema: {},
+      schema: null,
       loading: true,
       reservedFields: [
         'name',
@@ -92,10 +96,13 @@ export default {
     async checkMetadata(obj) {
       if ('metadata' in obj) {
         this.$set(this, 'metadata', obj.metadata);
-        if (obj.metadata.views) {
+        if (this.network && this.address) {
           try {
-            this.schema = await this.api.getMetadataViewsSchema(obj.network, obj.address);
-            this.putSchemaToViews();
+            const data = await this.api.getMetadataViewsSchema(this.network, this.address);
+            this.$set(this, 'schema', data);
+            this.$nextTick(() => {
+              this.putSchemaToViews();
+            });
           } catch (err) {
             this.showError("Error when getting views");
           }
