@@ -1,5 +1,11 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
+    <p
+        v-if="selectedCode.length > freezingAmount && !isCodeRendered"
+        class="text--disabled"
+    >
+      Big code! Rendering is in progress...
+    </p>
     <v-skeleton-loader v-if="loading" type="card-heading, image" />
     <div v-else-if="selectedCode">
       <v-card tile flat outlined class="pa-0">
@@ -91,7 +97,8 @@ export default {
   data: () => ({
     code: {},
     lastSubstring: 0,
-    isCodeLoaded: false,
+    freezingAmount: 5000,
+    isCodeRendered: false,
     loadedCode: "",
     loading: true,
     selectedProtocol: "",
@@ -132,22 +139,21 @@ export default {
     ...mapActions(["showError", "showClipboardOK"]),
     setCodeByParts() {
       const code = this.code[this.selectedProtocol];
-      const showAmount = 5000;
-      this.setLoadedCode(code, showAmount);
+      this.setLoadedCode(code);
       let interval = setInterval(() => {
-        if (!this.isCodeLoaded) {
-          this.setLoadedCode(code, showAmount);
+        if (!this.isCodeRendered) {
+          this.setLoadedCode(code);
         } else {
           clearInterval(interval);
         }
       }, 500);
     },
-    setLoadedCode(code, showAmount) {
-      this.loadedCode += code.substring(this.lastSubstring, this.lastSubstring + showAmount);
-      if (this.lastSubstring + showAmount >= code.length) {
-        this.isCodeLoaded = true;
+    setLoadedCode(code) {
+      this.loadedCode += code.substring(this.lastSubstring, this.lastSubstring + this.freezingAmount);
+      if (this.lastSubstring + this.freezingAmount >= code.length) {
+        this.isCodeRendered = true;
       }
-      this.lastSubstring = this.lastSubstring + showAmount;
+      this.lastSubstring = this.lastSubstring + this.freezingAmount;
     },
     getFallbackLevel(protocol = "") {
       if (protocol !== "" && this.migrations) {
