@@ -20,7 +20,7 @@
           name="Events"
       />
       <ImplementationsList
-          v-if="metadata.views"
+          v-if="metadata.views && Object.keys(schema).length"
           :implementsList="metadata.views"
           name="Views"
           executable
@@ -34,6 +34,7 @@ import BriefInfo from "@/views/contract/MetadataTab/ListBlocks/BriefInfo";
 import FieldsWrapper from "@/views/contract/MetadataTab/CustomFields/FieldsWrapper";
 import ReservedFields from "@/views/contract/MetadataTab/ListBlocks/ReservedFields";
 import ImplementationsList from "@/views/contract/MetadataTab/ListBlocks/ImplementationsList";
+import {mapActions} from "vuex";
 
 export default {
   name: "Metadata",
@@ -42,6 +43,7 @@ export default {
   data: () => {
     return {
       metadata: {},
+      schema: {},
       loading: true,
       reservedFields: [
         'name',
@@ -73,24 +75,46 @@ export default {
       return otherMetadata
     },
   },
-  mounted() {
-    this.checkMetadata(this.contract);
+  async mounted() {
+    await this.checkMetadata(this.contract);
   },
   watch: {
     contract: {
       deep: true,
       immediate: true,
-      handler(value) {
-        this.checkMetadata(value);
+      async handler(value) {
+        await this.checkMetadata(value);
       }
     },
   },
   methods: {
-    checkMetadata(obj) {
+    ...mapActions(["showError"]),
+    async checkMetadata(obj) {
       if ('metadata' in obj) {
         this.$set(this, 'metadata', obj.metadata);
+        if (obj.metadata.views) {
+          try {
+            this.schema = await this.api.getMetadataViewsSchema(obj.network, obj.address);
+            this.putSchemaToViews();
+          } catch (err) {
+            this.showError("Error when getting views");
+          }
+        }
         this.loading = false;
       }
+    },
+    putSchemaToViews() {
+      this.metadata.views.forEach(view => {
+        const { name } = view;
+        const relevantSchemas = this.schema.filter(schema => schema.name === name);
+        relevantSchemas.forEach(relevantSchema => {
+          const { implementation, schema, typedef } = relevantSchema;
+          const key = Object.keys(view.implementations[implementation])[0];
+          view.implementations[implementation][key].schema = schema;
+          view.implementations[implementation][key].schema["x-props"] = { "outlined": true, "dense": true, "label": "" };
+          view.implementations[implementation][key].typedef = typedef;
+        });
+      })
     }
   },
 };

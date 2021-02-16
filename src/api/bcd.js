@@ -985,7 +985,7 @@ export class BetterCallApi {
       })
   }
 
-  getMetadataViews(network, address) {
+  getMetadataViewsSchema(network, address) {
       return this.api.get(`/contract/${network}/${address}/views/schema`)
           .then((res) => {
              if (res.status !== 200) {

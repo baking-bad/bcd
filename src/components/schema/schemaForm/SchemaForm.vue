@@ -1,11 +1,10 @@
 <template>
   <v-form class="pa-6 pr-4">
     <div v-if="schema" class="pl-6 pt-4 pr-4 pb-4 mr-2 mb-6 canvas">
-      <div class="mb-6">
+      <div v-if="typeof header === 'string'" :class="typeof header === 'string' ? 'mb-6' : ''">
         <span class="caption font-weight-medium text-uppercase text--disabled">{{ header }}</span>
       </div>
-
-      <div class="mb-6" v-if="!isDeploy">
+      <div :class="!isDeploy ? 'mb-6' : ''" v-if="!isDeploy">
         <v-btn-toggle v-model="selectedFillType" color="primary" dense mandatory>
           <v-btn
               small
@@ -15,7 +14,6 @@
           >{{ data.text }}</v-btn>
         </v-btn-toggle>
       </div>
-
       <v-skeleton-loader :loading="!show" type="article" transition="fade-transition">
         <v-jsf v-model="model" :schema="schema" v-if="show">
           <template slot="custom-codemirror" slot-scope="{value, label, on}">
@@ -44,10 +42,13 @@
             </v-text-field>
           </template>
         </v-jsf>
-        <div v-else></div>
       </v-skeleton-loader>
     </div>
+    <div v-else-if="fallbackText">
+      <p class="text--disabled">{{ fallbackText }}</p>
+    </div>
     <SchemaOptionalSettings
+      v-if="isOptionalSettings"
       :is-storage="isStorage"
       :is-deploy="isDeploy"
       :networks="networks"
@@ -83,6 +84,10 @@ name: "SchemaForm",
     schema: Object,
     settings: Object,
     schemaModel: Object,
+    isOptionalSettings: {
+      type: Boolean,
+      default: true,
+    },
     schemaSelectedFillType: String,
     schemaSelectedNetwork: String,
     header: String,
@@ -95,6 +100,7 @@ name: "SchemaForm",
     networks: Array,
     importActions: Array,
     executeActions: Array,
+    fallbackText: String,
   },
   watch: {
     selectedFillType(val) {

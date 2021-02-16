@@ -4,9 +4,15 @@
       <SchemaHeader
           :title="implementation.implementationName"
       />
-      <SchemaImplementationForm
-          :parameters="implementation.info"
-          :schema="parametersSchema"
+      <SchemaForm
+          header="Parameters"
+          title="Call"
+          type="parameter"
+          fallback-text="This implementation doesn't have parameters"
+          :is-deploy="true"
+          :schema="implementation.info.schema"
+          :show="true"
+          :is-optional-settings="false"
       />
       <SchemaAlertData
           v-if="alertData"
@@ -26,28 +32,16 @@
 import SchemaHeader from "@/components/schema/schemaComponents/SchemaHeader";
 import SchemaAlertData from "@/components/schema/schemaAlert/SchemaAlertData";
 import SchemaAlertCustomSuccess from "@/components/schema/schemaAlert/SchemaAlertCustomSuccess";
-import SchemaImplementationForm from "@/views/contract/MetadataTab/SchemaImplementation/SchemaImplementationForm";
+import SchemaForm from "@/components/schema/schemaForm/SchemaForm";
 
 export default {
   name: "SchemaImplementation",
-  components: {SchemaImplementationForm, SchemaAlertCustomSuccess, SchemaAlertData, SchemaHeader},
+  components: {SchemaForm, SchemaAlertCustomSuccess, SchemaAlertData, SchemaHeader},
   props: {
     title: String,
     alertData: String,
     successText: String,
     implementation: Object,
-  },
-  computed: {
-    parametersSchema() {
-      return {
-        "type": "object",
-        "properties": this.getSchemaProperties(this.implementation.info)
-      }
-    }
-  },
-  async mounted() {
-    const a = await this.api.getMetadataViews(`delphinet`, `KT1Nu6FHWrpWF3wAkKkWs1Tb1MMTgNesFrUn`);
-    return a;
   },
   methods: {
     showAlertData(msg) {
@@ -56,17 +50,6 @@ export default {
     showSuccessMessage(msg) {
       this.successText = msg;
     },
-    getSchemaProperties(implementation) {
-      let properties = {};
-      Object.keys(implementation).forEach(key => {
-        properties[key] = {
-          type: "string",
-          title: key,
-          "x-display": "custom-contract"
-        }
-      })
-      return properties;
-    }
   }
 }
 </script>
