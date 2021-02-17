@@ -269,7 +269,7 @@ export default {
           const lastAccount = this.getLastUsedAccount();
           return lastAccount.address;
         } else {
-          const client = this.wallet ? this.wallet : await this.getWallet(this.network);
+          const client = this.wallet ? this.wallet : await this.getWallet();
           await this.getNewPermissions(false);
           const account = await client.getActiveAccount();
           return account.address;
@@ -471,9 +471,9 @@ export default {
     },
     async getNewPermissions(isLast) {
       this.isGettingWalletProgress = true;
-      const rpcUrl = this.config.rpc_endpoints[this.network];
+      const rpcUrl = this.config.rpc_endpoints[this.selectedNetwork];
       const networkMap = { sandboxnet: "custom" };
-      const type = networkMap[this.network] || this.network;
+      const type = networkMap[this.selectedNetwork] || this.selectedNetwork;
       if (!isLast) {
         await this.wallet.clearActiveAccount();
       } else {
@@ -486,9 +486,9 @@ export default {
       let client;
       if (this.wallet && !isLast) {
         await this.getNewPermissions(isLast);
-        client = this.wallet ? this.wallet : await this.getWallet(this.network);
+        client = this.wallet ? this.wallet : await this.getWallet();
       } else {
-        client = this.wallet ? this.wallet : await this.getWallet(this.network);
+        client = this.wallet ? this.wallet : await this.getWallet();
         await this.getNewPermissions(isLast);
       }
       return client;
