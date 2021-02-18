@@ -11,7 +11,13 @@
       <v-card-title class="sidebar py-2" primary-title>
         <span class="body-1 font-weight-medium text-uppercase text--secondary">
           Raw JSON:
-          <span class="text--primary">{{ type }}</span>
+          <span class="text--primary">{{ type }} </span>
+        </span>
+        <span
+            v-if="isShowRenderingWarning"
+            class="ml-3 text--uppercase text--secondary raw-json-dialog__warning"
+        >
+          Rendering may take some time...
         </span>
         <v-spacer></v-spacer>
         <v-menu offset-y v-if="type === 'code'">
@@ -84,6 +90,8 @@
 import { mapActions } from "vuex";
 import VueJsonPretty from "vue-json-pretty";
 
+const BIG_SIZE_JSON_SYMBOLS = 10000;
+
 export default {
   name: "RawJsonViewer",
   props: {
@@ -104,6 +112,8 @@ export default {
     data: null,
     url: null,
     loaded: false,
+    isShowRenderingWarning: false,
+    isLastBigDataPushed: false,
   }),
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
@@ -123,13 +133,40 @@ export default {
       }
       return this.data;
     },
+    loadCodePartially(data) {
+      const JSON_PARTS_DISPLAYING_DELAY_MS = 100;
+
+      this.data = [data[0]];
+      window.requestAnimationFrame(() => {
+        setTimeout(() => {
+          this.data.push(data[1]);
+          window.requestAnimationFrame(() => {
+            setTimeout(() => {
+              this.data.push(data[2]);
+              this.isLastBigDataPushed = true;
+            }, JSON_PARTS_DISPLAYING_DELAY_MS);
+          });
+        }, JSON_PARTS_DISPLAYING_DELAY_MS);
+      });
+    },
+  },
+  beforeUpdate() {
+    if (this.isLastBigDataPushed && this.isShowRenderingWarning) {
+      this.isShowRenderingWarning = false;
+      this.isLastBigDataPushed = false;
+    }
   },
   watch: {
     show(newValue) {
       if (!newValue) return;
 
       if (this.raw) {
-        this.data = this.raw;
+        if (JSON.stringify(this.raw).length > BIG_SIZE_JSON_SYMBOLS) {
+          this.isShowRenderingWarning = true;
+          this.loadCodePartially(this.raw);
+        } else {
+          this.data = this.raw;
+        }
         this.loaded = true;
         return;
       }
@@ -158,7 +195,12 @@ export default {
 
       res
         .then((r) => {
-          this.data = r.data;
+          if (JSON.stringify(r.data).length > BIG_SIZE_JSON_SYMBOLS) {
+            this.isShowRenderingWarning = true;
+            this.loadCodePartially(r.data);
+          } else {
+            this.data = r.data;
+          }
           this.url = r.url;
           this.loaded = true;
         })
@@ -192,5 +234,8 @@ export default {
 }
 .raw-json-viewer {
   background-color: transparent !important;
+}
+.raw-json-dialog__warning {
+  font-size: 0.6em;
 }
 </style>
