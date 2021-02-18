@@ -19,6 +19,10 @@
             :network="network"
             :migrations="migrations"
             :contract="contract"
+            :alias="alias"
+            :contract-tags="contractTags"
+            :contract-link="contractLink"
+            ref="sidebar"
             v-on:fork="onFork"
           />
         </v-col>
@@ -112,6 +116,9 @@ export default {
     migrations: [],
     tokens: null,
     showFork: false,
+    alias: undefined,
+    contractTags: null,
+    contractLink: '',
   }),
   mounted() {
     this.init();
@@ -162,11 +169,58 @@ export default {
         .then((res) => {
           if (!res) return;
           this.$set(this, 'contract', Object.assign(this.contract, res));
+          this.$nextTick(() => {
+            this.setAlias();
+            this.setTags();
+            this.setContractLink();
+          })
         })
         .catch((err) => {
           this.showError(err.message);
         })
         .finally(() => (this.contractLoading = false));
+    },
+    setAlias() {
+      if (this.contract.subscription && this.contract.subscription.alias) {
+        this.alias = this.contract.subscription.alias;
+      } else if (this.contract.alias) {
+        this.alias = this.contract.alias;
+      } else {
+        this.alias = undefined;
+      }
+    },
+    setTags() {
+      const standards = {
+        fa2: "FA2",
+        fa12: "FA1.2",
+        fa1: "FA1",
+        delegator: "Delegator",
+        multisig: "Multisig",
+      };
+      if (this.contract.tags) {
+        for (var tag in standards) {
+          if (this.contract.tags.includes(tag)) {
+            this.contractTags = { tag, text: standards[tag] };
+          }
+        }
+      } else {
+        this.contractTags = null;
+      }
+    },
+    setContractLink() {
+      let routeData = {};
+      if (this.contract.slug) {
+        routeData = {href:`/@${this.contract.slug}`};
+      } else {
+        routeData = this.$router.resolve({
+          name: "contract",
+          params: {
+            address: this.address,
+            network: this.network,
+          },
+        });
+      }
+      this.contractLink = `${window.location.protocol}//${window.location.host}${routeData.href}`;
     },
     getMigrations() {
       this.migrationsLoading = true;
