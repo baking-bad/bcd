@@ -386,6 +386,8 @@ export default {
   }
 }
 .v-autocomplete__content {
+  width: 358px;
+  right: 0;
   .v-list {
     padding: 4px 0;
   }
