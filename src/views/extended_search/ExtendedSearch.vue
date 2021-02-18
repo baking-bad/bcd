@@ -102,7 +102,7 @@
             <ResultItem :key="idx" :item="item" :words="getSearchWords()" />
           </template>
           <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
-        </template>     
+        </template>
         <template v-else-if="searchText == '' || searchText == null">
           <v-card flat outlined class="mt-8 pa-8 data">
             <div class="d-flex flex-row justify-start align-center">

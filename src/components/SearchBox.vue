@@ -207,10 +207,12 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     pushTo(path) {
+      if (this.$route.path !== `${path}/operations`) {
+        this.$router.push({ path });
+      }
       this.$nextTick(() => {
         this.model = null;
       });
-      this.$router.push({ path });
     },
     isModelsArrayInclude(value) {
       return [this.model.type, this.model.body.recent_type].includes(value);
