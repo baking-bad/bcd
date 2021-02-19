@@ -61,15 +61,17 @@ export default {
     ValueInspector
   },
   methods: {
-    handleEscClick() {
-      this.show = false;
-    }
+    handleKeyUp(e) {
+      if (e.key === "Escape"){
+        this.close();
+      }
+    },
   },
   mounted() {
-    window.addEventListener('keydown', this.handleEscClick);
+    document.addEventListener('keyup', this.handleKeyUp);
   },
   destroyed() {
-    window.removeEventListener('keydown', this.handleEscClick);
+    document.removeEventListener('keyup', this.handleKeyUp);
   },
   data: () => ({
     show: false
