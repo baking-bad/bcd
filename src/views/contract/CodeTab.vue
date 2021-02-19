@@ -19,7 +19,7 @@
             hide-details
           ></v-select>
           <v-spacer></v-spacer>
-          <v-btn 
+          <v-btn
             class="mr-1 text--secondary"
             v-clipboard="() => selectedCode"
             v-clipboard:success="showClipboardOK"
@@ -75,6 +75,8 @@ import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/RawJsonViewer.vue";
 import LZString from "lz-string";
+
+const MICHELSON_TRY_LIMIT_SYMBOLS = 8190; // apache LimitRequestLine Directive
 
 export default {
   props: {
@@ -186,7 +188,10 @@ export default {
             query += `&storage=${storage}`;
           }
           let lzQuery = LZString.compressToEncodedURIComponent(query);
-          let uri = `https://try-michelson.tzalpha.net/?${lzQuery}`;
+
+          let uri = lzQuery.length >= MICHELSON_TRY_LIMIT_SYMBOLS
+              ? `https://try-michelson.tzalpha.net/`
+              : `https://try-michelson.tzalpha.net/?${lzQuery}`;
 
           var newTab = window.open(); // https://habr.com/ru/post/282880/
           newTab.opener = null;
