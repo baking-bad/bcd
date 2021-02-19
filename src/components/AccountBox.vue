@@ -60,6 +60,17 @@ export default {
   components: {
     ValueInspector
   },
+  methods: {
+    handleEscClick() {
+      this.show = false;
+    }
+  },
+  mounted() {
+    window.addEventListener('keydown', this.handleEscClick);
+  },
+  destroyed() {
+    window.removeEventListener('keydown', this.handleEscClick);
+  },
   data: () => ({
     show: false
   })
