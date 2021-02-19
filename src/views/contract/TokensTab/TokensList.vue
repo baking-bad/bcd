@@ -1,48 +1,40 @@
 <template>
-  <v-card flat outlined rounded>
-    <v-list class="py-0 item">
-      <v-list-item-group v-model="selectedToken" mandatory>
-        <template v-for="(token) in tokens">
-          <v-list-item
-              :key="token.token_id"
-              :class="!isSelectShown ? 'v-list-item--inactive v-item--inactive' : ''"
-              @click="changeSelectedToken(token.token_id)"
-          >
-            <v-row>
-              <v-col cols="8" class="pa-0 pl-3 pr-3">
-                <v-list-item-content>
-                  <v-list-item-title>
-                    <span v-if="token.name">{{ token.name }}</span>
-                    <span v-else v-html="helpers.shortcut(token.contract)"></span>
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    <span
-                        v-if="isTokenSupply"
-                        class="caption text--disabled"
-                    >token ID: {{ token.token_id }}</span>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-col>
-              <v-col cols="3" class="pa-0 pr-3">
-                <v-list-item-content class="fill-height" v-if="isTokenSupply">
-                  <v-list-item-title>
-                    {{ tokenSupply }}
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    <span
-                        v-if="isTokenSupply"
-                        class="caption text--disabled"
-                    >supply</span>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-              </v-col>
-            </v-row>
-          </v-list-item>
-          <v-divider :key="`divider-${token.token_id}`" />
-        </template>
-      </v-list-item-group>
-    </v-list>
-  </v-card>
+  <div v-if="tokens" class="ma-0 pa-0">
+    <v-data-table
+      :items="tokens"
+      :page.sync="tokensPage"
+      :items-per-page="12"
+      hide-default-header
+      hide-default-footer
+      class="elevation-0"        
+      @page-count="tokensPageCount = $event"
+    >
+      <template v-slot:item="{ item }">
+        <v-list-item @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`" 
+            :class="item == selectedToken ? 'token-card token-card-selected' : 'token-card'">
+          <v-list-item-content>
+            <v-list-item-title>
+              <span v-if="item.name">{{ item.name }}</span>
+              <span v-else class="text--disabled">NO NAME</span>
+            </v-list-item-title>
+          </v-list-item-content>
+          <v-list-item-action>
+            <v-list-item-action-text>
+              <span class="caption text--disabled">token ID:</span>
+              <span>&nbsp;{{ item.token_id }}</span>
+            </v-list-item-action-text>
+          </v-list-item-action>
+        </v-list-item>
+      </template>
+    </v-data-table>
+    <div class="text-center mt-2">
+      <v-pagination
+        v-model="tokensPage"
+        :length="tokensPageCount"
+        v-if="tokens.length > 10"
+      ></v-pagination>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -53,49 +45,65 @@ export default {
     currentToken: Object,
     preselectedToken: Number,
   },
-  computed: {
-    tokenSupply() {
-      return typeof this.token.total_supply === "number" ? this.token.total_supply : this.token.supply;
-    },
-    isTokenSupply() {
-      return this.token && (typeof this.token.total_supply === "number" ||  typeof this.token.supply === "number");
-    },
-    token() {
-      if (this.selectedToken < 0 || this.selectedToken >= this.tokens.length)
-        return null;
-      return this.tokens[this.selectedToken];
-    },
-  },
-  mounted() {
-    this.selectedToken = this.preselectedToken;
+  created() {
+    this.selectFirst(this.tokens);
   },
   methods: {
-    changeSelectedToken(id) {
-      this.selectedToken = this.tokens.findIndex(token => token.token_id === id);
-      this.$emit('changeSelectedToken', id);
-      this.isSelectShown = true;
+    getTokenSupply(item) {
+      return this.helpers
+          .round(
+              item.supply,
+              item.decimals ? item.decimals : 0
+          )
+          .toLocaleString(undefined, {
+            maximumFractionDigits: item.decimals
+                ? item.decimals
+                : 0,
+          })
+    },
+    selectFirst(tokens) {
+      if (this.selectedToken === null && tokens && tokens.length > 0) {
+        this.selectedToken = tokens[0];
+      }
     }
   },
   watch: {
-    tokens(val) {
-      this.isSelectShown = !!val.find(item => item.token_id === this.currentToken.token_id);
-      this.selectedToken = val.findIndex(token => token.token_id === this.preselectedToken);
+    tokens(newVal) {
+      this.selectFirst(newVal);
     },
+    selectedToken: {
+      handler(newVal) { 
+        this.$emit('selectedToken', newVal)
+      },
+      deep: true,
+      immediate: true
+    }
   },
   data() {
     return {
-      selectedToken: -1,
-      isSelectShown: true,
+      selectedToken: null, 
+      tokensPage: 0,
+      tokensPageCount: 0
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
-.v-list-item--inactive,
-.v-item--inactive {
-  &::before {
-    background: transparent;
-  }
+<style scoped>
+table {
+  margin: 0 !important;
+}
+
+.token-card {
+  border-bottom: 1px solid var(--v-border-base);
+}
+
+.token-card:last-child {
+  border-bottom: none !important;
+}
+
+.token-card-selected {
+  border-left: 2px solid var(--v-primary-base);
+  background-color: var(--v-sidebar-base);
 }
 </style>
