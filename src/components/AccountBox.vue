@@ -63,7 +63,7 @@ export default {
   methods: {
     handleKeyUp(e) {
       if (e.key === "Escape"){
-        this.close();
+        this.show = false;
       }
     },
   },
