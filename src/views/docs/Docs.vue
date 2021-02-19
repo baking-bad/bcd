@@ -1,11 +1,14 @@
 <template>
-<div>
+<div id="docs-wrapper">
   <div class="fill-height">
     <v-navigation-drawer floating app permanent width="56" color="canvas" class="main-navigation">
       <SideNavigation />
     </v-navigation-drawer>
   </div>
-  <v-container class="pa-0 ma-0" fluid>
+  <div v-show="isDocsRerendering" class="ma-3">
+    <h2>Theme is changing...</h2>
+  </div>
+  <v-container v-show="!isDocsRerendering" class="pa-0 ma-0" fluid>
     <div id="docs" ref="redoc-container"></div>
   </v-container>
 </div>
@@ -15,6 +18,7 @@
 import SideNavigation from "@/components/SideNavigation.vue";
 import { init as initRedoc } from "redoc/bundles/redoc.standalone.js";
 
+const RERENDERING_TIMEOUT = 200;
 
 export default {
   name: "Docs",
@@ -26,7 +30,17 @@ export default {
   },
   watch: {
     theme() {
-      this.init();
+      setTimeout(() => {
+        this.isDocsRerendering = true;
+        setTimeout(() => {
+          window.requestAnimationFrame(() => {
+            this.init();
+            window.requestAnimationFrame(() => {
+              this.isDocsRerendering = false;
+            });
+          });
+        }, RERENDERING_TIMEOUT);
+      }, RERENDERING_TIMEOUT);
     }
   },
   methods: {
@@ -43,7 +57,7 @@ export default {
       return this.$vuetify.theme.themes[this.$vuetify.theme.isDark ? 'dark' : 'light'];
     },
     redocOptions() {
-      return {        
+      return {
         scrollYOffset: 0,
         expandResponses: "200",
         hideDownloadButton: true,
@@ -77,7 +91,7 @@ export default {
               light: this.$vuetify.theme.themes.light.primary,
             },
             success: {
-              main: this.theme.success,              
+              main: this.theme.success,
               dark: this.$vuetify.theme.themes.dark.success,
               light: this.$vuetify.theme.themes.light.success,
             },
@@ -121,77 +135,86 @@ export default {
       };
     }
   },
+  data() {
+    return {
+      isDocsRerendering: false,
+    }
+  }
 };
 </script>
 
 <style lang="scss">
 body {
-  #docs {
-    .redoc-wrap {
-      background-color: var(--v-canvas-base);
+  #docs-wrapper {
+    .skeleton {
     }
-    .api-content > div {
-      padding: 2rem 0;
-    }
-    .api-content > div h1 {
-      margin-bottom: 0;
-    }
-    code {
-      background-color: #2a2a2a;
-      color: #888;
-      span.token.punctuation {
+    #docs {
+      .redoc-wrap {
+        background-color: var(--v-canvas-base);
+      }
+      .api-content > div {
+        padding: 2rem 0;
+      }
+      .api-content > div h1 {
+        margin-bottom: 0;
+      }
+      code {
+        background-color: #2a2a2a;
         color: #888;
+        span.token.punctuation {
+          color: #888;
+        }
+        span.token.boolean, span.ellipsis {
+          color:rgb(14, 124, 134);
+        }
       }
-      span.token.boolean, span.ellipsis {
-        color:rgb(14, 124, 134);
+      td {
+        border-color: var(--v-border-base);
       }
-    }
-    td {
-      border-color: var(--v-border-base);
-    }
-    h1 {
-      text-transform: uppercase;
-      font-weight: 500;
-    }
-    h2 {
-      color: var(--v-text-darken2);
-    }
-    h3 {
-      margin-top: 20px;
-      margin-bottom: 10px;
-    }
-    h5 {
-      color: var(--v-text-darken2);
-      border-color: var(--v-border-base);
-      span {
-        color: var(--v-text-darken4);
+      h1 {
+        text-transform: uppercase;
+        font-weight: 500;
       }
-    }
-    ul {
-      padding: 0;
-    }
-    ul[role="navigation"] ~ div > a {
-      border-color: var(--v-border-base) !important;
-    }
-    label[type="tag"] {
-      opacity: .7;
-      font-weight: 700;
-      font-size: 12px;
-      letter-spacing: .0333333333em!important;
-      line-height: 1.25rem;
-    }
-    div[role="tabpanel"] {
-      margin-top: 10px;
-    }
-    div[role="button"] > div {
-      color: #000;
-      &> span {
+      h2 {
+        color: var(--v-text-darken2);
+      }
+      h3 {
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
+      h5 {
+        color: var(--v-text-darken2);
+        border-color: var(--v-border-base);
+        span {
+          color: var(--v-text-darken4);
+        }
+      }
+      ul {
+        padding: 0;
+      }
+      ul[role="navigation"] ~ div > a {
+        border-color: var(--v-border-base) !important;
+      }
+      label[type="tag"] {
+        opacity: .7;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: .0333333333em!important;
+        line-height: 1.25rem;
+      }
+      div[role="tabpanel"] {
+        margin-top: 10px;
+      }
+      div[role="button"] > div {
         color: #000;
+        &> span {
+          color: #000;
+        }
       }
-    }
-    li[role="tab"].react-tabs__tab--selected {
-      background-color: #555;
-      border-color: #555;
+      li[role="tab"].react-tabs__tab--selected {
+        background-color: #555;
+        border-color: #555;
+      }
     }
   }
 }
