@@ -104,11 +104,17 @@ export default {
     data: null,
     url: null,
     loaded: false,
+    isShown: false,
   }),
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
     close() {
       this.$emit("update:show", false);
+    },
+    handleKeyUp(e) {
+      if (e.key === "Escape"){
+        this.close();
+      }
     },
     reset() {
       this.loaded = false;
@@ -123,6 +129,12 @@ export default {
       }
       return this.data;
     },
+  },
+  mounted() {
+    document.addEventListener('keyup', this.handleKeyUp);
+  },
+  destroyed() {
+    document.addEventListener('keyup', this.handleKeyUp);
   },
   watch: {
     show(newValue) {

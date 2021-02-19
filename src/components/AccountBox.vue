@@ -61,6 +61,19 @@ export default {
   components: {
     ValueInspector
   },
+  methods: {
+    handleKeyUp(e) {
+      if (e.key === "Escape"){
+        this.show = false;
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener('keyup', this.handleKeyUp);
+  },
+  destroyed() {
+    document.removeEventListener('keyup', this.handleKeyUp);
+  },
   data: () => ({
     show: false
   })
