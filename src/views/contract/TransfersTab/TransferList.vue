@@ -247,14 +247,6 @@ export default {
           .finally(() => (this.loading = false));
       }
     },
-    getStatusColor(status) {
-      if (status === "applied") {
-        return "primary";
-      } else if (status === "failed") {
-        return "red";
-      }
-      return "lightgrey";
-    },
     onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
         this.getNextPage();
@@ -283,5 +275,8 @@ export default {
 }
 .hash-link {
   max-width: 100%;
+}
+.item-header-applied {
+  border-color: transparent;
 }
 </style>

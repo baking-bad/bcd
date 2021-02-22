@@ -27,14 +27,14 @@
           >
         </v-list-item-subtitle>
       </v-list-item-content>
-      <v-list-item-action v-if="contractTags">
+      <v-list-item-action v-if="tags">
         <v-list-item-action-text>
           <v-chip
             small
             class="caption"
-            :to="`/search?text=${contractTags.tag}`"
+            :to="`/search?text=${tags.tag}`"
             target="_blank"
-            >{{ contractTags.text }}</v-chip
+            >{{ tags.text }}</v-chip
           >
         </v-list-item-action-text>
       </v-list-item-action>
@@ -99,7 +99,7 @@
             icon
             @click="
               () => {
-                $clipboard(contractLink);
+                $clipboard(link);
                 showClipboardOK();
               }
             "
@@ -346,10 +346,7 @@ export default {
   name: "SideBar",
   props: {
     loading: Boolean,
-    alias: String,
     contract: Object,
-    contractTags: Object,
-    contractLink: String,
     address: String,
     network: String,
     migrations: Array,
@@ -388,6 +385,50 @@ export default {
     },
     isContract() {
       return this.address.startsWith("KT");
+    },
+    alias() {
+      if (this.contract) {
+        if (this.contract.subscription && this.contract.subscription.alias) {
+          return this.contract.subscription.alias;
+        } else if (this.contract.alias) {
+          return this.contract.alias;
+        } else if (this.contract.metadata && this.contract.metadata.name) {
+          return this.contract.metadata.name;
+        }
+      }
+      return null;
+    },
+    tags() {
+      const standards = {
+        fa2: "FA2",
+        fa12: "FA1.2",
+        fa1: "FA1",
+        delegator: "Delegator",
+        multisig: "Multisig",
+      };
+      if (this.contract && this.contract.tags) {
+        for (var tag in standards) {
+          if (this.contract.tags.includes(tag)) {
+            return { tag, text: standards[tag] };
+          }
+        }
+      }
+      return null;
+    },
+    link() {
+      let routeData = {};
+      if (this.contract && this.contract.slug) {
+        routeData = {href:`/@${this.contract.slug}`};
+      } else {
+        routeData = this.$router.resolve({
+          name: "contract",
+          params: {
+            address: this.address,
+            network: this.network,
+          },
+        });
+      }
+      return `${window.location.protocol}//${window.location.host}${routeData.href}`;
     },
   },
   methods: {
