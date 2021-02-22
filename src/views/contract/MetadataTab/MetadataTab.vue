@@ -3,7 +3,7 @@
     <v-skeleton-loader :loading="loading" type="card-heading, image">
       <v-card v-if="metadata" tile flat outlined class="pa-0">
         <v-card-title class="d-flex sidebar px-4 py-3">
-          <h4 class="font-weight-regular text--secondary">Contract metadata</h4>
+          <h1 class="font-weight-regular text--secondary" style="font-size: 1em;">Contract metadata</h1>
           <v-spacer></v-spacer>
           <v-btn @click="showRaw = true" small text class="text--secondary">
             <v-icon class="mr-1" small>mdi-code-json</v-icon>
@@ -18,7 +18,7 @@
           <ReservedFields
             v-if="availableReservedFields"
             :metadata="reservedMetadata"
-            class="pr-8"
+            class="pr-8 pl-2"
           />
           <template v-if="metadata.views && metadata.views.length > 0">
               <v-divider></v-divider>
@@ -32,8 +32,8 @@
           <template v-if="unknownFields && unknownFields.length > 0">
               <v-divider></v-divider>
               <FieldsWrapper
-                :metadata="otherMetadata"
-                class="pr-8"
+                :fields="otherMetadata"
+                class="pr-8 pl-2"
               />
           </template>
         </v-card-text>
@@ -41,7 +41,7 @@
       <RawJsonViewer
         :show.sync="showRaw"
         type="metadata"
-        :raw="metadata"
+        :raw="rawData"
     />
     </v-skeleton-loader>
   </v-container>
@@ -94,7 +94,7 @@ export default {
     },
     unknownFields() {
       return Object.keys(this.metadata)
-        .filter(key => !~this.reservedFields.indexOf(key) && !~this.ignoredKeys.indexOf(key))
+        .filter(key => -1 == [...this.reservedFields, ...this.ignoredKeys, 'views'].indexOf(key))
     },
     reservedMetadata() {
       return this.availableReservedFields.map(key => ({key, value: this.metadata[key]}))
@@ -102,6 +102,11 @@ export default {
     otherMetadata() {
       return this.unknownFields.map(key => ({key, value: this.metadata[key]}));
     },
+    rawData() {
+      return Object.fromEntries(
+        Object.entries(this.metadata)
+          .filter(([key, val]) => -1 == this.ignoredKeys.indexOf(key)));
+    }
   },
   watch: {
     contract: {
@@ -131,9 +136,9 @@ export default {
       const element = document.createElement("a");
       element.setAttribute(
           "href",
-          "data:text/plain;charset=utf-8," + encodeURIComponent(JSON.stringify(this.metadata))
+          "data:text/plain;charset=utf-8," + encodeURIComponent(JSON.stringify(this.rawData))
       );
-      element.setAttribute("download", `${this.metadata.name}-metadata.json`);
+      element.setAttribute("download", `${this.address}.json`);
       element.style.display = "none";
       document.body.appendChild(element);
 

@@ -1,11 +1,11 @@
 <template>
   <v-list class="ma-0 data">
-    <h4 class="ml-4 my-4 text--secondary d-flex align-center">
-      <span>TZIP-16</span>
+    <h2 class="ml-4 my-4 text--secondary d-flex align-center">
+      <span class="font-weight-regular">TZIP-16</span>
       <v-btn small icon class="ml-1 text--disabled" href="https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md" target="_blank" rel="noopener">
         <v-icon small>mdi-file-document-outline</v-icon>
       </v-btn>
-    </h4>
+    </h2>
     <v-list-item
         v-for="(field, idx) in metadata"
         :key="idx"

@@ -1,8 +1,8 @@
 <template>
   <v-list class="data" ref="list">
-    <h4 class="ml-4 my-4 text--secondary">
-      <span>Unknown fields</span>
-    </h4>
+    <h2 class="ml-4 my-4 hash font-weight-regular text--secondary">
+      <span>Extra fields</span>
+    </h2>
     <v-list-item
         v-for="(field, idx) in fields"
         :key="idx"
