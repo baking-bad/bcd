@@ -105,7 +105,7 @@ export default {
     rawData() {
       return Object.fromEntries(
         Object.entries(this.metadata)
-          .filter(([key, val]) => -1 == this.ignoredKeys.indexOf(key)));
+          .filter(([key]) => -1 == this.ignoredKeys.indexOf(key)));
     }
   },
   watch: {
