@@ -32,7 +32,7 @@
               icon
               class="mr-2 text--secondary"
               @click="() => {
-                $clipboard(data.hash); 
+                $clipboard(data.hash);
                 showClipboardOK();
               }"
             >

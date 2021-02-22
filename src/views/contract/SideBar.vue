@@ -27,14 +27,14 @@
           >
         </v-list-item-subtitle>
       </v-list-item-content>
-      <v-list-item-action v-if="standard">
+      <v-list-item-action v-if="contractTags">
         <v-list-item-action-text>
           <v-chip
             small
             class="caption"
-            :to="`/search?text=${standard.tag}`"
+            :to="`/search?text=${contractTags.tag}`"
             target="_blank"
-            >{{ standard.text }}</v-chip
+            >{{ contractTags.text }}</v-chip
           >
         </v-list-item-action-text>
       </v-list-item-action>
@@ -346,7 +346,10 @@ export default {
   name: "SideBar",
   props: {
     loading: Boolean,
+    alias: String,
     contract: Object,
+    contractTags: Object,
+    contractLink: String,
     address: String,
     network: String,
     migrations: Array,
@@ -377,52 +380,11 @@ export default {
     this.resolveDomain();
   },
   computed: {
-    standard() {
-      const standards = {
-        fa2: "FA2",
-        fa12: "FA1.2",
-        fa1: "FA1",
-        delegator: "Delegator",
-        multisig: "Multisig",
-      };
-      if (this.contract.tags) {
-        for (var tag in standards) {
-          if (this.contract.tags.includes(tag)) {
-            return { tag, text: standards[tag] };
-          }
-        }
-      }
-      return null;
-    },
-    alias() {
-      if (this.contract.subscription && this.contract.subscription.alias) {
-        return this.contract.subscription.alias;
-      }
-      if (this.contract.alias) {
-        return this.contract.alias;
-      }
-      return undefined;
-    },
     isAuthorized() {
       return this.$store.state.isAuthorized;
     },
     profile() {
       return this.$store.state.profile;
-    },
-    contractLink() {
-      let routeData = {};
-      if (this.contract.slug) {
-        routeData = {href:`/@${this.contract.slug}`};
-      } else {
-        routeData = this.$router.resolve({
-          name: "contract",
-          params: {
-            address: this.address,
-            network: this.network,
-          },
-        });
-      }
-      return `${window.location.protocol}//${window.location.host}${routeData.href}`;
     },
     isContract() {
       return this.address.startsWith("KT");

@@ -120,6 +120,7 @@ export default {
     data: null,
     url: null,
     loaded: false,
+    isShown: false,
   }),
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
@@ -129,6 +130,11 @@ export default {
     handleCopyClick() {
       if (!this.isCopiableOptions && this.raw) {
         return this.raw
+      }
+    },
+    handleKeyUp(e) {
+      if (e.key === "Escape"){
+        this.close();
       }
     },
     reset() {
@@ -144,6 +150,12 @@ export default {
       }
       return this.data;
     },
+  },
+  mounted() {
+    document.addEventListener('keyup', this.handleKeyUp);
+  },
+  destroyed() {
+    document.addEventListener('keyup', this.handleKeyUp);
   },
   watch: {
     show(newValue) {

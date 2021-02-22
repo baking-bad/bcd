@@ -147,4 +147,17 @@ input:-webkit-autofill:active  {
 .cursor-pointer {
   cursor: pointer;
 }
+
+.lower-overline {
+  font-size: .625rem;
+  font-weight: 400;
+  letter-spacing: .1666666667em!important;
+  line-height: 1rem;
+  text-transform: lowercase !important;
+  font-family: Roboto,sans-serif!important
+}
+
+.text-align-end {
+  text-align: end;
+}
 </style>

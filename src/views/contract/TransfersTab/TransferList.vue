@@ -87,18 +87,16 @@
                             ))
                         : item.amount
                   }}
-                  <span
+                  <span v-if="token.symbol"
                     class="caption text-uppercase font-weight-regular text--disabled"
-                    >{{
-                      token.symbol ? token.symbol : `tok_${item.token_id}`
-                    }}</span
+                    >{{ token.symbol }}</span
                   >
                 </span>
               </v-col>
               <v-col cols="4" class="d-flex align-center">
                 <div>
                   <span
-                    class="accent--text"
+                    class="caption text-uppercase font-weight-regular accent--text"
                     v-if="!item.to && address === item.from"
                   >
                     Burn&nbsp;
@@ -109,7 +107,12 @@
                   >
                     From&nbsp;
                   </span>
-                  <span v-else-if="!item.from && address === item.to" class="accent--text">Mint&nbsp;</span>
+                  <span 
+                    v-else-if="!item.from && address === item.to" 
+                    class="caption text-uppercase font-weight-regular accent--text"
+                  >
+                    Mint&nbsp;
+                  </span>
                   <router-link
                     v-if="item.from && address !== item.from"
                     text

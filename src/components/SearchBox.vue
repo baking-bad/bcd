@@ -207,10 +207,12 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     pushTo(path) {
+      if (this.$route.path !== `${path}/operations`) {
+        this.$router.push({ path });
+      }
       this.$nextTick(() => {
         this.model = null;
       });
-      this.$router.push({ path });
     },
     isModelsArrayInclude(value) {
       return [this.model.type, this.model.body.recent_type].includes(value);
@@ -384,6 +386,8 @@ export default {
   }
 }
 .v-autocomplete__content {
+  width: 358px;
+  right: 0;
   .v-list {
     padding: 4px 0;
   }
