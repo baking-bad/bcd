@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import AccountBox from "@/components/AccountBox";
+import AccountBox from "@/components/Dialogs/AccountBox";
 
 export default {
   name: "TokenHolders",

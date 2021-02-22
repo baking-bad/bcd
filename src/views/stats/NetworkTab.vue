@@ -114,8 +114,8 @@
 
 <script>
 import { mapActions } from "vuex";
-import ColumnChart from "@/components/ColumnChart.vue";
-import DonutChart from "@/components/DonutChart.vue";
+import ColumnChart from "@/components/Charts/ColumnChart.vue";
+import DonutChart from "@/components/Charts/DonutChart.vue";
 
 export default {
   name: "NetworkTab",

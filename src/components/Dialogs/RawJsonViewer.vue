@@ -17,16 +17,28 @@
         <v-menu offset-y v-if="type === 'code'">
           <template v-slot:activator="{ on, attrs }">
             <v-btn
+                v-if="isCopiableOptions"
+                text
+                outlined
+                v-bind="attrs"
+                v-on="on"
+                class="mr-4 text--secondary"
+            >
+              <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
+            </v-btn>
+            <v-btn
               text
               outlined
               v-bind="attrs"
               v-on="on"
+              v-else
+              v-clipboard="handleCopyClick"
               class="mr-4 text--secondary"
             >
               <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
             </v-btn>
           </template>
-          <v-list>
+          <v-list v-if="isCopiableOptions">
             <v-list-item
               class="px-4"
               v-for="(item, index) in ['parameter', 'storage', 'code', 'all']"
@@ -96,6 +108,10 @@ export default {
     hash: String,
     ptr: String,
     keyhash: String,
+    isCopiableOptions: {
+      type: Boolean,
+      default: true
+    }
   },
   components: {
     VueJsonPretty,
@@ -110,6 +126,11 @@ export default {
     ...mapActions(["showError", "showClipboardOK"]),
     close() {
       this.$emit("update:show", false);
+    },
+    handleCopyClick() {
+      if (!this.isCopiableOptions && this.raw) {
+        return this.raw
+      }
     },
     handleKeyUp(e) {
       if (e.key === "Escape"){
@@ -191,7 +212,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../styles/vue-json-pretty.css';
+@import '../../styles/vue-json-pretty.css';
 
 .vjs-tree .vjs-value__string {
   color: var(--v-tree-base) !important;

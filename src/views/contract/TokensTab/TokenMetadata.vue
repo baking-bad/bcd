@@ -64,8 +64,8 @@
 
 <script>
 import { makeTreeview } from '@/utils/parsing';
-import TreeNodeDetails from "@/components/TreeNodeDetails";
-import RawJsonViewer from "@/components/RawJsonViewer";
+import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails";
+import RawJsonViewer from "@/components/Dialogs/RawJsonViewer";
 
 export default {
   name: "TokenMetadata",

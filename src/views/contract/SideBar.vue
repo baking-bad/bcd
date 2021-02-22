@@ -337,10 +337,10 @@
 import { mapActions } from "vuex";
 import SimilarItem from "@/views/contract/SimilarItem.vue";
 import LogItem from "@/views/contract/LogItem.vue";
-import AccountBox from "@/components/AccountBox.vue";
+import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
-import WatchSettings from "@/components/WatchSettings.vue";
-import VerifyDialog from "@/components/VerifyDialog.vue";
+import WatchSettings from "@/components/Dialogs/WatchSettings.vue";
+import VerifyDialog from "@/components/Dialogs/VerifyDialog.vue";
 
 export default {
   name: "SideBar",

@@ -163,7 +163,7 @@
 
 <script>
 import { mapActions } from "vuex";
-import EmptyState from "@/components/EmptyState.vue";
+import EmptyState from "@/components/Cards/EmptyState.vue";
 import { numberToLocalizeString } from '@/utils/tz';
 import {getContentItemHeaderClass} from "@/utils/styles";
 

@@ -9,12 +9,13 @@
             color="accent"
             v-bind="attrs"
             v-on="on"
+            @click="$emit('executeClick')"
         >
           <span>Execute</span>
           <v-icon small class="ml-1">mdi-creation</v-icon>
         </v-btn>
       </template>
-      <v-list>
+      <v-list v-if="executeActions">
         <template v-for="(item, index) in executeActions">
           <v-list-item :key="index" @click="item.callback()" v-if="item.callback">
             <v-list-item-title>{{ item.text }}</v-list-item-title>

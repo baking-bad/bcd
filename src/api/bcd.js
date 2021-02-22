@@ -992,6 +992,26 @@ export class BetterCallApi {
       })
   }
 
+  getMetadataViewsSchema(network, address) {
+      return this.api.get(`/contract/${network}/${address}/views/schema`)
+          .then((res) => {
+             if (res.status !== 200) {
+                 throw new RequestFailedError(res);
+             }
+             return res.data;
+          });
+  }
+
+  executeMetadataView(network, address, data) {
+      return this.api.post(`/contract/${network}/${address}/views/execute`, data)
+          .then((res) => {
+              if (res.status !== 200) {
+                  throw new RequestFailedError(res);
+              }
+              return res.data;
+          });
+  }
+  
   getTokenHoldersList(network, address, token_id) {
     return this.api.get(`/contract/${network}/${address}/tokens/holders?token_id=${token_id}`)
         .then(this.returnResponseData);

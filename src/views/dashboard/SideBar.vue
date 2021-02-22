@@ -137,7 +137,7 @@
 
 <script>
 import { mapActions } from "vuex";
-import WatchSettings from "@/components/WatchSettings.vue";
+import WatchSettings from "@/components/Dialogs/WatchSettings.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
 
 export default {
