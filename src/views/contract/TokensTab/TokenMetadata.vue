@@ -9,17 +9,16 @@
           </v-list-item-content>
         </v-list-item>
       </v-col>
-      <v-col cols="2">
+      <v-col cols="6">
         <v-list-item v-if="token.supply" class="pl-1">
           <v-list-item-content>
-            <v-list-item-subtitle class="overline">Supply</v-list-item-subtitle>
-            <v-list-item-title class="key-hash">{{ getTokenSupply(token.supply) }}
-              &nbsp;<span class="caption text-uppercase font-weight-regular text--secondary">{{ item.symbol ? item.symbol : '' }}</span>
+            <v-list-item-subtitle class="overline">Total supply</v-list-item-subtitle>
+            <v-list-item-title class="hash">{{ formatTokenAmount(token.supply) }}
+              &nbsp;<span class="caption text-uppercase font-weight-regular text--secondary">{{ token.symbol ? token.symbol : '' }}</span>
             </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-col>
-      <v-col cols="4"></v-col>
       <v-col cols="4" class="d-flex align-center justify-end">         
         <v-btn small text @click="showRaw = true">
           <v-icon small class="mr-1">mdi-code-braces</v-icon>
@@ -82,17 +81,11 @@ export default {
     }
   },
   methods: {
-    getTokenSupply(item) {
+    formatTokenAmount(amount) {
+      const decimals = this.token && this.token.decimals ? this.token.decimals : 0;
       return this.helpers
-          .round(
-              item.supply,
-              item.decimals ? item.decimals : 0
-          )
-          .toLocaleString(undefined, {
-            maximumFractionDigits: item.decimals
-                ? item.decimals
-                : 0,
-          })
+          .round(amount, decimals)
+          .toLocaleString(undefined, { maximumFractionDigits: decimals })
     },
     showTreeInfo(item) {
       if (item.children) {
