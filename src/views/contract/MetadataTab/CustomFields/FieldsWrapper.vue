@@ -1,29 +1,30 @@
 <template>
-  <v-list class="fields-wrapper" ref="list">
-    <v-subheader class="title">{{ name }}</v-subheader>
-    <v-list-item v-if="isTreeview">
-      <vue-json-pretty
-          :data="metadata"
-          :deep="1"
-      />
-    </v-list-item>
+  <v-list class="data" ref="list">
+    <h4 class="ml-4 my-4 text--secondary">
+      <span>Unknown fields</span>
+    </h4>
     <v-list-item
-        v-else
-        v-for="(field, idx) in metadata"
+        v-for="(field, idx) in fields"
         :key="idx"
         selectable
     >
-      <v-list-item-content class="pt-0 pb-0">
-        <v-list-item-title class="d-flex">
-          <span>
-            {{
-              field.key
-            }}:
-          </span>
-          <span class="grey--text ml-3">
-            {{ field.value }}
-          </span>
-        </v-list-item-title>
+    <v-list-item-content class="pt-0">
+      <v-row no-gutters>
+        <v-col cols="2">
+          <span class="key-field">
+          {{
+            field.key
+          }}:
+        </span>
+        </v-col>
+        <v-col>
+          <vue-json-pretty
+            class="value-field"
+            :data="field.value"
+            :deep="1"
+        />
+        </v-col>
+      </v-row>
       </v-list-item-content>
     </v-list-item>
   </v-list>
@@ -36,7 +37,7 @@ import 'vue-json-pretty/lib/styles.css';
 export default {
   name: "FieldsWrapper",
   props: {
-    metadata: Object,
+    fields: Array,
     isTreeview: {
       type: Boolean,
       default: false,
@@ -49,19 +50,17 @@ export default {
 }
 </script>
 
-<style lang="scss">
-.fields-wrapper {
-  .v-list-item {
-    min-height: 32px;
-    &__title {
-      span {
-        font-size: 0.75rem;
-      }
-    }
-  }
-  .vjs-tree {
-    font-size: 0.75rem;
+<style lang="scss" scoped>
+.v-list-item {
+  min-height: 1.25rem;
+  font-family: Monaco,Menlo,Consolas,Bitstream Vera Sans Mono,monospace;
+  .key-field {
     color: #9e9e9e;
+    line-height: 1.2rem;
+  }
+  .value-field {
+    white-space: normal;
+    line-height: 1.2rem;
   }
 }
 </style>

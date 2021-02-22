@@ -1,52 +1,61 @@
 <template>
-  <v-list class="pb-4">
-    <v-subheader class="title">Reserved Fields</v-subheader>
+  <v-list class="ma-0 data">
+    <h4 class="ml-4 my-4 text--secondary d-flex align-center">
+      <span>TZIP-16</span>
+      <v-btn small icon class="ml-1 text--disabled" href="https://gitlab.com/tzip/tzip/-/blob/master/proposals/tzip-16/tzip-16.md" target="_blank" rel="noopener">
+        <v-icon small>mdi-file-document-outline</v-icon>
+      </v-btn>
+    </h4>
     <v-list-item
         v-for="(field, idx) in metadata"
         :key="idx"
         selectable
     >
-      <v-list-item-content class="pt-1 pb-0">
-        <v-list-item-title class="d-flex">
-          <span class="key-field">
+      <v-list-item-content class="pt-0">
+        <v-row no-gutters>
+          <v-col cols="2">
+            <span class="key-field">
             {{
               field.key
             }}:
           </span>
+          </v-col>
+          <v-col>
           <LicenseField
-              class="value-field ml-3"
+              class="value-field"
               v-if="field.key === 'license'"
               :value="field.value"
           />
           <AuthorsField
-              class="value-field ml-3"
+              class="value-field"
               v-else-if="field.key === 'authors'"
               :value="field.value"
           />
           <HomepageField
-              class="value-field ml-3"
+              class="value-field"
               v-else-if="field.key === 'homepage'"
               :value="field.value"
           />
           <InterfacesField
-              class="value-field ml-3"
+              class="value-field"
               v-else-if="field.key === 'interfaces'"
               :value="field.value"
             />
           <SourcesField
-              class="value-field ml-3"
+              class="value-field"
               v-else-if="field.key === 'source'"
               :value="field.value"
             />
           <ErrorsField
-              class="value-field ml-3"
+              class="value-field"
               v-else-if="field.key === 'errors'"
               :value="field.value"
           />
-          <span v-else class="value-field ml-3">
+          <span v-else class="value-field">
             {{ field.value }}
           </span>
-        </v-list-item-title>
+          </v-col>
+        </v-row>
       </v-list-item-content>
     </v-list-item>
   </v-list>
@@ -73,16 +82,14 @@ export default {
 .v-list-item {
   min-height: 1.25rem;
   font-family: Monaco,Menlo,Consolas,Bitstream Vera Sans Mono,monospace;
-  .key-field,
-  .value-field {
-    font-size: 0.75rem;
-  }
   .key-field {
     color: #9e9e9e;
+    line-height: 1.2rem;
   }
   .value-field {
     white-space: normal;
     color: var(--v-tree-base);
+    line-height: 1.2rem;
   }
 }
 </style>

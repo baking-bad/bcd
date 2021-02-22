@@ -23,11 +23,33 @@
           :loading="loading"
           type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
         >
-          <EntrypointsCard
-            @selected="(newVal) => this.selected = newVal"
-            :entrypoints="entrypoints"
-            :selected-outside="selected"
-          />
+          <v-card flat outlined style="max-width: 500px;">
+            <v-navigation-drawer floating permanent style="max-height: 80vh; width: 100%;">
+              <v-expansion-panels
+                flat
+                accordion
+                mandatory
+                active-class="entrypoint-selected"
+                v-model="selected"
+              >
+                <v-expansion-panel
+                  v-for="(item, i) in entrypoints"
+                  :key="i"
+                  :class="i > 0 ? 'bt-1' : ''"
+                  class="entrypoint-panel"
+                >
+                  <v-expansion-panel-header>
+                    <div class="d-flex">
+                      <span class="hash">{{ item.name }}</span>
+                    </div>
+                  </v-expansion-panel-header>
+                  <v-expansion-panel-content>
+                    <TypeDef :typedef="item.typedef" first="parameter"/>
+                  </v-expansion-panel-content>
+                </v-expansion-panel>
+              </v-expansion-panels>
+            </v-navigation-drawer>
+          </v-card>
         </v-skeleton-loader>
       </v-col>
     </v-row>
@@ -36,9 +58,9 @@
 
 <script>
 import { mapActions } from "vuex";
-import Schema from "@/components/schema/Schema.vue";
 import { applyStyles } from '@/utils/styles.js';
-import EntrypointsCard from "@/components/Cards/EntrypointsCard";
+import Schema from "@/components/schema/Schema.vue";
+import TypeDef from "@/views/contract/TypeDef";
 
 export default {
   name: "InteractTab",
@@ -47,8 +69,8 @@ export default {
     network: String,
   },
   components: {
-    EntrypointsCard,
     Schema,
+    TypeDef
   },
   data: () => ({
     loading: true,
