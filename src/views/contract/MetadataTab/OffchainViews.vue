@@ -8,10 +8,11 @@
               :storage-html="selectedItem.name"
           />
           <SchemaForm
-              :header="selectedItem.name"
+              header="Parameters"
               fallback-text="This implementation doesn't have parameters"
               :schema="selectedItem.schema"
               :show="true"
+              :is-deploy="true"
               :is-optional-settings="false"
               @executeClick="callOffchainView"
               @modelChange="setModel"

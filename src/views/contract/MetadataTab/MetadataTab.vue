@@ -51,7 +51,8 @@
 import FieldsWrapper from "@/views/contract/MetadataTab/CustomFields/FieldsWrapper";
 import ReservedFields from "@/views/contract/MetadataTab/ReservedFields";
 import OffchainViews from "@/views/contract/MetadataTab/OffchainViews";
-import {mapActions} from "vuex";
+import { mapActions } from "vuex";
+import { applyStyles } from '@/utils/styles.js';
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer";
 
 export default {
@@ -89,11 +90,19 @@ export default {
   },
   computed: {
     availableReservedFields() {
-      return this.reservedFields.filter(key => key in this.metadata);
+      if (this.metadata) {
+        return this.reservedFields.filter(key => key in this.metadata);
+      } else {
+        return [];
+      }
     },
     unknownFields() {
-      return Object.keys(this.metadata)
-        .filter(key => -1 == [...this.reservedFields, ...this.ignoredKeys, 'views'].indexOf(key))
+      if (this.metadata) {
+        return Object.keys(this.metadata)
+          .filter(key => -1 == [...this.reservedFields, ...this.ignoredKeys, 'views'].indexOf(key))
+      } else {
+        return [];
+      }
     },
     reservedMetadata() {
       return this.availableReservedFields.map(key => ({key, value: this.metadata[key]}))
@@ -102,17 +111,23 @@ export default {
       return this.unknownFields.map(key => ({key, value: this.metadata[key]}));
     },
     rawData() {
-      return Object.fromEntries(
-        Object.entries(this.metadata)
-          .filter(([key]) => -1 == this.ignoredKeys.indexOf(key)));
+      if (this.metadata) {
+        return Object.fromEntries(
+          Object.entries(this.metadata)
+            .filter(([key]) => -1 == this.ignoredKeys.indexOf(key)));
+      } else {
+        return {};
+      }
     }
   },
   watch: {
     metadata: {
       deep: true,
       immediate: true,
-      async handler() {
-        await this.loadViewsSchema();
+      async handler(newVal) {
+        if (newVal) {
+          await this.loadViewsSchema();
+        }
       }
     },
   },
@@ -121,7 +136,10 @@ export default {
     async loadViewsSchema() {
       if (this.network && this.address) {
         try {
-          this.views = await this.api.getMetadataViewsSchema(this.network, this.address);
+          let views = await this.api.getMetadataViewsSchema(this.network, this.address);
+          views.forEach(view => applyStyles(view.schema));
+          this.views = views;
+          console.log(views)
         } catch (err) {
           this.showError("Error while fetching off-chain views");
         }
