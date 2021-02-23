@@ -4,6 +4,8 @@
       v-for="(author, pos) in linkableNames"
       v-bind:key="getAuthorName(author) + `${pos}`"
       :href="getAuthorLink(author)"
+      target="_blank"
+      rel="noopener"
     >
       {{
         getAuthorName(author)

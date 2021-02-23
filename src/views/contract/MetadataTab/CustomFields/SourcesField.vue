@@ -1,6 +1,8 @@
 <template>
   <a
     :href="value.location"
+    target="_blank"
+    res="noopener"
   >
     {{value.tools.join(',')}}
   </a>

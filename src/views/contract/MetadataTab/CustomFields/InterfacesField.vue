@@ -4,6 +4,8 @@
       v-for="interfaceName in linkableInterfaces"
       v-bind:key="getInterfaceLink(interfaceName)"
       :href="getInterfaceLink(interfaceName)"
+      target="_blank"
+      rel="noopener"
       class="mr-3"
     >{{interfaceName}}</a>
     <span
