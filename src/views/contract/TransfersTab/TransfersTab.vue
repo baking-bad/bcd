@@ -12,7 +12,7 @@
       </v-col>
       <v-col cols="4" class="pa-2">
         <TransfersCard
-          :tokens="tokens"
+          :tokens="balances"
           @selectedToken="updateSelectedToken"
         />
       </v-col>
@@ -27,19 +27,13 @@ import TransfersCard from "@/views/contract/TransfersTab/TransfersCard.vue";
 export default {
   name: "TransfersTab",
   props: {
-    contract: Object,
+    balances: Array,
     network: String,
     address: String,
   },
   components: {
     TransfersCard,
     TransferList,
-  },
-  computed: {
-    tokens() {
-      if (!this.contract) return [];
-      return this.contract.tokens;
-    }
   },
   methods: {
     updateSelectedToken(newVal) {

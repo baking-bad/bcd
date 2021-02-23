@@ -3,7 +3,7 @@
     <v-card-text class="pa-0 pt-6 pb-4 data">
       <h2 class="ml-6 font-weight-regular">Top holders</h2>
       <v-row class="canvas mx-6 mt-6" no-gutters>
-        <v-col cols="6">
+        <v-col cols="6" md="8" sm="12">
           <v-list class="canvas">
             <v-list-item v-for="(item, i) in tokenHolders" v-bind:key="item.address">
               <v-list-item-content class="pa-0 pl-4">

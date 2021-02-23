@@ -58,13 +58,12 @@ export default {
   name: "Metadata",
   components: {OffchainViews, ReservedFields, FieldsWrapper, RawJsonViewer},
   props: {
-    contract: Object,
+    metadata: Object,
     network: String,
     address: String,
   },
   data: () => {
     return {
-      metadata: {},
       views: [],
       loading: true,
       showRaw: false,
@@ -109,28 +108,25 @@ export default {
     }
   },
   watch: {
-    contract: {
+    metadata: {
       deep: true,
       immediate: true,
-      async handler(value) {
-        await this.checkMetadata(value);
+      async handler() {
+        await this.loadViewsSchema();
       }
     },
   },
   methods: {
     ...mapActions(["showError"]),
-    async checkMetadata(obj) {
-      if ('metadata' in obj) {
-        this.metadata = obj.metadata;
-        if (this.network && this.address) {
-          try {
-            this.views = await this.api.getMetadataViewsSchema(this.network, this.address);
-          } catch (err) {
-            this.showError("Error while fetching off-chain views");
-          }
+    async loadViewsSchema() {
+      if (this.network && this.address) {
+        try {
+          this.views = await this.api.getMetadataViewsSchema(this.network, this.address);
+        } catch (err) {
+          this.showError("Error while fetching off-chain views");
         }
-        this.loading = false;
       }
+      this.loading = false;
     },
     downloadFile() {
       const element = document.createElement("a");

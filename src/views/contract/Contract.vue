@@ -57,14 +57,14 @@
         <v-tab
           :to="{ name: 'transfers' }"
           replace
-          v-if="tokenBalances && tokenBalances.length > 0"
+          v-if="balances && balances.length > 0"
         >
           <v-icon left small>mdi-transfer</v-icon>Transfers
         </v-tab>
         <v-tab
           :to="{ name: 'metadata' }"
           replace
-          v-if="isContract && isContractMetadata"
+          v-if="metadata"
         >
           <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
         </v-tab>
@@ -81,8 +81,10 @@
       :address="address"
       :network="network"
       :contract="contract"
+      :balances="balances"
       :migrations="migrations"
       :tokens="tokens"
+      :metadata="metadata"
     ></router-view>
   </div>
 </template>
@@ -108,27 +110,21 @@ export default {
   data: () => ({
     contractLoading: true,
     migrationsLoading: true,
-    tokensLoading: true,
     contract: {},
+    balances: [],
     migrations: [],
+    metadata: null,
     tokens: null,
     showFork: false,
     contractTags: null,
     contractLink: '',
   }),
   computed: {
-    isContractMetadata() {
-      return this.contract && this.contract.metadata;
-    },
     loading() {
       return this.contractLoading || this.migrationsLoading;
     },
     isContract() {
       return this.address.startsWith("KT");
-    },
-    tokenBalances() {
-      if (!this.contract) return [];
-      return this.contract.tokens;
     },
   },
   methods: {
@@ -136,18 +132,20 @@ export default {
       showError: "showError",
     }),
     init() {
-      this.$set(this, 'tokens', null);
+      this.tokens = [];
+      this.metadata = null;
       this.migrations = [];
+      this.contract = {};
       this.showFork = this.$route.name === "fork";
       if (this.isContract) {
         this.getContract();
+        this.getTokens();
         this.getMigrations();
       } else {
         this.migrationsLoading = false;
       }
       this.getInfo();
       this.getMetadata();
-      this.getTokens();
     },
     getContract() {
       if (
@@ -182,17 +180,15 @@ export default {
         .finally(() => (this.migrationsLoading = false));
     },
     getTokens() {
-      this.tokensLoading = true;
       this.api
         .getContractTokens(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          this.$set(this, 'tokens', res);
+          this.tokens = res;
         })
         .catch((err) => {
           this.showError(err);
         })
-        .finally(() => (this.tokensLoading = false));
     },
     getInfo() {
       this.contractLoading = true;
@@ -200,11 +196,10 @@ export default {
         .getAccountInfo(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          if (this.isContract) {
-            this.$set(this, 'contract', Object.assign(this.contract, res));
-          } else {
-            this.$set(this, 'contract', res);
+          if (!this.isContract) {
+            this.contract = res;
           }
+          this.balances = res.tokens || [];
         })
         .catch((err) => {
           this.showError(err);
@@ -216,7 +211,7 @@ export default {
         .getAccountMetadata(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          this.$set(this.contract, 'metadata', res);
+          this.metadata = res;
         })
         .catch((err) => {
           this.showError(err);

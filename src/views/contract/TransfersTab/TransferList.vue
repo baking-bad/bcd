@@ -109,7 +109,7 @@
                   </span>
                   <span 
                     v-else-if="!item.from && address === item.to" 
-                    class="caption text-uppercase font-weight-regular accent--text"
+                    class="caption text-uppercase font-weight-regular secondary--text"
                   >
                     Mint&nbsp;
                   </span>
