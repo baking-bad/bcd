@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import ErrorSnackbar from "@/components/ErrorSnackbar.vue";
-import SuccessSnackbar from "@/components/SuccessSnackbar.vue";
+import ErrorSnackbar from "@/components/Snackbar/ErrorSnackbar.vue";
+import SuccessSnackbar from "@/components/Snackbar/SuccessSnackbar.vue";
 
 export default {
   name: "App",
@@ -96,6 +96,10 @@ div.theme--dark.v-application {
   background-color: var(--v-data-base) !important;
 }
 
+.white-space-normal {
+  white-space: normal !important;
+}
+
 ::-webkit-scrollbar {
   width: 12px;
 }
@@ -138,5 +142,22 @@ input:-webkit-autofill:active  {
 
 .item-header-mempool {
   border-left: 3px solid var(--v-border-base);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.lower-overline {
+  font-size: .625rem;
+  font-weight: 400;
+  letter-spacing: .1666666667em!important;
+  line-height: 1rem;
+  text-transform: lowercase !important;
+  font-family: Roboto,sans-serif!important
+}
+
+.text-align-end {
+  text-align: end;
 }
 </style>

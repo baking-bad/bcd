@@ -69,7 +69,7 @@
 
 <script>
 import Michelson from "@/components/Michelson.vue";
-import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
+import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails.vue";
 
 export default {
   name: "OperationAlert",

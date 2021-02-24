@@ -102,7 +102,7 @@
             <ResultItem :key="idx" :item="item" :words="getSearchWords()" />
           </template>
           <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
-        </template>     
+        </template>
         <template v-else-if="searchText == '' || searchText == null">
           <v-card flat outlined class="mt-8 pa-8 data">
             <div class="d-flex flex-row justify-start align-center">
@@ -142,7 +142,7 @@ import { mapActions } from "vuex";
 import SearchFilters from "@/views/extended_search/SearchFilters.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import ResultItem from "@/views/extended_search/ResultItem.vue";
-import EmptyState from "@/components/EmptyState.vue";
+import EmptyState from "@/components/Cards/EmptyState.vue";
 
 export default {
   name: "ExtendedSearch",

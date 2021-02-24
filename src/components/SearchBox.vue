@@ -43,13 +43,13 @@
         <v-list-item-title>
           <template v-if="item.type == 'contract'">
             <span class="text--secondary hash">Contracts</span>
-            <span class="text--secondary" style="font-size: 20px">→</span>
+            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
           <template v-else-if="item.type == 'operation'">
             <span class="text--secondary hash">Operations</span>
-            <span class="text--secondary" style="font-size: 20px">→</span>
+            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <template v-if="item.body.destination.startsWith('KT')">
               <span
                 v-if="item.body.destination_alias"
@@ -61,7 +61,7 @@
                 v-html="helpers.shortcut(item.body.destination)"
                 class="text--secondary"
               ></span>
-              <span class="text--secondary" style="font-size: 20px">→</span>
+              <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             </template>
             <span v-if="item.body.entrypoint" class="hash"
               >{{ item.body.entrypoint }}()</span
@@ -73,28 +73,28 @@
           </template>
           <template v-else-if="item.type == 'bigmapdiff'">
             <span class="text--secondary hash">Big_map {{ item.body.ptr }}</span>
-            <span class="text--secondary" style="font-size: 20px">→</span>
+            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.key }}</span>
           </template>
           <template v-else-if="item.type == 'tzip'">
             <span class="text--secondary hash">Metadata</span>
-            <span class="text--secondary" style="font-size: 20px">→</span>
+            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.name }}</span>
           </template>
           <template v-else-if="item.type == 'token_metadata'">
             <span class="text--secondary hash">Tokens</span>
-            <span class="text--secondary" style="font-size: 20px">→</span>
+            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.name">{{ item.body.name }}</span>
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
           <template v-else-if="item.type == 'tezos_domain'">
             <span class="text--secondary hash">Domains</span>
-            <span class="text--secondary" style="font-size: 20px">→</span>
+            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span class="hash">{{ item.body.name }}</span>
           </template>
           <template v-if="item.type == 'subscription'">
             <span class="text--secondary hash">Subscriptions</span>
-            <span class="text--secondary" style="font-size: 20px">→</span>
+            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.alias }}</span>
           </template>
           <template v-if="item.type == 'recent'">
@@ -111,25 +111,25 @@
           <span
             v-if="item.body.network"
             :class="item.body.network === 'mainnet' ? 'secondary--text' : ''"
-            >{{ item.body.network }}&nbsp;|&nbsp;</span
+            >{{ item.body.network }}</span
           >
-          <span v-if="item.type === 'contract'">{{
+          <span v-if="item.type === 'contract'">&nbsp;|&nbsp;{{
             helpers.plural(item.body.tx_count - 1, "tx")
           }}</span>
-          <span v-else-if="item.type === 'operation'">{{
+          <span v-else-if="item.type === 'operation'">&nbsp;|&nbsp;{{
             item.body.status
           }}</span>
-          <span v-else-if="item.type === 'bigmapdiff' && item.group">{{
+          <span v-else-if="item.type === 'bigmapdiff' && item.group">&nbsp;|&nbsp;{{
             helpers.plural(item.group.count, "update")
           }}</span>
-          <span v-else-if="item.type === 'token_metadata' && item.group">{{
+          <span v-else-if="item.type === 'token_metadata' && item.group">&nbsp;|&nbsp;{{
             helpers.plural(item.group.count, "token")
           }}</span>
           <span v-else-if="item.type === 'subscription'"
-            >Subscribed at
+            >&nbsp;|&nbsp;Subscribed at
             {{ helpers.formatDate(item.body.subscribed_at) }}</span
           >
-          <span v-else-if="item.type === 'recent' && item.body.second">{{
+          <span v-else-if="item.type === 'recent' && item.body.second">&nbsp;|&nbsp;{{
             item.body.second
           }}</span>
           <span class="overline text--primary" v-if="item.body.timestamp">
@@ -207,10 +207,12 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     pushTo(path) {
+      if (this.$route.path !== `${path}/operations`) {
+        this.$router.push({ path });
+      }
       this.$nextTick(() => {
         this.model = null;
       });
-      this.$router.push({ path });
     },
     isModelsArrayInclude(value) {
       return [this.model.type, this.model.body.recent_type].includes(value);
@@ -384,6 +386,8 @@ export default {
   }
 }
 .v-autocomplete__content {
+  width: 358px;
+  right: 0;
   .v-list {
     padding: 4px 0;
   }

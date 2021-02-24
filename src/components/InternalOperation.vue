@@ -32,7 +32,7 @@
               icon
               class="mr-2 text--secondary"
               @click="() => {
-                $clipboard(data.hash); 
+                $clipboard(data.hash);
                 showClipboardOK();
               }"
             >
@@ -203,8 +203,8 @@
 import { mapActions } from "vuex";
 import InfoItem from "@/components/InfoItem.vue";
 import OperationAlert from "@/components/OperationAlert.vue";
-import AccountBox from "@/components/AccountBox.vue";
-import RawJsonViewer from "@/components/RawJsonViewer.vue";
+import AccountBox from "@/components/Dialogs/AccountBox.vue";
+import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
 
 export default {

@@ -21,9 +21,9 @@ import OperationsTab from '@/views/contract/OperationsTab.vue'
 import CodeTab from '@/views/contract/CodeTab.vue'
 import InteractTab from '@/views/contract/InteractTab.vue'
 import StorageTab from '@/views/contract/StorageTab.vue'
-import ContractTokensTab from '@/views/contract/TokensTab.vue'
+import ContractTokensTab from '@/views/contract/TokensTab/TokensTab.vue'
 import TransfersTab from '@/views/contract/TransfersTab/TransfersTab.vue'
-import MetadataTab from '@/views/contract/MetadataTab.vue'
+import MetadataTab from '@/views/contract/MetadataTab/MetadataTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
@@ -238,7 +238,7 @@ const router = new Router({
           components: {
             default: ForkTab,
           }
-        }, 
+        },
         {
           path: 'tokens',
           name: 'tokens',

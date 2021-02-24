@@ -136,7 +136,7 @@
 <script>
 import { mapActions } from "vuex";
 import ContentItem from "@/views/contract/ContentItem.vue";
-import EmptyState from "@/components/EmptyState.vue";
+import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
 
 export default {
