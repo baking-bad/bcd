@@ -37,9 +37,9 @@
             <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
             <span>Download</span>
           </v-btn>
-          <v-btn small text @click="openTryMichelson" class="text--secondary ml-2">
-            <v-icon class="mr-1 text--secondary" small>mdi-play-circle-outline</v-icon>
-            <span>Run in sandbox</span>
+          <v-btn small text :to="{name: 'interact'}" class="text--secondary ml-2">
+            <v-icon class="mr-1 text--secondary" small>mdi-play-box-outline</v-icon>
+            <span>Interact</span>
           </v-btn>
           <v-btn
             v-if="contract.language === 'smartpy'"
