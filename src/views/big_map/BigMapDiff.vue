@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import RawJsonViewer from "@/components/RawJsonViewer.vue"
+import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue"
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
 
 export default {

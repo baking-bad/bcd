@@ -171,7 +171,7 @@ api.getConfig().then(response => {
     next();
   })
 
-  if (config.GA_ENABLED) {
+  if (config.GA_ENABLED || config.ga_enabled) {
     Vue.use(VueAnalytics, {
       id: "UA-160856677-1",
       router,

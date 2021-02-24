@@ -3,7 +3,7 @@
     <template v-slot:activator="{ on }">
       <v-list-item v-on="on" class="link" :class="gutters ? '' : 'pa-0 ma-0'" selectable>
         <v-list-item-content>
-          <v-list-item-subtitle v-if="title" class="overline">
+          <v-list-item-subtitle v-if="title" :class="lowerTitle ? 'lower-overline' : 'overline'">
             <span>{{ title }}</span>
           </v-list-item-subtitle>
           <v-list-item-title>
@@ -55,10 +55,24 @@ export default {
     alias: String,
     highlighted: Boolean,
     gutters: Boolean,
-    network: String
+    network: String,
+    lowerTitle: Boolean,
   },
   components: {
     ValueInspector
+  },
+  methods: {
+    handleKeyUp(e) {
+      if (e.key === "Escape"){
+        this.show = false;
+      }
+    },
+  },
+  mounted() {
+    document.addEventListener('keyup', this.handleKeyUp);
+  },
+  destroyed() {
+    document.removeEventListener('keyup', this.handleKeyUp);
   },
   data: () => ({
     show: false

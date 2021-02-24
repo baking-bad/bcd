@@ -47,6 +47,9 @@ export default new Vuex.Store({
     showClipboardOK({ commit }) {
       commit('setSuccess', 'Copied to the clipboard')
     },
+    showClipboardFail({ dispatch}) {
+      dispatch('showError', 'Failed to save to the clipboard')
+    },
     showSuccess({ commit }, value) {
       commit('setSuccess', value)
     },

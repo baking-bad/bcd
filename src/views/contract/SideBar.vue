@@ -27,14 +27,14 @@
           >
         </v-list-item-subtitle>
       </v-list-item-content>
-      <v-list-item-action v-if="standard">
+      <v-list-item-action v-if="tags">
         <v-list-item-action-text>
           <v-chip
             small
             class="caption"
-            :to="`/search?text=${standard.tag}`"
+            :to="`/search?text=${tags.tag}`"
             target="_blank"
-            >{{ standard.text }}</v-chip
+            >{{ tags.text }}</v-chip
           >
         </v-list-item-action-text>
       </v-list-item-action>
@@ -99,7 +99,7 @@
             icon
             @click="
               () => {
-                $clipboard(contractLink);
+                $clipboard(link);
                 showClipboardOK();
               }
             "
@@ -337,10 +337,10 @@
 import { mapActions } from "vuex";
 import SimilarItem from "@/views/contract/SimilarItem.vue";
 import LogItem from "@/views/contract/LogItem.vue";
-import AccountBox from "@/components/AccountBox.vue";
+import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
-import WatchSettings from "@/components/WatchSettings.vue";
-import VerifyDialog from "@/components/VerifyDialog.vue";
+import WatchSettings from "@/components/Dialogs/WatchSettings.vue";
+import VerifyDialog from "@/components/Dialogs/VerifyDialog.vue";
 
 export default {
   name: "SideBar",
@@ -377,7 +377,28 @@ export default {
     this.resolveDomain();
   },
   computed: {
-    standard() {
+    isAuthorized() {
+      return this.$store.state.isAuthorized;
+    },
+    profile() {
+      return this.$store.state.profile;
+    },
+    isContract() {
+      return this.address.startsWith("KT");
+    },
+    alias() {
+      if (this.contract) {
+        if (this.contract.subscription && this.contract.subscription.alias) {
+          return this.contract.subscription.alias;
+        } else if (this.contract.alias) {
+          return this.contract.alias;
+        } else if (this.contract.metadata && this.contract.metadata.name) {
+          return this.contract.metadata.name;
+        }
+      }
+      return null;
+    },
+    tags() {
       const standards = {
         fa2: "FA2",
         fa12: "FA1.2",
@@ -385,7 +406,7 @@ export default {
         delegator: "Delegator",
         multisig: "Multisig",
       };
-      if (this.contract.tags) {
+      if (this.contract && this.contract.tags) {
         for (var tag in standards) {
           if (this.contract.tags.includes(tag)) {
             return { tag, text: standards[tag] };
@@ -394,24 +415,9 @@ export default {
       }
       return null;
     },
-    alias() {
-      if (this.contract.subscription && this.contract.subscription.alias) {
-        return this.contract.subscription.alias;
-      }
-      if (this.contract.alias) {
-        return this.contract.alias;
-      }
-      return undefined;
-    },
-    isAuthorized() {
-      return this.$store.state.isAuthorized;
-    },
-    profile() {
-      return this.$store.state.profile;
-    },
-    contractLink() {
+    link() {
       let routeData = {};
-      if (this.contract.slug) {
+      if (this.contract && this.contract.slug) {
         routeData = {href:`/@${this.contract.slug}`};
       } else {
         routeData = this.$router.resolve({
@@ -423,9 +429,6 @@ export default {
         });
       }
       return `${window.location.protocol}//${window.location.host}${routeData.href}`;
-    },
-    isContract() {
-      return this.address.startsWith("KT");
     },
   },
   methods: {
