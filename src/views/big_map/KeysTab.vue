@@ -42,7 +42,7 @@
 
 <script>
 import BigMapDiff from "@/views/big_map/BigMapDiff.vue";
-import EmptyState from "@/components/EmptyState.vue"
+import EmptyState from "@/components/Cards/EmptyState.vue"
 import { mapActions } from "vuex";
 
 export default {

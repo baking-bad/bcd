@@ -140,7 +140,7 @@
 
 <script>
 import { mapActions } from "vuex";
-import RawJsonViewer from "@/components/RawJsonViewer.vue";
+import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
 
 export default {

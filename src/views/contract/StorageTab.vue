@@ -116,7 +116,7 @@
 import { mapActions } from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
-import RawJsonViewer from "@/components/RawJsonViewer.vue";
+import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
 
