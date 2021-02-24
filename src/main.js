@@ -77,9 +77,10 @@ Vue.filter('bytes', function (value) {
   return `${value} bytes`;
 })
 
+const wsProtocol = window.location.protocol === "https:" ? "wss" : "ws";
 let config = {
-  API_URI: process.env.VUE_APP_API_URI || `https://${window.location.host}/v1`,
-  WS_URI: process.env.VUE_APP_WS_URI || `wss://${window.location.host}/v1/ws`,
+  API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
+  WS_URI: process.env.VUE_APP_WS_URI || `${wsProtocol}//${window.location.host}/v1/ws`,
   HOME_PAGE: 'home'
 }
 
