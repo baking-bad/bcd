@@ -169,8 +169,8 @@ export default {
           this.data.push(data[2]);
           this.renderingStep = this.renderingStep + 1;
           this.isLastBigDataPushed = true;
-        });
-      });
+        }, 0);
+      }, 0);
     },
   },
   beforeUpdate() {
