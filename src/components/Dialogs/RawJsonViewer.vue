@@ -17,7 +17,7 @@
             v-if="isShowRenderingWarning"
             class="ml-3 text--uppercase text--secondary raw-json-dialog__warning"
         >
-          Rendering may take some time...
+          Rendering in progress: Step {{renderingStep}} of 3
         </span>
         <v-spacer></v-spacer>
         <v-menu offset-y v-if="type === 'code'">
@@ -130,6 +130,7 @@ export default {
     loaded: false,
     isShowRenderingWarning: false,
     isLastBigDataPushed: false,
+    renderingStep: 1,
   }),
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
@@ -166,9 +167,11 @@ export default {
       window.requestAnimationFrame(() => {
         setTimeout(() => {
           this.data.push(data[1]);
+          this.renderingStep = this.renderingStep + 1;
           window.requestAnimationFrame(() => {
             setTimeout(() => {
               this.data.push(data[2]);
+              this.renderingStep = this.renderingStep + 1;
               this.isLastBigDataPushed = true;
             }, JSON_PARTS_DISPLAYING_DELAY_MS);
           });
