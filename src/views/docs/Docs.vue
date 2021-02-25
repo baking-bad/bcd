@@ -6,7 +6,7 @@
     </v-navigation-drawer>
   </div>
   <div v-show="isDocsRerendering" class="ma-3">
-    <h2>Theme is changing...</h2>
+    <h2 class="theme-is-changing">Theme is changing...</h2>
   </div>
   <v-container v-show="!isDocsRerendering" class="pa-0 ma-0" fluid>
     <div id="docs" ref="redoc-container"></div>
@@ -146,7 +146,10 @@ export default {
 <style lang="scss">
 body {
   #docs-wrapper {
-    .skeleton {
+    .theme-is-changing {
+      font-family: Roboto, sans-serif;
+      font-weight: 500;
+      color: rgb(91, 148, 42);
     }
     #docs {
       .redoc-wrap {
