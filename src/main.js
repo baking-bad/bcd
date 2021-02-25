@@ -89,7 +89,7 @@ let api = new BetterCallApi(config.API_URI);
 api.getConfig().then(response => {
   Object.assign(config, response);
 
-  if (config.SANDBOX_MODE) {
+  if (config.sandbox_mode) {
     config.HOME_PAGE = 'dashboard';
   }
 
@@ -140,7 +140,7 @@ api.getConfig().then(response => {
   router.beforeEach((to, from, next) => {
     const privatePages = ['/dashboard', '/dashboard/'];
     const authRequired = privatePages.includes(to.path);
-    const loggedIn = config.SANDBOX_MODE || getJwt() !== null;
+    const loggedIn = config.sandbox_mode || getJwt() !== null;
 
     store.dispatch('setIsAuthorized', loggedIn)
     if (authRequired && !loggedIn) {

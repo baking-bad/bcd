@@ -28,25 +28,57 @@
 
     <v-list nav>
       <v-list-item-group>
-        <template v-for="(item, idx) in items">
-          <v-tooltip v-if="!item.private || (isAuthorized && profile != null)" :key="idx" right>
-            <template v-slot:activator="{ on }">
-              <v-list-item :to="item.to" v-on="on" active-class="primary--text">
-                <template v-slot:default="{ active }">
-                  <v-list-item-icon>
-                    <v-icon v-if="active" color="primary">{{ item.icon }}</v-icon>
-                    <v-icon v-else color="grey lighten-2">{{ item.icon }}</v-icon>
-                  </v-list-item-icon>
+        <v-tooltip right>
+          <template v-slot:activator="{ on }">
+            <v-list-item :to="{ name: 'search' }" v-on="on" active-class="primary--text">
+              <template v-slot:default="{ active }">
+                <v-list-item-icon>
+                  <v-icon v-if="active" color="primary">mdi-cloud-search-outline</v-icon>
+                  <v-icon v-else color="grey lighten-2">mdi-cloud-search-outline</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>
+                  Advanced search
+                </v-list-item-title>
+              </template>
+            </v-list-item>
+          </template>
+          <span>Advanced search</span>
+        </v-tooltip>
 
-                  <v-list-item-content>
-                    <v-list-item-title>{{ item.text }}</v-list-item-title>
-                  </v-list-item-content>
-                </template>
-              </v-list-item>
-            </template>
-            <span>{{ item.text }}</span>
-          </v-tooltip>
-        </template>
+        <v-tooltip right>
+          <template v-slot:activator="{ on }">
+            <v-list-item :to="{ path: `/stats/${config.networks[0]}/general` }" v-on="on" active-class="primary--text">
+              <template v-slot:default="{ active }">
+                <v-list-item-icon>
+                  <v-icon v-if="active" color="primary">mdi-poll</v-icon>
+                  <v-icon v-else color="grey lighten-2">mdi-poll</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>
+                  Statistics
+                </v-list-item-title>
+              </template>
+            </v-list-item>
+          </template>
+          <span>Statistics</span>
+        </v-tooltip>
+      
+        <v-tooltip right>
+          <template v-slot:activator="{ on }">
+            <v-list-item :to="{ path: 'dapps' }" v-on="on" active-class="primary--text">
+              <template v-slot:default="{ active }">
+                <v-list-item-icon>
+                  <v-icon v-if="active" color="primary">mdi-apps</v-icon>
+                  <v-icon v-else color="grey lighten-2">mdi-apps</v-icon>
+                </v-list-item-icon>
+                <v-list-item-title>
+                  DApps
+                </v-list-item-title>
+              </template>
+            </v-list-item>
+          </template>
+          <span>DApps</span>
+        </v-tooltip>
+
       </v-list-item-group>
     </v-list>
 
@@ -90,7 +122,7 @@
           <span v-if="$vuetify.theme.dark">Disable dark theme</span>
           <span v-else>Enable dark theme</span>
         </v-tooltip>
-        <v-tooltip right v-if="isAuthorized && !config.SANDBOX_MODE">
+        <v-tooltip right v-if="isAuthorized && !config.sandbox_mode">
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon @click="clickLogout" class="mt-6">
               <v-icon color="grey lighten-2">mdi-logout</v-icon>
@@ -124,27 +156,6 @@ export default {
     },
   },
   data: () => ({
-    items: [
-      {
-        icon: "mdi-cloud-search-outline",
-        text: "Advanced search",
-        to: { name: "search" },
-      },
-      {
-        icon: "mdi-poll",
-        text: "Statistics",
-        to: {
-          path: "/stats/mainnet/general",
-        },
-      },
-      {
-        icon: "mdi-apps",
-        text: "DApps",
-        to: {
-          path: "/dapps",
-        },
-      },
-    ],
     pickingRandom: false,
   }),
   methods: {

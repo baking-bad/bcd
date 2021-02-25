@@ -61,8 +61,9 @@
               <v-col>Unique contracts</v-col>
               <v-col>
                 <router-link
+                  v-if="stats.length > 0"
                   style="text-decoration: none"
-                  :to="`/stats/mainnet/fa12`"
+                  :to="`/stats/${stats[0].network}/fa2`"
                 >
                   <span class="secondary--text">FA tokens</span>
                 </router-link>
@@ -117,7 +118,8 @@
         text
         href="https://baking-bad.org/docs"
         target="_blank"
-        class="text--secondary mb-1 ml-1 pa-1"
+        class="text--secondary ml-1 pa-1"
+        style="margin-bottom: 2px;"
       >
         <span>Baking Bad</span>
       </v-btn>

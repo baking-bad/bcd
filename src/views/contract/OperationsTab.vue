@@ -176,7 +176,7 @@ export default {
       if (this.operations.length === 0) return [];
       if (this.last_id !== null) operations = this.operations;
 
-      if (this.config.MEMPOOL_ENABLED) {
+      if (this.config.mempool_enabled) {
         let mempoolOperations = this.getDisplayedMempool();
         if (mempoolOperations.length > 0)
           operations = operations
@@ -376,7 +376,7 @@ export default {
       this.ws.onOpen(this.onOpen);
 
       this.getOperations(true, true);
-      if (this.config.MEMPOOL_ENABLED) {
+      if (this.config.mempool_enabled) {
         this.getMempool();
       }
       this.getEntrypoints();
