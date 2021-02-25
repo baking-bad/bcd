@@ -43,9 +43,9 @@
             <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
             <span>Download</span>
           </v-btn>
-          <v-btn small text @click="openTryMichelson" class="text--secondary ml-2">
-            <v-icon class="mr-1 text--secondary" small>mdi-play-circle-outline</v-icon>
-            <span>Run in sandbox</span>
+          <v-btn small text :to="{name: 'interact'}" class="text--secondary ml-2">
+            <v-icon class="mr-1 text--secondary" small>mdi-play-box-outline</v-icon>
+            <span>Interact</span>
           </v-btn>
           <v-btn
             v-if="contract.language === 'smartpy'"
@@ -80,7 +80,6 @@ import { mapActions } from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
-import LZString from "lz-string";
 
 export default {
   props: {
@@ -222,27 +221,6 @@ export default {
       if (this.contract.language === "smartpy")
         return `https://smartpy.io/dev/explore.html?address=${this.address}`;
     },
-    openTryMichelson() {
-      this.api
-        .getContractStorageRaw(this.network, this.address)
-        .then(res => {
-          let query = `source=${this.selectedCode}`;
-          if (res) {
-            let storage = res.replace(/\n|\s+/gm, " ");
-            query += `&storage=${storage}`;
-          }
-          let lzQuery = LZString.compressToEncodedURIComponent(query);
-          let uri = `https://try-michelson.tzalpha.net/?${lzQuery}`;
-
-          var newTab = window.open(); // https://habr.com/ru/post/282880/
-          newTab.opener = null;
-          newTab.location = uri;
-        })
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        });
-    }
   },
   watch: {
     address: function() {

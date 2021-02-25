@@ -371,7 +371,7 @@ export default {
         LOCAL_RATE_LIMIT_REACHED: { handler: () => null },
         OPERATION_REQUEST_SUCCESS: {
           handler: (data) => {
-            const link = `https://${data.account.network.type}.tzkt.io/${data.output.transactionHash}`;
+            const link = `/${data.account.network.type}/opg/${data.output.transactionHash}`;
             const successMessage = `The transaction
                has successfully been <a href="${link}">broadcasted</a>
                 to the network.`;
