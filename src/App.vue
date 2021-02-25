@@ -3,6 +3,7 @@
     <v-content>
       <ErrorSnackbar v-if="!!$store.state.error" />
       <SuccessSnackbar v-if="!!$store.state.success" />
+      <WarningSnackbar v-if="!!$store.state.warning" />
       <router-view></router-view>
       <v-fab-transition v-if="$vuetify.breakpoint.smAndUp">
         <v-btn color="primary" fab fixed bottom right v-show="showToTop" @click="scrollToTop">
@@ -14,12 +15,14 @@
 </template>
 
 <script>
+import WarningSnackbar from "@/components/Snackbar/WarningSnackbar";
 import ErrorSnackbar from "@/components/Snackbar/ErrorSnackbar.vue";
 import SuccessSnackbar from "@/components/Snackbar/SuccessSnackbar.vue";
 
 export default {
   name: "App",
   components: {
+    WarningSnackbar,
     ErrorSnackbar,
     SuccessSnackbar
   },

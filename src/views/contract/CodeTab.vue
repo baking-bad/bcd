@@ -18,11 +18,17 @@
             class="mb-1"
             hide-details
           ></v-select>
+          <span
+              v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
+              class="ml-4 text--disabled rendering-percents"
+          >
+            Rendering: {{Math.floor(loadedPercentage)}}%
+          </span>
           <v-spacer></v-spacer>
           <v-btn
             class="mr-1 text--secondary"
-            v-clipboard="() => selectedCode"
-            v-clipboard:success="showClipboardOK"
+            v-clipboard="getValueToCopy"
+            v-clipboard:success="showSuccessCopy"
             small
             text
           >
@@ -55,7 +61,7 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="pa-0">
-          <Michelson :code="selectedCode"></Michelson>
+          <Michelson :code="loadedCode"></Michelson>
         </v-card-text>
       </v-card>
     </div>
@@ -89,6 +95,12 @@ export default {
   },
   data: () => ({
     code: {},
+    renderingInterval: null,
+    lastSubstring: 0,
+    freezingAmount: 35000,
+    loadedPercentage: 0,
+    isCodeRendered: false,
+    loadedCode: "",
     loading: true,
     selectedProtocol: "",
     showRaw: false
@@ -96,9 +108,13 @@ export default {
   created() {
     if (this.$route.query.protocol) {
       this.selectedProtocol = this.$route.query.protocol;
-      this.getCode(this.$route.query.protocol);
+      this.$nextTick(() => {
+        this.getCode(this.$route.query.protocol);
+      });
     } else {
-      this.getCode();
+      this.$nextTick(() => {
+        this.getCode();
+      });
     }
   },
   computed: {
@@ -124,8 +140,41 @@ export default {
       return versions;
     }
   },
+  destroyed() {
+    clearInterval(this.renderingInterval);
+  },
   methods: {
-    ...mapActions(["showError", "showClipboardOK"]),
+    ...mapActions(["showError", "showClipboardOK", "showClipboardWarning"]),
+    showSuccessCopy() {
+      if (this.selectedCode.length <= this.freezingAmount) {
+        this.showClipboardOK();
+      }
+    },
+    getValueToCopy() {
+      if (this.selectedCode.length > this.freezingAmount) {
+        this.showClipboardWarning();
+      }
+
+      return this.selectedCode;
+    },
+    setCodeByParts() {
+      const code = this.code[this.selectedProtocol];
+      this.renderingInterval = setInterval(() => {
+        if (!this.isCodeRendered) {
+          this.setLoadedCode(code);
+        } else {
+          clearInterval(this.renderingInterval);
+        }
+      }, 0);
+    },
+    setLoadedCode(code) {
+      this.loadedCode += code.substring(this.lastSubstring, this.lastSubstring + this.freezingAmount);
+      if (this.lastSubstring + this.freezingAmount >= code.length) {
+        this.isCodeRendered = true;
+      }
+      this.lastSubstring = this.lastSubstring + this.freezingAmount;
+      this.loadedPercentage = this.lastSubstring / code.length * 100;
+    },
     getFallbackLevel(protocol = "") {
       if (protocol !== "" && this.migrations) {
         for (var i = 0; i < this.migrations.length; i++) {
@@ -148,10 +197,12 @@ export default {
         .getContractCode(this.network, this.address, protocol, level)
         .then(res => {
           if (!res) return;
-          this.code[protocol] = res;
+          this.$set(this.code, protocol, res);
+          this.$nextTick(() => {
+            this.setCodeByParts();
+          });
         })
         .catch(err => {
-          console.log(err);
           this.showError(err);
         })
         .finally(() => {
@@ -191,3 +242,8 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.rendering-percents {
+  font-size: 0.65em;
+}
+</style>

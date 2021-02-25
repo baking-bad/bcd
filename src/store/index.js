@@ -5,6 +5,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    warning: null,
     error: null,
     success: null,
     isAuthorized: false,
@@ -24,6 +25,9 @@ export default new Vuex.Store({
     setSuccess(state, value) {
       state.success = value;
     },
+    setWarning(state, value) {
+      state.warning = value;
+    },
     setSubscriptions(state, value) {
       state.subscriptions = value;
     }
@@ -37,6 +41,9 @@ export default new Vuex.Store({
     hideError({ commit }) {
       commit('setError', null)
     },
+    showClipboardWarning({ commit }) {
+      commit('setWarning', 'Copied! Text might be truncated due to its size');
+    },
     showClipboardOK({ commit }) {
       commit('setSuccess', 'Copied to the clipboard')
     },
@@ -48,6 +55,9 @@ export default new Vuex.Store({
     },
     hideSuccess({ commit }) {
       commit('setSuccess', null)
+    },
+    hideWarning({ commit }) {
+      commit('setWarning', null)
     },
     setIsAuthorized({ commit }, value) {
       commit('setIsAuthorized', value)
