@@ -97,7 +97,7 @@ export default {
     code: {},
     renderingInterval: null,
     lastSubstring: 0,
-    freezingAmount: 55000,
+    freezingAmount: 35000,
     loadedPercentage: 0,
     isCodeRendered: false,
     loadedCode: "",
@@ -108,9 +108,13 @@ export default {
   created() {
     if (this.$route.query.protocol) {
       this.selectedProtocol = this.$route.query.protocol;
-      this.getCode(this.$route.query.protocol);
+      this.$nextTick(() => {
+        this.getCode(this.$route.query.protocol);
+      });
     } else {
-      this.getCode();
+      this.$nextTick(() => {
+        this.getCode();
+      });
     }
   },
   computed: {
@@ -155,7 +159,6 @@ export default {
     },
     setCodeByParts() {
       const code = this.code[this.selectedProtocol];
-      this.setLoadedCode(code);
       this.renderingInterval = setInterval(() => {
         if (!this.isCodeRendered) {
           this.setLoadedCode(code);
