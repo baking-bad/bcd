@@ -1,11 +1,5 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
-    <p
-        v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
-        class="text--disabled"
-    >
-      Big code! Rendering is in progress...
-    </p>
     <v-skeleton-loader v-if="loading" type="card-heading, image" />
     <div v-else-if="selectedCode">
       <v-card tile flat outlined class="pa-0">
@@ -24,6 +18,12 @@
             class="mb-1"
             hide-details
           ></v-select>
+          <span
+              v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
+              class="ml-4 text--disabled rendering-percents"
+          >
+            Rendering: {{Math.floor(loadedPercentage)}}%
+          </span>
           <v-spacer></v-spacer>
           <v-btn
             class="mr-1 text--secondary"
@@ -97,7 +97,8 @@ export default {
     code: {},
     renderingInterval: null,
     lastSubstring: 0,
-    freezingAmount: 5000,
+    freezingAmount: 30000,
+    loadedPercentage: 0,
     isCodeRendered: false,
     loadedCode: "",
     loading: true,
@@ -161,9 +162,10 @@ export default {
         } else {
           clearInterval(this.renderingInterval);
         }
-      }, 500);
+      }, 0);
     },
     setLoadedCode(code) {
+      this.loadedPercentage = this.lastSubstring / code.length * 100;
       this.loadedCode += code.substring(this.lastSubstring, this.lastSubstring + this.freezingAmount);
       if (this.lastSubstring + this.freezingAmount >= code.length) {
         this.isCodeRendered = true;
@@ -237,3 +239,8 @@ export default {
   }
 };
 </script>
+<style lang="scss" scoped>
+.rendering-percents {
+  font-size: 0.65em;
+}
+</style>
