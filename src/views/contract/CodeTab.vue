@@ -97,7 +97,7 @@ export default {
     code: {},
     renderingInterval: null,
     lastSubstring: 0,
-    freezingAmount: 30000,
+    freezingAmount: 55000,
     loadedPercentage: 0,
     isCodeRendered: false,
     loadedCode: "",
@@ -165,12 +165,12 @@ export default {
       }, 0);
     },
     setLoadedCode(code) {
-      this.loadedPercentage = this.lastSubstring / code.length * 100;
       this.loadedCode += code.substring(this.lastSubstring, this.lastSubstring + this.freezingAmount);
       if (this.lastSubstring + this.freezingAmount >= code.length) {
         this.isCodeRendered = true;
       }
       this.lastSubstring = this.lastSubstring + this.freezingAmount;
+      this.loadedPercentage = this.lastSubstring / code.length * 100;
     },
     getFallbackLevel(protocol = "") {
       if (protocol !== "" && this.migrations) {
