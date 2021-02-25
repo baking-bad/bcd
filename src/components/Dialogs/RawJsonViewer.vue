@@ -161,21 +161,15 @@ export default {
       return this.data;
     },
     loadCodePartially(data) {
-      const JSON_PARTS_DISPLAYING_DELAY_MS = 100;
-
       this.data = [data[0]];
-      window.requestAnimationFrame(() => {
+      setTimeout(() => {
+        this.data.push(data[1]);
+        this.renderingStep = this.renderingStep + 1;
         setTimeout(() => {
-          this.data.push(data[1]);
+          this.data.push(data[2]);
           this.renderingStep = this.renderingStep + 1;
-          window.requestAnimationFrame(() => {
-            setTimeout(() => {
-              this.data.push(data[2]);
-              this.renderingStep = this.renderingStep + 1;
-              this.isLastBigDataPushed = true;
-            }, JSON_PARTS_DISPLAYING_DELAY_MS);
-          });
-        }, JSON_PARTS_DISPLAYING_DELAY_MS);
+          this.isLastBigDataPushed = true;
+        });
       });
     },
   },
