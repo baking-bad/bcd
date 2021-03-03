@@ -275,7 +275,7 @@ button.pick-random-button {
           .v-input__append-inner {
             width: 100%;
             .v-icon {
-              color: var(--v-data-lighten5);
+              color: var(--v-data-lighten5) !important;
             }
           }
         }
