@@ -249,9 +249,38 @@ export default {
 </style>
 <style lang="scss">
 button.pick-random-button {
-  padding-right: 38px !important;
-  .network-select {
-    width: 0;
+  padding-right: 0 !important;
+  & > .v-btn__content {
+    height: inherit;
+    border-top-right-radius: inherit;
+    border-bottom-right-radius: inherit;
+    .network-select {
+      margin-left: 1em;
+      width: 3em;
+      height: 100%;
+      margin-top: 0;
+      padding-top: 0;
+      border-top-right-radius: inherit;
+      border-bottom-right-radius: inherit;
+      background-color: var(--v-data-lighten2) !important;
+      & > .v-input__control {
+        height: inherit;
+        & > .v-input__slot {
+          height: inherit;
+          margin-bottom: 0;
+          &::before,
+          &::after {
+            border: none;
+          }
+          .v-input__append-inner {
+            width: 100%;
+            .v-icon {
+              color: var(--v-data-lighten5);
+            }
+          }
+        }
+      }
+    }
   }
 }
 </style>
