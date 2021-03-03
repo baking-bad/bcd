@@ -262,7 +262,10 @@ button.pick-random-button {
       padding-top: 0;
       border-top-right-radius: inherit;
       border-bottom-right-radius: inherit;
-      background-color: var(--v-data-lighten2) !important;
+      border-left: 1px solid var(--v-data-lighten2);
+      &:active {
+        background: darken(#414141, 1);
+      }
       & > .v-input__control {
         height: inherit;
         & > .v-input__slot {
