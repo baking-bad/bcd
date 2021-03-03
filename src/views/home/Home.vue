@@ -40,11 +40,19 @@
                 large
                 depressed
                 color="border"
-                class="text--secondary"
+                class="text--secondary pick-random-button"
                 :loading="pickingRandom"
                 @click="pickRandom"
-                >Pick Random</v-btn
-              >
+                >
+                Pick Random
+                <v-select
+                    class="network-select"
+                    :items="stats.map(item => item.network)"
+                    :menu-props="{ top: true, offsetY: true }"
+                    @change="pickRandom"
+                >
+                </v-select>
+              </v-btn>
             </v-col>
           </v-row>
         </v-col>
@@ -164,11 +172,12 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
-    pickRandom() {
-      if (this.pickingRandom) return;
+    pickRandom(val) {
+      const isSelectPressed = val.target && val.target.closest('.network-select');
+      if (isSelectPressed || this.pickingRandom) return;
       this.pickingRandom = true;
       this.api
-        .getRandomContract()
+        .getRandomContract(val)
         .then((res) => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
@@ -235,6 +244,14 @@ export default {
   }
   .stats-row {
     height: 50%;
+  }
+}
+</style>
+<style lang="scss">
+button.pick-random-button {
+  padding-right: 38px !important;
+  .network-select {
+    width: 0;
   }
 }
 </style>
