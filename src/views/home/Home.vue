@@ -263,8 +263,15 @@ button.pick-random-button {
       border-top-right-radius: inherit;
       border-bottom-right-radius: inherit;
       border-left: 1px solid var(--v-data-lighten2);
-      &:active {
+      color: inherit !important;
+      &.theme--light {
+        border-color: rgba(0,0,0,0.06) !important;
+      }
+      &:not(.theme--light):active {
         background: darken(#414141, 1);
+      }
+      &.theme--light:active {
+        background: darken(#dddddd, 15);
       }
       & > .v-input__control {
         height: inherit;
@@ -278,7 +285,7 @@ button.pick-random-button {
           .v-input__append-inner {
             width: 100%;
             .v-icon {
-              color: var(--v-data-lighten5) !important;
+              color: inherit !important;
             }
           }
         }
