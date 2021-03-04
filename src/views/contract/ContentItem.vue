@@ -14,7 +14,10 @@
             <v-list-item class="fill-height pa-0">
               <v-list-item-content>
                 <v-list-item-title class="hash">{{
-                  helpers.formatDatetime(value.timestamp)
+                  helpers.formatDatetime(value.timestamp, {
+                    val: 15,
+                    unit: "minute"
+                  })
                 }}</v-list-item-title>
                 <v-list-item-subtitle
                   class="font-weight-light hash text--secondary"

@@ -50,11 +50,11 @@ export function shortcut(value, tail = 4) {
         `${value.slice(value.length - tail)}`
 }
 
-export function formatDatetime(timestamp) {
+export function formatDatetime(timestamp, minDate = {val: 1, unit: "day"}) {
     let d = dayjs(timestamp);
     if (timestamp) {
         if (d.year() < dayjs().year()) return d.format("D MMM'YY HH:mm");
-        if (d.add(1, "days").isBefore(dayjs())) return d.format("D MMM HH:mm");
+        if (d.add(minDate.val, minDate.unit).isBefore(dayjs())) return d.format("D MMM HH:mm");
         return d.fromNow();
     }
 }
