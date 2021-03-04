@@ -177,7 +177,7 @@ export default {
       if (isSelectPressed || this.pickingRandom) return;
       this.pickingRandom = true;
       this.api
-        .getRandomContract(val)
+        .getRandomContract(val.target ? '' : val)
         .then((res) => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
