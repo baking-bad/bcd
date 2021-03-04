@@ -125,7 +125,7 @@
           </v-expansion-panels>
           <span
             v-intersect="onDownloadPage"
-            v-show="!loading && !downloaded"
+            v-if="!loading && !downloaded"
           ></span>
         </v-skeleton-loader>
       </v-col>
@@ -177,15 +177,14 @@ export default {
         return [];
       }
       if (this.last_id !== null) operations = this.operations;
-
       if (this.config.mempool_enabled) {
         let mempoolOperations = this.getDisplayedMempool();
-        if (mempoolOperations.length > 0)
+        if (mempoolOperations.length > 0) {
           operations = operations
-            .concat(mempoolOperations)
-            .sort(this.compareOperations);
+              .concat(mempoolOperations)
+              .sort(this.compareOperations);
+        }
       }
-
       return operations;
     },
     dateRangeText() {
@@ -313,7 +312,7 @@ export default {
         .finally(() => (this.mempoolLoading = false));
     },
     getDisplayedMempool() {
-      if (this.mempool.length === 0) return [];
+      if (!this.mempool || this.mempool.length === 0) return [];
       let mempoolOperations = this.mempool;
 
       // Apply operation filters
@@ -350,9 +349,11 @@ export default {
     pushOperations(data) {
       data.forEach((element) => {
         if (element.internal) {
-          this.operations[this.operations.length - 1].internal_operations.push(
-            element
+          const lastEl = this.operations[this.operations.length - 1];
+          lastEl.internal_operations.push(
+              element
           );
+          this.$set(this.operations, this.operations.length - 1, lastEl);
         } else {
           element.internal_operations = [];
           this.operations.push(element);
@@ -362,7 +363,9 @@ export default {
     unshiftOperations(data) {
       data.forEach((element) => {
         if (element.internal) {
-          this.operations[0].internal_operations.push(element);
+          const firstEl = this.operations[0];
+          firstEl.internal_operations.push(element);
+          this.$set(this.operations, 0, firstEl);
         } else {
           element.internal_operations = [];
           this.operations.unshift(element);
