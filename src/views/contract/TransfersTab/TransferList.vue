@@ -71,7 +71,7 @@
         <template v-for="(item, id) in items">
           <v-list-item class="item__list-item" :class="statusHeaderClass(item.status)" :key="id">
             <v-row>
-              <v-col cols="2" class="d-flex align-center justify-center">
+              <v-col cols="2" class="d-flex align-center justify-center pa-0">
                 <span class="body-2 text--secondary">{{
                   helpers.formatDatetime(item.timestamp)
                 }}</span>
@@ -107,8 +107,8 @@
                   >
                     From&nbsp;
                   </span>
-                  <span 
-                    v-else-if="!item.from && address === item.to" 
+                  <span
+                    v-else-if="!item.from && address === item.to"
                     class="caption text-uppercase font-weight-regular secondary--text"
                   >
                     Mint&nbsp;

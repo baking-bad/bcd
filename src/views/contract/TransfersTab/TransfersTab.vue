@@ -1,7 +1,7 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-row no-gutters>
-      <v-col cols="8" class="pa-2">
+      <v-col cols="7" class="pa-2">
         <TransferList
           v-if="selectedToken"
           :address="address"
@@ -10,7 +10,7 @@
           :contract="selectedToken.contract"
         />
       </v-col>
-      <v-col cols="4" class="pa-2">
+      <v-col cols="5" class="pa-2">
         <TransfersCard
           :tokens="balances"
           @selectedToken="updateSelectedToken"
