@@ -110,7 +110,7 @@
             text="Empty set is also a result, otherwise try a broader query"
           />
           <v-expansion-panels
-            v-else
+            v-show="items.length !== 0"
             multiple
             hover
             flat
@@ -169,21 +169,22 @@ export default {
   },
   computed: {
     loading() {
-      return (this.operationsLoading || this.mempoolLoading) && this.items.length === 0;
+      return this.items.length === 0 && (this.operationsLoading || this.mempoolLoading);
     },
     items() {
       let operations = [];
-      if (this.operations.length === 0) return [];
+      if (this.operations.length === 0) {
+        return [];
+      }
       if (this.last_id !== null) operations = this.operations;
-
       if (this.config.mempool_enabled) {
         let mempoolOperations = this.getDisplayedMempool();
-        if (mempoolOperations.length > 0)
+        if (mempoolOperations.length > 0) {
           operations = operations
-            .concat(mempoolOperations)
-            .sort(this.compareOperations);
+              .concat(mempoolOperations)
+              .sort(this.compareOperations);
+        }
       }
-
       return operations;
     },
     dateRangeText() {
@@ -239,24 +240,23 @@ export default {
           this.availableEntrypoints = res.map((x) => x.name);
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
         });
     },
-    getOperations(clearData = false, resetFilters = false) {
+    async getOperations(clearData = false, resetFilters = false) {
       if (this.operationsLoading || (this.downloaded && !clearData)) return;
       this.operationsLoading = true;
-
       if (clearData) {
-        this.operations = [];
+        this.$set(this, 'operations', []);
         this.downloaded = false;
-        this.last_id = null;
+        this.$set(this, 'last_id', null);
       }
       if (resetFilters) {
-        this.status = [];
-        this.dates = [];
-        this.datesBuf = [];
+        this.$set(this, 'status', []);
+        this.$set(this, 'dates', []);
+        this.$set(this, 'datesBuf', []);
         this.datesModal = false;
-        this.entrypoints = [];
+        this.$set(this, 'entrypoints', []);
       }
 
       const onChainStatuses = ["applied", "failed", "skipped", "backtracked"];
@@ -268,7 +268,7 @@ export default {
       let entries = this.entrypoints;
       let timestamps = this.getTimestamps();
 
-      this.api
+      await this.api
         .getContractOperations(
           this.network,
           this.address,
@@ -283,17 +283,19 @@ export default {
           if (!res) {
             this.downloaded = true; // prevent endless polling
           } else {
+            this.downloaded = res.operations.length === 0;
+            this.$set(this, 'last_id', res.last_id);
             this.pushOperations(res.operations);
-            this.downloaded = res.operations.length == 0;
-            this.last_id = res.last_id;
           }
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
           this.showError(err);
           this.downloaded = true;
         })
-        .finally(() => (this.operationsLoading = false));
+        .finally(() => {
+          this.operationsLoading = false;
+        });
     },
     getMempool() {
       if (this.mempoolLoading) return;
@@ -305,12 +307,12 @@ export default {
           this.mempool = res;
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
         })
         .finally(() => (this.mempoolLoading = false));
     },
     getDisplayedMempool() {
-      if (this.mempool.length === 0) return [];
+      if (!this.mempool || this.mempool.length === 0) return [];
       let mempoolOperations = this.mempool;
 
       // Apply operation filters
@@ -347,9 +349,11 @@ export default {
     pushOperations(data) {
       data.forEach((element) => {
         if (element.internal) {
-          this.operations[this.operations.length - 1].internal_operations.push(
-            element
+          const lastEl = this.operations[this.operations.length - 1];
+          lastEl.internal_operations.push(
+              element
           );
+          this.$set(this.operations, this.operations.length - 1, lastEl);
         } else {
           element.internal_operations = [];
           this.operations.push(element);
@@ -359,30 +363,32 @@ export default {
     unshiftOperations(data) {
       data.forEach((element) => {
         if (element.internal) {
-          this.operations[0].internal_operations.push(element);
+          const firstEl = this.operations[0];
+          firstEl.internal_operations.push(element);
+          this.$set(this.operations, 0, firstEl);
         } else {
           element.internal_operations = [];
           this.operations.unshift(element);
         }
       });
     },
-    onDownloadPage(entries, observer, isIntersecting) {
+    async onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
-        this.getOperations();
+        await this.getOperations();
       }
     },
-    fetchOperations() {
+    async fetchOperations() {
       this.ws.onMessage(this.onOperationUpdates);
       this.ws.onOpen(this.onOpen);
 
-      this.getOperations(true, true);
+      await this.getOperations(true, true);
       if (this.config.mempool_enabled) {
         this.getMempool();
       }
       this.getEntrypoints();
     },
-    updateOperations() {
-      this.getOperations(true, false);
+    async updateOperations() {
+      await this.getOperations(true, false);
     },
     onOperationUpdates(data) {
       if (data.body === "ok") {
