@@ -457,9 +457,10 @@ export class BetterCallApi {
       })
   }
 
-  getRandomContract() {
+  getRandomContract(network) {
     cancelRequests();
-    return getCancellable(this.api, `/pick_random`, {})
+    const request_url = network ? `/pick_random?network=${network}` : `/pick_random`;
+    return getCancellable(this.api, request_url, {})
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -1011,7 +1012,7 @@ export class BetterCallApi {
               return res.data;
           });
   }
-  
+
   getTokenHoldersList(network, address, token_id) {
     return this.api.get(`/contract/${network}/${address}/tokens/holders?token_id=${token_id}`)
         .then(this.returnResponseData);
