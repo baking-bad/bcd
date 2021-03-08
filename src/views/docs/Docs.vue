@@ -44,15 +44,19 @@ export default {
     }
   },
   methods: {
-    init: function() {
+    init: async function() {
       return initRedoc(
-        `${this.config.API_URI}/swagger.json`,
+        `${this.baseURL}/swagger.json`,
         this.redocOptions,
         this.$refs["redoc-container"]
       );
     }
   },
   computed: {
+    baseURL() {
+      const apiURL = new URL(this.config.API_URI);
+      return `${apiURL.protocol}//api.${apiURL.hostname}${apiURL.pathname}`;
+    },
     theme() {
       return this.$vuetify.theme.themes[this.$vuetify.theme.isDark ? 'dark' : 'light'];
     },

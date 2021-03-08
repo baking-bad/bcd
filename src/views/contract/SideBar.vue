@@ -163,13 +163,13 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-              <v-list-item v-if="contract.balance">
+              <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle class="overline"
                     >Balance</v-list-item-subtitle
                   >
                   <v-list-item-title class="body-2">
-                    <span>{{ contract.balance | uxtz }}</span>
+                    <span>{{ balance | uxtz }}</span>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -347,9 +347,11 @@ export default {
   props: {
     loading: Boolean,
     contract: Object,
+    metadata: Object,
     address: String,
     network: String,
     migrations: Array,
+    balance: Number,
   },
   components: {
     SimilarItem,
@@ -392,8 +394,8 @@ export default {
           return this.contract.subscription.alias;
         } else if (this.contract.alias) {
           return this.contract.alias;
-        } else if (this.contract.metadata && this.contract.metadata.name) {
-          return this.contract.metadata.name;
+        } else if (this.metadata && this.metadata.name) {
+          return this.metadata.name;
         }
       }
       return null;
