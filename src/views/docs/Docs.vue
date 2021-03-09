@@ -259,15 +259,5 @@ body {
       }
     }
   }
-  & > div.theme--light {
-    #docs {
-      div[data-role="search:results"] {
-        li {
-          background-color: rgb(220, 220, 220);
-        }
-        background-color: rgb(220, 220, 220);
-      }
-    }
-  }
 }
 </style>
