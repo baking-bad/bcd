@@ -18,6 +18,8 @@
 import SideNavigation from "@/components/SideNavigation.vue";
 import { init as initRedoc } from "redoc/bundles/redoc.standalone.js";
 
+const RERENDERING_TIMEOUT = 200;
+
 export default {
   name: "Docs",
   components: {
@@ -37,8 +39,8 @@ export default {
               this.isDocsRerendering = false;
             });
           });
-        }, 0);
-      }, 0);
+        }, RERENDERING_TIMEOUT);
+      }, RERENDERING_TIMEOUT);
     }
   },
   methods: {
