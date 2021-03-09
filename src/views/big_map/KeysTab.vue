@@ -14,13 +14,6 @@
           hide-details
         ></v-text-field>
       </v-col>
-      <!-- <v-col cols="3" class="d-flex justify-center">
-        <v-checkbox v-model="showRemoved">
-          <template v-slot:label>
-            <span>Show removed keys</span>
-          </template>
-        </v-checkbox>
-      </v-col> -->
     </v-row>
 
     <v-row class="px-8 pt-6" no-gutters>
@@ -49,7 +42,7 @@
 
 <script>
 import BigMapDiff from "@/views/big_map/BigMapDiff.vue";
-import EmptyState from "@/components/EmptyState.vue"
+import EmptyState from "@/components/Cards/EmptyState.vue"
 import { mapActions } from "vuex";
 
 export default {

@@ -26,6 +26,13 @@ export class BetterCallApi {
     });
   }
 
+  returnResponseData(res) {
+      if (res.status !== 200) {
+          throw new RequestFailedError(res);
+      }
+      return res.data
+  }
+
   getConfig() {
     return getCancellable(this.api, `/config`, {})
       .then((res) => {
@@ -150,6 +157,9 @@ export class BetterCallApi {
   getAccountInfo(network, address) {
     return getCancellable(this.api, `/account/${network}/${address}`, {})
       .then((res) => {
+        if (!res) {
+          return null;
+        }
         if (res.status != 200) {
           throw new RequestFailedError(res);
         }
@@ -160,13 +170,13 @@ export class BetterCallApi {
   getAccountMetadata(network, address) {
     return getCancellable(this.api, `/account/${network}/${address}/metadata`, {})
       .then((res) => {
-        if (res.status == 204) {
-          return null;
-        }
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
+          if (!res || res.status == 204) {
+              return null;
+          }
+          if (res.status != 200) {
+              throw new RequestFailedError(res);
+          }
+          return res.data
       })
   }
 
@@ -447,9 +457,10 @@ export class BetterCallApi {
       })
   }
 
-  getRandomContract() {
+  getRandomContract(network) {
     cancelRequests();
-    return getCancellable(this.api, `/pick_random`, {})
+    const request_url = network ? `/pick_random?network=${network}` : `/pick_random`;
+    return getCancellable(this.api, request_url, {})
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -980,5 +991,30 @@ export class BetterCallApi {
         }
         return res.data
       })
+  }
+
+  getMetadataViewsSchema(network, address) {
+      return this.api.get(`/contract/${network}/${address}/views/schema`)
+          .then((res) => {
+             if (res.status !== 200) {
+                 throw new RequestFailedError(res);
+             }
+             return res.data;
+          });
+  }
+
+  executeMetadataView(network, address, data) {
+      return this.api.post(`/contract/${network}/${address}/views/execute`, data)
+          .then((res) => {
+              if (res.status !== 200) {
+                  throw new RequestFailedError(res);
+              }
+              return res.data;
+          });
+  }
+
+  getTokenHoldersList(network, address, token_id) {
+    return this.api.get(`/contract/${network}/${address}/tokens/holders?token_id=${token_id}`)
+        .then(this.returnResponseData);
   }
 }

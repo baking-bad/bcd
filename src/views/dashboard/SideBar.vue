@@ -121,20 +121,6 @@
             </v-list>
           </v-expansion-panel-content>
         </v-expansion-panel>
-
-        <!-- <v-expansion-panel disabled class="ma-0 bb-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase">Accounts</span>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content color="data"></v-expansion-panel-content>
-        </v-expansion-panel>
-
-        <v-expansion-panel disabled class="ma-0 bb-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase">Deployments</span>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content color="data"></v-expansion-panel-content>
-        </v-expansion-panel>-->
       </v-expansion-panels>
     </v-skeleton-loader>
 
@@ -151,7 +137,7 @@
 
 <script>
 import { mapActions } from "vuex";
-import WatchSettings from "@/components/WatchSettings.vue";
+import WatchSettings from "@/components/Dialogs/WatchSettings.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
 
 export default {

@@ -14,7 +14,10 @@
             <v-list-item class="fill-height pa-0">
               <v-list-item-content>
                 <v-list-item-title class="hash">{{
-                  helpers.formatDatetime(value.timestamp)
+                  helpers.formatDatetime(value.timestamp, {
+                    val: 15,
+                    unit: "minute"
+                  })
                 }}</v-list-item-title>
                 <v-list-item-subtitle
                   class="font-weight-light hash text--secondary"
@@ -226,12 +229,11 @@ export default {
   }),
   methods: {
     getOrientedAmount(data, sign) {
-      if (this.address !== undefined && !isNaN(data.amount)) {
-        if (data.source === this.address && sign < 0) {
-          return data.amount;
-        } else if (data.destination === this.address && sign > 0) {
-          return data.amount;
-        }
+      if (this.address !== undefined && !isNaN(data.amount) && (
+          (data.source === this.address && sign < 0) ||
+          (data.destination === this.address && sign > 0)
+      )) {
+        return data.amount;
       }
       return 0;
     },

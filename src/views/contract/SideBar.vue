@@ -27,14 +27,14 @@
           >
         </v-list-item-subtitle>
       </v-list-item-content>
-      <v-list-item-action v-if="standard">
+      <v-list-item-action v-if="tags">
         <v-list-item-action-text>
           <v-chip
             small
             class="caption"
-            :to="`/search?text=${standard.tag}`"
+            :to="`/search?text=${tags.tag}`"
             target="_blank"
-            >{{ standard.text }}</v-chip
+            >{{ tags.text }}</v-chip
           >
         </v-list-item-action-text>
       </v-list-item-action>
@@ -99,7 +99,7 @@
             icon
             @click="
               () => {
-                $clipboard(contractLink);
+                $clipboard(link);
                 showClipboardOK();
               }
             "
@@ -163,13 +163,13 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-              <v-list-item v-if="contract.total_withdrawn">
+              <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle class="overline"
-                    >Total withdrawn</v-list-item-subtitle
+                    >Balance</v-list-item-subtitle
                   >
                   <v-list-item-title class="body-2">
-                    <span>{{ contract.total_withdrawn | uxtz }}</span>
+                    <span>{{ balance | uxtz }}</span>
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
@@ -198,60 +198,6 @@
                 :alias="contract.delegate_alias"
                 gutters
               />
-            </v-list>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-
-        <v-expansion-panel class="ma-0 bb-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span
-              class="caption font-weight-bold text-uppercase text--secondary"
-              >Balances</span
-            >
-          </v-expansion-panel-header>
-          <v-expansion-panel-content color="data">
-            <v-list class="contract-list">
-              <v-list-item v-if="contract.balance >= 0">
-                <v-list-item-content>
-                  <v-list-item-subtitle class="overline"
-                    >Tezos</v-list-item-subtitle
-                  >
-                  <v-list-item-title class="body-2">
-                    <span>{{ contract.balance | uxtz }}</span>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <template v-for="(token, i) in contract.tokens">
-                <v-divider :key="`divider-balance-${i}`"></v-divider>
-                <v-list-item :key="i">
-                  <v-list-item-content>
-                    <v-list-item-subtitle class="overline"
-                      ><span v-if="token.name">{{ token.name }}</span>
-                      <span v-else
-                        >{{ token.contract.substring(0, 10) }} ... ({{
-                          token.token_id
-                        }})</span
-                      ></v-list-item-subtitle
-                    >
-                    <v-list-item-title class="body-2">
-                      <span>{{
-                        helpers
-                          .round(token.balance, token.decimals ? token.decimals : 0)
-                          .toLocaleString(undefined, {
-                            maximumFractionDigits: token.decimals ? token.decimals : 0,
-                          })
-                      }}</span
-                      >&nbsp;
-                     <span
-                        class="caption text-uppercase font-weight-regular text--disabled"
-                        >{{
-                          token.symbol ? token.symbol : `tok_${token.token_id}`
-                        }}</span
-                      >
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </template>
             </v-list>
           </v-expansion-panel-content>
         </v-expansion-panel>
@@ -391,19 +337,21 @@
 import { mapActions } from "vuex";
 import SimilarItem from "@/views/contract/SimilarItem.vue";
 import LogItem from "@/views/contract/LogItem.vue";
-import AccountBox from "@/components/AccountBox.vue";
+import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
-import WatchSettings from "@/components/WatchSettings.vue";
-import VerifyDialog from "@/components/VerifyDialog.vue";
+import WatchSettings from "@/components/Dialogs/WatchSettings.vue";
+import VerifyDialog from "@/components/Dialogs/VerifyDialog.vue";
 
 export default {
   name: "SideBar",
   props: {
     loading: Boolean,
     contract: Object,
+    metadata: Object,
     address: String,
     network: String,
     migrations: Array,
+    balance: Number,
   },
   components: {
     SimilarItem,
@@ -431,7 +379,28 @@ export default {
     this.resolveDomain();
   },
   computed: {
-    standard() {
+    isAuthorized() {
+      return this.$store.state.isAuthorized;
+    },
+    profile() {
+      return this.$store.state.profile;
+    },
+    isContract() {
+      return this.address.startsWith("KT");
+    },
+    alias() {
+      if (this.contract) {
+        if (this.contract.subscription && this.contract.subscription.alias) {
+          return this.contract.subscription.alias;
+        } else if (this.contract.alias) {
+          return this.contract.alias;
+        } else if (this.metadata && this.metadata.name) {
+          return this.metadata.name;
+        }
+      }
+      return null;
+    },
+    tags() {
       const standards = {
         fa2: "FA2",
         fa12: "FA1.2",
@@ -439,7 +408,7 @@ export default {
         delegator: "Delegator",
         multisig: "Multisig",
       };
-      if (this.contract.tags) {
+      if (this.contract && this.contract.tags) {
         for (var tag in standards) {
           if (this.contract.tags.includes(tag)) {
             return { tag, text: standards[tag] };
@@ -448,24 +417,9 @@ export default {
       }
       return null;
     },
-    alias() {
-      if (this.contract.subscription && this.contract.subscription.alias) {
-        return this.contract.subscription.alias;
-      }
-      if (this.contract.alias) {
-        return this.contract.alias;
-      }
-      return undefined;
-    },
-    isAuthorized() {
-      return this.$store.state.isAuthorized;
-    },
-    profile() {
-      return this.$store.state.profile;
-    },
-    contractLink() {
+    link() {
       let routeData = {};
-      if (this.contract.slug) {
+      if (this.contract && this.contract.slug) {
         routeData = {href:`/@${this.contract.slug}`};
       } else {
         routeData = this.$router.resolve({
@@ -477,9 +431,6 @@ export default {
         });
       }
       return `${window.location.protocol}//${window.location.host}${routeData.href}`;
-    },
-    isContract() {
-      return this.address.startsWith("KT");
     },
   },
   methods: {
@@ -575,7 +526,7 @@ export default {
   min-height: 48px;
 }
 .contract-list {
-  max-height: calc(100vh - 75px - 6 * 48px);
+  max-height: calc(100vh - 75px - 5 * 48px);
   overflow-y: auto;
   border-radius: 0;
   padding: 0;

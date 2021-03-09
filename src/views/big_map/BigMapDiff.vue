@@ -5,7 +5,10 @@
         <v-col cols="8" class="d-flex align-center justify-start text-truncate">
           <v-list-item>
             <v-list-item-content>
-              <v-list-item-title class="hash">{{ diff.data.key_string ? diff.data.key_string : '@empty' }}</v-list-item-title>
+              <v-list-item-title class="hash">
+                <span v-if="diff.data.key_string">{{ diff.data.key_string }}</span>
+                <span v-else class="accent--text">@empty</span>
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-col>
@@ -89,7 +92,7 @@
 </template>
 
 <script>
-import RawJsonViewer from "@/components/RawJsonViewer.vue"
+import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue"
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
 
 export default {

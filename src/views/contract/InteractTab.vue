@@ -58,11 +58,9 @@
 
 <script>
 import { mapActions } from "vuex";
-
-import Schema from "@/components/Schema.vue";
-import TypeDef from "@/views/contract/TypeDef.vue";
-
 import { applyStyles } from '@/utils/styles.js';
+import Schema from "@/components/schema/Schema.vue";
+import TypeDef from "@/views/contract/TypeDef";
 
 export default {
   name: "InteractTab",
@@ -72,7 +70,7 @@ export default {
   },
   components: {
     Schema,
-    TypeDef,
+    TypeDef
   },
   data: () => ({
     loading: true,
@@ -82,9 +80,14 @@ export default {
   }),
   computed: {
     selectedItem() {
-      if (this.selected < 0 || this.entrypoints.length < this.selected)
+      if (this.selected < 0 || this.entrypoints.length < this.selected) {
         return null;
-      return this.entrypoints[this.selected];
+      }
+      if (typeof this.selected === "number") {
+        return this.entrypoints[this.selected];
+      }
+      const entrypointQuery = this.$route.query.entrypoint;
+      return this.entrypoints.find(item => item.name === entrypointQuery)
     },
   },
   created() {
@@ -120,7 +123,7 @@ export default {
     address: "getEntrypoints",
     selectedItem: function (newValue) {
       if (newValue === null) return;
-      if (this.$route.query.entrypoint != newValue.name) {
+      if (this.$route.query.entrypoint !== newValue.name) {
         this.$router.replace({ query: { entrypoint: newValue.name } });
       }
       this.model = Object.assign({}, newValue.default_model);

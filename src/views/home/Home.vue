@@ -9,7 +9,7 @@
               cols="12"
               class="d-flex align-center justify-center primary--text"
             >
-              <span style="font-family: Script1-Casual; font-size: 72px"
+              <span style="font-family: Script1-Casual, monospace; font-size: 72px"
                 >Better Call Dev</span
               >
             </v-col>
@@ -40,11 +40,19 @@
                 large
                 depressed
                 color="border"
-                class="text--secondary"
+                class="text--secondary pick-random-button"
                 :loading="pickingRandom"
                 @click="pickRandom"
-                >Pick Random</v-btn
-              >
+                >
+                Pick Random
+                <v-select
+                    class="network-select"
+                    :items="stats.map(item => item.network)"
+                    :menu-props="{ top: true, offsetY: true }"
+                    @change="pickRandom"
+                >
+                </v-select>
+              </v-btn>
             </v-col>
           </v-row>
         </v-col>
@@ -61,8 +69,9 @@
               <v-col>Unique contracts</v-col>
               <v-col>
                 <router-link
+                  v-if="stats.length > 0"
                   style="text-decoration: none"
-                  :to="`/stats/mainnet/fa12`"
+                  :to="`/stats/${stats[0].network}/fa2`"
                 >
                   <span class="secondary--text">FA tokens</span>
                 </router-link>
@@ -117,7 +126,8 @@
         text
         href="https://baking-bad.org/docs"
         target="_blank"
-        class="text--secondary mb-1 ml-1 pa-1"
+        class="text--secondary ml-1 pa-1"
+        style="margin-bottom: 2px;"
       >
         <span>Baking Bad</span>
       </v-btn>
@@ -162,11 +172,12 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
-    pickRandom() {
-      if (this.pickingRandom) return;
+    pickRandom(val) {
+      const isSelectPressed = val.target && val.target.closest('.network-select');
+      if (isSelectPressed || this.pickingRandom) return;
       this.pickingRandom = true;
       this.api
-        .getRandomContract()
+        .getRandomContract(val.target ? '' : val)
         .then((res) => {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
@@ -185,7 +196,7 @@ export default {
         return;
       }
 
-      if (!this.synced && this.config.networks.length == data.body.length) {
+      if (!this.synced && data.body.length > 1) {
         this.stats = data.body.sort(function (a, b) {
           if (a.network === "mainnet") {
             return -1;
@@ -233,6 +244,53 @@ export default {
   }
   .stats-row {
     height: 50%;
+  }
+}
+</style>
+<style lang="scss">
+button.pick-random-button {
+  padding-right: 0 !important;
+  & > .v-btn__content {
+    height: inherit;
+    border-top-right-radius: inherit;
+    border-bottom-right-radius: inherit;
+    .network-select {
+      margin-left: 1em;
+      width: 3em;
+      height: 100%;
+      margin-top: 0;
+      padding-top: 0;
+      border-top-right-radius: inherit;
+      border-bottom-right-radius: inherit;
+      border-left: 1px solid var(--v-data-lighten2);
+      color: inherit !important;
+      &.theme--light {
+        border-color: rgba(0,0,0,0.06) !important;
+      }
+      &:not(.theme--light):active {
+        background: darken(#414141, 1);
+      }
+      &.theme--light:active {
+        background: darken(#dddddd, 15);
+      }
+      & > .v-input__control {
+        height: inherit;
+        & > .v-input__slot {
+          height: inherit;
+          margin-bottom: 0;
+          &::before,
+          &::after {
+            border: none;
+          }
+          .v-input__append-inner {
+            width: 100%;
+            .v-icon {
+              color: inherit !important;
+            }
+          }
+        }
+      }
+    }
   }
 }
 </style>

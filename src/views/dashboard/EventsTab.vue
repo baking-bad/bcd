@@ -208,7 +208,7 @@
 <script>
 import dayjs from "dayjs";
 import { mapActions } from "vuex";
-import EmptyState from "@/components/EmptyState.vue";
+import EmptyState from "@/components/Cards/EmptyState.vue";
 
 export default {
   name: "Events",

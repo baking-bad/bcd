@@ -1,11 +1,17 @@
+import BigNumber from "bignumber.js";
+
 var bs58check = require("bs58check");
 var dayjs = require("dayjs");
 
 export function checkAddress(address) {
     if (address === undefined && address == null) return false;
     if (typeof address !== "string") return false;
-    if (address.length != 36 && !address.startsWith("KT")) return false;
-    if (bs58check.decode(address) === undefined) return false;
+    if (address.length !== 36 && !address.startsWith("KT")) return false;
+    try {
+        if (bs58check.decode(address) === undefined) return false;
+    } catch (e) {
+        return false;
+    }
     return true;
 }
 
@@ -44,11 +50,11 @@ export function shortcut(value, tail = 4) {
         `${value.slice(value.length - tail)}`
 }
 
-export function formatDatetime(timestamp) {
+export function formatDatetime(timestamp, minDate = {val: 1, unit: "day"}) {
     let d = dayjs(timestamp);
     if (timestamp) {
         if (d.year() < dayjs().year()) return d.format("D MMM'YY HH:mm");
-        if (d.add(1, "days").isBefore(dayjs())) return d.format("D MMM HH:mm");
+        if (d.add(minDate.val, minDate.unit).isBefore(dayjs())) return d.format("D MMM HH:mm");
         return d.fromNow();
     }
 }
@@ -73,6 +79,24 @@ export function urlExtractBase58(url) {
     }
 }
 
+export function numberToLocalizeString(number, maximumFractionDigits) {
+    if (maximumFractionDigits >= 0 && maximumFractionDigits <= 20) {
+        return number.toLocaleString(undefined, {
+            maximumFractionDigits
+        });
+    } else {
+        const stringed = String(number);
+        const intPart = stringed.substring(0, stringed.indexOf('.'));
+        if (maximumFractionDigits === 0) {
+            return intPart;
+        }
+        return new BigNumber(number).precision(intPart.length + maximumFractionDigits);
+    }
+}
+
 export function round(value, decimals) {
+    if (decimals > 20) {
+        return parseFloat(new BigNumber(value).toFixed(decimals));
+    }
     return parseFloat((value / 10 ** decimals).toFixed(decimals));
 }

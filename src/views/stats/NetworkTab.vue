@@ -64,7 +64,7 @@
         <v-skeleton-loader :loading="loading" type="image">
           <v-card flat outlined>
             <v-card-title class="data d-flex align-center justify-center" style="font-size: 18px;">
-              <span style="font-family: 'Roboto Condensed'">Activated protocols</span>
+              <span style="font-family: 'Roboto Condensed', monospace">Activated protocols</span>
             </v-card-title>
             <v-card-text class="pa-0 data">
               <v-timeline>
@@ -114,8 +114,8 @@
 
 <script>
 import { mapActions } from "vuex";
-import ColumnChart from "@/components/ColumnChart.vue";
-import DonutChart from "@/components/DonutChart.vue";
+import ColumnChart from "@/components/Charts/ColumnChart.vue";
+import DonutChart from "@/components/Charts/DonutChart.vue";
 
 export default {
   name: "NetworkTab",

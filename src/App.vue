@@ -3,6 +3,7 @@
     <v-content>
       <ErrorSnackbar v-if="!!$store.state.error" />
       <SuccessSnackbar v-if="!!$store.state.success" />
+      <WarningSnackbar v-if="!!$store.state.warning" />
       <router-view></router-view>
       <v-fab-transition v-if="$vuetify.breakpoint.smAndUp">
         <v-btn color="primary" fab fixed bottom right v-show="showToTop" @click="scrollToTop">
@@ -14,12 +15,14 @@
 </template>
 
 <script>
-import ErrorSnackbar from "@/components/ErrorSnackbar.vue";
-import SuccessSnackbar from "@/components/SuccessSnackbar.vue";
+import WarningSnackbar from "@/components/Snackbar/WarningSnackbar";
+import ErrorSnackbar from "@/components/Snackbar/ErrorSnackbar.vue";
+import SuccessSnackbar from "@/components/Snackbar/SuccessSnackbar.vue";
 
 export default {
   name: "App",
   components: {
+    WarningSnackbar,
     ErrorSnackbar,
     SuccessSnackbar
   },
@@ -44,6 +47,11 @@ export default {
 <style>
 html {
   overflow-y: auto !important;
+  width: 100vw;
+}
+
+div.theme--dark.v-application {
+  background: var(--v-canvas-base);
 }
 
 :focus {
@@ -91,6 +99,10 @@ html {
   background-color: var(--v-data-base) !important;
 }
 
+.white-space-normal {
+  white-space: normal !important;
+}
+
 ::-webkit-scrollbar {
   width: 12px;
 }
@@ -112,8 +124,8 @@ html {
 
 /* Change the white to any color ;) */
 input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
 input:-webkit-autofill:active  {
   -webkit-box-shadow: 0 0 0 30px var(--v-data-base) inset !important;
   -webkit-text-fill-color: var(--v-text-base) !important;
@@ -133,5 +145,22 @@ input:-webkit-autofill:active  {
 
 .item-header-mempool {
   border-left: 3px solid var(--v-border-base);
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.lower-overline {
+  font-size: .625rem;
+  font-weight: 400;
+  letter-spacing: .1666666667em!important;
+  line-height: 1rem;
+  text-transform: lowercase !important;
+  font-family: Roboto,sans-serif!important
+}
+
+.text-align-end {
+  text-align: end;
 }
 </style>

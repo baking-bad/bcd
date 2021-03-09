@@ -14,18 +14,15 @@
       <template v-slot:label="{ item }">
         <div :class="`${item.kind} pl-1`">
           <span
-              v-if="item.name.length ===`''`.length"
+              v-if="item.name.length === 0"
               class="key"
-          >
-            @empty:
-          </span>
+          ><span class="text--secondary">@empty</span>:</span>
           <span
             v-else
             class="key"
             :class="item.name.startsWith('@') ? 'text--secondary' : ''"
             >{{ item.name }}:</span
           >
-
           <v-btn
             v-if="hasAddress(item.name)"
             @click.prevent.stop="handleAddress(item.name)"
@@ -36,7 +33,6 @@
           >
             <v-icon class="accent--text" small>mdi-open-in-new</v-icon>
           </v-btn>
-          <span class="ml-2 key" v-else-if="item.value === ''">@empty</span>
           <span class="ml-2" v-else></span>
 
           <template v-if="item.value_type === 'big_map'">
@@ -74,7 +70,7 @@
 
 <script>
 import { getTree } from "@/utils/diff.js";
-import TreeNodeDetails from "@/components/TreeNodeDetails.vue";
+import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails.vue";
 
 export default {
   name: "MiguelTreeView",
@@ -101,7 +97,10 @@ export default {
     },
     active() {
       if (this.activeNodes.length > 0) {
-        return this.activeNodes[0];
+        const node = this.activeNodes[0];
+        if (node.val || node.from) {
+          return node;
+        }
       }
       return null;
     },

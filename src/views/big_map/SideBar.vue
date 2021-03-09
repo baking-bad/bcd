@@ -147,7 +147,7 @@
 </template>
 
 <script>
-import AccountBox from "@/components/AccountBox.vue";
+import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
 import { mapActions } from "vuex";
 

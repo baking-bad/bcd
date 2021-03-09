@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Clipboard from 'v-clipboard'
 import App from './App.vue'
 
+import './styles';
+
 import store from '@/store'
 import router from '@/router'
 import VueAnalytics from 'vue-analytics'
@@ -15,7 +17,6 @@ import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js"
 import { NodeRPC } from "@/api/rpc.js"
 import { BcdWs } from "@/api/ws.js";
 
-import '@mdi/font/css/materialdesignicons.css';
 import { makeVuetify } from '@/plugins/vuetify';
 
 import dayjs from 'dayjs';
@@ -23,8 +24,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
 
 
-import VJsf from '@koumoul/vjsf/lib/VJsf.js'
-import '@koumoul/vjsf/lib/VJsf.css'
+import VJsf from '@baking-bad/vjsf/lib/VJsf.js';
+import '@baking-bad/vjsf/lib/VJsf.css';
 
 import draggable from 'vuedraggable';
 Vue.component('draggable', draggable);
@@ -76,9 +77,10 @@ Vue.filter('bytes', function (value) {
   return `${value} bytes`;
 })
 
+const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 let config = {
-  API_URI: process.env.VUE_APP_API_URI || `https://${window.location.host}/v1`,
-  WS_URI: process.env.VUE_APP_WS_URI || `wss://${window.location.host}/v1/ws`,
+  API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
+  WS_URI: process.env.VUE_APP_WS_URI || `${wsProtocol}//${window.location.host}/v1/ws`,
   HOME_PAGE: 'home'
 }
 
@@ -87,7 +89,7 @@ let api = new BetterCallApi(config.API_URI);
 api.getConfig().then(response => {
   Object.assign(config, response);
 
-  if (config.SANDBOX_MODE) {
+  if (config.sandbox_mode) {
     config.HOME_PAGE = 'dashboard';
   }
 
@@ -138,7 +140,7 @@ api.getConfig().then(response => {
   router.beforeEach((to, from, next) => {
     const privatePages = ['/dashboard', '/dashboard/'];
     const authRequired = privatePages.includes(to.path);
-    const loggedIn = config.SANDBOX_MODE || getJwt() !== null;
+    const loggedIn = config.sandbox_mode || getJwt() !== null;
 
     store.dispatch('setIsAuthorized', loggedIn)
     if (authRequired && !loggedIn) {
@@ -170,7 +172,7 @@ api.getConfig().then(response => {
     next();
   })
 
-  if (config.GA_ENABLED) {
+  if (config.GA_ENABLED || config.ga_enabled) {
     Vue.use(VueAnalytics, {
       id: "UA-160856677-1",
       router,
