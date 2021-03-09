@@ -251,12 +251,6 @@ body {
           }
         }
       }
-      div[data-role="search:results"] {
-        li {
-          background: var(--v-data-darken1);
-        }
-        background: var(--v-data-darken1);
-      }
     }
   }
 }
