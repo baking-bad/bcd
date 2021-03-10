@@ -59,11 +59,27 @@ dayjs.updateLocale('en', {
     d: function(dd, timestamp) {
       if (timestamp) {
         const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
+        if (dd === 24) {
+          return `1 day ${minutesDiff} mins ago`;
+        } else if (dd > 24) {
+          return `1 day ${dd - 24} hrs ${minutesDiff} mins ago`;
+        }
         return `${dd} hrs ${minutesDiff} mins ago`;
       }
       return `${dd} hours`;
     },
-    dd: "%d days",
+    dd: function(d, timestamp) {
+      if (timestamp) {
+        const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
+        if (d === 24) {
+          return `1 day ${minutesDiff} mins ago`;
+        } else if (d > 24) {
+          return `1 day ${d - 24} hrs ${minutesDiff} mins ago`;
+        }
+        return `${d} hrs ${minutesDiff} mins ago`;
+      }
+      return `${d} hours`;
+    },
     M: "a month",
     MM: "%d months",
     y: "a year",
