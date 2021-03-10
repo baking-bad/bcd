@@ -20,7 +20,7 @@ import { BcdWs } from "@/api/ws.js";
 import { makeVuetify } from '@/plugins/vuetify';
 
 import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import updateLocale from 'dayjs/plugin/updateLocale';
 import utc from 'dayjs/plugin/utc';
 
 
@@ -33,8 +33,43 @@ Vue.component('VJsf', VJsf)
 
 Vue.config.productionTip = false;
 
-dayjs.extend(relativeTime);
+dayjs.extend(updateLocale);
 dayjs.extend(utc);
+
+dayjs.updateLocale('en', {
+  relativeTime: {
+    future: "Time Error!",
+    past: "%s ago",
+    s: 'a few seconds ago',
+    m: "a minute ago",
+    mm: "%d mins ago",
+    h: function(dd, timestamp) {
+      if (timestamp) {
+        return `1 hour ${dd % 60} mins ago`;
+      }
+      return `an hour`;
+    },
+    hh: function(dd, timestamp) {
+      if (timestamp) {
+        const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
+        return `${dd} hrs ${minutesDiff} mins ago`;
+      }
+      return `${dd} hours`;
+    },
+    d: function(dd, timestamp) {
+      if (timestamp) {
+        const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
+        return `${dd} hrs ${minutesDiff} mins ago`;
+      }
+      return `${dd} hours`;
+    },
+    dd: "%d days",
+    M: "a month",
+    MM: "%d months",
+    y: "a year",
+    yy: "%d years"
+  }
+});
 
 Vue.use(Clipboard)
 

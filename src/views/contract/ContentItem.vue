@@ -13,12 +13,18 @@
           <v-col cols="2">
             <v-list-item class="fill-height pa-0">
               <v-list-item-content>
-                <v-list-item-title class="hash">{{
-                  helpers.formatDatetime(value.timestamp, {
-                    val: 15,
-                    unit: "minute"
-                  })
-                }}</v-list-item-title>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-list-item-title
+                        class="hash"
+                        v-bind="attrs"
+                        v-on="on"
+                    >
+                      {{showTimestamp(value.timestamp)}}
+                    </v-list-item-title>
+                  </template>
+                  <span>{{new Date(value.timestamp).toLocaleString()}}</span>
+                </v-tooltip>
                 <v-list-item-subtitle
                   class="font-weight-light hash text--secondary"
                 >
@@ -132,8 +138,8 @@
 <script>
 import InternalOperation from "@/components/InternalOperation.vue";
 import { getContentItemHeaderClass } from '@/utils/styles';
-import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from "dayjs";
 
 dayjs.extend(relativeTime);
 
@@ -228,6 +234,9 @@ export default {
     value: null,
   }),
   methods: {
+    showTimestamp(timestamp) {
+      return dayjs(timestamp).fromNow(timestamp);
+    },
     getOrientedAmount(data, sign) {
       if (this.address !== undefined && !isNaN(data.amount) && (
           (data.source === this.address && sign < 0) ||
