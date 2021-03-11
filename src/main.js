@@ -70,15 +70,17 @@ dayjs.updateLocale('en', {
     },
     dd: function(d, timestamp) {
       if (timestamp) {
-        const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
-        if (d === 24) {
-          return `1 day ${minutesDiff} mins ago`;
-        } else if (d > 24) {
-          return `1 day ${d - 24} hrs ${minutesDiff} mins ago`;
+        const hoursDiff = dayjs().diff(dayjs(timestamp), "hour") % (24 * (d - 1));
+        if (d === 2 && hoursDiff < 1) {
+          const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
+          return `${plural(d, 'day')} ${plural(minutesDiff, 'min')} ago`;
         }
-        return `${d} hrs ${minutesDiff} mins ago`;
+
+        const daysDiff = dayjs().diff(dayjs(timestamp), "day");
+        const dToShow = daysDiff === d ? d : d - 1;
+        return `${plural(dToShow, 'day')} ${plural(hoursDiff, 'hr')} ago`;
       }
-      return `${d} hours`;
+      return `${plural(d, 'hour')}`;
     },
     M: "a month",
     MM: "%d months",
