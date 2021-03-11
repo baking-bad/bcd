@@ -36,11 +36,11 @@ export default {
   },
   methods: {
     getInterfaceLink(interfaceName) {
-      const constant = `https://gitlab.com/tzip/tzip/-/blob/master/proposals`;
-      return `${constant}/${interfaceName.toLowerCase()}`
+      const constant = `https://gitlab.com/tzip/tzip/-/tree/master/proposals`;
+      return `${constant}/${interfaceName.toLowerCase().split('-0').join('-')}`
     },
     isInterfaceWithLink(interfaceName) {
-      const regex = /TZIP-[1-9]+[0]*$/;
+      const regex = /TZIP-([0-9]+).*/;
       return regex.test(interfaceName)
     },
   }
