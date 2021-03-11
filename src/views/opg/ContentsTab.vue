@@ -15,20 +15,25 @@
           </template>
         </v-card>
       </template>
-      <ErrorState v-else />
+      <EmptyState
+        v-else
+        icon="mdi-code-brackets"
+        title="Nothing found"
+        text="Empty set is also a result, otherwise try a broader query"
+      />
     </v-container>
   </div>
 </template>
 
 <script>
 import InternalOperation from "@/components/InternalOperation.vue";
-import ErrorState from "@/components/ErrorState.vue";
+import EmptyState from "@/components/Cards/EmptyState.vue";
 
 export default {
   name: "OpgContents",
   components: {
     InternalOperation,
-    ErrorState
+    EmptyState
   },
   props: {
     operations: Array,

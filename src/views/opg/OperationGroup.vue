@@ -67,8 +67,10 @@ export default {
           this.operations = res;
         })
         .catch(err => {
-          console.log(err);
-          this.showError(err);
+          if (err.code != 204){
+            console.log();
+            this.showError(err);
+          }
         })
         .finally(() => (this.loading = false));
     }
