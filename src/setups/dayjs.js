@@ -35,14 +35,16 @@ dayjs.updateLocale('en', {
         },
         h: function(dd, timestamp) {
             if (timestamp) {
-                return `1 hour ${plural(dd % 60, 'min')} ago`;
+                const hoursDiff = dayjs().diff(dayjs(timestamp), "hour");
+                return `${hoursDiff ? '1 hour ' : ''}${plural(dd % 60, 'min')} ago`;
             }
             return `an hour`;
         },
         hh: function(dd, timestamp) {
             if (timestamp) {
                 const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
-                return `${plural(dd, 'hr')} ${plural(minutesDiff, 'min')} ago`;
+                const hoursDiff = dayjs().diff(dayjs(timestamp), "hour");
+                return `${plural(hoursDiff, 'hr')} ${plural(minutesDiff, 'min')} ago`;
             }
             return `${plural(dd, 'hour')}`;
         },
