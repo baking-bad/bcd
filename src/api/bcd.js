@@ -281,9 +281,9 @@ export class BetterCallApi {
       })
   }
 
-  getContractEntrypointData(network, address, bin_path, data, format = '') {
+  getContractEntrypointData(network, address, name, data, format = '') {
     return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/data`, {
-      bin_path: bin_path,
+      name: name,
       data: data,
       format: format
     })
@@ -296,9 +296,9 @@ export class BetterCallApi {
       })
   }
 
-  getContractEntrypointTrace(network, address, bin_path, data, source = null, amount = null) {
+  getContractEntrypointTrace(network, address, name, data, source = null, amount = null) {
     var body = {
-      bin_path: bin_path,
+      name: name,
       data: data
     }
     if (source) {
