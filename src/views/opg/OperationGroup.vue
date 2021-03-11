@@ -67,8 +67,8 @@ export default {
           this.operations = res;
         })
         .catch(err => {
-          if (err.code != 204){
-            console.log();
+          if (err.code !== 204){
+            console.log(err);
             this.showError(err);
           }
         })
