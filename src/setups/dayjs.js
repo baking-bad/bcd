@@ -31,7 +31,7 @@ dayjs.updateLocale('en', {
             if (timestamp) {
                 return `${plural(dd, 'min')} ago`;
             }
-            return `${plural(dd, 'min')}`;
+            return `${plural(dd, 'minute')}`;
         },
         h: function(dd, timestamp) {
             if (timestamp) {
