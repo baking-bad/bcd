@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Clipboard from 'v-clipboard'
-import App from './App.vue'
+import App from './App.vue';
 
-import './styles';
+import './setups/styles';
 
 import store from '@/store'
 import router from '@/router'
@@ -10,6 +10,8 @@ import VueAnalytics from 'vue-analytics'
 
 import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
+import './setups/dayjs';
+import './setups/filters';
 
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { getJwt, logout, getBool } from "@/utils/auth.js";
@@ -19,118 +21,11 @@ import { BcdWs } from "@/api/ws.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
 
-import dayjs from 'dayjs';
-import updateLocale from 'dayjs/plugin/updateLocale';
-import utc from 'dayjs/plugin/utc';
-
-
-import VJsf from '@baking-bad/vjsf/lib/VJsf.js';
-import '@baking-bad/vjsf/lib/VJsf.css';
-
-import draggable from 'vuedraggable';
-Vue.component('draggable', draggable);
-Vue.component('VJsf', VJsf)
+import './setups/components';
 
 Vue.config.productionTip = false;
 
-dayjs.extend(updateLocale);
-dayjs.extend(utc);
-
-dayjs.updateLocale('en', {
-  relativeTime: {
-    future: "Time Error!",
-    past: "%s ago",
-    s: 'a few seconds ago',
-    m: "a minute ago",
-    mm: function(dd) {
-      return `${plural(dd, 'min')}`;
-    },
-    h: function(dd, timestamp) {
-      if (timestamp) {
-        return `1 hour ${plural(dd % 60, 'min')} ago`;
-      }
-      return `an hour`;
-    },
-    hh: function(dd, timestamp) {
-      if (timestamp) {
-        const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
-        return `${plural(dd, 'hr')} ${plural(minutesDiff, 'min')} ago`;
-      }
-      return `${plural(dd, 'hour')}`;
-    },
-    d: function(dd, timestamp) {
-      if (timestamp) {
-        const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
-        if (dd === 24) {
-          return `1 day ${plural(minutesDiff, 'min')} ago`;
-        } else if (dd > 24) {
-          return `1 day ${plural(dd - 24, 'hr')} ago`;
-        }
-        return `${plural(dd, 'hour')} ${plural(minutesDiff, 'min')} ago`;
-      }
-      return `${plural(dd, 'hour')}`;
-    },
-    dd: function(d, timestamp) {
-      if (timestamp) {
-        const hoursDiff = dayjs().diff(dayjs(timestamp), "hour") % (24 * (d - 1));
-        if (d === 2 && hoursDiff < 1) {
-          const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
-          return `${plural(d, 'day')} ${plural(minutesDiff, 'min')} ago`;
-        }
-
-        const daysDiff = dayjs().diff(dayjs(timestamp), "day");
-        const dToShow = daysDiff === d ? d : d - 1;
-        return `${plural(dToShow, 'day')} ${plural(hoursDiff, 'hr')} ago`;
-      }
-      return `${plural(d, 'hour')}`;
-    },
-    M: "a month",
-    MM: "%d months",
-    y: "a year",
-    yy: "%d years"
-  }
-});
-
-Vue.use(Clipboard)
-
-Vue.filter('formatDate', function (value) {
-  if (value) {
-    return dayjs(value).format('D MMMM YYYY');
-  }
-})
-
-Vue.filter('formatTime', function (value) {
-  if (value) {
-    return dayjs(value).format('D MMMM YYYY HH:mm');
-  }
-})
-
-
-Vue.filter('formatShortTime', function (value) {
-  if (value) {
-    return dayjs(value).format('D MMM YYYY HH:mm');
-  }
-})
-
-Vue.filter('fromNow', function (value) {
-  if (value) {
-    return dayjs(value).fromNow();
-  }
-})
-
-Vue.filter('uxtz', function (value) {
-  let xtz = (value / 1000000).toLocaleString(undefined, { maximumFractionDigits: 6 });
-  return `${xtz} \uA729`;
-})
-
-Vue.filter('mutez', function (value) {
-  let xtz = (value / 1000000).toLocaleString(undefined, { maximumFractionDigits: 6 });
-  return `${xtz}`;
-})
-
-Vue.filter('bytes', function (value) {
-  return `${value} bytes`;
-})
+Vue.use(Clipboard);
 
 const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 let config = {
