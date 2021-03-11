@@ -66,7 +66,7 @@ dayjs.updateLocale('en', {
         } else if (dd > 24) {
           return `1 day ${plural(dd - 24, 'hr')} ago`;
         }
-        return `${plural(dd, 'day')} ${plural(minutesDiff, 'min')} ago`;
+        return `${plural(dd, 'hour')} ${plural(minutesDiff, 'min')} ago`;
       }
       return `${plural(dd, 'hour')}`;
     },

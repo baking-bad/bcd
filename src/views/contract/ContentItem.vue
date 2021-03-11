@@ -10,7 +10,7 @@
     >
       <template v-slot:default="{ open }">
         <v-row no-gutters class="py-1">
-          <v-col :cols="(!open && totalLockedWithdrawn !== 0) ? 2 : 3">
+          <v-col :cols="isClosedWithNoTotalLockedWithdrawn && isClosedWithInvoker ? 2 : 3">
             <v-list-item class="fill-height pa-0">
               <v-list-item-content>
                 <v-tooltip bottom>
@@ -34,7 +34,7 @@
               </v-list-item-content>
             </v-list-item>
           </v-col>
-          <v-col :cols="(!open && totalLockedWithdrawn !== 0) ? 2 : 3">
+          <v-col :cols="isClosedWithNoTotalLockedWithdrawn && isClosedWithInvoker ? 2 : 3">
             <v-list-item class="fill-height pa-0">
               <v-list-item-content>
                 <v-list-item-title class="hash">
@@ -63,7 +63,7 @@
               </v-list-item-content>
             </v-list-item>
           </v-col>
-          <v-col v-if="!open && totalLockedWithdrawn !== 0" cols="2">
+          <v-col v-if="isClosedWithNoTotalLockedWithdrawn" cols="2">
             <v-list-item
               class="fill-height pl-1"
             >
@@ -106,8 +106,8 @@
               </v-list-item-content>
             </v-list-item>
           </v-col>
-          <v-col cols="2">
-            <v-list-item class="fill-height pa-0" v-if="!open && invoker">
+          <v-col v-if="isClosedWithInvoker" cols="2">
+            <v-list-item class="fill-height pa-0">
               <v-list-item-content>
                 <v-list-item-title>
                   <span class="font-weight-light">by</span>
@@ -155,6 +155,12 @@ export default {
     this.value = Object.assign({}, this.data);
   },
   computed: {
+    isClosedWithNoTotalLockedWithdrawn() {
+      return !this.open && this.totalLockedWithdrawn !== 0;
+    },
+    isClosedWithInvoker() {
+      return !this.open && this.invoker;
+    },
     entryName() {
       if (
         this.value.entrypoint &&
