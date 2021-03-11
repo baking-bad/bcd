@@ -42,31 +42,33 @@ dayjs.updateLocale('en', {
     past: "%s ago",
     s: 'a few seconds ago',
     m: "a minute ago",
-    mm: "%d mins ago",
+    mm: function(dd) {
+      return `${plural(dd, 'min')}`;
+    },
     h: function(dd, timestamp) {
       if (timestamp) {
-        return `1 hour ${dd % 60} mins ago`;
+        return `1 hour ${plural(dd % 60, 'min')} ago`;
       }
       return `an hour`;
     },
     hh: function(dd, timestamp) {
       if (timestamp) {
         const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
-        return `${dd} hrs ${minutesDiff} mins ago`;
+        return `${plural(dd, 'hr')} ${plural(minutesDiff, 'min')} ago`;
       }
-      return `${dd} hours`;
+      return `${plural(dd, 'hour')}`;
     },
     d: function(dd, timestamp) {
       if (timestamp) {
         const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
         if (dd === 24) {
-          return `1 day ${minutesDiff} mins ago`;
+          return `1 day ${plural(minutesDiff, 'min')} ago`;
         } else if (dd > 24) {
-          return `1 day ${dd - 24} hrs ${minutesDiff} mins ago`;
+          return `1 day ${plural(dd - 24, 'hr')} ago`;
         }
-        return `${dd} hrs ${minutesDiff} mins ago`;
+        return `${plural(dd, 'day')} ${plural(minutesDiff, 'min')} ago`;
       }
-      return `${dd} hours`;
+      return `${plural(dd, 'hour')}`;
     },
     dd: function(d, timestamp) {
       if (timestamp) {
