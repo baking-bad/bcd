@@ -9,14 +9,13 @@ dayjs.extend(utc);
 function showDaysAgo(d, timestamp) {
     if (timestamp) {
         const hoursDiff = dayjs().diff(dayjs(timestamp), "hour") % (24 * (d - 1));
-        if (d === 2 && hoursDiff < 1) {
+        if (hoursDiff % 24 < 1) {
             const minutesDiff = dayjs().diff(dayjs(timestamp), "minute") % 60;
             return `${plural(d, 'day')} ${plural(minutesDiff, 'min')} ago`;
         }
 
         const daysDiff = dayjs().diff(dayjs(timestamp), "day");
-        const dToShow = daysDiff === d ? d : d - 1;
-        return `${plural(dToShow + Math.floor(hoursDiff/24), 'day')} ${plural(hoursDiff % 24, 'hr')} ago`;
+        return `${plural(daysDiff, 'day')} ${plural(hoursDiff % 24, 'hr')} ago`;
     }
     return `${plural(d, 'hour')}`;
 }
@@ -56,7 +55,8 @@ dayjs.updateLocale('en', {
                 } else if (dd > 24) {
                     return `1 day ${plural(dd - 24, 'hr')} ago`;
                 }
-                return `${plural(dd, 'hour')} ${plural(minutesDiff, 'min')} ago`;
+                const hoursDiff = dayjs().diff(dayjs(timestamp), "hour");
+                return `${plural(hoursDiff, 'hour')} ${plural(minutesDiff, 'min')} ago`;
             }
             return `${plural(dd, 'hour')}`;
         },
