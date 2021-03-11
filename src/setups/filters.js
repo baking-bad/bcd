@@ -22,7 +22,7 @@ Vue.filter('formatShortTime', function (value) {
 
 Vue.filter('fromNow', function (value) {
     if (value) {
-        return dayjs(value).fromNow();
+        return dayjs(value).fromNow(value);
     }
 })
 
