@@ -25,8 +25,8 @@ dayjs.updateLocale('en', {
     relativeTime: {
         future: "Time Error!",
         past: "%s ago",
-        s: 'a few seconds ago',
-        m: "a minute ago",
+        s: 'few seconds',
+        m: "minute",
         mm: function(dd, timestamp) {
             if (timestamp) {
                 return `${plural(dd, 'min')} ago`;
