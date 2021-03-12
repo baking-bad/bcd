@@ -5,13 +5,23 @@
         <template v-slot:item="{item}">
           <tr>
             <td>
-              <v-btn 
+              <v-btn
                 class="text--secondary hash"
                 :to="`/${item.network}/${item.address}`"
                 style="text-transform: none;"
                 target="_blank"
                 text>
-                <span v-if="item.alias">{{ item.alias }}</span>
+                <span v-if="item.alias">
+                  {{
+                    item.alias.length > aliasMaxLength
+                    ? item.alias.slice(0, 12).trim()
+                    : item.alias
+                  }}<i
+                      v-if="item.alias.length > aliasMaxLength"
+                      class="v-icon notranslate mdi mdi-dots-horizontal"
+                      style="font-size: 16px;"
+                    />
+                </span>
                 <span v-else v-html="helpers.shortcut(item.address)"></span>
               </v-btn>
             </td>
@@ -89,6 +99,7 @@ export default {
     tokens: [],
     page: 0,
     total: 0,
+    aliasMaxLength: 12,
     headers: [
       {
         text: "Contract",
