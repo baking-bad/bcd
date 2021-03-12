@@ -37,10 +37,14 @@ export default {
   methods: {
     getInterfaceLink(interfaceName) {
       const constant = `https://gitlab.com/tzip/tzip/-/tree/master/proposals`;
-      return `${constant}/${interfaceName.toLowerCase().split('-0').join('-')}`
+      return `${constant}/${this.getTZIPlinkableName(interfaceName.trim())}`
+    },
+    getTZIPlinkableName(name) {
+      const regex = /^(TZIP-([0-9]+))/;
+      return regex.exec(name)[0].toLowerCase().split('-0').join('-');
     },
     isInterfaceWithLink(interfaceName) {
-      const regex = /TZIP-([0-9]+).*/;
+      const regex = /^(TZIP-([0-9]+).*)/;
       return regex.test(interfaceName)
     },
   }
