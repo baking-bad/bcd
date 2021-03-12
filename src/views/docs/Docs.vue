@@ -1,5 +1,5 @@
 <template>
-<div id="docs-wrapper">
+<div id="docs-wrapper" :class="this.$vuetify.theme.isDark ? 'docs-wrapper_dark' : ''">
   <div class="fill-height">
     <v-navigation-drawer floating app permanent width="56" color="canvas" class="main-navigation">
       <SideNavigation />
@@ -44,15 +44,19 @@ export default {
     }
   },
   methods: {
-    init: function() {
+    init: async function() {
       return initRedoc(
-        `${this.config.API_URI}/swagger.json`,
+        `${this.baseURL}/swagger.json`,
         this.redocOptions,
         this.$refs["redoc-container"]
       );
     }
   },
   computed: {
+    baseURL() {
+      const apiURL = new URL(this.config.API_URI);
+      return `${apiURL.protocol}//api.${apiURL.hostname}${apiURL.pathname}`;
+    },
     theme() {
       return this.$vuetify.theme.themes[this.$vuetify.theme.isDark ? 'dark' : 'light'];
     },
@@ -217,6 +221,19 @@ body {
       li[role="tab"].react-tabs__tab--selected {
         background-color: #555;
         border-color: #555;
+      }
+    }
+    &.docs-wrapper_dark {
+      table td[colspan="2"] > div {
+        color: var(--v-text-base);
+        background: var(--v-data-base) !important;
+      }
+      .api-content > div > div > div:last-child:not(:first-child) > div:first-child > div:last-child {
+        background: var(--v-data-base);
+        & > div:first-child > div:last-child > div {
+          border: none;
+          background: var(--v-data-base);
+        }
       }
     }
   }

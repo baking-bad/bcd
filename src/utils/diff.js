@@ -91,7 +91,7 @@ function compactizePairs(x) {
 
 function parseItem(x, compactPair) {
     let item = {
-        name: compactPair ? compactizePairs(x) : (x.name || x.type),
+        name: compactPair ? compactizePairs(x) : x.name,
         children: [],
         value: getValue(x),
         type: "value",
@@ -117,7 +117,7 @@ function parseItem(x, compactPair) {
 function parseMap(x, compactPair) {
     const label = x.prim === 'big_map' ? 'diffs' : 'items'
     let item = {
-        name: x.name || x.type,
+        name: x.name,
         children: [],
         value: (x.value !== undefined && x.value !== null) ? x.value : `0 ${label}`,
         type: "object",
@@ -159,7 +159,7 @@ function parseTuple(x, isRoot = false) {
         }
         return [{
             id: getId(),
-            name: x.name || x.type,  // TODO: @type_0 ?
+            name: x.name,
             type: 'object',
             children: [],
             value: '0 items',
@@ -178,7 +178,7 @@ function parseTuple(x, isRoot = false) {
 
     return [{
         id: getId(),
-        name: x.name || x.type,  // TODO: @type_0 ?
+        name: x.name,
         type: 'object',
         children: children,
         value: children.length ? `${children.length} items` : '0 items',

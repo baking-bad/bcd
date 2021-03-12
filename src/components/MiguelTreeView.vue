@@ -16,16 +16,13 @@
           <span
               v-if="item.name.length === 0"
               class="key"
-          >
-            <span class="text--secondary">@empty</span>:
-          </span>
+          ><span class="text--secondary">@empty</span>:</span>
           <span
             v-else
             class="key"
             :class="item.name.startsWith('@') ? 'text--secondary' : ''"
             >{{ item.name }}:</span
           >
-
           <v-btn
             v-if="hasAddress(item.name)"
             @click.prevent.stop="handleAddress(item.name)"
@@ -59,7 +56,7 @@
             </template>
           </template>
 
-          <span v-else :class="item.type">{{ item.value }}<span class="text--secondary" v-if="item.value === ''">@empty</span></span>
+          <span v-else :class="item.type">{{ item.value }}</span>
         </div>
       </template>
     </v-treeview>

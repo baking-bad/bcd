@@ -13,7 +13,6 @@
             :name="selectedItem.name"
             :network="network"
             :address="address"
-            :binPath="selectedItem.bin_path"
           />
           <div v-else></div>
         </v-skeleton-loader>

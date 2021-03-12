@@ -110,7 +110,6 @@ export default {
     name: String,
     address: String,
     network: String,
-    binPath: String,
     header: String,
     title: String,
     type: String,
@@ -396,7 +395,7 @@ export default {
         .getContractEntrypointData(
           this.network,
           this.address,
-          this.binPath,
+          this.name,
           this.model,
           rawJSON ? "" : "michelson"
         )
@@ -432,7 +431,7 @@ export default {
         .getContractEntrypointTrace(
           this.network,
           this.address,
-          this.binPath,
+          this.name,
           this.model,
           this.settings.source,
           this.settings.amount
@@ -644,8 +643,7 @@ export default {
           .getContractStorageSchema(this.network, this.address, newValue)
           .then((res) => {
             if (!res) return;
-            this.model = res.default_model;
-            this.$forceUpdate();
+            this.$set(this, 'model', res.default_model);
           })
           .catch((err) => {
             this.showError(err);
@@ -663,8 +661,7 @@ export default {
           )
           .then((res) => {
             if (!res) return;
-            this.model = res.default_model;
-            this.$forceUpdate();
+            this.$set(this, 'model', res.default_model);
           })
           .catch((err) => {
             this.showError(err);

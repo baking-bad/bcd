@@ -19,6 +19,8 @@
             :network="network"
             :migrations="migrations"
             :contract="contract"
+            :metadata="metadata"
+            :balance="balance"
             ref="sidebar"
             v-on:fork="onFork"
           />
@@ -112,6 +114,7 @@ export default {
     migrationsLoading: true,
     contract: {},
     balances: [],
+    balance: 0,
     migrations: [],
     metadata: null,
     tokens: null,
@@ -200,6 +203,7 @@ export default {
             this.contract = res;
           }
           this.balances = res.tokens || [];
+          this.balance = res.balance || 0;
         })
         .catch((err) => {
           this.showError(err);

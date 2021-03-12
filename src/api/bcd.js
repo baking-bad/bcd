@@ -281,9 +281,9 @@ export class BetterCallApi {
       })
   }
 
-  getContractEntrypointData(network, address, bin_path, data, format = '') {
+  getContractEntrypointData(network, address, name, data, format = '') {
     return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/data`, {
-      bin_path: bin_path,
+      name: name,
       data: data,
       format: format
     })
@@ -296,9 +296,9 @@ export class BetterCallApi {
       })
   }
 
-  getContractEntrypointTrace(network, address, bin_path, data, source = null, amount = null) {
+  getContractEntrypointTrace(network, address, name, data, source = null, amount = null) {
     var body = {
-      bin_path: bin_path,
+      name: name,
       data: data
     }
     if (source) {
@@ -457,11 +457,12 @@ export class BetterCallApi {
       })
   }
 
-  getRandomContract() {
+  getRandomContract(network) {
     cancelRequests();
-    return getCancellable(this.api, `/pick_random`, {})
+    const request_url = network ? `/pick_random?network=${network}` : `/pick_random`;
+    return getCancellable(this.api, request_url, {})
       .then((res) => {
-        if (res.status != 200) {
+        if (res.status !== 200) {
           throw new RequestFailedError(res);
         }
         return res.data
@@ -1011,7 +1012,7 @@ export class BetterCallApi {
               return res.data;
           });
   }
-  
+
   getTokenHoldersList(network, address, token_id) {
     return this.api.get(`/contract/${network}/${address}/tokens/holders?token_id=${token_id}`)
         .then(this.returnResponseData);

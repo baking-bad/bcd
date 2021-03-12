@@ -62,7 +62,7 @@ export default {
           })
     },
     selectFirst(tokens) {
-      if (this.selectedToken === null && tokens && tokens.length > 0) {
+      if (tokens && tokens.length > 0) {
         this.selectedToken = tokens[0];
       }
     }
