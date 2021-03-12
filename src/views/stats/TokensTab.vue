@@ -14,7 +14,7 @@
                 <span v-if="item.alias">
                   {{
                     item.alias.length > aliasMaxLength
-                    ? item.alias.slice(0, 12).trim()
+                    ? item.alias.slice(0, aliasMaxLength).trim()
                     : item.alias
                   }}<i
                       v-if="item.alias.length > aliasMaxLength"
