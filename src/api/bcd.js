@@ -462,7 +462,7 @@ export class BetterCallApi {
     const request_url = network ? `/pick_random?network=${network}` : `/pick_random`;
     return getCancellable(this.api, request_url, {})
       .then((res) => {
-        if (res.status != 200) {
+        if (res.status !== 200) {
           throw new RequestFailedError(res);
         }
         return res.data

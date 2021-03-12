@@ -182,7 +182,9 @@ export default {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
         .catch((err) => {
-          if (err.code !== 204) {
+          if (err.response.status === 404) {
+            this.showError("The network does not have enough contracts");
+          } else if (err.code !== 204) {
             console.log(err);
             this.showError(err);
           }
@@ -282,10 +284,20 @@ button.pick-random-button {
           &::after {
             border: none;
           }
-          .v-input__append-inner {
-            width: 100%;
-            .v-icon {
-              color: inherit !important;
+          .v-select__slot {
+            height: inherit;
+            .v-input__append-inner {
+              margin: 0;
+              padding: 0;
+              height: inherit;
+              width: 100%;
+              .v-input__icon {
+                height: inherit;
+                .v-icon {
+                  height: inherit;
+                  color: inherit !important;
+                }
+              }
             }
           }
         }
