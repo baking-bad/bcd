@@ -1,5 +1,5 @@
 <template>
-<div id="docs-wrapper">
+<div id="docs-wrapper" :class="this.$vuetify.theme.isDark ? 'docs-wrapper_dark' : ''">
   <div class="fill-height">
     <v-navigation-drawer floating app permanent width="56" color="canvas" class="main-navigation">
       <SideNavigation />
@@ -221,6 +221,19 @@ body {
       li[role="tab"].react-tabs__tab--selected {
         background-color: #555;
         border-color: #555;
+      }
+    }
+    &.docs-wrapper_dark {
+      table td[colspan="2"] > div {
+        color: var(--v-text-base);
+        background: var(--v-data-base) !important;
+      }
+      .api-content > div > div > div:last-child:not(:first-child) > div:first-child > div:last-child {
+        background: var(--v-data-base);
+        & > div:first-child > div:last-child > div {
+          border: none;
+          background: var(--v-data-base);
+        }
       }
     }
   }
