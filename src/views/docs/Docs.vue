@@ -1,5 +1,5 @@
 <template>
-<div id="docs-wrapper" :class="this.$vuetify.theme.isDark ? 'docs-wrapper_dark' : 'docs-wrapper_light'">
+<div id="docs-wrapper" :class="this.$vuetify.theme.isDark ? 'docs-wrapper_dark' : ''">
   <div class="fill-height">
     <v-navigation-drawer floating app permanent width="56" color="canvas" class="main-navigation">
       <SideNavigation />
