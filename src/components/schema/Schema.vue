@@ -85,7 +85,7 @@ import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
 import { DAppClient, TezosOperationType, AbortedBeaconError, BroadcastBeaconError } from '@airgap/beacon-sdk'
 
 const walletsToIcons = {
-  "Thanos Wallet": "mdi-alpha-t",
+  "Temple - Tezos Wallet (ex. Thanos)": "mdi-alpha-t",
   "Beacon Extension": "mdi-alpha-b",
   "Galleon": "mdi-alpha-g",
   "Kukai": "mdi-alpha-k",
