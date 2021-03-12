@@ -42,24 +42,24 @@
               </span>
               <span
                 v-if="item.children || isObjectValue(getValueFromName(item.name))"
-                class="value_white"
               >
-                {{ getValue(item.name, item.children) }}
                 <v-treeview
                   :items="item.children ? makeView(item.children) : makeView(JSON.parse(getValueFromName(item.name)))"
-                  open-on-click
+                  :open-on-click="false"
                   open-all
                   expand-icon=""
                 >
                   <template v-slot:label="{ item }">
-                    <span class="key">
-                      {{item.name.split(':')[0].trim()}}:
-                    </span>
-                    <span
-                        class="value"
-                    >
-                      {{getValue(item.name)}}
-                    </span>
+                    <div @click.exact.stop.prevent="showTreeInfo(item)">
+                      <span class="key">
+                        {{item.name.split(':')[0].trim()}}:
+                      </span>
+                      <span
+                          class="value"
+                      >
+                        {{getValue(item.name)}}
+                      </span>
+                    </div>
                   </template>
                 </v-treeview>
               </span>
