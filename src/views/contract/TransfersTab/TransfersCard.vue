@@ -6,11 +6,11 @@
       :items-per-page="9"
       hide-default-header
       hide-default-footer
-      class="elevation-0"        
+      class="elevation-0"
       @page-count="tokensPageCount = $event"
     >
       <template v-slot:item="{ item }">
-        <v-list-item two-line @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`" 
+        <v-list-item two-line @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`"
             :class="item == selectedToken ? 'token-card token-card-selected' : 'token-card'">
           <v-list-item-avatar class="my-0 mr-2">
             <v-tooltip left>
@@ -24,7 +24,13 @@
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title>
-              <span v-if="item.name">{{ item.name }}</span>
+              <span
+                  v-if="item.name"
+                  @mouseover="(e) => e.target.textContent = item.name"
+                  @mouseout="(e) => e.target.textContent = cutItemName(item.name)"
+              >
+                {{ cutItemName(item.name) }}
+              </span>
               <span v-else v-html="helpers.shortcut(item.contract)"></span>
             </v-list-item-title>
             <v-list-item-subtitle>
@@ -34,8 +40,13 @@
           </v-list-item-content>
           <v-list-item-action>
             <v-list-item-action-text>
-              <span class="hash text--primary" style="font-size: 1.2em;">
-                {{ getItemValue(item) }}
+              <span
+                  class="hash text--primary"
+                  style="font-size: 1.2em;"
+                  @mouseover="(e) => e.target.textContent = getItemValue(item)"
+                  @mouseout="(e) => e.target.textContent = cutItemValue(item)"
+              >
+                {{ cutItemValue(item) }}
               </span>
               <span class="caption text-uppercase font-weight-regular text--secondary">
                 &nbsp;{{ item.symbol ? item.symbol : '' }}
@@ -74,7 +85,7 @@ export default {
       }
     },
     selectedToken: {
-      handler(newVal) { 
+      handler(newVal) {
         this.$emit('selectedToken', newVal)
       },
       deep: true,
@@ -82,6 +93,15 @@ export default {
     },
   },
   methods: {
+    cutItemName(name) {
+      if (name.length > this.maxLengthTokenName) {
+        return `${name.slice(0, -3)}...`;
+      }
+      return name;
+    },
+    cutItemValue(item) {
+      return Number(item.balance/Math.pow(10, item.decimals)).toFixed(this.maxLengthTokenDecimals);
+    },
     getItemValue(item) {
       return this.helpers
           .round(
@@ -103,7 +123,10 @@ export default {
     return {
       selectedToken: null,
       tokensPage: 0,
-      tokensPageCount: 0
+      tokensPageCount: 0,
+      isHovered: false,
+      maxLengthTokenName: 16,
+      maxLengthTokenDecimals: 2,
     }
   }
 }
