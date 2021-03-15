@@ -75,6 +75,17 @@ export class BetterCallApi {
       })
   }
 
+  getHead() {
+    return getCancellable(this.api, `/head`, {})
+    .then((res) => {
+      if (!res) { return res; }
+      if (res.status != 200) {
+        throw new RequestFailedError(res);
+      }
+      return res.data
+    })
+  }
+
   getContract(network, address) {
     let params = {};
     const token = getJwt();
