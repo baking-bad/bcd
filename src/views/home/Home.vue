@@ -148,30 +148,31 @@ export default {
   },
   data: () => ({
     stats: [],
-    indices: {},
-    connecting: true,
     pickingRandom: false,
-    hasOpenCallback: false,
-    synced: false,
+    loadingHead: true
   }),
   mounted() {
     if (this.$route.name != this.config.HOME_PAGE) {
       this.$router.push({ path: this.config.HOME_PAGE });
     }
-
-    this.ws.onMessage(this.onMessage);
-    this.ws.onOpen(this.onOpen);
-  },
-  beforeRouteLeave(to, from, next) {
-    this.ws.send({
-      action: "unsubscribe",
-      channel: "stats",
-    });
-
-    next();
+    this.getHead();
   },
   methods: {
     ...mapActions(["showError"]),
+    getHead() {
+      this.api
+        .getHead()
+        .then((res) => {
+          this.stats = res;
+        })
+        .catch((err) => {
+            console.log(err);
+            this.showError(err);
+        })
+        .finally(() => {
+          this.pickingRandom = false;
+        });
+    },
     pickRandom(val) {
       const isSelectPressed = val.target && val.target.closest('.network-select');
       if (isSelectPressed || this.pickingRandom) return;
@@ -192,41 +193,6 @@ export default {
         .finally(() => {
           this.pickingRandom = false;
         });
-    },
-    onMessage(data) {
-      if (data.body === undefined) {
-        return;
-      }
-
-      if (!this.synced && data.body.length > 1) {
-        this.stats = data.body.sort(function (a, b) {
-          if (a.network === "mainnet") {
-            return -1;
-          } else if (b.network === "mainnet") {
-            return 1;
-          } else {
-            return b.network.localeCompare(a.network);
-          }
-        });
-        for (let i = 0; i < this.stats.length; i++) {
-          this.indices[this.stats[i].network] = i;
-        }
-        this.synced = true;
-      } else if (this.synced) {
-        for (let i = 0; i < data.body.length; i++) {
-          let idx = this.indices[data.body[i].network];
-          if (idx !== undefined) {
-            Object.assign(this.stats[idx], data.body[i]);
-          }
-        }
-      }
-    },
-    onOpen() {
-      this.ws.send({
-        action: "subscribe",
-        channel: "stats",
-      });
-      this.connecting = false;
     },
   },
 };
