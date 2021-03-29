@@ -72,7 +72,7 @@
     <TreeNodeDetails
         prim="string"
         :data="fullErrorValue"
-        :value="!!fullErrorValue"
+        :value="isErrorShown"
         is-error-info
     />
   </v-row>
@@ -93,13 +93,6 @@ export default {
     network: String,
     address: String,
   },
-  watch: {
-    implementation(newVal, oldVal) {
-      if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-        this.showAlertData('');
-      }
-    }
-  },
   computed: {
     selectedItem() {
       if (this.selected < 0 || this.views.length < this.selected) {
@@ -112,9 +105,6 @@ export default {
     },
   },
   methods: {
-    showAlertData(msg) {
-      this.alertData = msg;
-    },
     setModel(val) {
       this.$set(this, 'model', val);
     },
@@ -131,11 +121,15 @@ export default {
             this.successResponse = res;
           })
           .catch((err) => {
+            this.isErrorShown = false;
             this.$set(this, 'fullErrorValue', {
               name: `${err.response.statusText} — ${err.response.status}`,
               val: err.response.data.message,
               realPrim: 'string',
               label: err.response.data.message,
+            });
+            this.$nextTick(() => {
+              this.isErrorShown = true;
             });
           })
     }
@@ -144,7 +138,7 @@ export default {
     return {
       model: {},
       selected: -1,
-      alertData: '',
+      isErrorShown: false,
       successText: '',
       showSuccess: false,
       successResponse: null,
