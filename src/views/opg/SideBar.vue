@@ -32,7 +32,7 @@
             icon
             class="mr-2"
             @click="() => {
-              $clipboard(hash); 
+              $clipboard(hash);
               showClipboardOK();
             }"
           >
@@ -47,7 +47,7 @@
             v-on="on"
             icon
             @click="() => {
-              $clipboard(opgLink); 
+              $clipboard(opgLink);
               showClipboardOK();
             }"
           >
@@ -58,7 +58,6 @@
       </v-tooltip>
     </div>
     <v-divider></v-divider>
-
     <v-skeleton-loader
       :loading="loading"
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
@@ -99,7 +98,9 @@
             <span class="caption font-weight-bold text-uppercase text--secondary">Call stack</span>
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas">
-            <div class="d-flex flex-column px-4">
+            <div
+                class="d-flex flex-column px-4 call-stack-content-wrapper"
+            >
               <div
                 v-for="(op, idx) in operations"
                 :key="idx"
@@ -187,3 +188,10 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.call-stack-content-wrapper {
+  max-height: calc(100vh - 344px);
+  overflow-y: auto;
+}
+</style>
