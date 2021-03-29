@@ -17,11 +17,6 @@
               @executeClick="callOffchainView"
               @modelChange="setModel"
           />
-          <SchemaAlertData
-              v-if="alertData"
-              :alert-data="alertData"
-              @dismiss="showAlertData('')"
-          />
         </template>
         <v-dialog
           v-model="showSuccess"
@@ -74,19 +69,25 @@
           </v-navigation-drawer>
         </v-card>
       </v-col>
+    <TreeNodeDetails
+        prim="string"
+        :data="fullErrorValue"
+        :value="!!fullErrorValue"
+        is-error-info
+    />
   </v-row>
 </template>
 
 <script>
 import SchemaHeader from "@/components/schema/schemaComponents/SchemaHeader";
-import SchemaAlertData from "@/components/schema/schemaAlert/SchemaAlertData";
 import SchemaForm from "@/components/schema/schemaForm/SchemaForm";
 import MiguelTreeView from "@/components/MiguelTreeView";
 import TypeDef from "@/views/contract/TypeDef";
+import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails";
 
 export default {
   name: "OffchainViews",
-  components: {MiguelTreeView, SchemaForm, SchemaAlertData, SchemaHeader, TypeDef},
+  components: {TreeNodeDetails, MiguelTreeView, SchemaForm, SchemaHeader, TypeDef},
   props: {
     views: Array,
     network: String,
@@ -129,8 +130,13 @@ export default {
             this.showSuccess = true;
             this.successResponse = res;
           })
-          .catch(() => {
-            this.showAlertData('Cannot execute the view');
+          .catch((err) => {
+            this.$set(this, 'fullErrorValue', {
+              name: `${err.response.statusText} — ${err.response.status}`,
+              val: err.response.data.message,
+              realPrim: 'string',
+              label: err.response.data.message,
+            });
           })
     }
   },
@@ -142,6 +148,7 @@ export default {
       successText: '',
       showSuccess: false,
       successResponse: null,
+      fullErrorValue: null,
     }
   }
 }
