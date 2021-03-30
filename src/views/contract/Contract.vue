@@ -51,15 +51,15 @@
         <v-tab
           :to="{ name: 'tokens' }"
           replace
-          v-if="isContract && tokens && tokens.length > 0"
+          v-if="isContract && tokensTotal > 0"
         >
           <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
-          <span class="ml-1">({{ tokens.length || 0 }})</span>
+          <span class="ml-1">({{ tokensTotal }})</span>
         </v-tab>
         <v-tab
           :to="{ name: 'transfers' }"
           replace
-          v-if="balances && balances.length > 0"
+          v-if="tokenBalancesTotal > 0"
         >
           <v-icon left small>mdi-transfer</v-icon>Transfers
         </v-tab>
@@ -83,9 +83,9 @@
       :address="address"
       :network="network"
       :contract="contract"
-      :balances="balances"
       :migrations="migrations"
-      :tokens="tokens"
+      :tokensTotal="tokensTotal"
+      :tokenBalancesTotal="tokenBalancesTotal"
       :metadata="metadata"
     ></router-view>
   </div>
@@ -113,11 +113,11 @@ export default {
     contractLoading: true,
     migrationsLoading: true,
     contract: {},
-    balances: [],
     balance: 0,
     migrations: [],
     metadata: null,
-    tokens: null,
+    tokenBalancesTotal: 0,
+    tokensTotal: 0,
     showFork: false,
     contractTags: null,
     contractLink: '',
@@ -135,19 +135,21 @@ export default {
       showError: "showError",
     }),
     init() {
-      this.tokens = [];
+      this.tokensTotal = 0;
+      this.tokenBalancesTotal = 0;
       this.metadata = null;
       this.migrations = [];
       this.contract = {};
       this.showFork = this.$route.name === "fork";
       if (this.isContract) {
         this.getContract();
-        this.getTokens();
+        this.getTokensTotal();
         this.getMigrations();
       } else {
         this.migrationsLoading = false;
       }
       this.getInfo();
+      this.getTokenBalancesTotal();
       this.getMetadata();
     },
     getContract() {
@@ -182,12 +184,23 @@ export default {
         })
         .finally(() => (this.migrationsLoading = false));
     },
-    getTokens() {
+    getTokensTotal() {
       this.api
-        .getContractTokens(this.network, this.address)
+        .getContractTokensCount(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          this.tokens = res;
+          this.tokensTotal = res.count || 0;
+        })
+        .catch((err) => {
+          this.showError(err);
+        })
+    },
+    getTokenBalancesTotal() {
+      this.api
+        .getAccountTokenBalances(this.network, this.address, 0, 1)
+        .then((res) => {
+          if (!res) return;
+          this.tokenBalancesTotal = res.total || 0;
         })
         .catch((err) => {
           this.showError(err);
@@ -202,7 +215,6 @@ export default {
           if (!this.isContract) {
             this.contract = res;
           }
-          this.balances = res.tokens || [];
           this.balance = res.balance || 0;
         })
         .catch((err) => {

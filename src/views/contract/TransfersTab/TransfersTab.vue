@@ -12,7 +12,9 @@
       </v-col>
       <v-col cols="4" class="pa-2">
         <TransfersCard
-          :tokens="balances"
+          :address="address"
+          :network="network"
+          :tokenBalancesTotal="tokenBalancesTotal"
           @selectedToken="updateSelectedToken"
         />
       </v-col>
@@ -30,6 +32,7 @@ export default {
     balances: Array,
     network: String,
     address: String,
+    tokenBalancesTotal: Number
   },
   components: {
     TransfersCard,

@@ -178,6 +178,21 @@ export class BetterCallApi {
       })
   }
 
+  getAccountTokenBalances(network, address, offset=0, size=10) {
+    return getCancellable(this.api, `/account/${network}/${address}/token_balances`, {
+      params: {offset, size}
+    })
+      .then((res) => {
+        if (!res) {
+          return null;
+        }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
   getAccountMetadata(network, address) {
     return getCancellable(this.api, `/account/${network}/${address}/metadata`, {})
       .then((res) => {
@@ -247,8 +262,21 @@ export class BetterCallApi {
       })
   }
 
-  getContractTokens(network, address) {
-    return getCancellable(this.api, `/contract/${network}/${address}/tokens`, {})
+  getContractTokens(network, address, offset=0, size=10) {
+    return getCancellable(this.api, `/contract/${network}/${address}/tokens`, {
+      params: {offset, size}
+    })
+      .then((res) => {
+        if (!res) { return res; }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getContractTokensCount(network, address) {
+    return getCancellable(this.api, `/contract/${network}/${address}/tokens/count`, {})
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {
