@@ -209,7 +209,7 @@ export default {
             this.network,
             this.address,
             this.token.token_id,
-            20,
+            10,
             this.items.length
           )
           .then((res) => {
@@ -230,7 +230,7 @@ export default {
             this.address,
             this.token.token_id,
             [this.contract],
-            20,
+            10,
             this.lastId
           )
           .then((res) => {
