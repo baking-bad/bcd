@@ -52,7 +52,7 @@ export default {
           }
         });
       }
-      return contents;
+      return contents.sort((a, b) => a.counter - b.counter);
     }
   }
 };
