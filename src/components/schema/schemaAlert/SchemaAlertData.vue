@@ -4,6 +4,7 @@
       <div class="d-flex justify-space-between align-center">
         <span class="text--primary">{{ alertData }}</span>
         <v-btn
+            class="text--primary"
             text
             @click="$emit('dismiss')"
         >
@@ -19,6 +20,26 @@ export default {
   name: "SchemaAlertData",
   props: {
     alertData: String,
+    isFullMessage: Boolean,
+    errorValue: [Object, null],
   },
+  watch: {
+    errorValue: {
+      handler(val) {
+        this.$nextTick(() => {
+          this.value = true;
+          this.$set(this, 'data', val);
+        })
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
+  data() {
+    return {
+      value: false,
+      data: {},
+    }
+  }
 }
 </script>

@@ -17,11 +17,6 @@
               @executeClick="callOffchainView"
               @modelChange="setModel"
           />
-          <SchemaAlertData
-              v-if="alertData"
-              :alert-data="alertData"
-              @dismiss="showAlertData('')"
-          />
         </template>
         <v-dialog
           v-model="showSuccess"
@@ -74,30 +69,29 @@
           </v-navigation-drawer>
         </v-card>
       </v-col>
+    <TreeNodeDetails
+        prim="string"
+        :data="fullErrorValue"
+        :value="isErrorShown"
+        is-error-info
+    />
   </v-row>
 </template>
 
 <script>
 import SchemaHeader from "@/components/schema/schemaComponents/SchemaHeader";
-import SchemaAlertData from "@/components/schema/schemaAlert/SchemaAlertData";
 import SchemaForm from "@/components/schema/schemaForm/SchemaForm";
 import MiguelTreeView from "@/components/MiguelTreeView";
 import TypeDef from "@/views/contract/TypeDef";
+import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails";
 
 export default {
   name: "OffchainViews",
-  components: {MiguelTreeView, SchemaForm, SchemaAlertData, SchemaHeader, TypeDef},
+  components: {TreeNodeDetails, MiguelTreeView, SchemaForm, SchemaHeader, TypeDef},
   props: {
     views: Array,
     network: String,
     address: String,
-  },
-  watch: {
-    implementation(newVal, oldVal) {
-      if (JSON.stringify(newVal) !== JSON.stringify(oldVal)) {
-        this.showAlertData('');
-      }
-    }
   },
   computed: {
     selectedItem() {
@@ -111,9 +105,6 @@ export default {
     },
   },
   methods: {
-    showAlertData(msg) {
-      this.alertData = msg;
-    },
     setModel(val) {
       this.$set(this, 'model', val);
     },
@@ -129,8 +120,17 @@ export default {
             this.showSuccess = true;
             this.successResponse = res;
           })
-          .catch(() => {
-            this.showAlertData('Cannot execute the view');
+          .catch((err) => {
+            this.isErrorShown = false;
+            this.$set(this, 'fullErrorValue', {
+              name: `${err.response.statusText} — ${err.response.status}`,
+              val: err.response.data.message,
+              realPrim: 'string',
+              label: err.response.data.message,
+            });
+            this.$nextTick(() => {
+              this.isErrorShown = true;
+            });
           })
     }
   },
@@ -138,10 +138,11 @@ export default {
     return {
       model: {},
       selected: -1,
-      alertData: '',
+      isErrorShown: false,
       successText: '',
       showSuccess: false,
       successResponse: null,
+      fullErrorValue: null,
     }
   }
 }
