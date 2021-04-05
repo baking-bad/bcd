@@ -504,7 +504,10 @@ export default {
             kind: TezosOperationType.TRANSACTION,
             destination: this.address,
             amount: String(parseInt(this.settings.amount || "0")),
-            parameters: JSON.parse(JSON.stringify(parameter)),
+            parameters: {
+              entrypoint: this.name,
+              value: JSON.parse(JSON.stringify(parameter))
+            },
           }]
         });
         this.injectedOpHash = result.opHash;
