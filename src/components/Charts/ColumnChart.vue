@@ -35,7 +35,7 @@ function defaultFormatter(value) {
   return value;
 }
 
-const AVAILABLE_PERIODS = {
+const AVAILABLE_TIMESTAMPS = {
   daily: {
     type: "day",
     count: 6,
@@ -52,7 +52,7 @@ export default {
   name: "ColumnChart",
   props: {
     data: Array,
-    periods: Array,
+    timestamps: Array,
     title: String,
     name: String,
     formatter: String,
@@ -62,10 +62,10 @@ export default {
     highcharts: Chart,
   },
   methods: {
-    setPeriodsButtons() {
-      return this.periods.map(period => {
-        if (period in AVAILABLE_PERIODS) {
-          return AVAILABLE_PERIODS[period];
+    setTimestampsButtons() {
+      return this.timestamps.map(period => {
+        if (period in AVAILABLE_TIMESTAMPS) {
+          return AVAILABLE_TIMESTAMPS[period];
         }
       });
     },
@@ -123,7 +123,7 @@ export default {
     },
     options() {
       if (this.data == null) return {};
-      const buttons = AVAILABLE_PERIODS ? this.setPeriodsButtons() : this.setDefaultButtons();
+      const buttons = AVAILABLE_TIMESTAMPS ? this.setTimestampsButtons() : this.setDefaultButtons();
       let options = {
         navigator: {
           enabled: false,
