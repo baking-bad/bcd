@@ -28,6 +28,8 @@
               :title="summary ? `<div class='text-center py-0'>Unique accounts<div>
                 <div class='text--secondary caption text-center py-0'>Total ${summary.users}</div>` : 'Unique users'"
               name="Unique users"
+              zoom
+              :periods="['daily', 'hourly']"
             ></ColumnChart>
           </v-card-text>
         </v-card>
@@ -42,6 +44,8 @@
               :title="summary ? `<div class='text-center py-0'>Activity (contracts calls count)<div>
                 <div class='text--secondary caption text-center py-0'>Total ${summary.txs} calls</div>` : 'Calls count'"
               name="Calls count"
+              zoom
+              :periods="['daily', 'hourly']"
             ></ColumnChart>
           </v-card-text>
         </v-card>

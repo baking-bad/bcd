@@ -35,10 +35,24 @@ function defaultFormatter(value) {
   return value;
 }
 
+const AVAILABLE_PERIODS = {
+  daily: {
+    type: "day",
+    count: 6,
+    text: "daily",
+  },
+  hourly: {
+    type: "hour",
+    count: 1,
+    text: "hourly",
+  }
+};
+
 export default {
   name: "ColumnChart",
   props: {
     data: Array,
+    periods: Array,
     title: String,
     name: String,
     formatter: String,
@@ -46,6 +60,34 @@ export default {
   },
   components: {
     highcharts: Chart,
+  },
+  methods: {
+    setPeriodsButtons() {
+      return this.periods.map(period => {
+        if (period in AVAILABLE_PERIODS) {
+          return AVAILABLE_PERIODS[period];
+        }
+      });
+    },
+    setDefaultButtons() {
+      return [
+        {
+          type: "month",
+          count: 6,
+          text: "6m",
+        },
+        {
+          type: "year",
+          count: 1,
+          text: "1Y",
+        },
+        {
+          type: "all",
+          count: 1,
+          text: "All",
+        },
+      ];
+    }
   },
   computed: {
     labelFormatterFunction() {
@@ -81,6 +123,7 @@ export default {
     },
     options() {
       if (this.data == null) return {};
+      const buttons = AVAILABLE_PERIODS ? this.setPeriodsButtons() : this.setDefaultButtons();
       let options = {
         navigator: {
           enabled: false,
@@ -224,23 +267,7 @@ export default {
                 },
               },
             },
-            buttons: [
-              {
-                type: "month",
-                count: 6,
-                text: "6m",
-              },
-              {
-                type: "year",
-                count: 1,
-                text: "1Y",
-              },
-              {
-                type: "all",
-                count: 1,
-                text: "All",
-              },
-            ],
+            buttons,
             selected: 1,
             labelStyle: {
               color: "transparent",
