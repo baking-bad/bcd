@@ -89,7 +89,9 @@ export default {
       let latestTimestamp = typeof lastRes === "undefined"
           ? +new Date()
           : lastRes[0];
-      for (let i = 0; i < amountToAdd; i++) {
+
+      const EMPTY_DATA_JUSTIFIER = 4;
+      for (let i = 0; i < amountToAdd + EMPTY_DATA_JUSTIFIER; i++) {
         let timestampToAdd = latestTimestamp - ONE_DAY_IN_MS;
         res.unshift([timestampToAdd, 0]);
         latestTimestamp = timestampToAdd;
