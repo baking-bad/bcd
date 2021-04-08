@@ -1,23 +1,7 @@
 <template>
   <v-row>
-    <v-col cols="2">
+    <v-col cols="12">
       <h3>Statistics</h3>
-    </v-col>
-    <v-col cols="10" class="d-flex justify-end">
-      <v-skeleton-loader :loading="loading" type="actions">
-        <v-btn-toggle v-model="selectedPeriod" color="primary" dense mandatory>
-          <v-btn
-            :disabled="loading || loadingSeries || loadingSummary"
-            small
-            :value="period"
-            v-for="(text, period) in {
-                'month': 'Monthly',
-                'year': 'Annual'
-            }"
-            :key="period"
-          >{{ text }}</v-btn>
-        </v-btn-toggle>
-      </v-skeleton-loader>
     </v-col>
     <v-col cols="6">
       <v-skeleton-loader :loading="loading || loadingSeries || loadingSummary" type="image">
@@ -83,7 +67,7 @@ export default {
       users: [],
     },
     selectedToken: 0,
-    selectedPeriod: "month",
+    selectedPeriod: "day",
     summary: null,
   }),
   mounted() {

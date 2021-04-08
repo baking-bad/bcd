@@ -38,12 +38,12 @@ function defaultFormatter(value) {
 const AVAILABLE_TIMESTAMPS = {
   daily: {
     type: "day",
-    count: 6,
+    count: 11,
     text: "daily",
   },
   hourly: {
     type: "hour",
-    count: 1,
+    count: 11,
     text: "hourly",
   }
 };
@@ -268,7 +268,7 @@ export default {
               },
             },
             buttons,
-            selected: 1,
+            selected: 0,
             labelStyle: {
               color: "transparent",
             },
