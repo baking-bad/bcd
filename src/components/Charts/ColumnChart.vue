@@ -35,19 +35,6 @@ function defaultFormatter(value) {
   return value;
 }
 
-const AVAILABLE_TIMESTAMPS = {
-  daily: {
-    type: "day",
-    count: 11,
-    text: "daily",
-  },
-  hourly: {
-    type: "hour",
-    count: 11,
-    text: "hourly",
-  }
-};
-
 export default {
   name: "ColumnChart",
   props: {
@@ -57,6 +44,7 @@ export default {
     name: String,
     formatter: String,
     zoom: Boolean,
+    minAmountOfGraphs: Number,
   },
   components: {
     highcharts: Chart,
@@ -64,8 +52,8 @@ export default {
   methods: {
     setTimestampsButtons() {
       return this.timestamps.map(period => {
-        if (period in AVAILABLE_TIMESTAMPS) {
-          return AVAILABLE_TIMESTAMPS[period];
+        if (period in this.AVAILABLE_TIMESTAMPS) {
+          return this.AVAILABLE_TIMESTAMPS[period];
         }
       });
     },
@@ -123,7 +111,7 @@ export default {
     },
     options() {
       if (this.data == null) return {};
-      const buttons = AVAILABLE_TIMESTAMPS ? this.setTimestampsButtons() : this.setDefaultButtons();
+      const buttons = this.timestamps ? this.setTimestampsButtons() : this.setDefaultButtons();
       let options = {
         navigator: {
           enabled: false,
@@ -285,6 +273,22 @@ export default {
       }
       return options;
     },
+  },
+  data() {
+    return {
+      AVAILABLE_TIMESTAMPS: {
+        daily: {
+          type: "day",
+          count: this.minAmountOfGraphs - 1,
+          text: "daily",
+        },
+        hourly: {
+          type: "hour",
+          count: this.minAmountOfGraphs - 1,
+          text: "hourly",
+        }
+      }
+    }
   },
 };
 </script>

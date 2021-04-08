@@ -13,6 +13,7 @@
                 <div class='text--secondary caption text-center py-0'>Total ${summary.users}</div>` : 'Unique users'"
               name="Unique users"
               zoom
+              :min-amount-of-graphs="minAmountOfGraphs"
               :timestamps="['daily', 'hourly']"
             ></ColumnChart>
           </v-card-text>
@@ -29,6 +30,7 @@
                 <div class='text--secondary caption text-center py-0'>Total ${summary.txs} calls</div>` : 'Calls count'"
               name="Calls count"
               zoom
+              :min-amount-of-graphs="minAmountOfGraphs"
               :timestamps="['daily', 'hourly']"
             ></ColumnChart>
           </v-card-text>
@@ -41,6 +43,7 @@
 <script>
 import { mapActions } from "vuex";
 import ColumnChart from "@/components/Charts/ColumnChart.vue";
+import { ONE_DAY_IN_MS } from "@/utils/date";
 
 export default {
   name: "StatisticsBlock",
@@ -60,6 +63,7 @@ export default {
     },
   },
   data: () => ({
+    minAmountOfGraphs: 12,
     loadingSeries: true,
     loadingSummary: true,
     series: {
@@ -76,13 +80,31 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    addEmptyDataInfo(res) {
+      const amountToAdd = this.minAmountOfGraphs - res.length;
+      const lastRes = res[res.length - 1];
+      let latestTimestamp = typeof lastRes === "undefined"
+          ? +new Date()
+          : lastRes[0];
+      for (let i = 0; i < amountToAdd; i++) {
+        let timestampToAdd = latestTimestamp - ONE_DAY_IN_MS;
+        res.unshift([latestTimestamp - timestampToAdd, 0]);
+        latestTimestamp = timestampToAdd;
+      }
+      return res;
+    },
     getSeries(period) {
       this.loadingSeries = true;
 
       this.api
         .getNetworkStatsSeries("mainnet", "users", period, this.contracts)
         .then((res) => {
-          this.series.users = res;
+          console.log('res: ', res);
+          if (res.length < this.minAmountOfGraphs) {
+            this.series.users = this.addEmptyDataInfo(res);
+          } else {
+            this.series.users = res;
+          }
           return this.api.getNetworkStatsSeries(
             "mainnet",
             "operation",
@@ -91,7 +113,7 @@ export default {
           );
         })
         .then((res) => {
-          this.series.volume = res;
+          this.series.volume = this.addEmptyDataInfo(res);
         })
         .catch((err) => {
           console.log(err);
@@ -106,7 +128,7 @@ export default {
       this.api
         .getContractsStats("mainnet", this.contracts, "all")
         .then((res) => {
-          this.summary = res;
+          this.summary = this.addEmptyDataInfo(res);
         })
         .catch((err) => {
           console.log(err);
