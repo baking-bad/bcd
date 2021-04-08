@@ -82,13 +82,16 @@ export default {
     ...mapActions(["showError"]),
     addEmptyDataInfo(res) {
       const amountToAdd = this.minAmountOfGraphs - res.length;
+      if (amountToAdd <= 0 || isNaN(amountToAdd)) {
+        return res;
+      }
       const lastRes = res[res.length - 1];
       let latestTimestamp = typeof lastRes === "undefined"
           ? +new Date()
           : lastRes[0];
       for (let i = 0; i < amountToAdd; i++) {
         let timestampToAdd = latestTimestamp - ONE_DAY_IN_MS;
-        res.unshift([latestTimestamp - timestampToAdd, 0]);
+        res.unshift([timestampToAdd, 0]);
         latestTimestamp = timestampToAdd;
       }
       return res;
@@ -99,12 +102,7 @@ export default {
       this.api
         .getNetworkStatsSeries("mainnet", "users", period, this.contracts)
         .then((res) => {
-          console.log('res: ', res);
-          if (res.length < this.minAmountOfGraphs) {
-            this.series.users = this.addEmptyDataInfo(res);
-          } else {
-            this.series.users = res;
-          }
+          this.series.users = this.addEmptyDataInfo(res);
           return this.api.getNetworkStatsSeries(
             "mainnet",
             "operation",
