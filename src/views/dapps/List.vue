@@ -1,7 +1,17 @@
 <template>
   <v-skeleton-loader :loading="loading" type="card">
     <v-row>
-      <v-col v-for="(dapp, i) in dapps" :key="i" :cols="i < 2 ? 6 : 4">
+      <v-chip
+          v-for="(c, key) in categories"
+          :key="key + 'category'"
+          class="mx-1 ml-3 mt-2 category-chip"
+          :class="{'category-chip_not-picked': !isPicked(key)}"
+          @click="setPickedCategory(key)"
+      >{{ key }} {{ c }}</v-chip
+      >
+    </v-row>
+    <v-row>
+      <v-col v-for="(dapp, i) in shownDapps" :key="i" :cols="i < 2 ? 6 : 4">
         <v-hover v-slot:default="{ hover }">
           <template v-if="i > 1">
             <v-card
@@ -100,6 +110,8 @@ export default {
   },
   data: () => ({
     dapps: [],
+    categories: {},
+    pickedCategories: {},
     loading: false,
   }),
   created() {
@@ -113,19 +125,57 @@ export default {
       this.api
         .getDApps()
         .then((res) => {
-          this.dapps = res;
+          this.$set(this, 'dapps', res);
         })
         .catch((err) => {
-          console.log(err);
           this.showError(err);
         })
         .finally(() => {
           this.loading = false;
         });
     },
+    setCategories() {
+      this.dapps.forEach(dapp => {
+        dapp.categories.forEach(category => {
+          let newValue = typeof this.categories[category] === "undefined"
+            ? 1
+            : ++this.categories[category];
+          this.$set(this.pickedCategories, category, false);
+          this.$set(this.categories, category, newValue);
+        });
+      });
+    },
+    setPickedCategory(category) {
+      this.$set(this.pickedCategories, category, !this.pickedCategories[category]);
+    },
+    isAllPickedCategoriesFalse() {
+      return Object.keys(this.pickedCategories).every(category => {
+        return this.pickedCategories[category] === false;
+      });
+    },
+    isPicked(category) {
+      if (this.isAllPickedCategoriesFalse()) {
+        return true;
+      }
+
+      return this.pickedCategories[category];
+    }
+  },
+  computed: {
+    shownDapps() {
+      if (this.isAllPickedCategoriesFalse()) {
+        return this.dapps;
+      }
+      return this.dapps.filter(dapp => {
+        return dapp.categories.some(category => {
+          return this.pickedCategories[category];
+        });
+      });
+    },
   },
   watch: {
     $route: "getList",
+    dapps: "setCategories",
   },
 };
 </script>
@@ -146,5 +196,12 @@ export default {
   height: 100px;
   width: 100px;
   z-index: 100;
+}
+
+.category-chip {
+  cursor: pointer;
+  &_not-picked {
+    background: var(--v-data-darken1) !important;
+  }
 }
 </style>
