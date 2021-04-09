@@ -82,6 +82,7 @@
                           :key="c"
                           class="mx-1"
                           small
+                          @click.prevent="setPickedCategory(c)"
                           >{{ c }}</v-chip
                         >
                       </div>
