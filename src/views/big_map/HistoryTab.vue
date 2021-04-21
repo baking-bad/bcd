@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-0 ma-0 canvas fill-canvas">
     <v-row class="pa-8 ma-0" v-if="loading || total > 0">
-      <v-col cols="9">
+      <v-col cols="8">
         <v-skeleton-loader
           :loading="loading"
           type="list-item-two-line, list-item-two-line, list-item-two-line"
@@ -19,7 +19,7 @@
         </v-skeleton-loader>
       </v-col>
       <v-spacer></v-spacer>
-      <v-col cols="3" class="pt-3">
+      <v-col cols="4" class="pt-3">
         <v-card flat outlined>
           <v-skeleton-loader
             :loading="loading && total === 0"
@@ -56,11 +56,12 @@
           </v-skeleton-loader>
         </v-card>
         <v-pagination
-          circle
-          v-if="total > diffsPerPage"
-          v-model="page"
-          :length="Math.ceil(total / diffsPerPage)"
-          class="mt-4"
+            circle
+            v-if="total > diffsPerPage"
+            v-model="page"
+            :length="Math.ceil(total / diffsPerPage)"
+            :total-visible="6"
+            class="mt-4"
         ></v-pagination>
       </v-col>
     </v-row>
