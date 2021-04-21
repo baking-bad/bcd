@@ -1,6 +1,7 @@
 FROM node:latest AS build
 WORKDIR /better-call-dev
 COPY . .
+RUN rm -rf node_modules package-lock.json
 RUN npm i && npm run build
 
 
