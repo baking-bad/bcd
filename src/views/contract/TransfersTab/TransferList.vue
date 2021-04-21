@@ -99,19 +99,19 @@
                     class="caption text-uppercase font-weight-regular accent--text"
                     v-if="!item.to && address === item.from"
                   >
-                    Burn&nbsp;
+                    {{ item.parent || 'Burn' }}&nbsp;
                   </span>
                   <span
                     class="caption text-uppercase font-weight-regular text--secondary"
                     v-else-if="item.from && item.from !== address"
                   >
-                    From&nbsp;
+                    {{ item.parent }}&nbsp;From&nbsp;
                   </span>
                   <span
                     v-else-if="!item.from && address === item.to"
                     class="caption text-uppercase font-weight-regular secondary--text"
                   >
-                    Mint&nbsp;
+                    {{ item.parent || 'Mint' }}&nbsp;
                   </span>
                   <router-link
                     v-if="item.from && address !== item.from"
@@ -124,7 +124,7 @@
                   <span
                     v-if="item.to && address !== item.to"
                     class="caption text-uppercase font-weight-regular text--secondary"
-                    >&nbsp;to&nbsp;</span
+                    >&nbsp;{{ item.parent }}&nbsp;to&nbsp;</span
                   >
                   <router-link
                     v-if="item.to && address !== item.to"
