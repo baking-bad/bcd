@@ -1,4 +1,5 @@
 const axios = require('axios').default;
+const maxSize = 10;
 
 import { getJwt } from '@/utils/auth.js'
 import { getCancellable, postCancellable, cancelRequests } from '@/utils/cancellation.js';
@@ -73,6 +74,17 @@ export class BetterCallApi {
         }
         return res.data
       })
+  }
+
+  getHead() {
+    return getCancellable(this.api, `/head`, {})
+    .then((res) => {
+      if (!res) { return res; }
+      if (res.status != 200) {
+        throw new RequestFailedError(res);
+      }
+      return res.data
+    })
   }
 
   getContract(network, address) {
@@ -167,6 +179,21 @@ export class BetterCallApi {
       })
   }
 
+  getAccountTokenBalances(network, address, offset=0, size=maxSize) {
+    return getCancellable(this.api, `/account/${network}/${address}/token_balances`, {
+      params: {offset, size}
+    })
+      .then((res) => {
+        if (!res) {
+          return null;
+        }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
   getAccountMetadata(network, address) {
     return getCancellable(this.api, `/account/${network}/${address}/metadata`, {})
       .then((res) => {
@@ -180,7 +207,7 @@ export class BetterCallApi {
       })
   }
 
-  getAccountTransfers(network, address, token_id = -1, contracts = [], size = 10, last_id = '') {
+  getAccountTransfers(network, address, token_id = -1, contracts = [], size = maxSize, last_id = '') {
     let params = {};
     if (token_id > -1) {
       params['token_id'] = token_id
@@ -236,8 +263,10 @@ export class BetterCallApi {
       })
   }
 
-  getContractTokens(network, address) {
-    return getCancellable(this.api, `/contract/${network}/${address}/tokens`, {})
+  getContractTokens(network, address, offset=0, size=maxSize) {
+    return getCancellable(this.api, `/contract/${network}/${address}/tokens`, {
+      params: {offset, size}
+    })
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {
@@ -247,7 +276,18 @@ export class BetterCallApi {
       })
   }
 
-  getContractTransfers(network, address, token_id = -1, size = 10, offset = 0) {
+  getContractTokensCount(network, address) {
+    return getCancellable(this.api, `/contract/${network}/${address}/tokens/count`, {})
+      .then((res) => {
+        if (!res) { return res; }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getContractTransfers(network, address, token_id = -1, size = maxSize, offset = 0) {
     let params = {};
     if (token_id > -1) {
       params['token_id'] = token_id
@@ -686,7 +726,7 @@ export class BetterCallApi {
         },
         params: {
           offset: offset,
-          size: 15
+          size: maxSize
         }
       })
       .then((res) => {
@@ -784,7 +824,7 @@ export class BetterCallApi {
       })
   }
 
-  listDomains(network, offset = 0, size = 10) {
+  listDomains(network, offset = 0, size = maxSize) {
     let params = {}
     if (size > 0) {
       params['size'] = size

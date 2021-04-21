@@ -360,27 +360,12 @@ export default {
         }
       });
     },
-    unshiftOperations(data) {
-      data.forEach((element) => {
-        if (element.internal) {
-          const firstEl = this.operations[0];
-          firstEl.internal_operations.push(element);
-          this.$set(this.operations, 0, firstEl);
-        } else {
-          element.internal_operations = [];
-          this.operations.unshift(element);
-        }
-      });
-    },
     async onDownloadPage(entries, observer, isIntersecting) {
       if (isIntersecting) {
         await this.getOperations();
       }
     },
     async fetchOperations() {
-      this.ws.onMessage(this.onOperationUpdates);
-      this.ws.onOpen(this.onOpen);
-
       await this.getOperations(true, true);
       if (this.config.mempool_enabled) {
         this.getMempool();
@@ -390,35 +375,6 @@ export default {
     async updateOperations() {
       await this.getOperations(true, false);
     },
-    onOperationUpdates(data) {
-      if (data.body === "ok") {
-        this.operationsChannelName = data.channel_name;
-      } else if (data.channel_name === this.operationsChannelName) {
-        this.unshiftOperations(data.body);
-      }
-    },
-    onOpen() {
-      this.ws.send({
-        action: "subscribe",
-        channel: "operations",
-        address: this.address,
-        network: this.network,
-      });
-    },
-  },
-  beforeRouteUpdate(to, from, next) {
-    this.ws.send({
-      action: "unsubscribe",
-      channel: `operations_${from.params.network}_${from.params.address}`,
-    });
-    next();
-  },
-  beforeRouteLeave(to, from, next) {
-    this.ws.send({
-      action: "unsubscribe",
-      channel: `operations_${from.params.network}_${from.params.address}`,
-    });
-    next();
   },
   watch: {
     address: "fetchOperations",

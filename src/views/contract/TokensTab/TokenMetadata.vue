@@ -9,17 +9,15 @@
           </v-list-item-content>
         </v-list-item>
       </v-col>
-      <v-col cols="6">
-        <v-list-item v-if="token.supply" class="pl-1">
+      <v-col cols="7">
+        <v-list-item v-if="ipfsURI" class="pl-1">
           <v-list-item-content>
-            <v-list-item-subtitle class="overline">Total supply</v-list-item-subtitle>
-            <v-list-item-title class="hash">{{ formatTokenAmount(token.supply) }}
-              &nbsp;<span class="caption text-uppercase font-weight-regular text--secondary">{{ token.symbol ? token.symbol : '' }}</span>
-            </v-list-item-title>
+            <v-list-item-subtitle class="overline">Metadata URI</v-list-item-subtitle>
+            <v-list-item-title class="hash">{{ ipfsURI }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
       </v-col>
-      <v-col cols="4" class="d-flex align-center justify-end">
+      <v-col cols="3" class="d-flex align-center justify-end">
         <v-btn small text @click="showRaw = true">
           <v-icon small class="mr-1">mdi-code-braces</v-icon>
           <span>Raw JSON</span>
@@ -41,7 +39,7 @@
                 {{item.name.split(':')[0].trim()}}:
               </span>
               <span
-                v-if="item.children || isObjectValue(getValueFromName(item.name))"
+                v-if="isTreeViewable(item)"
               >
                 <v-treeview
                   :items="item.children ? makeView(item.children) : makeView(JSON.parse(getValueFromName(item.name)))"
@@ -58,7 +56,7 @@
                           class="value"
                       >
                         {{getValue(item.name)}}
-                      </span>
+                       </span>
                     </div>
                   </template>
                 </v-treeview>
@@ -103,15 +101,20 @@ export default {
     return {
       showTreeNodeDetails: false,
       dataTreeNode: {},
-      showRaw: false
+      showRaw: false,
+      ignoredKeys: [
+        'level',
+        'timestamp',
+        'contract',
+        'network',
+        'token_id',
+        'extras',
+      ]
     }
   },
   methods: {
-    formatTokenAmount(amount) {
-      const decimals = this.token && this.token.decimals ? this.token.decimals : 0;
-      return this.helpers
-          .round(amount, decimals)
-          .toLocaleString(undefined, { maximumFractionDigits: decimals })
+    isTreeViewable(item) {
+      return this.isObjectValue(this.getValueFromName(item.name));
     },
     showTreeInfo(item) {
       if (item.children) {
@@ -153,18 +156,19 @@ export default {
   computed: {
     tokenInfo() {
       if (this.token) {
-        return Object.assign({}, {
-          name: this.token.name,
-          symbol: this.token.symbol,
-          decimals: this.token.decimals
-        }, this.token.token_info);
+        return Object.fromEntries(
+          Object.entries(this.token)
+            .filter(([key]) => -1 == this.ignoredKeys.indexOf(key)));
       } else {
         return null;
       }
     },
     treeView() {
       return makeTreeview(this.tokenInfo)
-    }
+    },
+    ipfsURI() {
+      return this.token.extras? this.token.extras["@@empty"] : null;
+    },
   }
 }
 </script>

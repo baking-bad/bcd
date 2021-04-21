@@ -20,7 +20,13 @@
       :label="label"
     ></v-text-field>
 
-    <v-btn text small link @click.prevent.stop="copyText(value)">
+    <v-btn
+        text
+        small
+        link
+        @click.prevent.stop="copyText(value)"
+        :class="isPreFormatted ? 'pl-0 mt-4' : ''"
+    >
       <v-icon small class="mr-1">mdi-content-copy</v-icon>
       <span>Copy Value</span>
     </v-btn>

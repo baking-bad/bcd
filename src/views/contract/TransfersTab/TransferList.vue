@@ -184,6 +184,7 @@ export default {
     downloaded: false,
     total: 0,
     lastId: "",
+    maxSize: 10
   }),
   mounted() {
     this.getNextPage();
@@ -209,7 +210,7 @@ export default {
             this.network,
             this.address,
             this.token.token_id,
-            20,
+            this.maxSize,
             this.items.length
           )
           .then((res) => {
@@ -230,7 +231,7 @@ export default {
             this.address,
             this.token.token_id,
             [this.contract],
-            20,
+            this.maxSize,
             this.lastId
           )
           .then((res) => {

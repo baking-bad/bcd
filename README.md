@@ -71,11 +71,7 @@ make release
 * Uses `.env.production` and `config.production.json` configs
 * Command: `make deploy`
 
-#### Staging `you.better-call.dev`
-* See https://github.com/baking-bad/bbbox.git `custom` target
-
-#### Sandbox `bbbox`
-* See https://github.com/baking-bad/bbbox.git `bbbox` target
+#### Staging `ee.better-call.dev`
 
 ## Development
 
@@ -92,18 +88,13 @@ npm i
 
 #### Local API `localhost:14000`
 * Requires https://github.com/baking-bad/bcdhub.git running in _development_ mode
-* Uses `.env.development` and `config.development.json` configs
+* Uses `.env.development` (frontend) and `config.development.yml` (backend) configs
 * Command: `make dev`
 
-#### Sandbox API `localhost:42000`
-* Requires https://github.com/baking-bad/bbbox.git running in _bbbox_ mode
-* Uses `.env.box` and `config.sandbox.json` configs
-* Command: `make box`
-
-#### Staging API `you.better-call.dev`
+#### Staging API `ee.better-call.dev`
 * Connects to the public API instance
-* Uses `.env.you` and `config.you.json` configs
-* Command: `make you`
+* Uses `.env.ee` (frontend) and `config.you.yml` (backend) configs
+* Command: `make ee`
 
 
 ## Publications
