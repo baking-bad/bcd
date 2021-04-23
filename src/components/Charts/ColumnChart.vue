@@ -10,7 +10,7 @@
 import { Chart } from "highcharts-vue";
 import Highcharts from "highcharts";
 import stockInit from "highcharts/modules/stock";
-import { MONTH_IN_MS } from "@/constants/date";
+import { MONTH_IN_MS } from "@/utils/date";
 
 stockInit(Highcharts);
 
