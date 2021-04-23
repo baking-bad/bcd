@@ -13,10 +13,10 @@
       <v-col cols="12">
         <StatisticsBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
       </v-col>
-      <v-col cols="12" v-if="dapp.categories.includes('DEX') && dapp.dex_tokens">
+      <v-col cols="12" v-if="dapp.categories && dapp.categories.includes('DEX') && dapp.dex_tokens">
         <DEXBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
       </v-col>
-      <v-col cols="12" v-if="dapp.categories.includes('Token') && dapp.tokens">
+      <v-col cols="12" v-if="dapp.categories && dapp.categories.includes('Token') && dapp.tokens">
         <TokenBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
       </v-col>
       <v-col cols="12" v-if="dapp.agora_review_post_id || dapp.agora_qa_post_id">

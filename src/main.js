@@ -21,7 +21,7 @@ import { makeVuetify } from '@/plugins/vuetify';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
-
+import './setups/router';
 
 import VJsf from '@baking-bad/vjsf/lib/VJsf.js';
 import '@baking-bad/vjsf/lib/VJsf.css';
