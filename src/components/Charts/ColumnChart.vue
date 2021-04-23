@@ -280,12 +280,12 @@ export default {
         daily: {
           type: "day",
           count: this.minAmountOfGraphs - 1,
-          text: "daily",
+          text: "1D",
         },
         hourly: {
           type: "hour",
           count: this.minAmountOfGraphs - 1,
-          text: "hourly",
+          text: "1h",
         }
       }
     }
