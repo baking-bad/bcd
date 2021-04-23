@@ -31,15 +31,13 @@
         <v-tooltip right>
           <template v-slot:activator="{ on }">
             <v-list-item :to="{ name: 'search' }" v-on="on" active-class="primary--text">
-              <template v-slot:default="{ active }">
-                <v-list-item-icon>
-                  <v-icon v-if="active" color="primary">mdi-cloud-search-outline</v-icon>
-                  <v-icon v-else color="grey lighten-2">mdi-cloud-search-outline</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>
-                  Advanced search
-                </v-list-item-title>
-              </template>
+              <v-list-item-icon>
+                <v-icon v-if="isAdvancedSearchPage" color="primary">mdi-cloud-search-outline</v-icon>
+                <v-icon v-else color="grey lighten-2">mdi-cloud-search-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>
+                Advanced search
+              </v-list-item-title>
             </v-list-item>
           </template>
           <span>Advanced search</span>
@@ -157,6 +155,9 @@ export default {
     },
     apiDocsUrl() {
       return `${window.location.origin}/docs`;
+    },
+    isAdvancedSearchPage() {
+      return this.$route.fullPath.indexOf(`/search`) === 0;
     },
     isDappsPage() {
       return this.$route.fullPath.indexOf(`/dapps`) === 0;
