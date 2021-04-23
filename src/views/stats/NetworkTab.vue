@@ -4,7 +4,7 @@
       <v-col cols="6">
         <v-skeleton-loader :loading="!contractSeries" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0">
+            <v-card-text class="data pa-0" v-if="contractSeries">
               <ColumnChart
                 :data="contractSeries"
                 :title="`New deployments (total ${details.contracts_count})<br/>
@@ -19,7 +19,7 @@
       <v-col cols="6">
         <v-skeleton-loader :loading="!operationSeries" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0">
+            <v-card-text class="data pa-0" v-if="operationSeries">
               <ColumnChart
                 :data="operationSeries"
                 :title="`Contract calls (total ${details.operations_count})`"
@@ -33,7 +33,7 @@
       <v-col cols="6">
         <v-skeleton-loader :loading="!paidStorageSizeDiffSeries" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0">
+            <v-card-text class="data pa-0" v-if="paidStorageSizeDiffSeries">
               <ColumnChart
                 :data="paidStorageSizeDiffSeries"
                 formatter="kilobyte"
@@ -48,7 +48,7 @@
       <v-col cols="6">
         <v-skeleton-loader :loading="!consumedGasSeries" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0">
+            <v-card-text class="data pa-0" v-if="consumedGasSeries">
               <ColumnChart
                 :data="consumedGasSeries"
                 :title="`Consumed gas × 10\u2076`"
@@ -159,13 +159,20 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    setDetailsDataToDefault() {
+      this.$set(this, 'details', {});
+      this.$set(this, 'contractSeries', null);
+      this.$set(this, 'operationSeries', null);
+      this.$set(this, 'consumedGasSeries', null);
+      this.$set(this, 'paidStorageSizeDiffSeries', null);
+    },
     getDetails(network) {
       this.loading = true;
 
       this.api
         .getNetworkStats(network)
         .then(res => {
-          this.details = res;
+          this.$set(this, 'details', res);
         })
         .catch(err => {
           console.log(err);
@@ -176,10 +183,10 @@ export default {
       this.api
         .getNetworkStatsSeries(network, "contract", "month")
         .then(res => {
-          this.contractSeries = res;
+          this.$set(this, 'contractSeries', res);
         })
         .catch(err => {
-          this.contractSeries = [];
+          this.$set(this, 'contractSeries', []);
           console.log(err);
           this.showError(err);
         });
@@ -187,10 +194,10 @@ export default {
       this.api
         .getNetworkStatsSeries(network, "operation", "month")
         .then(res => {
-          this.operationSeries = res;
+          this.$set(this, 'operationSeries', res);
         })
         .catch(err => {
-          this.operationSeries = [];
+          this.$set(this, 'operationSeries', []);
           console.log(err);
           this.showError(err);
         });
@@ -198,10 +205,10 @@ export default {
       this.api
         .getNetworkStatsSeries(network, "paid_storage_size_diff", "month")
         .then(res => {
-          this.paidStorageSizeDiffSeries = res;
+          this.$set(this, 'paidStorageSizeDiffSeries', res);
         })
         .catch(err => {
-          this.paidStorageSizeDiffSeries = [];
+          this.$set(this, 'paidStorageSizeDiffSeries', []);
           console.log(err);
           this.showError(err);
         });
@@ -209,10 +216,10 @@ export default {
       this.api
         .getNetworkStatsSeries(network, "consumed_gas", "month")
         .then(res => {
-          this.consumedGasSeries = res;
+          this.$set(this, 'consumedGasSeries', res);
         })
         .catch(err => {
-          this.consumedGasSeries = [];
+          this.$set(this, 'consumedGasSeries', []);
           console.log(err);
           this.showError(err);
         });
@@ -229,6 +236,7 @@ export default {
   },
   watch: {
     network(newValue) {
+      this.setDetailsDataToDefault();
       this.getDetails(newValue);
     }
   }
