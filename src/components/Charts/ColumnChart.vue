@@ -46,11 +46,15 @@ export default {
     formatter: String,
     zoom: Boolean,
     minAmountOfGraphs: Number,
+    selectedTimestamp: Number,
   },
   components: {
     highcharts: Chart,
   },
   methods: {
+    changePeriod(period) {
+      this.$emit('changePeriod', period);
+    },
     setTimestampsButtons() {
       return this.timestamps.map(period => {
         if (period in this.AVAILABLE_TIMESTAMPS) {
@@ -236,6 +240,7 @@ export default {
       if (this.zoom) {
         options = Object.assign(options, {
           rangeSelector: {
+            allButtonsEnabled: true,
             buttonPosition: {
               y: -32,
               x: -10,
@@ -268,7 +273,7 @@ export default {
               },
             },
             buttons,
-            selected: 0,
+            selected: this.selectedTimestamp ? this.selectedTimestamp : 0,
             labelStyle: {
               color: "transparent",
             },
@@ -293,11 +298,16 @@ export default {
           type: "day",
           count: this.minAmountOfGraphs - 1,
           text: "1D",
+          events: {
+            click: () => this.changePeriod("day")
+          }
         },
         hourly: {
           type: "hour",
-          count: this.minAmountOfGraphs - 1,
           text: "1h",
+          events: {
+            click: () => this.changePeriod("hour")
+          }
         }
       }
     }

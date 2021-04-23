@@ -6,7 +6,7 @@
     <v-col cols="6">
       <v-skeleton-loader :loading="loading || loadingSeries || loadingSummary" type="image">
         <v-card flat outlined>
-          <v-card-text class="data pa-0">
+          <v-card-text class="data pa-0" v-if="series.users.length">
             <ColumnChart
               :data="series.users"
               :title="summary ? `<div class='text-center py-0'>Unique accounts<div>
@@ -15,15 +15,17 @@
               zoom
               :min-amount-of-graphs="minAmountOfGraphs"
               :timestamps="['daily', 'hourly']"
+              :selected-timestamp="selectedUsersTimestamp"
+              @changePeriod="(val) => changePeriod('selectedPeriodUsers', val)"
             ></ColumnChart>
           </v-card-text>
         </v-card>
       </v-skeleton-loader>
     </v-col>
     <v-col cols="6">
-      <v-skeleton-loader :loading="loading || loadingSeries || loadingSummary" type="image">
+      <v-skeleton-loader :loading="loading || loadingCalls || loadingSummary" type="image">
         <v-card flat outlined>
-          <v-card-text class="data pa-0">
+          <v-card-text class="data pa-0" v-if="series.volume.length">
             <ColumnChart
               :data="series.volume"
               :title="summary ? `<div class='text-center py-0'>Activity (contracts calls count)<div>
@@ -32,6 +34,8 @@
               zoom
               :min-amount-of-graphs="minAmountOfGraphs"
               :timestamps="['daily', 'hourly']"
+              :selected-timestamp="selectedCallTimestamp"
+              @changePeriod="(val) => changePeriod('selectedPeriodCalls', val)"
             ></ColumnChart>
           </v-card-text>
         </v-card>
@@ -61,25 +65,45 @@ export default {
       this.dapp.contracts.forEach((x) => contracts.push(x.address));
       return contracts;
     },
+    selectedCallTimestamp() {
+      if (this.selectedPeriodCalls === "day") {
+        return 0;
+      }
+
+      return 1;
+    },
+    selectedUsersTimestamp() {
+      if (this.selectedPeriodUsers === "day") {
+        return 0;
+      }
+
+      return 1;
+    }
   },
   data: () => ({
     minAmountOfGraphs: 12,
     loadingSeries: true,
+    loadingCalls: true,
     loadingSummary: true,
     series: {
       volume: [],
       users: [],
     },
     selectedToken: 0,
-    selectedPeriod: "day",
+    selectedPeriodUsers: "day",
+    selectedPeriodCalls: "day",
     summary: null,
   }),
   mounted() {
-    this.getSeries(this.selectedPeriod);
+    this.getUsersSeries(this.selectedPeriodUsers);
+    this.getCallsSeries(this.selectedPeriodCalls);
     this.getGeneralStats();
   },
   methods: {
     ...mapActions(["showError"]),
+    changePeriod(type, period) {
+      this.$set(this, type, period);
+    },
     addEmptyDataInfo(res) {
       const amountToAdd = this.minAmountOfGraphs - res.length;
       if (amountToAdd <= 0 || isNaN(amountToAdd)) {
@@ -98,37 +122,51 @@ export default {
       }
       return res;
     },
-    getSeries(period) {
+    getUsersSeries(period) {
       this.loadingSeries = true;
 
       this.api
-        .getNetworkStatsSeries("mainnet", "users", period, this.contracts)
-        .then((res) => {
-          this.series.users = this.addEmptyDataInfo(res);
-          return this.api.getNetworkStatsSeries(
-            "mainnet",
-            "operation",
-            period,
-            this.contracts
-          );
-        })
-        .then((res) => {
-          this.series.volume = this.addEmptyDataInfo(res);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.showError(err);
-        })
-        .finally(() => {
-          this.loadingSeries = false;
-        });
+          .getNetworkStatsSeries("mainnet", "users", period, this.contracts)
+          .then((res) => {
+            this.$set(this.series, 'users', this.addEmptyDataInfo(res));
+          })
+          .catch((err) => {
+            console.log(err);
+            this.showError(err);
+          })
+          .finally(() => {
+            this.loadingSeries = false;
+          });
+    },
+    getCallsSeries(period) {
+      this.loadingCalls = false;
+
+      this.api.getNetworkStatsSeries(
+          "mainnet",
+          "operation",
+          period,
+          this.contracts
+      )
+      .then((res) => {
+          this.$set(this.series, 'volume', this.addEmptyDataInfo(res))
+          this.$nextTick(() => {
+            console.log('this.series.volume: ', this.series.volume);
+          })
+      })
+      .catch((err) => {
+        console.log(err);
+        this.showError(err);
+      })
+      .finally(() => {
+        this.loadingCalls = false;
+      })
     },
     getGeneralStats() {
       this.loadingSummary = true;
       this.api
         .getContractsStats("mainnet", this.contracts, "all")
         .then((res) => {
-          this.summary = this.addEmptyDataInfo(res);
+          this.$set(this, 'summary', this.addEmptyDataInfo(res));
         })
         .catch((err) => {
           console.log(err);
@@ -140,8 +178,25 @@ export default {
     },
   },
   watch: {
-    selectedPeriod: function (newValue) {
-      this.getSeries(newValue);
+    selectedPeriodUsers: {
+      handler(newValue) {
+        this.$set(this.series, 'users', []);
+        this.$nextTick(() => {
+          this.getUsersSeries(newValue);
+        });
+      },
+      deep: true,
+      immediate: true,
+    },
+    selectedPeriodCalls: {
+      handler(newValue) {
+        this.$set(this.series, 'volume', []);
+        this.$nextTick(() => {
+          this.getCallsSeries(newValue);
+        });
+      },
+      deep: true,
+      immediate: true,
     },
   },
 };
