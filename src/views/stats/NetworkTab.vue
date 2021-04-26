@@ -4,7 +4,7 @@
       <v-col cols="6">
         <v-skeleton-loader :loading="!contractSeries" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0" v-if="contractSeries">
+            <v-card-text class="pa-0 data" v-if="contractSeries">
               <ColumnChart
                 :data="contractSeries"
                 :title="`New deployments (total ${details.contracts_count})<br/>
@@ -48,7 +48,7 @@
       <v-col cols="6">
         <v-skeleton-loader :loading="!consumedGasSeries" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0" v-if="consumedGasSeries">
+            <v-card-text class="pa-0 data" v-if="consumedGasSeries">
               <ColumnChart
                 :data="consumedGasSeries"
                 :title="`Consumed gas × 10\u2076`"
