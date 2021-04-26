@@ -31,15 +31,13 @@
         <v-tooltip right>
           <template v-slot:activator="{ on }">
             <v-list-item :to="{ name: 'search' }" v-on="on" active-class="primary--text">
-              <template v-slot:default="{ active }">
-                <v-list-item-icon>
-                  <v-icon v-if="active" color="primary">mdi-cloud-search-outline</v-icon>
-                  <v-icon v-else color="grey lighten-2">mdi-cloud-search-outline</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>
-                  Advanced search
-                </v-list-item-title>
-              </template>
+              <v-list-item-icon>
+                <v-icon v-if="isAdvancedSearchPage" color="primary">mdi-cloud-search-outline</v-icon>
+                <v-icon v-else color="grey lighten-2">mdi-cloud-search-outline</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>
+                Advanced search
+              </v-list-item-title>
             </v-list-item>
           </template>
           <span>Advanced search</span>
@@ -47,33 +45,37 @@
 
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-list-item :to="{ path: `/stats/${config.networks[0]}/general` }" v-on="on" active-class="primary--text">
-              <template v-slot:default="{ active }">
-                <v-list-item-icon>
-                  <v-icon v-if="active" color="primary">mdi-poll</v-icon>
-                  <v-icon v-else color="grey lighten-2">mdi-poll</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>
-                  Statistics
-                </v-list-item-title>
-              </template>
+            <v-list-item
+                :to="{ path: `/stats/${config.networks[0]}/general` }"
+                v-on="on"
+                :class="isStatsPage ? 'v-list-item--active primary--text' : ''"
+            >
+              <v-list-item-icon>
+                <v-icon v-if="isStatsPage" color="primary">mdi-poll</v-icon>
+                <v-icon v-else color="grey lighten-2">mdi-poll</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>
+                Statistics
+              </v-list-item-title>
             </v-list-item>
           </template>
           <span>Statistics</span>
         </v-tooltip>
-      
+
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-list-item :to="{ path: 'dapps' }" v-on="on" active-class="primary--text">
-              <template v-slot:default="{ active }">
-                <v-list-item-icon>
-                  <v-icon v-if="active" color="primary">mdi-apps</v-icon>
-                  <v-icon v-else color="grey lighten-2">mdi-apps</v-icon>
-                </v-list-item-icon>
-                <v-list-item-title>
-                  DApps
-                </v-list-item-title>
-              </template>
+            <v-list-item
+                :to="{ path: '/dapps' }"
+                v-on="on"
+                :class="isDappsPage ? 'v-list-item--active primary--text' : ''"
+            >
+              <v-list-item-icon>
+                <v-icon v-if="isDappsPage" color="primary">mdi-apps</v-icon>
+                <v-icon v-else color="grey lighten-2">mdi-apps</v-icon>
+              </v-list-item-icon>
+              <v-list-item-title>
+                DApps
+              </v-list-item-title>
             </v-list-item>
           </template>
           <span>DApps</span>
@@ -153,6 +155,15 @@ export default {
     },
     apiDocsUrl() {
       return `${window.location.origin}/docs`;
+    },
+    isAdvancedSearchPage() {
+      return this.$route.fullPath.indexOf(`/search`) === 0;
+    },
+    isDappsPage() {
+      return this.$route.fullPath.indexOf(`/dapps`) === 0;
+    },
+    isStatsPage() {
+      return this.$route.fullPath.indexOf(`/stats/`) === 0;
     },
   },
   data: () => ({

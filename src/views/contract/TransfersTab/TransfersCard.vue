@@ -22,7 +22,13 @@
               </v-list-item-avatar>
               <v-list-item-content>
                 <v-list-item-title>
-                  <span v-if="item.name">{{ item.name }}</span>
+                  <span
+                      v-if="item.name"
+                      @mouseover="(e) => e.target.textContent = item.name"
+                      @mouseout="(e) => e.target.textContent = cutItemName(item.name)"
+                  >
+                    {{ cutItemName(item.name) }}
+                  </span>
                   <span v-else v-html="helpers.shortcut(item.contract)"></span>
                 </v-list-item-title>
                 <v-list-item-subtitle>
@@ -32,8 +38,13 @@
               </v-list-item-content>
               <v-list-item-action>
                 <v-list-item-action-text>
-                  <span class="hash text--primary" style="font-size: 1.2em;">
-                    {{ getItemValue(item) }}
+                  <span
+                      class="hash text--primary"
+                      style="font-size: 1.2em;"
+                      @mouseover="(e) => e.target.textContent = getItemValue(item)"
+                      @mouseout="(e) => e.target.textContent = cutItemValue(item)"
+                  >
+                    {{ cutItemValue(item) }}
                   </span>
                   <span class="caption text-uppercase font-weight-regular text--secondary">
                     &nbsp;{{ item.symbol ? item.symbol : '' }}
@@ -80,7 +91,7 @@ export default {
       immediate: true
     },
     selectedToken: {
-      handler(newVal) { 
+      handler(newVal) {
         this.$emit('selectedToken', newVal)
       },
       deep: true,
@@ -88,6 +99,15 @@ export default {
     },
   },
   methods: {
+    cutItemName(name) {
+      if (name.length > this.maxLengthTokenName) {
+        return `${name.slice(0, -3)}...`;
+      }
+      return name;
+    },
+    cutItemValue(item) {
+      return Number(item.balance/Math.pow(10, item.decimals)).toFixed(this.maxLengthTokenDecimals);
+    },
     getTokenBalances(offset, size) {
       this.api
         .getAccountTokenBalances(this.network, this.address, offset, size)
@@ -121,6 +141,9 @@ export default {
     return {
       tokens: [],
       selectedToken: null,
+      isHovered: false,
+      maxLengthTokenName: 16,
+      maxLengthTokenDecimals: 2,
       tokensPage: 1,
       tokensPageCount: 0,
       itemsPerPage: 9

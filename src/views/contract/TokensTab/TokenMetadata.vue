@@ -39,7 +39,7 @@
                 {{item.name.split(':')[0].trim()}}:
               </span>
               <span
-                v-if="item.children || isObjectValue(getValueFromName(item.name))"
+                v-if="isTreeViewable(item)"
               >
                 <v-treeview
                   :items="item.children ? makeView(item.children) : makeView(JSON.parse(getValueFromName(item.name)))"
@@ -56,7 +56,7 @@
                           class="value"
                       >
                         {{getValue(item.name)}}
-                      </span>
+                       </span>
                     </div>
                   </template>
                 </v-treeview>
@@ -109,16 +109,12 @@ export default {
         'network',
         'token_id',
         'extras',
-        'formats'  // FIXME
       ]
     }
   },
   methods: {
-    formatTokenAmount(amount) {
-      const decimals = this.token && this.token.decimals ? this.token.decimals : 0;
-      return this.helpers
-          .round(amount, decimals)
-          .toLocaleString(undefined, { maximumFractionDigits: decimals })
+    isTreeViewable(item) {
+      return this.isObjectValue(this.getValueFromName(item.name));
     },
     showTreeInfo(item) {
       if (item.children) {
