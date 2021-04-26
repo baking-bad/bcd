@@ -1,14 +1,12 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-row no-gutters>
-      <v-col cols="9" class="pa-2">
+      <v-col cols="8" class="pa-2">
         <TokenMetadata :token="selectedToken"/>
         <TokenHolders class="mt-3" :token="selectedToken" />
       </v-col>
-      <v-col cols="3" class="pa-2">
-        <TokensList
-          :tokens="tokens"
-          @selectedToken="updateSelectedToken"
+      <v-col cols="4" class="pa-2">
+        <TokensList :network="network" :address="address" :tokensTotal="tokensTotal" @selectedToken="updateSelectedToken"
         />
       </v-col>
     </v-row>
@@ -23,8 +21,9 @@ import TokensList from "@/views/contract/TokensTab/TokensList";
 export default {
   name: "ContractTokensTab",
   props: {
-    tokens: Array,
     network: String,
+    address: String,
+    tokensTotal: Number
   },
   components: {
     TokensList,
@@ -33,9 +32,7 @@ export default {
   },
   data: () => ({
     holders: {},
-    selectedToken: null,
-    tokensPage: 0,
-    tokensPageCount: 0
+    selectedToken: null
   }),
   methods: {
     async updateSelectedToken(newVal) {

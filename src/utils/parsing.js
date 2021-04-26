@@ -4,12 +4,12 @@ export function makeTreeview(json, lastid = 0, result = []) {
         if (typeof json[item] !== "object") {
             result.push({
                 id,
-                name: `${item} : ${json[item]}`
+                name: `${item}: ${json[item]}`
             })
         } else {
             result.push({
                 id,
-                name: `${item} :`,
+                name: `${item}:`,
                 children: makeTreeview(json[item], lastid, [])
             })
         }

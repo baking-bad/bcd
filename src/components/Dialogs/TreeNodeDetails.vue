@@ -8,11 +8,20 @@
      :retain-focus="false"
   >
     <v-card>
-      <v-card-title class="sidebar py-3 px-6 align-center d-flex">
-        <span class="body-1 font-weight-medium text-uppercase text--secondary mr-2">
+      <v-card-title
+          class="py-3 px-6 align-center d-flex"
+          :class="isErrorInfo ? 'error-background' : 'sidebar'"
+      >
+        <span
+            class="body-1 font-weight-medium text-uppercase mr-2"
+            :class="isErrorInfo ? 'black--text' : 'text--secondary'"
+        >
           Inspect:
         </span>
-        <span class="body-1">{{ data.name }}</span>
+        <span
+            class="body-1"
+            :class="isErrorInfo ? 'black--text' : ''"
+        >{{ data.name }}</span>
         <v-spacer></v-spacer>
         <template v-if="data.diffType === 'create'">
           <v-icon color="success" small>mdi-database-plus</v-icon>
@@ -26,9 +35,13 @@
           <v-icon color="error" small>mdi-database-remove</v-icon>
           <span class="error--text ml-2 caption font-weight-medium text-uppercase">remove</span>
         </template>
-        <v-btn v-if="fullscreen" class="ml-6" text @click="show = false">
-          <v-icon>mdi-close</v-icon>
-          Close
+        <v-btn class="ml-6" text @click="show = false">
+          <v-icon :color="isErrorInfo ? 'black' : 'white'">mdi-close</v-icon>
+          <span
+              :class="isErrorInfo ? 'black--text' : 'text--secondary'"
+          >
+            Close
+          </span>
         </v-btn>
       </v-card-title>
       <v-card-text class="data" :class="data.realPrim === 'lambda' ? 'pa-0' : 'pt-7'">
@@ -67,7 +80,11 @@ export default {
   props: {
     value: Boolean,
     data: Object,
-    network: String
+    network: String,
+    isErrorInfo: {
+      type: Boolean,
+      default: false,
+    },
   },
   data: () => ({
     show: false

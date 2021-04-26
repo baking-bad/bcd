@@ -1,58 +1,69 @@
 <template>
-  <div v-if="tokens" class="ma-0 pa-0">
-    <v-data-table
-      :items="tokens"
-      :page.sync="tokensPage"
-      :items-per-page="9"
-      hide-default-header
-      hide-default-footer
-      class="elevation-0"        
-      @page-count="tokensPageCount = $event"
-    >
-      <template v-slot:item="{ item }">
-        <v-list-item two-line @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`" 
-            :class="item == selectedToken ? 'token-card token-card-selected' : 'token-card'">
-          <v-list-item-avatar class="my-0 mr-2">
-            <v-tooltip left>
-              <template v-slot:activator="{ on }">
-                <v-btn v-on="on" small icon class="text--disabled" @click.prevent.stop="openToken(item)">
-                  <v-icon small>mdi-open-in-new</v-icon>
-                </v-btn>
-              </template>
-              <span>View contract</span>
-            </v-tooltip>
-          </v-list-item-avatar>
-          <v-list-item-content>
-            <v-list-item-title>
-              <span v-if="item.name">{{ item.name }}</span>
-              <span v-else v-html="helpers.shortcut(item.contract)"></span>
-            </v-list-item-title>
-            <v-list-item-subtitle>
-              <span class="caption text--disabled">token ID:</span>
-              <span>&nbsp;{{ item.token_id }}</span>
-            </v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-list-item-action-text>
-              <span class="hash text--primary" style="font-size: 1.2em;">
-                {{ getItemValue(item) }}
-              </span>
-              <span class="caption text-uppercase font-weight-regular text--secondary">
-                &nbsp;{{ item.symbol ? item.symbol : '' }}
-              </span>
-            </v-list-item-action-text>
-            <v-list-item-action-text>
-              <span class="text--disabled">balance</span>
-            </v-list-item-action-text>
-          </v-list-item-action>
-        </v-list-item>
-      </template>
-    </v-data-table>
+  <div class="ma-0 pa-0">
+    <v-card flat outlined>
+      <v-list class="ma-0 pa-0 data">
+        <v-list-item-group
+          active-class="token-card-selected"
+          mandatory
+        >
+          <template v-for="(item, i) in tokens">
+            <v-divider :key="`${i}-divider`" v-if="i != 0" />
+            <v-list-item two-line @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`" 
+                class="token-card">
+              <v-list-item-avatar class="my-0 mr-2">
+                <v-tooltip left>item == selectedToken ? 'token-card token-card-selected' : '
+                  <template v-slot:activator="{ on }">
+                    <v-btn v-on="on" small icon class="text--disabled" @click.prevent.stop="openToken(item)">
+                      <v-icon small>mdi-open-in-new</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>View contract</span>
+                </v-tooltip>
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title>
+                  <span
+                      v-if="item.name"
+                      @mouseover="(e) => e.target.textContent = item.name"
+                      @mouseout="(e) => e.target.textContent = cutItemName(item.name)"
+                  >
+                    {{ cutItemName(item.name) }}
+                  </span>
+                  <span v-else v-html="helpers.shortcut(item.contract)"></span>
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                  <span class="caption text--disabled">token ID:</span>
+                  <span>&nbsp;{{ item.token_id }}</span>
+                </v-list-item-subtitle>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-list-item-action-text>
+                  <span
+                      class="hash text--primary"
+                      style="font-size: 1.2em;"
+                      @mouseover="(e) => e.target.textContent = getItemValue(item)"
+                      @mouseout="(e) => e.target.textContent = cutItemValue(item)"
+                  >
+                    {{ cutItemValue(item) }}
+                  </span>
+                  <span class="caption text-uppercase font-weight-regular text--secondary">
+                    &nbsp;{{ item.symbol ? item.symbol : '' }}
+                  </span>
+                </v-list-item-action-text>
+                <v-list-item-action-text>
+                  <span class="text--disabled">balance</span>
+                </v-list-item-action-text>
+              </v-list-item-action>
+            </v-list-item>
+        </template>
+        </v-list-item-group>
+      </v-list>
+    </v-card>
     <div class="text-center mt-2">
       <v-pagination
         v-model="tokensPage"
         :length="tokensPageCount"
-        v-if="tokens.length > 10"
+        v-if="tokenBalancesTotal > itemsPerPage"
       ></v-pagination>
     </div>
   </div>
@@ -62,19 +73,25 @@
 export default {
   name: "TransfersCard",
   props: {
-    tokens: Array
+    network: String,
+    address: String,
+    tokenBalancesTotal: Number
   },
   watch: {
-    tokens: {
-      immediate: true,
-      handler: function(newVal) {
-        if (this.selectedToken === null && newVal && newVal.length > 0) {
-          this.selectedToken = newVal[0];
-        }
-      }
+    tokensPage: {
+      handler(newVal) {
+        this.getTokenBalances((newVal - 1) * this.itemsPerPage, this.itemsPerPage)
+      },
+      immediate: true
+    },
+    tokenBalancesTotal: {
+      handler(newVal) { 
+        this.tokensPageCount = Math.ceil(newVal / this.itemsPerPage);
+      },
+      immediate: true
     },
     selectedToken: {
-      handler(newVal) { 
+      handler(newVal) {
         this.$emit('selectedToken', newVal)
       },
       deep: true,
@@ -82,6 +99,27 @@ export default {
     },
   },
   methods: {
+    cutItemName(name) {
+      if (name.length > this.maxLengthTokenName) {
+        return `${name.slice(0, -3)}...`;
+      }
+      return name;
+    },
+    cutItemValue(item) {
+      return Number(item.balance/Math.pow(10, item.decimals)).toFixed(this.maxLengthTokenDecimals);
+    },
+    getTokenBalances(offset, size) {
+      this.api
+        .getAccountTokenBalances(this.network, this.address, offset, size)
+        .then((res) => {
+          if (!res) return;
+          this.tokens = res.balances;
+          this.selectedToken = this.tokens[0];
+        })
+        .catch((err) => {
+          this.showError(err);
+        })
+    },
     getItemValue(item) {
       return this.helpers
           .round(
@@ -101,19 +139,20 @@ export default {
   },
   data() {
     return {
+      tokens: [],
       selectedToken: null,
-      tokensPage: 0,
-      tokensPageCount: 0
+      isHovered: false,
+      maxLengthTokenName: 16,
+      maxLengthTokenDecimals: 2,
+      tokensPage: 1,
+      tokensPageCount: 0,
+      itemsPerPage: 9
     }
   }
 }
 </script>
 
 <style scoped>
-table {
-  margin: 0 !important;
-}
-
 .token-card {
   border-bottom: 1px solid var(--v-border-base);
 }

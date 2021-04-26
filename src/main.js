@@ -15,9 +15,8 @@ import './setups/filters';
 
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { getJwt, logout, getBool } from "@/utils/auth.js";
-import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js"
-import { NodeRPC } from "@/api/rpc.js"
-import { BcdWs } from "@/api/ws.js";
+import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js";
+import { NodeRPC } from "@/api/rpc.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
 
@@ -27,10 +26,8 @@ Vue.config.productionTip = false;
 
 Vue.use(Clipboard);
 
-const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
 let config = {
   API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
-  WS_URI: process.env.VUE_APP_WS_URI || `${wsProtocol}//${window.location.host}/v1/ws`,
   HOME_PAGE: 'home'
 }
 
@@ -44,13 +41,12 @@ api.getConfig().then(response => {
   }
 
   let rpc = new NodeRPC(config.rpc_endpoints);
-  let ws = new BcdWs(config.WS_URI);
 
   let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress, round }
 
   Vue.mixin({
     data() {
-      return { config, api, rpc, ws, helpers }
+      return { config, api, rpc, helpers }
     }
   });
 

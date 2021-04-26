@@ -1,37 +1,36 @@
 <template>
-  <div v-if="tokens" class="ma-0 pa-0">
-    <v-data-table
-      :items="tokens"
-      :page.sync="tokensPage"
-      :items-per-page="12"
-      hide-default-header
-      hide-default-footer
-      class="elevation-0"        
-      @page-count="tokensPageCount = $event"
-    >
-      <template v-slot:item="{ item }">
-        <v-list-item @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`" 
-            :class="item == selectedToken ? 'token-card token-card-selected' : 'token-card'">
-          <v-list-item-content>
-            <v-list-item-title>
-              <span v-if="item.name">{{ item.name }}</span>
-              <span v-else class="text--disabled">NO NAME</span>
-            </v-list-item-title>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-list-item-action-text>
-              <span class="caption text--disabled">token ID:</span>
-              <span>&nbsp;{{ item.token_id }}</span>
-            </v-list-item-action-text>
-          </v-list-item-action>
-        </v-list-item>
-      </template>
-    </v-data-table>
+  <div class="ma-0 pa-0">
+    <v-card flat outlined>
+      <v-list class="ma-0 pa-0 data">
+        <v-list-item-group
+          active-class="token-card-selected"
+          mandatory
+        >
+          <template v-for="(item, i) in tokens">
+            <v-divider :key="`${i}-divider`" v-if="i != 0" />
+            <v-list-item @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`" class="token-card">
+              <v-list-item-content>
+                <v-list-item-title>
+                  <span v-if="item.name">{{ item.name }}</span>
+                  <span v-else class="text--disabled">NO NAME</span>
+                </v-list-item-title>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-list-item-action-text>
+                  <span class="caption text--disabled">token ID:</span>
+                  <span>&nbsp;{{ item.token_id }}</span>
+                </v-list-item-action-text>
+              </v-list-item-action>
+            </v-list-item>
+          </template>
+        </v-list-item-group>
+      </v-list>
+    </v-card>
     <div class="text-center mt-2">
       <v-pagination
         v-model="tokensPage"
         :length="tokensPageCount"
-        v-if="tokens.length > 10"
+        v-if="tokensTotal > itemsPerPage"
       ></v-pagination>
     </div>
   </div>
@@ -41,35 +40,36 @@
 export default {
   name: "TokensList",
   props: {
-    tokens: Array,
-    currentToken: Object,
-    preselectedToken: Number,
-  },
-  created() {
-    this.selectFirst(this.tokens);
+    network: String,
+    address: String,
+    tokensTotal: Number
   },
   methods: {
-    getTokenSupply(item) {
-      return this.helpers
-          .round(
-              item.supply,
-              item.decimals ? item.decimals : 0
-          )
-          .toLocaleString(undefined, {
-            maximumFractionDigits: item.decimals
-                ? item.decimals
-                : 0,
-          })
+    getTokens(offset, size) {
+      this.api
+        .getContractTokens(this.network, this.address, offset, size)
+        .then((res) => {
+          if (!res) return;
+          this.tokens = res;
+          this.selectedToken = this.tokens[0];
+        })
+        .catch((err) => {
+          this.showError(err);
+        })
     },
-    selectFirst(tokens) {
-      if (tokens && tokens.length > 0) {
-        this.selectedToken = tokens[0];
-      }
-    }
   },
   watch: {
-    tokens(newVal) {
-      this.selectFirst(newVal);
+    tokensPage: {
+      handler(newVal) {
+        this.getTokens((newVal - 1) * this.itemsPerPage, this.itemsPerPage)
+      },
+      immediate: true
+    },
+    tokensTotal: {
+      handler(newVal) { 
+        this.tokensPageCount = Math.ceil(newVal / this.itemsPerPage);
+      },
+      immediate: true
     },
     selectedToken: {
       handler(newVal) { 
@@ -81,8 +81,10 @@ export default {
   },
   data() {
     return {
+      tokens: [],
       selectedToken: null, 
-      tokensPage: 0,
+      tokensPage: 1,
+      itemsPerPage: 10,
       tokensPageCount: 0
     }
   }
@@ -90,10 +92,6 @@ export default {
 </script>
 
 <style scoped>
-table {
-  margin: 0 !important;
-}
-
 .token-card {
   border-bottom: 1px solid var(--v-border-base);
 }

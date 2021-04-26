@@ -148,30 +148,31 @@ export default {
   },
   data: () => ({
     stats: [],
-    indices: {},
-    connecting: true,
     pickingRandom: false,
-    hasOpenCallback: false,
-    synced: false,
+    loadingHead: true
   }),
   mounted() {
     if (this.$route.name != this.config.HOME_PAGE) {
       this.$router.push({ path: this.config.HOME_PAGE });
     }
-
-    this.ws.onMessage(this.onMessage);
-    this.ws.onOpen(this.onOpen);
-  },
-  beforeRouteLeave(to, from, next) {
-    this.ws.send({
-      action: "unsubscribe",
-      channel: "stats",
-    });
-
-    next();
+    this.getHead();
   },
   methods: {
     ...mapActions(["showError"]),
+    getHead() {
+      this.api
+        .getHead()
+        .then((res) => {
+          this.stats = res;
+        })
+        .catch((err) => {
+            console.log(err);
+            this.showError(err);
+        })
+        .finally(() => {
+          this.pickingRandom = false;
+        });
+    },
     pickRandom(val) {
       const isSelectPressed = val.target && val.target.closest('.network-select');
       if (isSelectPressed || this.pickingRandom) return;
@@ -182,7 +183,9 @@ export default {
           this.$router.push({ path: `/${res.network}/${res.address}` });
         })
         .catch((err) => {
-          if (err.code !== 204) {
+          if (err.response.status === 404) {
+            this.showError("The network does not have enough contracts");
+          } else if (err.code !== 204) {
             console.log(err);
             this.showError(err);
           }
@@ -190,41 +193,6 @@ export default {
         .finally(() => {
           this.pickingRandom = false;
         });
-    },
-    onMessage(data) {
-      if (data.body === undefined) {
-        return;
-      }
-
-      if (!this.synced && data.body.length > 1) {
-        this.stats = data.body.sort(function (a, b) {
-          if (a.network === "mainnet") {
-            return -1;
-          } else if (b.network === "mainnet") {
-            return 1;
-          } else {
-            return b.network.localeCompare(a.network);
-          }
-        });
-        for (let i = 0; i < this.stats.length; i++) {
-          this.indices[this.stats[i].network] = i;
-        }
-        this.synced = true;
-      } else if (this.synced) {
-        for (let i = 0; i < data.body.length; i++) {
-          let idx = this.indices[data.body[i].network];
-          if (idx !== undefined) {
-            Object.assign(this.stats[idx], data.body[i]);
-          }
-        }
-      }
-    },
-    onOpen() {
-      this.ws.send({
-        action: "subscribe",
-        channel: "stats",
-      });
-      this.connecting = false;
     },
   },
 };
@@ -282,10 +250,20 @@ button.pick-random-button {
           &::after {
             border: none;
           }
-          .v-input__append-inner {
-            width: 100%;
-            .v-icon {
-              color: inherit !important;
+          .v-select__slot {
+            height: inherit;
+            .v-input__append-inner {
+              margin: 0;
+              padding: 0;
+              height: inherit;
+              width: 100%;
+              .v-input__icon {
+                height: inherit;
+                .v-icon {
+                  height: inherit;
+                  color: inherit !important;
+                }
+              }
             }
           }
         }

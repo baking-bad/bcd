@@ -32,11 +32,6 @@
             @selectedFillType="setSelectedFillType"
             @modelChange="setModel"
         />
-        <SchemaAlertData
-            v-if="alertData"
-            :alert-data="alertData"
-            @dismiss="showAlertData('')"
-        />
         <SchemaAlertOpHashSuccess
             v-show="injectedOpHash"
             :injected-op-hash="injectedOpHash"
@@ -79,14 +74,13 @@ import SchemaForm from "./schemaForm/SchemaForm";
 import SchemaResultOPG from "./schemaDialog/SchemaResultOPG";
 import SchemaCmdLine from "./schemaDialog/SchemaCmdLine";
 import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
-import SchemaAlertData from "./schemaAlert/SchemaAlertData";
 import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
 import { DAppClient, TezosOperationType, AbortedBeaconError, BroadcastBeaconError } from '@airgap/beacon-sdk'
 
 const walletsToIcons = {
-  "Thanos Wallet": "mdi-alpha-t",
-  "Beacon Extension": "mdi-alpha-b",
+  "Temple - Tezos Wallet (ex. Thanos)": "mdi-alpha-t",
+  "Spire": "mdi-alpha-s",
   "Galleon": "mdi-alpha-g",
   "Kukai": "mdi-alpha-k",
   "default": "mdi-alpha-w",
@@ -97,7 +91,6 @@ export default {
   components: {
     SchemaAlertCustomSuccess,
     SchemaHeader,
-    SchemaAlertData,
     SchemaAlertOpHashSuccess,
     SchemaCmdLine,
     SchemaResultOPG,
@@ -110,7 +103,6 @@ export default {
     name: String,
     address: String,
     network: String,
-    binPath: String,
     header: String,
     title: String,
     type: String,
@@ -126,7 +118,6 @@ export default {
     wallet: null,
     execution: false,
     importing: false,
-    alertData: '',
     injectedOpHash: null,
     simulatedOperation: {},
     showRawJSON: false,
@@ -229,11 +220,6 @@ export default {
     },
     showSuccessMessage(text) {
       this.successText = text;
-      this.alertData = '';
-    },
-    showAlertData(text) {
-      this.alertData = text;
-      this.successText = '';
     },
     rawJsonActionCallback() {
       if (this.isParameter) {
@@ -396,7 +382,7 @@ export default {
         .getContractEntrypointData(
           this.network,
           this.address,
-          this.binPath,
+          this.name,
           this.model,
           rawJSON ? "" : "michelson"
         )
@@ -415,11 +401,7 @@ export default {
           return res;
         })
         .catch((err) => {
-          if (err.response) {
-            this.showAlertData(err.response.data.message);
-          } else {
-            this.showError(err);
-          }
+          this.showError(err.response ? err.response.data.message : err);
         })
         .finally(() => (this.execution = false));
     },
@@ -432,7 +414,7 @@ export default {
         .getContractEntrypointTrace(
           this.network,
           this.address,
-          this.binPath,
+          this.name,
           this.model,
           this.settings.source,
           this.settings.amount
@@ -447,11 +429,7 @@ export default {
           }
         })
         .catch((err) => {
-          if (err.response) {
-            this.showAlertData(err.response.data.message);
-          } else {
-            this.showError(err);
-          }
+          this.showError(err.response ? err.response.data.message : err);
         })
         .finally(() => (this.execution = false));
     },
@@ -505,13 +483,16 @@ export default {
             kind: TezosOperationType.TRANSACTION,
             destination: this.address,
             amount: String(parseInt(this.settings.amount || "0")),
-            parameters: JSON.parse(JSON.stringify(parameter)),
+            parameters: {
+              entrypoint: this.name,
+              value: JSON.parse(JSON.stringify(parameter))
+            },
           }]
         });
         this.injectedOpHash = result.opHash;
       } catch (err) {
         await err;
-        this.showAlertData(err.description);
+        this.showError(err.description);
       } finally {
         this.execution = false;
       }
@@ -532,11 +513,7 @@ export default {
           this.showRawJSON = show;
         })
         .catch((err) => {
-          if (err.response) {
-            this.showAlertData(err.response.data.message);
-          } else {
-            this.showError(err);
-          }
+          this.showError(err.response ? err.response.data.message : err);
         })
         .finally(() => (this.execution = false));
     },
@@ -552,7 +529,7 @@ export default {
         });
         await this.deploy(isLast, data.code, data.storage);
       } catch (err) {
-        this.showAlertData(this.makeHumanableErrorMessage(err));
+        this.showError(this.makeHumanableErrorMessage(err));
       } finally {
         this.execution = false;
       }
@@ -576,7 +553,7 @@ export default {
         });
         await this.deploy(isLast, data.code, data.storage);
       } catch (err) {
-        this.showAlertData(err.description);
+        this.showError(err.description);
       } finally {
         this.execution = false;
       }
@@ -598,7 +575,7 @@ export default {
         this.injectedOpHash = result.opHash;
         this.$emit("onDeploy", result);
       } catch (err) {
-        this.showAlertData(this.makeHumanableErrorMessage(err));
+        this.showError(this.makeHumanableErrorMessage(err));
       }
     },
     getRandomContract(props) {
@@ -611,7 +588,7 @@ export default {
           }
         })
         .catch((err) => {
-          this.showAlertData(err.message);
+          this.showError(err.message);
         })
         .finally(() => (this.show = true));
     },
@@ -619,12 +596,10 @@ export default {
   watch: {
     execution: function (newValue) {
       if (newValue) {
-        this.showAlertData('');
         this.injectedOpHash = null;
       }
     },
     name: function () {
-      this.showAlertData('');
       this.parametersJSON = null;
       this.tezosClientCmdline = null;
       this.simulatedOperation = {};

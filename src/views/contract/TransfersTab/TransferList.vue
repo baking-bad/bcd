@@ -71,7 +71,7 @@
         <template v-for="(item, id) in items">
           <v-list-item class="item__list-item" :class="statusHeaderClass(item.status)" :key="id">
             <v-row>
-              <v-col cols="2" class="d-flex align-center justify-center">
+              <v-col cols="2" class="d-flex align-center justify-center pa-0">
                 <span class="body-2 text--secondary">{{
                   helpers.formatDatetime(item.timestamp)
                 }}</span>
@@ -99,19 +99,19 @@
                     class="caption text-uppercase font-weight-regular accent--text"
                     v-if="!item.to && address === item.from"
                   >
-                    Burn&nbsp;
+                    {{ item.parent || 'Burn' }}&nbsp;
                   </span>
                   <span
                     class="caption text-uppercase font-weight-regular text--secondary"
                     v-else-if="item.from && item.from !== address"
                   >
-                    From&nbsp;
+                    {{ item.parent }}&nbsp;From&nbsp;
                   </span>
-                  <span 
-                    v-else-if="!item.from && address === item.to" 
+                  <span
+                    v-else-if="!item.from && address === item.to"
                     class="caption text-uppercase font-weight-regular secondary--text"
                   >
-                    Mint&nbsp;
+                    {{ item.parent || 'Mint' }}&nbsp;
                   </span>
                   <router-link
                     v-if="item.from && address !== item.from"
@@ -124,7 +124,7 @@
                   <span
                     v-if="item.to && address !== item.to"
                     class="caption text-uppercase font-weight-regular text--secondary"
-                    >&nbsp;to&nbsp;</span
+                    >&nbsp;{{ item.parent }}&nbsp;to&nbsp;</span
                   >
                   <router-link
                     v-if="item.to && address !== item.to"
@@ -184,6 +184,7 @@ export default {
     downloaded: false,
     total: 0,
     lastId: "",
+    maxSize: 10
   }),
   mounted() {
     this.getNextPage();
@@ -209,7 +210,7 @@ export default {
             this.network,
             this.address,
             this.token.token_id,
-            20,
+            this.maxSize,
             this.items.length
           )
           .then((res) => {
@@ -230,7 +231,7 @@ export default {
             this.address,
             this.token.token_id,
             [this.contract],
-            20,
+            this.maxSize,
             this.lastId
           )
           .then((res) => {

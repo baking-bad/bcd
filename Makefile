@@ -4,11 +4,11 @@
 dev:
 	npm run serve
 
-you:
-	npm run serve -- --mode you
+api:
+	npm run serve -- --mode api
 
-test:
-	npm run serve -- --mode test
+ee:
+	npm run serve -- --mode ee
 
 image:
 	docker build -t bakingbad/bcdhub-gui:latest .

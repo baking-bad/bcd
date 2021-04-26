@@ -99,6 +99,10 @@ div.theme--dark.v-application {
   background-color: var(--v-data-base) !important;
 }
 
+.error-background {
+  background-color: var(--v-error-base) !important;
+}
+
 .white-space-normal {
   white-space: normal !important;
 }
