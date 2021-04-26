@@ -6,7 +6,7 @@
     <v-col cols="6">
       <v-skeleton-loader :loading="loading || loadingSeries || loadingSummary" type="image">
         <v-card flat outlined>
-          <v-card-text class="data pa-0" v-if="series.users.length">
+          <v-card-text class="data pa-0">
             <ColumnChart
               :data="series.users"
               :title="summary ? `<div class='text-center py-0'>Unique accounts<div>
@@ -25,7 +25,7 @@
     <v-col cols="6">
       <v-skeleton-loader :loading="loading || loadingCalls || loadingSummary" type="image">
         <v-card flat outlined>
-          <v-card-text class="data pa-0" v-if="series.volume.length">
+          <v-card-text class="data pa-0">
             <ColumnChart
               :data="series.volume"
               :title="summary ? `<div class='text-center py-0'>Activity (contracts calls count)<div>
@@ -94,9 +94,12 @@ export default {
     selectedPeriodCalls: "day",
     summary: null,
   }),
-  mounted() {
+  async mounted() {
+    this.loadingSeries = true;
     this.getUsersSeries(this.selectedPeriodUsers);
+    this.loadingCalls = true;
     this.getCallsSeries(this.selectedPeriodCalls);
+    this.loadingSummary = true;
     this.getGeneralStats();
   },
   methods: {
@@ -123,8 +126,6 @@ export default {
       return res;
     },
     getUsersSeries(period) {
-      this.loadingSeries = true;
-
       this.api
           .getNetworkStatsSeries("mainnet", "users", period, this.contracts)
           .then((res) => {
@@ -139,8 +140,6 @@ export default {
           });
     },
     getCallsSeries(period) {
-      this.loadingCalls = false;
-
       this.api.getNetworkStatsSeries(
           "mainnet",
           "operation",
@@ -149,9 +148,6 @@ export default {
       )
       .then((res) => {
           this.$set(this.series, 'volume', this.addEmptyDataInfo(res))
-          this.$nextTick(() => {
-            console.log('this.series.volume: ', this.series.volume);
-          })
       })
       .catch((err) => {
         console.log(err);
@@ -162,7 +158,6 @@ export default {
       })
     },
     getGeneralStats() {
-      this.loadingSummary = true;
       this.api
         .getContractsStats("mainnet", this.contracts, "all")
         .then((res) => {
@@ -180,20 +175,14 @@ export default {
   watch: {
     selectedPeriodUsers: {
       handler(newValue) {
-        this.$set(this.series, 'users', []);
-        this.$nextTick(() => {
-          this.getUsersSeries(newValue);
-        });
+        this.getUsersSeries(newValue);
       },
       deep: true,
       immediate: true,
     },
     selectedPeriodCalls: {
       handler(newValue) {
-        this.$set(this.series, 'volume', []);
-        this.$nextTick(() => {
-          this.getCallsSeries(newValue);
-        });
+        this.getCallsSeries(newValue);
       },
       deep: true,
       immediate: true,

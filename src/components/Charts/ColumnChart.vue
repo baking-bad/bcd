@@ -46,7 +46,10 @@ export default {
     formatter: String,
     zoom: Boolean,
     minAmountOfGraphs: Number,
-    selectedTimestamp: Number,
+    selectedTimestamp: {
+      type: Number,
+      default: 0,
+    },
   },
   components: {
     highcharts: Chart,
@@ -91,43 +94,8 @@ export default {
           },
         ];
       }
-    }
-  },
-  computed: {
-    labelFormatterFunction() {
-      if (this.formatter === "kilobyte") {
-        return function () {
-          return kilobyteFormatter(this.total, 0);
-        };
-      } else if (this.formatter === "gas") {
-        return function () {
-          return gasFormatter(this.total, 0);
-        };
-      }
-      return function () {
-        return defaultFormatter(this.total);
-      };
     },
-    tooltipFormatterFunction() {
-      if (this.formatter === "kilobyte") {
-        return function () {
-          let value = kilobyteFormatter(this.y);
-          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value} KB</b><br/>`;
-        };
-      } else if (this.formatter === "gas") {
-        return function () {
-          let value = floorFormatter(this.y, 0);
-          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
-        };
-      }
-      return function () {
-        let value = defaultFormatter(this.y);
-        return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
-      };
-    },
-    options() {
-      if (this.data == null) return {};
-      const buttons = this.timestamps ? this.setTimestampsButtons() : this.setDefaultButtons();
+    setOptions(newVal, buttons) {
       let options = {
         navigator: {
           enabled: false,
@@ -215,7 +183,7 @@ export default {
         series: [
           {
             type: "column",
-            data: this.data,
+            data: newVal,
             color: "var(--v-primary-base)",
             name: this.name,
             borderColor: "transparent",
@@ -288,8 +256,63 @@ export default {
           },
         });
       }
-      return options;
+      this.$set(this, 'options', options);
     },
+  },
+  computed: {
+    labelFormatterFunction() {
+      if (this.formatter === "kilobyte") {
+        return function () {
+          return kilobyteFormatter(this.total, 0);
+        };
+      } else if (this.formatter === "gas") {
+        return function () {
+          return gasFormatter(this.total, 0);
+        };
+      }
+      return function () {
+        return defaultFormatter(this.total);
+      };
+    },
+    tooltipFormatterFunction() {
+      if (this.formatter === "kilobyte") {
+        return function () {
+          let value = kilobyteFormatter(this.y);
+          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value} KB</b><br/>`;
+        };
+      } else if (this.formatter === "gas") {
+        return function () {
+          let value = floorFormatter(this.y, 0);
+          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
+        };
+      }
+      return function () {
+        let value = defaultFormatter(this.y);
+        return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
+      };
+    },
+  },
+  watch: {
+    data: {
+      handler(newVal, oldVal) {
+        if (typeof oldVal !== "undefined") {
+          this.$refs.chart.chart.update({
+            series: [{
+              type: "column",
+              data: newVal,
+              color: "var(--v-primary-base)",
+              name: this.name,
+              borderColor: "transparent",
+              label: {},
+            }]
+          });
+        }
+        const buttons = this.timestamps ? this.setTimestampsButtons() : this.setDefaultButtons();
+        this.setOptions(newVal, buttons);
+      },
+      deep: true,
+      immediate: true,
+    }
   },
   data() {
     return {
@@ -299,7 +322,9 @@ export default {
           count: this.minAmountOfGraphs - 1,
           text: "1D",
           events: {
-            click: () => this.changePeriod("day")
+            click: () => {
+              this.changePeriod("day");
+            }
           }
         },
         hourly: {
@@ -307,10 +332,13 @@ export default {
           count: this.minAmountOfGraphs - 1,
           text: "1h",
           events: {
-            click: () => this.changePeriod("hour")
+            click: () => {
+              this.changePeriod("hour");
+            }
           }
         }
-      }
+      },
+      options: {}
     }
   },
 };
