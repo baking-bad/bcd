@@ -304,6 +304,7 @@ export default {
         },
         hourly: {
           type: "hour",
+          count: this.minAmountOfGraphs - 1,
           text: "1h",
           events: {
             click: () => this.changePeriod("hour")
