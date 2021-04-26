@@ -161,68 +161,39 @@ export default {
     ...mapActions(["showError"]),
     setDetailsDataToDefault() {
       this.$set(this, 'details', {});
-      this.$set(this, 'contractSeries', null);
-      this.$set(this, 'operationSeries', null);
-      this.$set(this, 'consumedGasSeries', null);
-      this.$set(this, 'paidStorageSizeDiffSeries', null);
+      ['contractSeries', 'operationSeries', 'consumedGasSeries', 'paidStorageSizeDiffSeries']
+          .forEach((key) => this.setRes(key, null));
     },
     getDetails(network) {
       this.loading = true;
 
       this.api
         .getNetworkStats(network)
-        .then(res => {
-          this.$set(this, 'details', res);
-        })
+        .then(res => this.setRes('details', res))
         .catch(err => {
           console.log(err);
           this.showError(err);
         })
         .finally(() => (this.loading = false));
 
+      this.requestStatsData(network, "contract", 'contractSeries');
+      this.requestStatsData(network, "operation", 'operationSeries');
+      this.requestStatsData(network, "paid_storage_size_diff", 'paidStorageSizeDiffSeries');
+      this.requestStatsData(network, "consumed_gas", 'consumedGasSeries');
+    },
+    requestStatsData(network, index, key) {
       this.api
-        .getNetworkStatsSeries(network, "contract", "month")
-        .then(res => {
-          this.$set(this, 'contractSeries', res);
-        })
-        .catch(err => {
-          this.$set(this, 'contractSeries', []);
-          console.log(err);
-          this.showError(err);
-        });
-
-      this.api
-        .getNetworkStatsSeries(network, "operation", "month")
-        .then(res => {
-          this.$set(this, 'operationSeries', res);
-        })
-        .catch(err => {
-          this.$set(this, 'operationSeries', []);
-          console.log(err);
-          this.showError(err);
-        });
-
-      this.api
-        .getNetworkStatsSeries(network, "paid_storage_size_diff", "month")
-        .then(res => {
-          this.$set(this, 'paidStorageSizeDiffSeries', res);
-        })
-        .catch(err => {
-          this.$set(this, 'paidStorageSizeDiffSeries', []);
-          console.log(err);
-          this.showError(err);
-        });
-
-      this.api
-        .getNetworkStatsSeries(network, "consumed_gas", "month")
-        .then(res => {
-          this.$set(this, 'consumedGasSeries', res);
-        })
-        .catch(err => {
-          this.$set(this, 'consumedGasSeries', []);
-          console.log(err);
-          this.showError(err);
-        });
+          .getNetworkStatsSeries(network, index, "month")
+          .then(res => this.setRes(key, res))
+          .catch(err => this.setErr(key, err));
+    },
+    setErr(key, err) {
+      this.$set(this, key, []);
+      console.log(err);
+      this.showError(err);
+    },
+    setRes(key, res) {
+      this.$set(this, key, res);
     },
     getProtocolLevelString(item) {
       if (item.start_level == item.end_level) {
