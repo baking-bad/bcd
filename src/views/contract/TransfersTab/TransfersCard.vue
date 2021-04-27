@@ -7,11 +7,11 @@
           mandatory
         >
           <template v-for="(item, i) in tokens">
-            <v-divider :key="`${i}-divider`" v-if="i != 0" />
-            <v-list-item two-line @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`" 
+            <v-divider v-if="i !== 0" :key="`${i}-divider`" />
+            <v-list-item two-line @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`"
                 class="token-card">
               <v-list-item-avatar class="my-0 mr-2">
-                <v-tooltip left>item == selectedToken ? 'token-card token-card-selected' : '
+                <v-tooltip :class="item === selectedToken ? 'token-card token-card-selected' : ''" left>
                   <template v-slot:activator="{ on }">
                     <v-btn v-on="on" small icon class="text--disabled" @click.prevent.stop="openToken(item)">
                       <v-icon small>mdi-open-in-new</v-icon>
@@ -85,7 +85,7 @@ export default {
       immediate: true
     },
     tokenBalancesTotal: {
-      handler(newVal) { 
+      handler(newVal) {
         this.tokensPageCount = Math.ceil(newVal / this.itemsPerPage);
       },
       immediate: true
