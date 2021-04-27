@@ -78,7 +78,7 @@ export default {
     TreeNodeDetails,
   },
   props: {
-    miguel: Object,
+    miguel: [Object, Array],
     network: String,
     openAll: Boolean,
     diffMode: Boolean,
