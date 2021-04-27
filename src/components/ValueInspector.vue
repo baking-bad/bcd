@@ -10,6 +10,7 @@
       readonly
       :label="label"
       :value="value"
+      @click="copyText(value)"
     ></v-textarea>
     <v-text-field
       v-else
@@ -18,6 +19,7 @@
       readonly
       filled
       :label="label"
+      @click="copyText(value)"
     ></v-text-field>
 
     <v-btn
