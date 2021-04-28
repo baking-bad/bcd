@@ -64,7 +64,7 @@
       
         <v-tooltip right>
           <template v-slot:activator="{ on }">
-            <v-list-item :to="{ path: 'dapps' }" v-on="on" active-class="primary--text">
+            <v-list-item :to="{ path: '/dapps' }" v-on="on" active-class="primary--text">
               <template v-slot:default="{ active }">
                 <v-list-item-icon>
                   <v-icon v-if="active" color="primary">mdi-apps</v-icon>
