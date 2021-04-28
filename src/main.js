@@ -77,7 +77,7 @@ Vue.filter('bytes', function (value) {
 })
 
 let config = {
-  API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
+  API_URI: import.meta.env.VITE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
   HOME_PAGE: 'home'
 }
 

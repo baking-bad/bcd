@@ -1,4 +1,4 @@
-const axios = require('axios').default;
+import { default as axios } from 'axios';
 
 export class RequestFailedError extends Error { }
 

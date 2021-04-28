@@ -137,14 +137,12 @@
 
 <script>
 import { mapActions } from "vuex";
-import HomeToolbar from "@/views/home/HomeToolbar.vue";
-import SearchBox from "@/components/SearchBox.vue";
 
 export default {
   name: "Home",
   components: {
-    HomeToolbar,
-    SearchBox,
+    HomeToolbar: () => import('@/views/home/HomeToolbar.vue'),
+    SearchBox: () => import('@/components/SearchBox.vue'),
   },
   data: () => ({
     stats: [],
@@ -152,7 +150,7 @@ export default {
     loadingHead: true
   }),
   mounted() {
-    if (this.$route.name != this.config.HOME_PAGE) {
+    if (this.$route.name !== this.config.HOME_PAGE) {
       this.$router.push({ path: this.config.HOME_PAGE });
     }
     this.getHead();

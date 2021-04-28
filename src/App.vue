@@ -15,16 +15,12 @@
 </template>
 
 <script>
-import WarningSnackbar from "@/components/Snackbar/WarningSnackbar";
-import ErrorSnackbar from "@/components/Snackbar/ErrorSnackbar.vue";
-import SuccessSnackbar from "@/components/Snackbar/SuccessSnackbar.vue";
-
 export default {
   name: "App",
   components: {
-    WarningSnackbar,
-    ErrorSnackbar,
-    SuccessSnackbar
+    WarningSnackbar: () => import('@/components/Snackbar/WarningSnackbar.vue'),
+    ErrorSnackbar: () => import('@/components/Snackbar/ErrorSnackbar.vue'),
+    SuccessSnackbar: () => import('@/components/Snackbar/SuccessSnackbar.vue')
   },
   data: () => ({
     showToTop: false

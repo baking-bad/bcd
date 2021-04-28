@@ -3,12 +3,12 @@
 </template>
 
 <script>
-import { codemirror } from "vue-codemirror-lite";
-require("codemirror/addon/mode/simple.js");
-require("codemirror/addon/display/autorefresh.js");
-require("codemirror/addon/search/searchcursor.js");
-require("codemirror/theme/darcula.css");
-require("codemirror/theme/neo.css");
+import codemirror from "@/components/Codemirror.vue";
+import 'codemirror/addon/mode/simple.js';
+import 'codemirror/addon/display/autorefresh.js';
+import 'codemirror/addon/search/searchcursor.js';
+import 'codemirror/theme/darcula.css';
+import 'codemirror/theme/neo.css';
 
 import { create } from "@/utils/codemirror.js";
 

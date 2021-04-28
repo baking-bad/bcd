@@ -2,47 +2,6 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import VueRouter from 'vue-router'
 
-import Home from '@/views/home/Home.vue'
-import Welcome from '@/views/home/Welcome.vue'
-
-import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
-
-import Stats from '@/views/stats/Stats.vue'
-import NetworkTab from '@/views/stats/NetworkTab.vue'
-import TokensTab from '@/views/stats/TokensTab.vue'
-import DomainsTab from '@/views/stats/DomainsTab.vue'
-
-import Diff from '@/views/diff/Diff.vue'
-
-import Docs from '@/views/docs/Docs.vue'
-
-import Contract from '@/views/contract/Contract.vue'
-import OperationsTab from '@/views/contract/OperationsTab.vue'
-import CodeTab from '@/views/contract/CodeTab.vue'
-import InteractTab from '@/views/contract/InteractTab.vue'
-import StorageTab from '@/views/contract/StorageTab.vue'
-import ContractTokensTab from '@/views/contract/TokensTab/TokensTab.vue'
-import TransfersTab from '@/views/contract/TransfersTab/TransfersTab.vue'
-import MetadataTab from '@/views/contract/MetadataTab/MetadataTab.vue'
-import ForkTab from '@/views/contract/ForkTab.vue'
-
-import OperationGroup from '@/views/opg/OperationGroup.vue'
-import OpgContents from '@/views/opg/ContentsTab.vue'
-
-import BigMap from '@/views/big_map/BigMap.vue'
-import BigMapKeys from '@/views/big_map/KeysTab.vue'
-import BigMapHistory from '@/views/big_map/HistoryTab.vue'
-
-import Dashboard from '@/views/dashboard/Dashboard.vue'
-import EventsTab from '@/views/dashboard/EventsTab.vue'
-import TasksTab from '@/views/dashboard/TasksTab.vue'
-import CompilationsTab from '@/views/dashboard/CompilationsTab.vue'
-
-import DAppList from '@/views/dapps/List.vue'
-import DApp from '@/views/dapps/DApp.vue'
-import MainDApp from '@/views/dapps/Main.vue'
-
-
 Vue.use(VueRouter)
 
 const router = new Router({
@@ -53,14 +12,14 @@ const router = new Router({
     {
       path: '/',
       components: {
-        default: Home
+        default: () => import('@/views/home/Home.vue')
       },
       name: 'home'
     },
     {
       path: '/welcome',
       components: {
-        default: Welcome,
+        default: () => import('@/views/home/Welcome.vue'),
       },
       name: 'welcome',
       props: { default: true }
@@ -68,7 +27,7 @@ const router = new Router({
     {
       path: '/search',
       components: {
-        default: ExtendedSearch
+        default: () => import('@/views/extended_search/ExtendedSearch.vue')
       },
       name: 'search',
       props: { default: true },
@@ -76,7 +35,7 @@ const router = new Router({
     {
       path: '/dapps',
       components: {
-        default: MainDApp
+        default: () => import('@/views/dapps/Main.vue')
       },
       props: { default: true },
       children: [
@@ -88,7 +47,7 @@ const router = new Router({
         {
           path: 'list',
           components: {
-            default: DAppList
+            default: () => import('@/views/dapps/List.vue')
           },
           name: 'dapps-list',
           props: { default: true },
@@ -96,7 +55,7 @@ const router = new Router({
         {
           path: ':slug',
           components: {
-            default: DApp
+            default: () => import('@/views/dapps/DApp.vue')
           },
           name: 'dapp',
           props: { default: true },
@@ -106,7 +65,7 @@ const router = new Router({
     {
       path: '/stats/:network',
       components: {
-        default: Stats,
+        default: () => import('@/views/stats/Stats.vue'),
       },
       props: { default: true },
       children: [
@@ -118,25 +77,25 @@ const router = new Router({
         {
           name: 'stats_general',
           path: 'general',
-          component: NetworkTab,
+          component: () => import('@/views/stats/NetworkTab.vue'),
           props: true
         },
         {
           path: 'fa12',
           name: 'stats_fa12',
-          component: TokensTab,
+          component: () => import('@/views/stats/TokensTab.vue'),
           props: true
         },
         {
           path: 'fa2',
           name: 'stats_fa20',
-          component: TokensTab,
+          component: () => import('@/views/stats/TokensTab.vue'),
           props: true
         },
         {
           path: 'domains',
           name: 'domains',
-          component: DomainsTab,
+          component: () => import('@/views/stats/DomainsTab.vue'),
           props: true
         }
       ]
@@ -144,7 +103,7 @@ const router = new Router({
     {
       path: '/diff',
       components: {
-        default: Diff,
+        default: () => import('@/views/diff/Diff.vue'),
       },
       name: 'diff',
       props: { default: true },
@@ -152,7 +111,7 @@ const router = new Router({
     {
       path: '/docs',
       components: {
-        default: Docs
+        default: () => import('@/views/docs/Docs.vue')
       },
       name: 'docs',
       props: { default: true },
@@ -193,7 +152,7 @@ const router = new Router({
     {
       path: '/:network/:address([0-9A-z]{36})',
       components: {
-        default: Contract,
+        default: () => import('@/views/contract/Contract.vue'),
       },
       props: { default: true },
       children: [
@@ -205,50 +164,50 @@ const router = new Router({
         {
           path: 'operations',
           name: 'operations',
-          component: OperationsTab,
+          component: () => import('@/views/contract/OperationsTab.vue'),
           props: true
         },
         {
           path: 'code',
           name: 'code',
-          component: CodeTab,
+          component: () => import('@/views/contract/CodeTab.vue'),
           props: true
         },
         {
           path: 'interact',
           name: 'interact',
-          component: InteractTab,
+          component: () => import('@/views/contract/InteractTab.vue'),
           props: true
         },
         {
           path: 'metadata',
           name: 'metadata',
-          component: MetadataTab,
+          component: () => import('@/views/contract/MetadataTab/MetadataTab.vue'),
           props: true
         },
         {
           path: 'storage',
           name: 'storage',
-          component: StorageTab,
+          component: () => import('@/views/contract/StorageTab.vue'),
           props: true
         },
         {
           path: 'fork',
           name: 'fork',
           components: {
-            default: ForkTab,
+            default: () => import('@/views/contract/ForkTab.vue'),
           }
         },
         {
           path: 'tokens',
           name: 'tokens',
-          component: ContractTokensTab,
+          component: () => import('@/views/contract/TokensTab/TokensTab.vue'),
           props: true
         },
         {
           path: 'transfers',
           name: 'transfers',
-          component: TransfersTab,
+          component: () => import('@/views/contract/TransfersTab/TransfersTab.vue'),
           props: true
         },
       ]
@@ -256,7 +215,7 @@ const router = new Router({
     {
       path: '/dashboard',
       components: {
-        default: Dashboard
+        default: () => import('@/views/dashboard/Dashboard.vue')
       },
       props: { default: true },
       children: [
@@ -268,19 +227,19 @@ const router = new Router({
         {
           path: 'events',
           name: 'events',
-          component: EventsTab,
+          component: () => import('@/views/dashboard/EventsTab.vue'),
           props: true
         },
         {
           path: 'tasks',
           name: 'tasks',
-          component: TasksTab,
+          component: () => import('@/views/dashboard/TasksTab.vue'),
           props: true
         },
         {
           path: 'compilations',
           name: 'compilations',
-          component: CompilationsTab,
+          component: () => import('@/views/dashboard/CompilationsTab.vue'),
           props: true
         }
       ]
@@ -288,7 +247,7 @@ const router = new Router({
     {
       path: '/:network/big_map/:ptr(\\d+)',
       components: {
-        default: BigMap
+        default: () => import('@/views/big_map/BigMap.vue')
       },
       props: { default: true },
       children: [
@@ -300,13 +259,13 @@ const router = new Router({
         {
           path: 'keys',
           name: 'big_map_keys',
-          component: BigMapKeys,
+          component: () => import('@/views/big_map/KeysTab.vue'),
           props: true
         },
         {
           path: ':keyhash',
           name: 'big_map_history',
-          component: BigMapHistory,
+          component: () => import('@/views/big_map/HistoryTab.vue'),
           props: true
         }
       ]
@@ -315,7 +274,7 @@ const router = new Router({
       path: '/:network/opg/:hash(o[0-9A-z]{50})',
       alias: '/:network(main|babylon|zero|carthage)/:hash(o[0-9A-z]{50})',
       components: {
-        default: OperationGroup
+        default: () => import('@/views/opg/OperationGroup.vue')
       },
       props: { default: true },
       children: [
@@ -327,7 +286,7 @@ const router = new Router({
         {
           path: 'contents',
           name: 'opg_contents',
-          component: OpgContents,
+          component: () => import('@/views/opg/ContentsTab.vue'),
           props: true
         }
       ]

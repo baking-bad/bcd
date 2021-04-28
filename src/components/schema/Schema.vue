@@ -70,12 +70,12 @@
 import { mapActions } from "vuex";
 import Vue from 'vue';
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
-import SchemaForm from "./schemaForm/SchemaForm";
-import SchemaResultOPG from "./schemaDialog/SchemaResultOPG";
-import SchemaCmdLine from "./schemaDialog/SchemaCmdLine";
-import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
-import SchemaHeader from "./schemaComponents/SchemaHeader";
-import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
+import SchemaForm from "@/components/schema/schemaForm/SchemaForm.vue";
+import SchemaResultOPG from "@/components/schema/schemaDialog/SchemaResultOPG.vue";
+import SchemaCmdLine from "@/components/schema/schemaDialog/SchemaCmdLine.vue";
+import SchemaAlertOpHashSuccess from "@/components/schema/schemaAlert/SchemaAlertOpHashSuccess.vue";
+import SchemaHeader from "@/components/schema/schemaComponents/SchemaHeader.vue";
+import SchemaAlertCustomSuccess from "@/components/schema/schemaAlert/SchemaAlertCustomSuccess.vue";
 import { DAppClient, TezosOperationType, AbortedBeaconError, BroadcastBeaconError } from '@airgap/beacon-sdk'
 
 const walletsToIcons = {

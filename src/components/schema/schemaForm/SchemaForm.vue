@@ -69,9 +69,9 @@
 </template>
 
 <script>
-import SchemaOptionalSettings from "./SchemaOptionalSettings";
-import SchemaFormExecutionActions from "./SchemaFormExecutionActions";
-import Michelson from "@/components/Michelson";
+import SchemaOptionalSettings from "@/components/schema/schemaForm/SchemaOptionalSettings.vue";
+import SchemaFormExecutionActions from "@/components/schema/schemaForm/SchemaFormExecutionActions.vue";
+import Michelson from "@/components/Michelson.vue";
 import Vue from 'vue';
 
 export default {

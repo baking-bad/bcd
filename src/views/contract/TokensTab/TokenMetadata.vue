@@ -87,9 +87,9 @@
 </template>
 
 <script>
-import { makeTreeview } from '@/utils/parsing';
-import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails";
-import RawJsonViewer from "@/components/Dialogs/RawJsonViewer";
+import { makeTreeview } from '@/utils/parsing.vue';
+import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails.vue";
+import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 
 export default {
   name: "TokenMetadata",

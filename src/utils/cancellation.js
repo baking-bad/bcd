@@ -1,4 +1,4 @@
-const axios = require('axios').default;
+import {default as axios} from 'axios';
 
 const cancelMessage = 'Cancelled';
 var CancelToken = axios.CancelToken;

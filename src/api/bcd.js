@@ -1,4 +1,4 @@
-const axios = require('axios').default;
+import { default as axios } from 'axios';
 const maxSize = 10;
 
 import { getJwt } from '@/utils/auth.js'
