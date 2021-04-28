@@ -11,8 +11,10 @@
             small
             :value="period"
             v-for="(text, period) in {
+              hour: 'Hourly',
+              day: 'Daily',
               month: 'Monthly',
-              year: 'Annual',
+              year: 'Yearly',
             }"
             :key="period"
             >{{ text }}</v-btn
@@ -118,7 +120,7 @@ export default {
     loadingTokenSeries: true,
     data: {},
     selectedToken: 0,
-    selectedPeriod: "month",
+    selectedPeriod: "day",
   }),
   mounted() {
     this.getSeries(this.selectedPeriod, this.selectedToken);

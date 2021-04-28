@@ -11,8 +11,10 @@
             small
             :value="period"
             v-for="(text, period) in {
+                'hour': 'Hourly',
+                'day': 'Daily',
                 'month': 'Monthly',
-                'year': 'Annual'
+                'year': 'Yearly'
             }"
             :key="period"
           >{{ text }}</v-btn>
@@ -25,9 +27,7 @@
           <v-card-text class="data pa-0">
             <ColumnChart
               :data="series.users"
-              :title="summary ? `<div class='text-center py-0'>Unique accounts<div>
-                <div class='text--secondary caption text-center py-0'>Total ${summary.users}</div>` : 'Unique users'"
-              name="Unique users"
+              title="Unique accounts"
             ></ColumnChart>
           </v-card-text>
         </v-card>
@@ -79,7 +79,7 @@ export default {
       users: [],
     },
     selectedToken: 0,
-    selectedPeriod: "month",
+    selectedPeriod: "day",
     summary: null,
   }),
   mounted() {
