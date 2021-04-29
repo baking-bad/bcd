@@ -42,6 +42,13 @@ import DAppList from '@/views/dapps/List.vue'
 import DApp from '@/views/dapps/DApp.vue'
 import MainDApp from '@/views/dapps/Main.vue'
 
+(function fixNavigationCurrentLocationProblem() {
+  const originalPush = Router.prototype.push
+  Router.prototype.push = function push(location, onResolve, onReject) {
+    if (onResolve || onReject) return originalPush.call(this, location, onResolve, onReject)
+    return originalPush.call(this, location).catch(err => err)
+  }
+})();
 
 Vue.use(VueRouter)
 
