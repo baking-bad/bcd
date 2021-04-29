@@ -2,6 +2,21 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import VueRouter from 'vue-router'
 
+const loadedImports = {
+  operationsTab: null,
+  storageTab: null,
+  interactTab: null,
+  dapp: null,
+};
+
+function getLoadedOrImport(name, importName) {
+  if (name in loadedImports) {
+    return loadedImports[name];
+  }
+
+  return import(importName);
+}
+
 Vue.use(VueRouter)
 
 const router = new Router({
@@ -47,7 +62,10 @@ const router = new Router({
         {
           path: 'list',
           components: {
-            default: () => import('@/views/dapps/List.vue')
+            default: () => {
+              loadedImports.dapp = import('@/views/dapps/DApp.vue');
+              return import('@/views/dapps/List.vue')
+            }
           },
           name: 'dapps-list',
           props: { default: true },
@@ -55,7 +73,7 @@ const router = new Router({
         {
           path: ':slug',
           components: {
-            default: () => import('@/views/dapps/DApp.vue')
+            default: () => getLoadedOrImport('dapp', '@/views/dapps/DApp.vue')
           },
           name: 'dapp',
           props: { default: true },
@@ -152,7 +170,12 @@ const router = new Router({
     {
       path: '/:network/:address([0-9A-z]{36})',
       components: {
-        default: () => import('@/views/contract/Contract.vue'),
+        default: () => {
+          loadedImports.operationsTab = import('@/views/contract/OperationsTab.vue');
+          loadedImports.storageTab = import('@/views/contract/StorageTab.vue');
+          loadedImports.interactTab = import('@/views/contract/InteractTab.vue');
+          return import('@/views/contract/Contract.vue');
+        },
       },
       props: { default: true },
       children: [
@@ -164,7 +187,7 @@ const router = new Router({
         {
           path: 'operations',
           name: 'operations',
-          component: () => import('@/views/contract/OperationsTab.vue'),
+          component: () => getLoadedOrImport('operationsTab', '@/views/contract/OperationsTab.vue'),
           props: true
         },
         {
@@ -176,7 +199,7 @@ const router = new Router({
         {
           path: 'interact',
           name: 'interact',
-          component: () => import('@/views/contract/InteractTab.vue'),
+          component: () => getLoadedOrImport('interactTab', '@/views/contract/InteractTab.vue'),
           props: true
         },
         {
@@ -188,7 +211,7 @@ const router = new Router({
         {
           path: 'storage',
           name: 'storage',
-          component: () => import('@/views/contract/StorageTab.vue'),
+          component: () => getLoadedOrImport('storageTab', '@/views/contract/StorageTab.vue'),
           props: true
         },
         {

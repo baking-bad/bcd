@@ -59,7 +59,7 @@
 import { mapActions } from "vuex";
 import { applyStyles } from '@/utils/styles.js';
 import Schema from "@/components/schema/Schema.vue";
-import TypeDef from "@/views/contract/TypeDef";
+import TypeDef from "@/views/contract/TypeDef.vue";
 
 export default {
   name: "InteractTab",
