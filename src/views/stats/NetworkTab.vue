@@ -4,7 +4,7 @@
       <v-col cols="6">
         <v-skeleton-loader :loading="!contractSeries" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0">
+            <v-card-text class="data pa-0" v-if="contractSeries">
               <ColumnChart
                 :data="contractSeries"
                 :title="`New deployments (total ${details.contracts_count})<br/>
@@ -19,7 +19,7 @@
       <v-col cols="6">
         <v-skeleton-loader :loading="!operationSeries" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0">
+            <v-card-text class="data pa-0" v-if="operationSeries">
               <ColumnChart
                 :data="operationSeries"
                 :title="`Contract calls (total ${details.operations_count})`"
@@ -33,7 +33,7 @@
       <v-col cols="6">
         <v-skeleton-loader :loading="!paidStorageSizeDiffSeries" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0">
+            <v-card-text class="data pa-0" v-if="paidStorageSizeDiffSeries">
               <ColumnChart
                 :data="paidStorageSizeDiffSeries"
                 formatter="kilobyte"
@@ -48,7 +48,7 @@
       <v-col cols="6">
         <v-skeleton-loader :loading="!consumedGasSeries" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0">
+            <v-card-text class="data pa-0" v-if="consumedGasSeries">
               <ColumnChart
                 :data="consumedGasSeries"
                 :title="`Consumed gas × 10\u2076`"
@@ -159,76 +159,46 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    setDetailsDataToDefault() {
+      this.$set(this, 'details', {});
+      ['contractSeries', 'operationSeries', 'consumedGasSeries', 'paidStorageSizeDiffSeries']
+          .forEach((key) => this.setRes(key, null));
+    },
     getDetails(network) {
       this.loading = true;
 
       this.api
         .getNetworkStats(network)
-        .then(res => {
-          this.details = res;
-        })
+        .then(res => this.setRes('details', res))
         .catch(err => {
           console.log(err);
           this.showError(err);
         })
         .finally(() => (this.loading = false));
 
-      this.api
-        .getNetworkStatsSeries(network, "contract", "month")
-        .then(res => {
-          this.contractSeries = res;
-        })
-        .catch(err => {
-          this.contractSeries = [];
-          console.log(err);
-          this.showError(err);
-        });
-
-      this.api
-        .getNetworkStatsSeries(network, "operation", "month")
-        .then(res => {
-          this.operationSeries = res;
-        })
-        .catch(err => {
-          this.operationSeries = [];
-          console.log(err);
-          this.showError(err);
-        });
-
-      this.api
-        .getNetworkStatsSeries(network, "paid_storage_size_diff", "month")
-        .then(res => {
-          this.paidStorageSizeDiffSeries = res;
-        })
-        .catch(err => {
-          this.paidStorageSizeDiffSeries = [];
-          console.log(err);
-          this.showError(err);
-        });
-
-      this.api
-        .getNetworkStatsSeries(network, "consumed_gas", "month")
-        .then(res => {
-          this.consumedGasSeries = res;
-        })
-        .catch(err => {
-          this.consumedGasSeries = [];
-          console.log(err);
-          this.showError(err);
-        });
+      this.requestStatsData(network, "contract", 'contractSeries');
+      this.requestStatsData(network, "operation", 'operationSeries');
+      this.requestStatsData(network, "paid_storage_size_diff", 'paidStorageSizeDiffSeries');
+      this.requestStatsData(network, "consumed_gas", 'consumedGasSeries');
     },
-    getProtocolLevelString(item) {
-      if (item.start_level == item.end_level) {
-        return `At ${item.start_level} level`;
-      } else if (item.end_level == 0) {
-        return `From ${item.start_level} by now`;
-      } else {
-        return `From ${item.start_level} by ${item.end_level} level`;
-      }
-    }
+    requestStatsData(network, index, key) {
+      this.api
+          .getNetworkStatsSeries(network, index, "month")
+          .then(res => this.setRes(key, res))
+          .catch(err => this.setErr(key, err));
+    },
+    setErr(key, err) {
+      this.$set(this, key, []);
+      console.log(err);
+      this.showError(err);
+    },
+    setRes(key, res) {
+      this.$set(this, key, res);
+    },
   },
   watch: {
     network(newValue) {
+      this.setDetailsDataToDefault();
       this.getDetails(newValue);
     }
   }
