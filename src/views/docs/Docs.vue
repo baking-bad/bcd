@@ -55,7 +55,10 @@ export default {
   computed: {
     baseURL() {
       const apiURL = new URL(this.config.API_URI);
-      return `${apiURL.protocol}//api.${apiURL.hostname}${apiURL.pathname}`;
+      const noApiHostname = apiURL.hostname.indexOf('api.') === 0
+          ? apiURL.hostname.slice(4)
+          : apiURL.hostname;
+      return `${apiURL.protocol}//api.${noApiHostname}${apiURL.pathname}`;
     },
     theme() {
       return this.$vuetify.theme.themes[this.$vuetify.theme.isDark ? 'dark' : 'light'];
@@ -228,11 +231,28 @@ body {
         color: var(--v-text-base);
         background: var(--v-data-base) !important;
       }
-      .api-content > div > div > div:last-child:not(:first-child) > div:first-child > div:last-child {
-        background: var(--v-data-base);
-        & > div:first-child > div:last-child > div {
-          border: none;
-          background: var(--v-data-base);
+      .api-content {
+        & > div > div {
+          h2 {
+            a::before {
+              background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' x='0' y='0' width='512' height='512' viewBox='0 0 512 512' enable-background='new 0 0 512 512' xml:space='preserve'%3E%3Cpath fill='white' d='M459.7 233.4l-90.5 90.5c-50 50-131 50-181 0 -7.9-7.8-14-16.7-19.4-25.8l42.1-42.1c2-2 4.5-3.2 6.8-4.5 2.9 9.9 8 19.3 15.8 27.2 25 25 65.6 24.9 90.5 0l90.5-90.5c25-25 25-65.6 0-90.5 -24.9-25-65.5-25-90.5 0l-32.2 32.2c-26.1-10.2-54.2-12.9-81.6-8.9l68.6-68.6c50-50 131-50 181 0C509.6 102.3 509.6 183.4 459.7 233.4zM220.3 382.2l-32.2 32.2c-25 24.9-65.6 24.9-90.5 0 -25-25-25-65.6 0-90.5l90.5-90.5c25-25 65.5-25 90.5 0 7.8 7.8 12.9 17.2 15.8 27.1 2.4-1.4 4.8-2.5 6.8-4.5l42.1-42c-5.4-9.2-11.6-18-19.4-25.8 -50-50-131-50-181 0l-90.5 90.5c-50 50-50 131 0 181 50 50 131 50 181 0l68.6-68.6C274.6 395.1 246.4 392.3 220.3 382.2z'/%3E%3C/svg%3E");
+            }
+          }
+          & > div:last-child:not(:first-child) > div:first-child > div:last-child {
+            background: var(--v-data-base);
+            & > div:first-child > div:last-child > div {
+              border: none;
+              background: var(--v-data-base);
+            }
+          }
+        }
+      }
+      #docs {
+        div[role="button"] > div {
+          color: var(--v-secondary-lighten5);
+          &> span {
+            color: var(--v-secondary-lighten5);
+          }
         }
       }
     }
