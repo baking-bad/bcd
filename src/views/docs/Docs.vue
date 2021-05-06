@@ -55,7 +55,10 @@ export default {
   computed: {
     baseURL() {
       const apiURL = new URL(this.config.API_URI);
-      return `${apiURL.protocol}//api.${apiURL.hostname}${apiURL.pathname}`;
+      const noApiHostname = apiURL.hostname.indexOf('api.') === 0
+          ? apiURL.hostname.slice(4)
+          : apiURL.hostname;
+      return `${apiURL.protocol}//api.${noApiHostname}${apiURL.pathname}`;
     },
     theme() {
       return this.$vuetify.theme.themes[this.$vuetify.theme.isDark ? 'dark' : 'light'];
