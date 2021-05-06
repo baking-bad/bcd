@@ -42,7 +42,6 @@ import DAppList from '@/views/dapps/List.vue'
 import DApp from '@/views/dapps/DApp.vue'
 import MainDApp from '@/views/dapps/Main.vue'
 
-
 Vue.use(VueRouter)
 
 const router = new Router({

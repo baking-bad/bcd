@@ -3,7 +3,6 @@
     <SideNavigation :app="true" />
     <div>
       <Toolbar />
-
       <v-container style="max-width: 1280px">
         <router-view></router-view>
       </v-container>
