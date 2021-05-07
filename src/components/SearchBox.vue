@@ -4,7 +4,7 @@
     :search-input.sync="searchText"
     :items="suggests"
     item-text="value"
-    @focus="$emit('focus')"
+    @focus="handleSearchBoxFocus"
     @keyup.enter="onEnter(searchText)"
     return-object
     placeholder="Search anything"
@@ -22,6 +22,7 @@
     :dense="inplace"
     :menu-props="menuProps"
     @blur="handleSearchBoxBlur"
+    :class="searchBoxClassName"
   >
     <template v-slot:item="{ item }">
       <v-list-item-avatar>
@@ -199,15 +200,29 @@ export default {
     searchText: null,
     _locked: false,
     _timerId: null,
+    isFocused: false,
     seqno: 0,
     menuProps: {},
   }),
   created() {
     this.suggests = this.getHistoryItems("");
   },
+  computed: {
+    searchBoxClassName() {
+      if (this.isFocused) {
+        return 'focused-searchbar';
+      }
+      return 'unfocused-searchbar';
+    }
+  },
   methods: {
     ...mapActions(["showError"]),
+    handleSearchBoxFocus() {
+      this.isFocused = true;
+      this.$emit('focus')
+    },
     handleSearchBoxBlur() {
+      this.isFocused = false;
       this.$emit('blur');
       this.$set(this, 'menuProps', {});
       this.$set(this, 'model', null);
@@ -425,5 +440,9 @@ export default {
       margin-right: auto;
     }
   }
+}
+.unfocused-searchbar {
+  min-width: auto !important;
+  left: auto !important;
 }
 </style>
