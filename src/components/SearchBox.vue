@@ -220,11 +220,9 @@ export default {
     ...mapActions(["showError"]),
     handleSearchBoxFocus() {
       this.isFocused = true;
-      this.$emit('focus')
     },
     handleSearchBoxBlur() {
       this.isFocused = false;
-      this.$emit('blur');
       this.$set(this, 'menuProps', {});
       this.$set(this, 'model', null);
     },
@@ -296,7 +294,6 @@ export default {
     },
     onEnter(searchText) {
       this.isFocused = true;
-      this.$emit('focus');
 
       if (searchText !== null && searchText.length > 2) {
         addHistoryItem({
@@ -398,6 +395,13 @@ export default {
     model() {
       if (this._locked) return;
       this.onSearch();
+    },
+    isFocused(val) {
+      if (val) {
+        this.$emit('focus');
+      } else {
+        this.$emit('blur');
+      }
     },
   },
 };
