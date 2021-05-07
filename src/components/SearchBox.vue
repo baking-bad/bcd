@@ -6,6 +6,7 @@
     item-text="value"
     @focus="handleSearchBoxFocus"
     @keyup.enter="onEnter(searchText)"
+    @mousedown="handleSearchBoxFocus"
     return-object
     placeholder="Search anything"
     autocomplete="off"
@@ -294,6 +295,9 @@ export default {
       return historyItem;
     },
     onEnter(searchText) {
+      this.isFocused = true;
+      this.$emit('focus');
+
       if (searchText !== null && searchText.length > 2) {
         addHistoryItem({
           value: searchText,
