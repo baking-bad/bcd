@@ -94,20 +94,6 @@
           </v-card>
         </v-skeleton-loader>
       </v-col>
-      <v-col cols="6">
-        <v-skeleton-loader :loading="loading" type="image">
-          <v-card flat outlined>
-            <v-card-text class="data pa-0 pb-8">
-              <DonutChart
-                :data="languages"
-                title="Contract languages"
-                subtitle="Determined using heuristics, can be inaccurate"
-                name="Contract languages"
-              ></DonutChart>
-            </v-card-text>
-          </v-card>
-        </v-skeleton-loader>
-      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -115,7 +101,6 @@
 <script>
 import { mapActions } from "vuex";
 import ColumnChart from "@/components/Charts/ColumnChart.vue";
-import DonutChart from "@/components/Charts/DonutChart.vue";
 
 export default {
   name: "NetworkTab",
@@ -124,7 +109,6 @@ export default {
   },
   components: {
     ColumnChart,
-    DonutChart
   },
   created() {
     if (this.network) {
