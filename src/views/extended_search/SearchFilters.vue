@@ -5,7 +5,7 @@
         <v-list-item-content>
           <v-list-item-subtitle class="caption font-weight-medium text-uppercase">Time period</v-list-item-subtitle>
           <v-select
-            class="mt-2"            
+            class="mt-2"
             v-model="selectedTime"
             :items="timeItems"
             hide-details
@@ -33,24 +33,6 @@
           </v-chip-group>
         </v-list-item-content>
       </v-list-item>
-
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-subtitle>
-            <span class="caption font-weight-medium text-uppercase">Languages</span>
-            <span class="ml-4 overline">applied to contracts</span>
-          </v-list-item-subtitle>
-          <v-chip-group
-            v-model="languagesSelection"
-            column
-            multiple
-            mandatory
-            active-class="secondary--text"
-          >
-            <v-chip filter outlined v-for="lang in languages" :key="lang">{{ lang }}</v-chip>
-          </v-chip-group>
-        </v-list-item-content>
-      </v-list-item>
     </v-list>
   </v-navigation-drawer>
 </template>
@@ -66,7 +48,6 @@ export default {
   },
   data: () => ({
     selectedTime: 0,
-    languagesSelection: [],
     networksSelection: [],
     timeItems: [
       {
@@ -94,28 +75,16 @@ export default {
         value: 5
       }
     ],
-    languages: ["michelson", "ligo", "lorentz", "smartpy", "liquidity", "scaml"]
   }),
   created() {
-    this.languagesSelection = [...this.languages.keys()];
     this.networksSelection = [...this.config.networks.keys()];
   },
   watch: {
-    languagesSelection: function(newValue) {
-      this.filters.languages = [];
-      if (newValue.length < this.languages.length) {
-        newValue.forEach(x => {
-          this.filters.languages.push(this.languages[x]);
-        });
-      }
-    },
     networksSelection: function(newValue) {
       this.filters.networks = [];
-      if (newValue.length < this.languages.length) {
-        newValue.forEach(x => {
-          this.filters.networks.push(this.config.networks[x]);
-        });
-      }
+      newValue.forEach(x => {
+        this.filters.networks.push(this.config.networks[x]);
+      });
     },
     selectedTime: function(newValue) {
       let ts = 0;
@@ -135,7 +104,6 @@ export default {
     show: function(newValue) {
       if (newValue === false) {
         this.selectedTime = 0;
-        this.languagesSelection = [...this.languages.keys()];
         this.networksSelection = [...this.config.networks.keys()];
       }
     }

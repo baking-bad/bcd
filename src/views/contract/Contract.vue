@@ -74,8 +74,18 @@
           <v-icon left small>mdi-source-fork</v-icon>Fork
         </v-tab>
       </v-tabs>
-      <div class="mr-6 mt-6" style="width: 800px">
-        <SearchBox :inplace="true"></SearchBox>
+      <div
+          class="mr-6 mt-6 combobox-wrapper"
+          :class="comboboxWrapperClassName"
+      >
+        <SearchBox
+            :key="address"
+            :inplace="true"
+            @focus="handleSearchBoxFocus"
+            @blur="handleSearchBoxBlur"
+            @search="handleSearchBoxBlur"
+            ref="searchbox"
+        ></SearchBox>
       </div>
     </v-toolbar>
 
@@ -97,6 +107,8 @@ import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/contract/SideBar.vue";
 import { mapActions } from "vuex";
 import { cancelRequests } from "@/utils/cancellation.js";
+
+const MIN_SEARCHBOX_WIDTH = 240;
 
 export default {
   name: "Contract",
@@ -121,6 +133,7 @@ export default {
     showFork: false,
     contractTags: null,
     contractLink: '',
+    isComboBoxExpanded: false,
   }),
   computed: {
     loading() {
@@ -129,11 +142,27 @@ export default {
     isContract() {
       return this.address.startsWith("KT");
     },
+    comboboxWrapperClassName() {
+      if (this.isComboBoxExpanded) {
+        return 'combobox-wrapper_expanded';
+      }
+
+      return '';
+    },
   },
   methods: {
     ...mapActions({
       showError: "showError",
     }),
+    handleSearchBoxFocus() {
+      const { width } = this.$refs.searchbox.$el.getBoundingClientRect();
+      if (width < MIN_SEARCHBOX_WIDTH) {
+        this.isComboBoxExpanded = true;
+      }
+    },
+    handleSearchBoxBlur() {
+      this.isComboBoxExpanded = false;
+    },
     init() {
       this.tokensTotal = 0;
       this.tokenBalancesTotal = 0;
@@ -264,5 +293,12 @@ export default {
 .v-tabs {
   font-family: "Roboto Condensed", sans-serif;
   font-weight: 500;
+}
+.combobox-wrapper {
+  width: calc(100% - 48px);
+}
+.combobox-wrapper_expanded {
+  position: absolute;
+  right: 0;
 }
 </style>

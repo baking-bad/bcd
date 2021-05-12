@@ -22,6 +22,17 @@ import { makeVuetify } from '@/plugins/vuetify';
 
 import './setups/components';
 
+import { fixNavigationCurrentLocationProblem } from '@/setups/router';
+
+fixNavigationCurrentLocationProblem();
+
+import VJsf from '@baking-bad/vjsf/lib/VJsf.js';
+import '@baking-bad/vjsf/lib/VJsf.css';
+
+import draggable from 'vuedraggable';
+Vue.component('draggable', draggable);
+Vue.component('VJsf', VJsf)
+
 Vue.config.productionTip = false;
 
 Vue.use(Clipboard);

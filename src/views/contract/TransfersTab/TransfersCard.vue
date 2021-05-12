@@ -7,11 +7,11 @@
           mandatory
         >
           <template v-for="(item, i) in tokens">
-            <v-divider :key="`${i}-divider`" v-if="i != 0" />
-            <v-list-item two-line @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`" 
+            <v-divider v-if="i !== 0" :key="`${i}-divider`" />
+            <v-list-item two-line @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`"
                 class="token-card">
               <v-list-item-avatar class="my-0 mr-2">
-                <v-tooltip left>item == selectedToken ? 'token-card token-card-selected' : '
+                <v-tooltip :class="item === selectedToken ? 'token-card token-card-selected' : ''" left>
                   <template v-slot:activator="{ on }">
                     <v-btn v-on="on" small icon class="text--disabled" @click.prevent.stop="openToken(item)">
                       <v-icon small>mdi-open-in-new</v-icon>
@@ -36,7 +36,22 @@
                   <span>&nbsp;{{ item.token_id }}</span>
                 </v-list-item-subtitle>
               </v-list-item-content>
-              <v-list-item-action>
+              <v-list-item-action v-if="isLackMetadata(item)">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-icon
+                        v-on="on"
+                        small
+                        :color="warningColor"
+                        title="No metadata"
+                    >
+                      mdi-alert
+                    </v-icon>
+                  </template>
+                  <span>No metadata</span>
+                </v-tooltip>
+              </v-list-item-action>
+              <v-list-item-action v-else>
                 <v-list-item-action-text>
                   <span
                       class="hash text--primary"
@@ -85,7 +100,7 @@ export default {
       immediate: true
     },
     tokenBalancesTotal: {
-      handler(newVal) { 
+      handler(newVal) {
         this.tokensPageCount = Math.ceil(newVal / this.itemsPerPage);
       },
       immediate: true
@@ -135,6 +150,18 @@ export default {
     openToken(item) {
       const path = { path: `/${item.network}/${item.contract}/tokens` };  // ?token_id=${item.token_id}
       window.open(this.$router.resolve(path).href, "_blank");
+    },
+    isLackMetadata(item) {
+      const isMetadata = 'decimals' in item && 'symbol' in item;
+      return !isMetadata;
+    },
+  },
+  computed: {
+    theme() {
+      return this.$vuetify.theme.themes[this.$vuetify.theme.isDark ? 'dark' : 'light'];
+    },
+    warningColor() {
+      return this.theme.warning;
     }
   },
   data() {
@@ -146,7 +173,7 @@ export default {
       maxLengthTokenDecimals: 2,
       tokensPage: 1,
       tokensPageCount: 0,
-      itemsPerPage: 9
+      itemsPerPage: 9,
     }
   }
 }

@@ -4,7 +4,9 @@
     :search-input.sync="searchText"
     :items="suggests"
     item-text="value"
+    @focus="handleSearchBoxFocus"
     @keyup.enter="onEnter(searchText)"
+    @mousedown="handleSearchBoxFocus"
     return-object
     placeholder="Search anything"
     autocomplete="off"
@@ -20,34 +22,35 @@
     :outlined="!inplace"
     :dense="inplace"
     :menu-props="menuProps"
-    @blur="menuProps = {}"
+    @blur="handleSearchBoxBlur"
+    :class="searchBoxClassName"
   >
     <template v-slot:item="{ item }">
       <v-list-item-avatar>
-        <v-icon v-if="item.type == 'contract'">mdi-code-json</v-icon>
-        <v-icon v-else-if="item.type == 'operation'"
+        <v-icon v-if="item.type === 'contract'">mdi-code-json</v-icon>
+        <v-icon v-else-if="item.type === 'operation'"
           >mdi-swap-horizontal</v-icon
         >
-        <v-icon v-else-if="item.type == 'bigmapdiff'">mdi-database-edit</v-icon>
-        <v-icon v-else-if="item.type == 'subscription'">mdi-eye-outline</v-icon>
-        <v-icon v-else-if="item.type == 'token_metadata'"
+        <v-icon v-else-if="item.type === 'bigmapdiff'">mdi-database-edit</v-icon>
+        <v-icon v-else-if="item.type === 'subscription'">mdi-eye-outline</v-icon>
+        <v-icon v-else-if="item.type === 'token_metadata'"
           >mdi-circle-multiple-outline</v-icon
         >
-        <v-icon v-else-if="item.type == 'tzip'"
+        <v-icon v-else-if="item.type === 'tzip'"
           >mdi-puzzle-outline</v-icon
         >
-        <v-icon v-else-if="item.type == 'recent'">mdi-history</v-icon>
-        <v-icon v-else-if="item.type == 'tezos_domain'">mdi-web</v-icon>
+        <v-icon v-else-if="item.type === 'recent'">mdi-history</v-icon>
+        <v-icon v-else-if="item.type === 'tezos_domain'">mdi-web</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title>
-          <template v-if="item.type == 'contract'">
+          <template v-if="item.type === 'contract'">
             <span class="text--secondary hash">Contracts</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
-          <template v-else-if="item.type == 'operation'">
+          <template v-else-if="item.type === 'operation'">
             <span class="text--secondary hash">Operations</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <template v-if="item.body.destination.startsWith('KT')">
@@ -71,33 +74,33 @@
             >
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
-          <template v-else-if="item.type == 'bigmapdiff'">
+          <template v-else-if="item.type === 'bigmapdiff'">
             <span class="text--secondary hash">Big_map {{ item.body.ptr }}</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.key }}</span>
           </template>
-          <template v-else-if="item.type == 'tzip'">
+          <template v-else-if="item.type === 'tzip'">
             <span class="text--secondary hash">Metadata</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.name }}</span>
           </template>
-          <template v-else-if="item.type == 'token_metadata'">
+          <template v-else-if="item.type === 'token_metadata'">
             <span class="text--secondary hash">Tokens</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.name">{{ item.body.name }}</span>
             <span v-else v-html="helpers.shortcut(item.value)"></span>
           </template>
-          <template v-else-if="item.type == 'tezos_domain'">
+          <template v-else-if="item.type === 'tezos_domain'">
             <span class="text--secondary hash">Domains</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span class="hash">{{ item.body.name }}</span>
           </template>
-          <template v-if="item.type == 'subscription'">
+          <template v-if="item.type === 'subscription'">
             <span class="text--secondary hash">Subscriptions</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.alias }}</span>
           </template>
-          <template v-if="item.type == 'recent'">
+          <template v-if="item.type === 'recent'">
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
             <span
               v-else-if="item.body.shortcut"
@@ -198,14 +201,31 @@ export default {
     searchText: null,
     _locked: false,
     _timerId: null,
+    isFocused: false,
     seqno: 0,
     menuProps: {},
   }),
   created() {
     this.suggests = this.getHistoryItems("");
   },
+  computed: {
+    searchBoxClassName() {
+      if (this.isFocused) {
+        return 'focused-searchbar';
+      }
+      return 'unfocused-searchbar';
+    }
+  },
   methods: {
     ...mapActions(["showError"]),
+    handleSearchBoxFocus() {
+      this.isFocused = true;
+    },
+    handleSearchBoxBlur() {
+      this.isFocused = false;
+      this.$set(this, 'menuProps', {});
+      this.$set(this, 'model', null);
+    },
     pushTo(path) {
       if (this.$route.path !== `${path}/operations`) {
         this.$router.push({ path });
@@ -248,6 +268,8 @@ export default {
       } else if (this.model.type === "recent") {
         this.$router.push({ name: "search", query: { text: value } });
       }
+
+      this.$emit('search');
     },
     buildHistoryItem(model, value) {
       const network = model.body.network;
@@ -271,6 +293,8 @@ export default {
       return historyItem;
     },
     onEnter(searchText) {
+      this.isFocused = true;
+
       if (searchText !== null && searchText.length > 2) {
         addHistoryItem({
           value: searchText,
@@ -372,6 +396,13 @@ export default {
       if (this._locked) return;
       this.onSearch();
     },
+    isFocused(val) {
+      if (val) {
+        this.$emit('focus');
+      } else {
+        this.$emit('blur');
+      }
+    },
   },
 };
 </script>
@@ -417,5 +448,9 @@ export default {
       margin-right: auto;
     }
   }
+}
+.unfocused-searchbar {
+  min-width: auto !important;
+  left: auto !important;
 }
 </style>

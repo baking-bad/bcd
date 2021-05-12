@@ -15,7 +15,7 @@
         </v-btn-toggle>
       </div>
       <v-skeleton-loader :loading="!show" type="article" transition="fade-transition">
-        <v-jsf v-model="model" :schema="schema" v-show="show">
+        <v-jsf v-if="show" v-model="model" :schema="schema" :options="{initialValidation: false}">
           <template slot="custom-codemirror" slot-scope="{value, label, on}">
             <label class="codemirror-label">{{ label }}</label>
             <div class="mb-6 ba-1" style="border-radius: 3px;">

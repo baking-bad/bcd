@@ -84,20 +84,14 @@
         </v-hover>
       </v-col>
     </v-row>
-    <v-divider></v-divider>
-    <AddMyDapp />
   </v-skeleton-loader>
 </template>
 
 <script>
-import AddMyDapp from "@/views/dapps/AddMyDapp.vue";
 import { mapActions } from "vuex";
 
 export default {
   name: "DAppList",
-  components: {
-    AddMyDapp,
-  },
   data: () => ({
     dapps: [],
     loading: false,

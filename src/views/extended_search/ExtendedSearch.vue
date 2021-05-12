@@ -192,7 +192,6 @@ export default {
     filters: {
       startTime: 0,
       networks: [],
-      languages: [],
     },
     _timerId: null,
     _locked: false,
@@ -203,7 +202,6 @@ export default {
         ["tags", "derived from the code"],
         ["entrypoints", ""],
         ["fail_strings", "custom error messages"],
-        ["language", "determined by heuristics"],
         ["annotations", ""],
         ["delegate", "address"],
         ["hardcoded", "strings inside the code section"],
@@ -281,13 +279,12 @@ export default {
 
       const indices = this.indices;
       const networks = this.filters.networks;
-      const languages = this.filters.languages;
       const time = { s: this.filters.startTime };
       const offset = push ? this.suggests.length : 0;
 
       this._timerId = setTimeout(() => {
         this.api
-          .search(text, indices, offset, networks, languages, time, 1)
+          .search(text, indices, offset, networks, time, 1)
           .then((res) => {
             if (seqno !== this.seqno || !res) return;
 
