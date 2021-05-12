@@ -47,18 +47,6 @@
             <v-icon class="mr-1 text--secondary" small>mdi-play-box-outline</v-icon>
             <span>Interact</span>
           </v-btn>
-          <v-btn
-            v-if="contract.language === 'smartpy'"
-            small
-            text
-            class="ml-2 text--secondary"
-            :href="getSmartPyLink()"
-            rel="nofollow noopener"
-            target="_blank"
-          >
-            <v-icon class="mr-1" small>mdi-link</v-icon>
-            <span>View on SmartPy.io</span>
-          </v-btn>
         </v-card-title>
         <v-card-text class="pa-0">
           <Michelson :code="loadedCode"></Michelson>
@@ -221,10 +209,6 @@ export default {
 
       element.click();
       document.body.removeChild(element);
-    },
-    getSmartPyLink() {
-      if (this.contract.language === "smartpy")
-        return `https://smartpy.io/dev/explore.html?address=${this.address}`;
     },
   },
   watch: {
