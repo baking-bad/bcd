@@ -4,7 +4,7 @@
       <v-list-item two-line>
         <v-list-item-content>
           <v-list-item-title>
-            <template v-if="item.type == 'contract'">
+            <template v-if="item.type === 'contract'">
               <span class="hash">Contracts</span>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
               <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
@@ -12,7 +12,7 @@
                 <span v-else v-html="highlight(item.value)" class="hash"></span>
               </router-link>
             </template>
-            <template v-else-if="item.type == 'operation'">
+            <template v-else-if="item.type === 'operation'">
               <span class="hash">Operations</span>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
               <template v-if="item.body.destination.startsWith('KT')">
@@ -37,32 +37,32 @@
                 <span v-else v-html="highlight(item.value)" class="hash"></span>
               </router-link>
             </template>
-            <template v-else-if="item.type == 'bigmapdiff'">
-              <router-link class="serp-link" target="_blank" 
+            <template v-else-if="item.type === 'bigmapdiff'">
+              <router-link class="serp-link" target="_blank"
                 :to="`/${item.body.network}/big_map/${item.body.ptr}`">
                 <span class="hash text--primary">Big_map {{ item.body.ptr }}</span>
               </router-link>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
-              <router-link class="serp-link" target="_blank" 
+              <router-link class="serp-link" target="_blank"
                 :to="`/${item.body.network}/big_map/${item.body.ptr}/${item.body.key_hash}`">
                 <span class="hash" v-html="highlight(item.body.key)"></span>
               </router-link>
             </template>
-             <template v-else-if="item.type == 'token_metadata'">
+             <template v-else-if="item.type === 'token_metadata'">
               <span class="hash">Tokens</span>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
-              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">                
+              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
                 <span v-if="item.body.name" v-html="highlight(item.body.name)" class="alias"></span>
               </router-link>
             </template>
-            <template v-else-if="item.type == 'tzip'">
+            <template v-else-if="item.type === 'tzip'">
               <span class="hash">Metadata</span>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
               <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}/metadata`">
                 <span v-html="highlight(item.body.name)" class="hash"></span>
               </router-link>
             </template>
-            <template v-else-if="item.type == 'tezos_domain'">
+            <template v-else-if="item.type === 'tezos_domain'">
               <span class="hash">Domains</span>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
               <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
@@ -82,7 +82,7 @@
           <v-list-item-action-text class="body-1 text--primary">
             {{ helpers.formatDate(item.body.timestamp) }}
             <span
-              v-if="item.type === 'contract' 
+              v-if="item.type === 'contract'
               && item.body.last_action
               && item.body.last_action > item.body.timestamp"
             >— {{ helpers.formatDate(item.body.last_action) }}</span>
@@ -106,9 +106,6 @@
 
       <div class="d-flex ml-3">
         <template v-if="item.type === 'contract'">
-          <v-chip v-if="item.body.language !== 'unknown'" class="mr-1 mb-3" small outlined pill>
-            <span v-html="highlight(item.body.language)"></span>
-          </v-chip>
           <v-chip v-for="tag in item.body.tags" :key="tag" class="mr-1 mb-3" small outlined pill>
             <span v-html="highlight(tag.toLowerCase())"></span>
           </v-chip>
@@ -120,7 +117,7 @@
 
       <div class="d-flex mx-4">
         <template v-for="(values, key) in item.highlights">
-          <div 
+          <div
             :key="key"
             class="d-flex flex-column flex-child pr-1 mr-6 mb-4"
             v-if="!['alias', 'tags', 'language', 'entrypoint', 'key_strings'].includes(key)"

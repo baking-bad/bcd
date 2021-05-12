@@ -126,26 +126,6 @@
           </v-expansion-panel-header>
           <v-expansion-panel-content color="canvas">
             <v-list class="contract-list">
-              <v-list-item
-                v-if="contract.language && contract.language !== 'unknown'"
-              >
-                <v-list-item-content>
-                  <v-list-item-subtitle class="overline">
-                    Language
-                    <v-tooltip right>
-                      <template v-slot:activator="{ on }">
-                        <v-icon x-small v-on="on" class="text--secondary"
-                          >mdi-help-circle</v-icon
-                        >
-                      </template>
-                      Guessed by heuristics
-                    </v-tooltip>
-                  </v-list-item-subtitle>
-                  <v-list-item-title class="body-2">
-                    <span class="text-capitalize">{{ contract.language }}</span>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
               <v-list-item>
                 <v-list-item-content>
                   <v-list-item-subtitle class="overline"
