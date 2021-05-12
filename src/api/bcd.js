@@ -45,7 +45,7 @@ export class BetterCallApi {
       })
   }
 
-  search(text, indices = [], offset = 0, networks = [], languages = [], time = {}, group = 0) {
+  search(text, indices = [], offset = 0, networks = [], time = {}, group = 0) {
     let params = {
       q: text
     }
@@ -58,9 +58,6 @@ export class BetterCallApi {
     if (networks.length > 0) {
       params.n = networks.join(',')
     }
-    if (languages.length > 0) {
-      params.l = languages.join(',')
-    }
     if (group >= 0) {  // maybe remove group parameter?
       params.g = 1
     }
@@ -69,7 +66,7 @@ export class BetterCallApi {
       params: params
     })
       .then((res) => {
-        if (res.status != 200) {
+        if (res.status !== 200) {
           throw new RequestFailedError(res);
         }
         return res.data
@@ -159,7 +156,7 @@ export class BetterCallApi {
     })
       .then((res) => {
         if (!res) { return res; }
-        if (res.status != 200) {
+        if (res.status !== 200) {
           throw new RequestFailedError(res);
         }
         return res.data
@@ -172,7 +169,7 @@ export class BetterCallApi {
         if (!res) {
           return null;
         }
-        if (res.status != 200) {
+        if (res.status !== 200) {
           throw new RequestFailedError(res);
         }
         return res.data
