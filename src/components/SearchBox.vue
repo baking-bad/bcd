@@ -4,8 +4,9 @@
     :search-input.sync="searchText"
     :items="suggests"
     item-text="value"
-    @focus="$emit('focus')"
+    @focus="handleSearchBoxFocus"
     @keyup.enter="onEnter(searchText)"
+    @mousedown="handleSearchBoxFocus"
     return-object
     placeholder="Search anything"
     autocomplete="off"
@@ -22,6 +23,7 @@
     :dense="inplace"
     :menu-props="menuProps"
     @blur="handleSearchBoxBlur"
+    :class="searchBoxClassName"
   >
     <template v-slot:item="{ item }">
       <v-list-item-avatar>
@@ -199,16 +201,28 @@ export default {
     searchText: null,
     _locked: false,
     _timerId: null,
+    isFocused: false,
     seqno: 0,
     menuProps: {},
   }),
   created() {
     this.suggests = this.getHistoryItems("");
   },
+  computed: {
+    searchBoxClassName() {
+      if (this.isFocused) {
+        return 'focused-searchbar';
+      }
+      return 'unfocused-searchbar';
+    }
+  },
   methods: {
     ...mapActions(["showError"]),
+    handleSearchBoxFocus() {
+      this.isFocused = true;
+    },
     handleSearchBoxBlur() {
-      this.$emit('blur');
+      this.isFocused = false;
       this.$set(this, 'menuProps', {});
       this.$set(this, 'model', null);
     },
@@ -279,6 +293,8 @@ export default {
       return historyItem;
     },
     onEnter(searchText) {
+      this.isFocused = true;
+
       if (searchText !== null && searchText.length > 2) {
         addHistoryItem({
           value: searchText,
@@ -380,6 +396,13 @@ export default {
       if (this._locked) return;
       this.onSearch();
     },
+    isFocused(val) {
+      if (val) {
+        this.$emit('focus');
+      } else {
+        this.$emit('blur');
+      }
+    },
   },
 };
 </script>
@@ -425,5 +448,9 @@ export default {
       margin-right: auto;
     }
   }
+}
+.unfocused-searchbar {
+  min-width: auto !important;
+  left: auto !important;
 }
 </style>

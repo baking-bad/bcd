@@ -79,6 +79,7 @@
           :class="comboboxWrapperClassName"
       >
         <SearchBox
+            :key="address"
             :inplace="true"
             @focus="handleSearchBoxFocus"
             @blur="handleSearchBoxBlur"
