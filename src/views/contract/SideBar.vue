@@ -182,82 +182,97 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="ma-0 bb-1" v-if="isContract && sameCount > 0">
+        <v-expansion-panel
+            v-if="isContract && contract.same_count > 0"
+            class="ma-0 bb-1"
+            @click="requestSame"
+        >
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span
-              class="caption font-weight-bold text-uppercase text--secondary"
-              >Same contracts ({{ sameCount }})</span
-            >
+              <span
+                  class="caption font-weight-bold text-uppercase text--secondary"
+              >Same contracts ({{ contract.same_count }})</span
+              >
           </v-expansion-panel-header>
-          <v-expansion-panel-content color="data">
-            <v-list class="contract-list">
-              <template v-for="(contract, i) in same">
-                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <SimilarItem
-                  :key="i"
-                  :item="contract"
-                  :address="address"
-                  :network="network"
-                />
-              </template>
-              <v-divider></v-divider>
-              <v-list-item v-if="same.length < sameCount">
-                <v-list-item-content>
-                  <v-list-item-title class="d-flex align-center justify-center">
-                    <v-btn
-                      class="text--secondary"
-                      :loading="sameLoading"
-                      text
-                      small
-                      @click="requestMoreSame"
-                      >Load more</v-btn
-                    >
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-expansion-panel-content>
+          <v-skeleton-loader
+              type="image"
+              :loading="isSameInitialLoading"
+          >
+            <v-expansion-panel-content color="data">
+              <v-list class="contract-list">
+                <template v-for="(contract, i) in same">
+                  <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+                  <SimilarItem
+                    :key="i"
+                    :item="contract"
+                    :address="address"
+                    :network="network"
+                  />
+                </template>
+                <v-divider></v-divider>
+                <v-list-item v-if="same.length < sameCount">
+                  <v-list-item-content>
+                    <v-list-item-title class="d-flex align-center justify-center">
+                      <v-btn
+                        class="text--secondary"
+                        :loading="sameLoading"
+                        text
+                        small
+                        @click="requestMoreSame"
+                        >Load more</v-btn
+                      >
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-expansion-panel-content>
+          </v-skeleton-loader>
         </v-expansion-panel>
 
         <v-expansion-panel
-          class="ma-0 bb-1"
-          v-if="isContract && similarCount > 0"
+            v-if="isContract && contract.similar_count > 0"
+            class="ma-0 bb-1"
+            @click="requestSimilar"
         >
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span
-              class="caption font-weight-bold text-uppercase text--secondary"
-              >Similar contracts ({{ similarCount }})</span
-            >
+              <span
+                  class="caption font-weight-bold text-uppercase text--secondary"
+              >Similar contracts ({{ contract.similar_count }})</span
+              >
           </v-expansion-panel-header>
-          <v-expansion-panel-content color="data">
-            <v-list class="contract-list">
-              <template v-for="(contract, i) in similar">
-                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <SimilarItem
-                  :key="i"
-                  :diff="true"
-                  :item="contract"
-                  :address="address"
-                  :network="network"
-                />
-              </template>
-              <v-divider></v-divider>
-              <v-list-item v-if="similar.length < similarCount">
-                <v-list-item-content>
-                  <v-list-item-title class="d-flex align-center justify-center">
-                    <v-btn
-                      class="text--secondary"
-                      :loading="similarLoading"
-                      text
-                      small
-                      @click="requestMoreSimilar"
-                      >Load more</v-btn
-                    >
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-expansion-panel-content>
+          <v-skeleton-loader
+              type="image"
+              :loading="isSimilarInitialLoading"
+          >
+            <v-expansion-panel-content color="data">
+              <v-list class="contract-list">
+                <template v-for="(contract, i) in similar">
+                  <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+                  <SimilarItem
+                    :key="i"
+                    :diff="true"
+                    :item="contract"
+                    :address="address"
+                    :network="network"
+                  />
+                </template>
+                <v-divider></v-divider>
+                <v-list-item v-if="similar.length < similarCount">
+                  <v-list-item-content>
+                    <v-list-item-title class="d-flex align-center justify-center">
+                      <v-btn
+                        class="text--secondary"
+                        :loading="similarLoading"
+                        text
+                        small
+                        @click="requestMoreSimilar"
+                        >Load more</v-btn
+                      >
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-expansion-panel-content>
+          </v-skeleton-loader>
         </v-expansion-panel>
 
         <v-expansion-panel class="ma-0 bb-1" v-if="migrations.length > 0">
@@ -321,6 +336,7 @@ import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
 import WatchSettings from "@/components/Dialogs/WatchSettings.vue";
 import VerifyDialog from "@/components/Dialogs/VerifyDialog.vue";
+import { DATA_LOADING_STATUSES } from "@/utils/network";
 
 export default {
   name: "SideBar",
@@ -351,16 +367,21 @@ export default {
     showWatchSettings: false,
     showVerifyDialog: false,
     domain: undefined,
+    sameInitialLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
+    similarInitialLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
   }),
   created() {
-    if (this.isContract) {
-      this.requestSameSimilar();
-    }
     this.resolveDomain();
   },
   computed: {
     isAuthorized() {
       return this.$store.state.isAuthorized;
+    },
+    isSameInitialLoading() {
+      return this.sameInitialLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
+    isSimilarInitialLoading() {
+      return this.similarInitialLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
     profile() {
       return this.$store.state.profile;
@@ -415,22 +436,34 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
-    requestSameSimilar() {
-      if (!this.isContract) return;
+    requestSame() {
+      if (!this.isContract
+          || this.sameInitialLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
+      ) return;
+
+      this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
       this.same = [];
       this.sameCount = 0;
       this.api
-        .getSameContracts(this.network, this.address, 0)
-        .then((res) => {
-          if (!res) return;
-          this.same = res.contracts;
-          this.sameCount = res.count;
-        })
-        .catch((err) => {
-          this.showError(err);
-          console.log(err);
-        });
+          .getSameContracts(this.network, this.address, 0)
+          .then((res) => {
+            if (!res) return;
+            this.same = res.contracts;
+            this.sameCount = res.count;
+            this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
+          })
+          .catch((err) => {
+            this.showError(err);
+            console.log(err);
+            this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+          });
+    },
+    requestSimilar() {
+      if (!this.isContract
+        || this.similarInitialLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
+      ) return;
 
+      this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
       this.similar = [];
       this.similarCount = 0;
       this.api
@@ -439,10 +472,12 @@ export default {
           if (!res) return;
           this.similar = res.contracts;
           this.similarCount = res.count;
+          this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
         })
         .catch((err) => {
           this.showError(err);
           console.log(err);
+          this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.ERROR;
         });
     },
     requestMoreSame() {
@@ -488,9 +523,6 @@ export default {
         this.domain = res.name;
       });
     },
-  },
-  watch: {
-    address: "requestSameSimilar",
   },
 };
 </script>
