@@ -167,4 +167,8 @@ input:-webkit-autofill:active  {
 .text-align-end {
   text-align: end;
 }
+
+.max-width-100 {
+  max-width: 100%;
+}
 </style>
