@@ -1,6 +1,6 @@
 <template>
   <v-expansion-panel class="bl-1 br-1 bt-1 bmd-panel" active-class="bmd-active-panel">
-    <v-expansion-panel-header v-if="!single" class="px-4 pb-0 pt-1" ripple>
+    <v-expansion-panel-header v-if="!single" class="pa-0" ripple>
       <v-row no-gutters>
         <v-col cols="8" class="d-flex align-center justify-start text-truncate">
           <v-list-item>
@@ -23,7 +23,7 @@
           </v-list-item>
         </v-col>
         <v-col cols="2" class="d-flex align-center">
-          <v-list-item>
+          <v-list-item class="pl-0">
             <v-list-item-content>
               <v-list-item-title
                 class="hash font-weight-light"
@@ -51,7 +51,7 @@
             small
             text
             :to="{
-              name: 'big_map_history', 
+              name: 'big_map_history',
               params: {
                 network: network,
                 address: address,
@@ -70,11 +70,11 @@
         </v-col>
         <v-col cols="12" class="px-2 py-4 my-2 ba-1">
           <span class="overline ml-3">Key</span>
-          <MiguelTreeView :miguel="diff.data.key" :network="network" openAll />   
+          <MiguelTreeView :miguel="diff.data.key" :network="network" openAll />
         </v-col>
         <v-col cols="12" class="px-2 py-4 my-2 ba-1" v-if="diff.data.value">
           <span class="overline ml-3">Value</span>
-          <MiguelTreeView :miguel="diff.data.value" :network="network" openAll />         
+          <MiguelTreeView :miguel="diff.data.value" :network="network" openAll />
         </v-col>
       </v-row>
     </v-expansion-panel-content>
