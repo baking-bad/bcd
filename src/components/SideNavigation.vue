@@ -1,22 +1,6 @@
 <template>
   <v-navigation-drawer :app="app" dark mini-variant permanent floating color="sidenav">
     <router-link
-        :to="{name: 'dashboard'}"
-        class="d-flex justify-center align-center mt-1"
-        style="height: 63px"
-        v-if="isAuthorized && profile != null"
-    >
-      <v-tooltip right>
-        <template v-slot:activator="{ on }">
-          <v-avatar size="38" v-on="on" class="elevation-2">
-            <img :src="profile.avatar_url" :alt="profile.login" />
-          </v-avatar>
-        </template>
-        Dashboard
-      </v-tooltip>
-    </router-link>
-    <router-link
-        v-else
         :to="{name: config.HOME_PAGE}"
         class="d-flex justify-center align-center mt-1"
         style="height: 63px"
@@ -93,15 +77,6 @@
         </template>
         <span>Pick random</span>
       </v-tooltip>
-
-      <v-tooltip v-if="config.JUPYTER_PATH" right>
-        <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon :href="config.JUPYTER_PATH" target="_blank" class="mt-6">
-            <v-icon color="grey lighten-2">mdi-language-python</v-icon>
-          </v-btn>
-        </template>
-        <span>Jupyter notebooks</span>
-      </v-tooltip>
     </div>
 
     <template v-slot:append>
@@ -124,14 +99,6 @@
           <span v-if="$vuetify.theme.dark">Disable dark theme</span>
           <span v-else>Enable dark theme</span>
         </v-tooltip>
-        <v-tooltip right v-if="isAuthorized && !config.sandbox_mode">
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" icon @click="clickLogout" class="mt-6">
-              <v-icon color="grey lighten-2">mdi-logout</v-icon>
-            </v-btn>
-          </template>
-          Logout
-        </v-tooltip>
       </div>
     </template>
   </v-navigation-drawer>
@@ -139,19 +106,13 @@
 
 <script>
 import { mapActions } from "vuex";
-import { logout } from "@/utils/auth.js";
+
 export default {
   name: "SideNavigation",
   props: {
     app: Boolean,
   },
   computed: {
-    isAuthorized() {
-      return this.$store.state.isAuthorized;
-    },
-    profile() {
-      return this.$store.state.profile;
-    },
     apiDocsUrl() {
       return `${window.location.origin}/docs`;
     },
@@ -170,14 +131,8 @@ export default {
   }),
   methods: {
     ...mapActions({
-      userLogout: "logout",
       showError: "showError",
     }),
-    clickLogout() {
-      this.userLogout();
-      logout();
-      this.$router.push({ path: "/" });
-    },
     random() {
       if (this.pickingRandom) return;
       this.pickingRandom = true;

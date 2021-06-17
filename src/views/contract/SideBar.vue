@@ -46,26 +46,6 @@
       >
     </div>
     <div class="d-flex align-center justify-start pa-2 px-4">
-      <v-tooltip bottom v-if="isAuthorized && contract && !contract.verified">
-        <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon class="mr-2" @click="onVerifyClick">
-            <v-icon class="text--secondary">mdi-shield-check-outline</v-icon>
-          </v-btn>
-        </template>
-        Verify contract
-      </v-tooltip>
-      <v-tooltip bottom v-if="isAuthorized && contract">
-        <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon class="mr-2" @click="showWatchSettings = true">
-            <v-icon v-if="contract.subscription" class="text--primary"
-              >mdi-eye-settings-outline</v-icon
-            >
-            <v-icon v-else class="text--secondary">mdi-eye-outline</v-icon>
-          </v-btn>
-        </template>
-        <span v-if="contract.subscription">Edit watch settings</span>
-        <span v-else>Watch contract</span>
-      </v-tooltip>
       <v-tooltip bottom v-if="isContract">
         <template v-slot:activator="{ on }">
           <v-btn v-on="on" icon class="mr-2" @click="onForkClick">
@@ -285,31 +265,6 @@
     </v-skeleton-loader>
 
     <BakingBadFooter />
-
-    <WatchSettings
-      v-if="contract"
-      :show.sync="showWatchSettings"
-      :data="contract.subscription"
-      :contract="contract"
-      :onUpdate="
-        (s) => {
-          if (contract.subscription === null) contract.total_subscribed++;
-          contract.subscription = s;
-        }
-      "
-      :onRemove="
-        (s) => {
-          if (contract.subscription !== null) contract.total_subscribed--;
-          contract.subscription = null;
-        }
-      "
-    />
-
-    <VerifyDialog
-      v-model="showVerifyDialog"
-      :address="address"
-      :network="network"
-    />
   </div>
 </template>
 
@@ -319,8 +274,6 @@ import SimilarItem from "@/views/contract/SimilarItem.vue";
 import LogItem from "@/views/contract/LogItem.vue";
 import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
-import WatchSettings from "@/components/Dialogs/WatchSettings.vue";
-import VerifyDialog from "@/components/Dialogs/VerifyDialog.vue";
 
 export default {
   name: "SideBar",
@@ -338,8 +291,6 @@ export default {
     LogItem,
     AccountBox,
     BakingBadFooter,
-    WatchSettings,
-    VerifyDialog,
   },
   data: () => ({
     same: [],
@@ -348,8 +299,6 @@ export default {
     similarCount: 0,
     similarLoading: false,
     sameLoading: false,
-    showWatchSettings: false,
-    showVerifyDialog: false,
     domain: undefined,
   }),
   created() {
@@ -359,20 +308,12 @@ export default {
     this.resolveDomain();
   },
   computed: {
-    isAuthorized() {
-      return this.$store.state.isAuthorized;
-    },
-    profile() {
-      return this.$store.state.profile;
-    },
     isContract() {
       return this.address.startsWith("KT");
     },
     alias() {
       if (this.contract) {
-        if (this.contract.subscription && this.contract.subscription.alias) {
-          return this.contract.subscription.alias;
-        } else if (this.contract.alias) {
+        if (this.contract.alias) {
           return this.contract.alias;
         } else if (this.metadata && this.metadata.name) {
           return this.metadata.name;
@@ -478,9 +419,6 @@ export default {
         address: this.address,
         network: this.network,
       });
-    },
-    onVerifyClick() {
-      this.showVerifyDialog = !this.showVerifyDialog;
     },
     resolveDomain() {
       this.api.resolveDomain(this.network, this.address).then((res) => {
