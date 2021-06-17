@@ -84,7 +84,7 @@ export default {
       clearTimeout(this._timerId);
 
       this._timerId = setTimeout(() => {
-        this.api
+        this.api_bigmap
           .getContractBigMapKeys(
             this.network,
             this.ptr,

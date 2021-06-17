@@ -180,7 +180,7 @@ export default {
     ...mapActions(["showError"]),
     getBigMapActions() {
       this.loading = true;
-      this.api
+      this.api_bigmap
         .getContractBigMapActions(this.network, this.ptr)
         .then((res) => {
           if (!res) return;

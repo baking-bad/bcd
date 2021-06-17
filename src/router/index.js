@@ -33,11 +33,6 @@ import BigMap from '@/views/big_map/BigMap.vue'
 import BigMapKeys from '@/views/big_map/KeysTab.vue'
 import BigMapHistory from '@/views/big_map/HistoryTab.vue'
 
-import Dashboard from '@/views/dashboard/Dashboard.vue'
-import EventsTab from '@/views/dashboard/EventsTab.vue'
-import TasksTab from '@/views/dashboard/TasksTab.vue'
-import CompilationsTab from '@/views/dashboard/CompilationsTab.vue'
-
 import DAppList from '@/views/dapps/List.vue'
 import DApp from '@/views/dapps/DApp.vue'
 import MainDApp from '@/views/dapps/Main.vue'
@@ -250,38 +245,6 @@ const router = new Router({
           component: TransfersTab,
           props: true
         },
-      ]
-    },
-    {
-      path: '/dashboard',
-      components: {
-        default: Dashboard
-      },
-      props: { default: true },
-      children: [
-        {
-          path: '',
-          name: 'dashboard',
-          redirect: 'events'
-        },
-        {
-          path: 'events',
-          name: 'events',
-          component: EventsTab,
-          props: true
-        },
-        {
-          path: 'tasks',
-          name: 'tasks',
-          component: TasksTab,
-          props: true
-        },
-        {
-          path: 'compilations',
-          name: 'compilations',
-          component: CompilationsTab,
-          props: true
-        }
       ]
     },
     {

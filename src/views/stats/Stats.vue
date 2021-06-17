@@ -66,7 +66,7 @@ export default {
     },
     getStats() {
       this.loading = true;
-      this.api
+      this.api_stats
         .getStats()
         .then((res) => {
           if (!res) return;

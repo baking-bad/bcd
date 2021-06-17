@@ -181,7 +181,7 @@ export default {
       }
 
       let level = this.getFallbackLevel(protocol);
-      this.api
+      this.api_contract
         .getContractCode(this.network, this.address, protocol, level)
         .then(res => {
           if (!res) return;

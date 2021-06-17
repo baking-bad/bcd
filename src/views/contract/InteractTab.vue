@@ -96,7 +96,7 @@ export default {
     ...mapActions(["showError", "showClipboardOK"]),
     getEntrypoints(selectedName = undefined) {
       this.loading = true;
-      this.api
+      this.api_contract
         .getContractEntrypoints(this.network, this.address)
         .then((res) => {
           if (!res) return;

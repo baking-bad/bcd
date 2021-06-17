@@ -252,7 +252,7 @@ export default {
         .finally(() => (this.contractLoading = false));
     },
     getMetadata() {
-      this.api
+      this.api_account
         .getAccountMetadata(this.network, this.address)
         .then((res) => {
           if (!res) return;

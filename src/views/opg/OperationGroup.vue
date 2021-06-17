@@ -16,7 +16,7 @@
         <v-tab active>
           <v-icon left small>mdi-format-list-bulleted</v-icon>contents
           <span class="ml-1">({{ contentsLength }})</span>
-        </v-tab>        
+        </v-tab>
       </v-tabs>
       <div class="mr-6 mt-6" style="width: 800px;">
         <SearchBox :inplace="true"></SearchBox>
@@ -61,7 +61,7 @@ export default {
       showError: "showError"
     }),
     getOPG() {
-      this.api.getOPG(this.hash)
+      this.api_other.getOPG(this.hash)
         .then(res => {
           if (!res) return;
           this.operations = res;

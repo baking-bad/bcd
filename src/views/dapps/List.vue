@@ -104,7 +104,7 @@ export default {
     getList() {
       this.loading = true;
 
-      this.api
+      this.api_other
         .getDApps()
         .then((res) => {
           this.dapps = res;

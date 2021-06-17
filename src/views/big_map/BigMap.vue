@@ -25,7 +25,7 @@
           <v-icon left small>mdi-history</v-icon>
           <span style="text-transform: none;" v-html="helpers.shortcut(keyhash)"></span>
           <span class="ml-1">({{ count }})</span>
-        </v-tab>  
+        </v-tab>
       </v-tabs>
       <div class="mr-6 mt-6" style="width: 800px;">
         <SearchBox :inplace="true"></SearchBox>
@@ -71,7 +71,7 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     getBigMap() {
-      this.api
+      this.api_bigmap
         .getContractBigMap(this.network, this.ptr)
         .then(res => {
           if (!res) return;

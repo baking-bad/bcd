@@ -419,7 +419,7 @@ export default {
       if (!this.isContract) return;
       this.same = [];
       this.sameCount = 0;
-      this.api
+      this.api_contract
         .getSameContracts(this.network, this.address, 0)
         .then((res) => {
           if (!res) return;
@@ -433,7 +433,7 @@ export default {
 
       this.similar = [];
       this.similarCount = 0;
-      this.api
+      this.api_contract
         .getSimilarContracts(this.network, this.address, 0)
         .then((res) => {
           if (!res) return;
@@ -447,7 +447,7 @@ export default {
     },
     requestMoreSame() {
       this.sameLoading = true;
-      this.api
+      this.api_contract
         .getSameContracts(this.network, this.address, this.same.length)
         .then((res) => {
           if (!res) return;
@@ -461,7 +461,7 @@ export default {
     },
     requestMoreSimilar() {
       this.similarLoading = true;
-      this.api
+      this.api_contract
         .getSimilarContracts(this.network, this.address, this.similar.length)
         .then((res) => {
           if (!res) return;
@@ -483,7 +483,7 @@ export default {
       this.showVerifyDialog = !this.showVerifyDialog;
     },
     resolveDomain() {
-      this.api.resolveDomain(this.network, this.address).then((res) => {
+      this.api_other.resolveDomain(this.network, this.address).then((res) => {
         if (!res && res.name && res.name !== "") return;
         this.domain = res.name;
       });

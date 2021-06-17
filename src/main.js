@@ -13,7 +13,13 @@ import { Vue as VueIntegration } from "@sentry/integrations";
 
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { getJwt, logout, getBool } from "@/utils/auth.js";
-import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js";
+import { BetterCallApi_Account } from "@/api/bcd/account";
+import { BetterCallApi_BigMap } from "@/api/bcd/bigmap";
+import { BetterCallApi_Contract } from "@/api/bcd/contract";
+import { BetterCallApi_Other } from "@/api/bcd/other";
+import { BetterCallApi_Stats } from "@/api/bcd/stats";
+import { BetterCallApi_Tokens } from "@/api/bcd/tokens";
+import { UnauthorizedError } from "@/api/bcd/errors";
 import { NodeRPC } from "@/api/rpc.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
@@ -84,9 +90,14 @@ let config = {
   HOME_PAGE: 'home'
 }
 
-let api = new BetterCallApi(config.API_URI);
+const api_account = new BetterCallApi_Account(config.API_URI);
+const api_bigmap = new BetterCallApi_BigMap(config.API_URI);
+const api_contract = new BetterCallApi_Contract(config.API_URI);
+const api_other = new BetterCallApi_Other(config.API_URI);
+const api_stats = new BetterCallApi_Stats(config.API_URI);
+const api_tokens = new BetterCallApi_Tokens(config.API_URI);
 
-api.getConfig().then(response => {
+api_other.getConfig().then(response => {
   Object.assign(config, response);
 
   if (config.sandbox_mode) {
@@ -99,7 +110,17 @@ api.getConfig().then(response => {
 
   Vue.mixin({
     data() {
-      return { config, api, rpc, helpers }
+      return {
+        config,
+        api_account,
+        api_bigmap,
+        api_contract,
+        api_other,
+        api_stats,
+        api_tokens,
+        rpc,
+        helpers
+      }
     }
   });
 
@@ -122,7 +143,7 @@ api.getConfig().then(response => {
       path: '/@:slug([a-zA-Z0-9_.:-]*)',
       name: 'slug',
       beforeEnter: async function (to, from, next) {
-        return await api.getContractBySlug(to.params.slug)
+        return await api_other.getContractBySlug(to.params.slug)
           .then(res => next(`/${res.network}/${res.address}`))
           .catch(() => next(`/search?text=${to.params.slug}`))
       }
@@ -135,41 +156,6 @@ api.getConfig().then(response => {
       }
     }
   ]);
-
-  router.beforeEach((to, from, next) => {
-    const privatePages = ['/dashboard', '/dashboard/'];
-    const authRequired = privatePages.includes(to.path);
-    const loggedIn = config.sandbox_mode || getJwt() !== null;
-
-    store.dispatch('setIsAuthorized', loggedIn)
-    if (authRequired && !loggedIn) {
-      return next('/');
-    }
-
-    if (loggedIn && store.state.profile === null) {
-      api.getProfile()
-        .then(res => {
-          let subs = res.subscriptions;
-          delete res['subscriptions'];
-          store.dispatch('setProfile', res);
-          store.dispatch('setSubscriptions', subs);
-        })
-        .catch(err => {
-          if (err instanceof UnauthorizedError) {
-            store.dispatch('setIsAuthorized', false);
-            store.dispatch('setProfile', null);
-            store.dispatch('showError', 'Unauthorized access. Please sign in');
-          } else {
-            store.dispatch('showError', err);
-          }
-          logout();
-          // eslint-disable-next-line
-          console.log(err)
-        });
-    }
-
-    next();
-  })
 
   if (config.GA_ENABLED || config.ga_enabled) {
     Vue.use(VueAnalytics, {

@@ -91,11 +91,11 @@ export default {
     getSeries(period) {
       this.loadingSeries = true;
 
-      this.api
+      this.api_stats
         .getNetworkStatsSeries("mainnet", "users", period, this.contracts)
         .then((res) => {
           this.series.users = res;
-          return this.api.getNetworkStatsSeries(
+          return this.api_stats.getNetworkStatsSeries(
             "mainnet",
             "operation",
             period,
@@ -115,7 +115,7 @@ export default {
     },
     getGeneralStats() {
       this.loadingSummary = true;
-      this.api
+      this.api_stats
         .getContractsStats("mainnet", this.contracts, "all")
         .then((res) => {
           this.summary = res;

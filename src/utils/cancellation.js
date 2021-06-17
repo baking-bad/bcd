@@ -11,7 +11,7 @@ function getCancelSource() {
     cancelTokens[id] = source
     return id
 }
-export function getCancellable(api, url, params) {
+export function getCancellable(api, url, params = {}) {
     let id = getCancelSource();
     params.cancelToken = cancelTokens[id].token;
     return api.get(url, params)

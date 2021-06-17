@@ -283,7 +283,7 @@ export default {
       const offset = push ? this.suggests.length : 0;
 
       this._timerId = setTimeout(() => {
-        this.api
+        this.api_other
           .search(text, indices, offset, networks, time, 1)
           .then((res) => {
             if (seqno !== this.seqno || !res) return;

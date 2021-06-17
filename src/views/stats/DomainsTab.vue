@@ -119,7 +119,7 @@ export default {
     getDomains(network) {
       this.loading = true;
 
-      this.api
+      this.api_other
         .listDomains(network, this.domains.length, PAGE_SIZE)
         .then((res) => {
           if (!res) return;

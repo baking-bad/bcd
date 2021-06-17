@@ -167,7 +167,7 @@ export default {
         if (!force) return;
       }
       this.loading = true;
-      this.api
+      this.api_contract
         .getContractStorage(this.network, this.address, this.level)
         .then((res) => {
           if (!res) return;
@@ -192,7 +192,7 @@ export default {
         if (!force) return;
       }
       this.loading = true;
-      this.api
+      this.api_contract
         .getContractStorageRaw(this.network, this.address, this.level)
         .then((res) => {
           this.rawStorage = String(res);
@@ -205,7 +205,7 @@ export default {
         .finally(() => (this.loading = false));
     },
     getStorageSchema() {
-      this.api
+      this.api_contract
         .getContractStorageSchema(this.network, this.address)
 
         .catch((err) => {
@@ -215,7 +215,7 @@ export default {
     },
     downloadFile() {
       this.downloading = true;
-      this.api
+      this.api_contract
         .getContractStorageRich(this.network, this.address, this.level)
         .then((res) => {
           var element = document.createElement("a");
@@ -238,7 +238,7 @@ export default {
     },
     findPointers(value) {
       if (value.prim === "big_map") {
-        this.api
+        this.api_bigmap
           .getContractBigMapDiffsCount(this.network, value.value)
           .then((res) => {
             value.count = res.count;
