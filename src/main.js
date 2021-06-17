@@ -12,14 +12,12 @@ import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
 
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
-import { getJwt, logout, getBool } from "@/utils/auth.js";
 import { BetterCallApi_Account } from "@/api/bcd/account";
 import { BetterCallApi_BigMap } from "@/api/bcd/bigmap";
 import { BetterCallApi_Contract } from "@/api/bcd/contract";
 import { BetterCallApi_Other } from "@/api/bcd/other";
 import { BetterCallApi_Stats } from "@/api/bcd/stats";
 import { BetterCallApi_Tokens } from "@/api/bcd/tokens";
-import { UnauthorizedError } from "@/api/bcd/errors";
 import { NodeRPC } from "@/api/rpc.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
@@ -177,7 +175,7 @@ api_other.getConfig().then(response => {
     });
   }
 
-  const isDark = getBool('dark', true);
+  const isDark = localStorage.getItem('dark') ? localStorage.getItem('dark') : true;
   if (isDark) {
     document.body.classList.add('dark-theme-background');
   }

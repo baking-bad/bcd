@@ -9,11 +9,3 @@ export function login(token) {
 export function logout() {
     localStorage.removeItem("token");
 }
-
-export function getBool(key, _default = false) {
-    const res = localStorage.getItem(key);
-    if (res === null) {
-        return _default;
-    }
-    return res === 'true' ? true : false;
-}

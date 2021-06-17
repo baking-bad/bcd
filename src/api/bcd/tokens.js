@@ -1,7 +1,6 @@
 import axios from "axios";
 import {MAX_SIZE, returnResponseData} from "@/api/bcd/helpers";
 import {getCancellable} from "@/utils/cancellation";
-import {RequestFailedError} from "@/api/bcd/errors";
 
 export class BetterCallApi_Tokens {
     constructor(baseURL) {
