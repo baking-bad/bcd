@@ -501,7 +501,7 @@ export default {
       if (this.execution) return;
 
       this.execution = true;
-      this.api
+      this.api_other
         .prepareToFork({
           network: this.network,
           address: this.address,
@@ -580,7 +580,7 @@ export default {
     },
     getRandomContract(props) {
       this.show = false;
-      this.api
+      this.api_other
         .search(props.schema.tag, ["contract"], 0, [this.network], [], {}, 0)
         .then((res) => {
           if (res.items) {
@@ -615,7 +615,7 @@ export default {
     selectedFillType: function (newValue) {
       this.show = false;
       if (this.isStorage || this.isDeploy) {
-        this.api
+        this.api_contract
           .getContractStorageSchema(this.network, this.address, newValue)
           .then((res) => {
             if (!res) return;
@@ -628,7 +628,7 @@ export default {
             this.show = true;
           });
       } else {
-        this.api
+        this.api_contract
           .getContractEntrypointSchema(
             this.network,
             this.address,
