@@ -205,7 +205,7 @@ export default {
       this.loading = true;
 
       if (!this.contract) {
-        this.api
+        this.api_contract
           .getContractTransfers(
             this.network,
             this.address,
@@ -225,7 +225,7 @@ export default {
           })
           .finally(() => (this.loading = false));
       } else {
-        this.api
+         this.api_tokens
           .getAccountTransfers(
             this.network,
             this.address,

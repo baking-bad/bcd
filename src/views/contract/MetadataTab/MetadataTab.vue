@@ -37,7 +37,7 @@
               />
           </template>
         </v-card-text>
-      </v-card>      
+      </v-card>
       <RawJsonViewer
         :show.sync="showRaw"
         type="metadata"
@@ -136,7 +136,7 @@ export default {
     async loadViewsSchema() {
       if (this.network && this.address) {
         try {
-          let views = await this.api.getMetadataViewsSchema(this.network, this.address);
+          let views = await this.api_contract.getMetadataViewsSchema(this.network, this.address);
           views.forEach(view => applyStyles(view.schema));
           this.views = views;
           console.log(views)

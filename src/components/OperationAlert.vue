@@ -34,7 +34,7 @@
             text
             @click="getErrorLocation"
             :loading="errorLocationLoading"
-            class="text--secondary" 
+            class="text--secondary"
           >Show failed code</v-btn>
         </v-col>
         <v-col
@@ -54,8 +54,8 @@
             :code="errorLocation.text"
             :firstLineNumber="errorLocation.first_row"
             :mark="{
-              row: errorLocation.failed_row - errorLocation.first_row, 
-              start: errorLocation.start_col, 
+              row: errorLocation.failed_row - errorLocation.first_row,
+              start: errorLocation.start_col,
               end: errorLocation.end_col
             }"
           ></Michelson>
@@ -97,7 +97,7 @@ export default {
   methods: {
     getErrorLocation() {
       this.errorLocationLoading = true;
-      this.api
+      this.api_other
         .getErrorLocation(this.operationId)
         .then((res) => {
           this.errorLocation = res;

@@ -174,7 +174,7 @@ export default {
           this.findPointers(res);
           this.storage = res;
           this.raw = false;
-          return this.api.getContractStorageSchema(this.network, this.address);
+          return this.api_contract.getContractStorageSchema(this.network, this.address);
         })
         .then((res) => {
           if (!res) return;

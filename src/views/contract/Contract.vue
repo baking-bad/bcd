@@ -189,7 +189,7 @@ export default {
         return;
       }
       this.contractLoading = true;
-      this.api
+      this.api_contract
         .getContract(this.network, this.address)
         .then((res) => {
           if (!res) return;
@@ -202,7 +202,7 @@ export default {
     },
     getMigrations() {
       this.migrationsLoading = true;
-      this.api
+      this.api_contract
         .getContractMigrations(this.network, this.address)
         .then((res) => {
           if (!res) return;

@@ -378,7 +378,7 @@ export default {
 
       this.execution = true;
 
-      return this.api
+      return this.api_contract
         .getContractEntrypointData(
           this.network,
           this.address,
@@ -410,7 +410,7 @@ export default {
 
       this.execution = true;
 
-      this.api
+      this.api_contract
         .getContractEntrypointTrace(
           this.network,
           this.address,
@@ -522,7 +522,7 @@ export default {
 
       this.execution = true;
       try {
-        let data = await this.api.prepareToFork({
+        let data = await this.api_other.prepareToFork({
           network: this.network,
           address: this.address,
           storage: this.model,
@@ -547,7 +547,7 @@ export default {
 
       this.execution = true;
       try {
-        let data = await this.api.prepareToFork({
+        let data = await this.api_other.prepareToFork({
           script: JSON.stringify(this.script),
           storage: this.model,
         });

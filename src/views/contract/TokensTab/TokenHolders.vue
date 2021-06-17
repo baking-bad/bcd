@@ -59,7 +59,7 @@ export default {
   },
   methods: {
     async getHolders(token) {
-      const res = await this.api.getTokenHoldersList(token.network, token.contract, token.token_id);
+      const res = await this.api_contract.getTokenHoldersList(token.network, token.contract, token.token_id);
       if (res) {
         return Object.entries(res)
           .sort((a, b) => Math.sign(b[1] - a[1]))
