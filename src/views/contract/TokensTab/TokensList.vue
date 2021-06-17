@@ -46,7 +46,7 @@ export default {
   },
   methods: {
     getTokens(offset, size) {
-      this.api
+      this.api_contract
         .getContractTokens(this.network, this.address, offset, size)
         .then((res) => {
           if (!res) return;
@@ -66,13 +66,13 @@ export default {
       immediate: true
     },
     tokensTotal: {
-      handler(newVal) { 
+      handler(newVal) {
         this.tokensPageCount = Math.ceil(newVal / this.itemsPerPage);
       },
       immediate: true
     },
     selectedToken: {
-      handler(newVal) { 
+      handler(newVal) {
         this.$emit('selectedToken', newVal)
       },
       deep: true,
@@ -82,7 +82,7 @@ export default {
   data() {
     return {
       tokens: [],
-      selectedToken: null, 
+      selectedToken: null,
       tokensPage: 1,
       itemsPerPage: 10,
       tokensPageCount: 0

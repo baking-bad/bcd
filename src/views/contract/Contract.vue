@@ -214,7 +214,7 @@ export default {
         .finally(() => (this.migrationsLoading = false));
     },
     getTokensTotal() {
-      this.api
+      this.api_contract
         .getContractTokensCount(this.network, this.address)
         .then((res) => {
           if (!res) return;
@@ -225,7 +225,7 @@ export default {
         })
     },
     getTokenBalancesTotal() {
-      this.api
+      this.api_account
         .getAccountTokenBalances(this.network, this.address, 0, 1)
         .then((res) => {
           if (!res) return;
@@ -237,7 +237,7 @@ export default {
     },
     getInfo() {
       this.contractLoading = true;
-      this.api
+      this.api_account
         .getAccountInfo(this.network, this.address)
         .then((res) => {
           if (!res) return;
