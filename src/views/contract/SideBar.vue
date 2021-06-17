@@ -194,38 +194,39 @@
               >
           </v-expansion-panel-header>
           <v-skeleton-loader
+              v-if="isSameInitialLoading"
               type="image"
               :loading="isSameInitialLoading"
           >
-            <v-expansion-panel-content color="data">
-              <v-list class="contract-list">
-                <template v-for="(contract, i) in same">
-                  <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                  <SimilarItem
-                    :key="i"
-                    :item="contract"
-                    :address="address"
-                    :network="network"
-                  />
-                </template>
-                <v-divider></v-divider>
-                <v-list-item v-if="same.length < sameCount">
-                  <v-list-item-content>
-                    <v-list-item-title class="d-flex align-center justify-center">
-                      <v-btn
-                        class="text--secondary"
-                        :loading="sameLoading"
-                        text
-                        small
-                        @click="requestMoreSame"
-                        >Load more</v-btn
-                      >
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-expansion-panel-content>
           </v-skeleton-loader>
+          <v-expansion-panel-content color="data">
+            <v-list class="contract-list">
+              <template v-for="(contract, i) in same">
+                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+                <SimilarItem
+                  :key="i"
+                  :item="contract"
+                  :address="address"
+                  :network="network"
+                />
+              </template>
+              <v-divider></v-divider>
+              <v-list-item v-if="same.length < sameCount">
+                <v-list-item-content>
+                  <v-list-item-title class="d-flex align-center justify-center">
+                    <v-btn
+                      class="text--secondary"
+                      :loading="sameLoading"
+                      text
+                      small
+                      @click="requestMoreSame"
+                      >Load more</v-btn
+                    >
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-expansion-panel-content>
         </v-expansion-panel>
 
         <v-expansion-panel
@@ -240,39 +241,40 @@
               >
           </v-expansion-panel-header>
           <v-skeleton-loader
+              v-if="isSimilarInitialLoading"
               type="image"
               :loading="isSimilarInitialLoading"
           >
-            <v-expansion-panel-content color="data">
-              <v-list class="contract-list">
-                <template v-for="(contract, i) in similar">
-                  <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                  <SimilarItem
-                    :key="i"
-                    :diff="true"
-                    :item="contract"
-                    :address="address"
-                    :network="network"
-                  />
-                </template>
-                <v-divider></v-divider>
-                <v-list-item v-if="similar.length < similarCount">
-                  <v-list-item-content>
-                    <v-list-item-title class="d-flex align-center justify-center">
-                      <v-btn
-                        class="text--secondary"
-                        :loading="similarLoading"
-                        text
-                        small
-                        @click="requestMoreSimilar"
-                        >Load more</v-btn
-                      >
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-expansion-panel-content>
           </v-skeleton-loader>
+          <v-expansion-panel-content color="data">
+            <v-list class="contract-list">
+              <template v-for="(contract, i) in similar">
+                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+                <SimilarItem
+                  :key="i"
+                  :diff="true"
+                  :item="contract"
+                  :address="address"
+                  :network="network"
+                />
+              </template>
+              <v-divider></v-divider>
+              <v-list-item v-if="similar.length < similarCount">
+                <v-list-item-content>
+                  <v-list-item-title class="d-flex align-center justify-center">
+                    <v-btn
+                      class="text--secondary"
+                      :loading="similarLoading"
+                      text
+                      small
+                      @click="requestMoreSimilar"
+                      >Load more</v-btn
+                    >
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list>
+          </v-expansion-panel-content>
         </v-expansion-panel>
 
         <v-expansion-panel class="ma-0 bb-1" v-if="migrations.length > 0">
