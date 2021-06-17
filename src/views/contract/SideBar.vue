@@ -1,5 +1,5 @@
 <template>
-  <div class="fill-height canvas">
+  <div class="fill-height canvas" :key="address">
     <v-list-item style="height: 74px">
       <v-list-item-content two-line>
         <v-list-item-title class="headline">
@@ -211,10 +211,11 @@
                 />
               </template>
               <v-divider></v-divider>
-              <v-list-item v-if="same.length < sameCount">
+              <v-list-item v-if="same.length < same_count">
                 <v-list-item-content>
                   <v-list-item-title class="d-flex align-center justify-center">
                     <v-btn
+                      v-if="!isSameInitialLoading"
                       class="text--secondary"
                       :loading="sameLoading"
                       text
@@ -259,10 +260,11 @@
                 />
               </template>
               <v-divider></v-divider>
-              <v-list-item v-if="similar.length < similarCount">
+              <v-list-item v-if="similar.length < similar_count">
                 <v-list-item-content>
                   <v-list-item-title class="d-flex align-center justify-center">
                     <v-btn
+                      v-if="!isSimilarInitialLoading"
                       class="text--secondary"
                       :loading="similarLoading"
                       text
@@ -361,9 +363,9 @@ export default {
   },
   data: () => ({
     same: [],
-    sameCount: 0,
+    same_count: 0,
     similar: [],
-    similarCount: 0,
+    similar_count: 0,
     similarLoading: false,
     sameLoading: false,
     showWatchSettings: false,
@@ -526,6 +528,16 @@ export default {
       });
     },
   },
+  watch: {
+    contract(newVal) {
+      this.same_count = newVal.same_count;
+      this.similar_count = newVal.similar_count;
+      this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
+      this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
+      this.$set(this, 'same', []);
+      this.$set(this, 'similar', []);
+    }
+  }
 };
 </script>
 
