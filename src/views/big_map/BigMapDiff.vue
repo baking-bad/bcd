@@ -1,7 +1,7 @@
 <template>
   <v-expansion-panel class="bl-1 br-1 bt-1 bmd-panel" active-class="bmd-active-panel">
-    <v-expansion-panel-header v-if="!single" class="pa-0" hide-actions>
-      <v-row no-gutters class="max-width-100">
+    <v-expansion-panel-header v-if="!single" class="pa-0">
+      <v-row no-gutters class="big-map-row">
         <v-col cols="8" class="d-flex align-center justify-start text-truncate">
           <v-list-item>
             <v-list-item-content>
@@ -136,5 +136,9 @@ export default {
 .bmd-active-panel,
 .bmd-panel.v-expansion-panel--next-active {
   border-bottom: 1px solid var(--v-border-base);
+}
+
+.big-map-row {
+  max-width: calc(100% -  3em - 10px);
 }
 </style>
