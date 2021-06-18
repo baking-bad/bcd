@@ -71,22 +71,18 @@
         <template v-for="(item, id) in items">
           <v-list-item class="item__list-item" :class="statusHeaderClass(item.status)" :key="id">
             <v-row>
-              <v-col cols="2" class="d-flex align-center justify-center pa-0">
+              <v-col cols="2" class="d-flex align-center pl-4 pa-0">
                 <span class="body-2 text--secondary">{{
                   helpers.formatDatetime(item.timestamp)
                 }}</span>
               </v-col>
-              <v-col cols="4" class="d-flex align-center justify-center pr-6">
+              <v-col
+                  cols="4"
+                  class="d-flex align-center text-truncate pl-4 pr-6"
+                  :title="`${getItemAmount(item)} ${token.symbol}`"
+              >
                 <span class="body-2">
-                  {{
-                    token
-                        ? localizeNumber(helpers
-                            .round(
-                                item.amount,
-                                token.decimals ? token.decimals : 0
-                            ))
-                        : item.amount
-                  }}
+                  {{ getItemAmount(item) }}
                   <span v-if="token.symbol"
                     class="caption text-uppercase font-weight-regular text--disabled"
                     >{{ token.symbol }}</span
@@ -94,22 +90,25 @@
                 </span>
               </v-col>
               <v-col cols="4" class="d-flex align-center">
-                <div>
+                <div class="text-truncate">
                   <span
                     class="caption text-uppercase font-weight-regular accent--text"
                     v-if="!item.to && address === item.from"
+                    :title="item.parent || 'Burn'"
                   >
                     {{ item.parent || 'Burn' }}&nbsp;
                   </span>
                   <span
                     class="caption text-uppercase font-weight-regular text--secondary"
                     v-else-if="item.from && item.from !== address"
+                    :title="`${item.parent} from`"
                   >
                     {{ item.parent }}&nbsp;From&nbsp;
                   </span>
                   <span
                     v-else-if="!item.from && address === item.to"
                     class="caption text-uppercase font-weight-regular secondary--text"
+                    :title="item.parent || 'Mint'"
                   >
                     {{ item.parent || 'Mint' }}&nbsp;
                   </span>
@@ -118,12 +117,13 @@
                     text
                     v-html="item.from_alias || helpers.shortcut(item.from)"
                     style="text-transform: none; text-decoration: none"
-                    class="px-1 text--primary hash"
+                    class="px-1 text--primary hash d-block pl-0"
                     :to="`/${item.network}/${item.from}`"
                   />&nbsp;
                   <span
                     v-if="item.to && address !== item.to"
                     class="caption text-uppercase font-weight-regular text--secondary"
+                    :title="`${item.parent} to`"
                     >&nbsp;{{ item.parent }}&nbsp;to&nbsp;</span
                   >
                   <router-link
@@ -132,7 +132,7 @@
                     :to="`/${item.network}/${item.to}`"
                     v-html="item.to_alias || helpers.shortcut(item.to)"
                     style="text-transform: none; text-decoration: none"
-                    class="px-1 text--primary hash"
+                    class="px-1 text--primary hash d-block pl-0"
                   />
                 </div>
               </v-col>
@@ -193,6 +193,16 @@ export default {
     ...mapActions({
       showError: "showError",
     }),
+    getItemAmount(item) {
+      return this.token
+          ? this.localizeNumber(
+              this.helpers.round(
+                  item.amount,
+                  this.token.decimals ? this.token.decimals : 0
+              )
+          )
+          : item.amount;
+    },
     statusHeaderClass(status) {
       return getContentItemHeaderClass(status);
     },
