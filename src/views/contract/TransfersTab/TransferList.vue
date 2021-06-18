@@ -84,7 +84,7 @@
                 <span class="body-2">
                   {{ getItemAmount(item) }}
                   <span v-if="token.symbol"
-                    class="caption text-uppercase font-weight-regular text--disabled"
+                    class="caption font-weight-regular text--disabled"
                     >{{ token.symbol }}</span
                   >
                 </span>
@@ -92,22 +92,22 @@
               <v-col cols="4" class="d-flex align-center">
                 <div class="text-truncate">
                   <span
-                    class="caption text-uppercase font-weight-regular accent--text"
+                    class="caption font-weight-regular accent--text"
                     v-if="!item.to && address === item.from"
                     :title="item.parent || 'Burn'"
                   >
                     {{ item.parent || 'Burn' }}&nbsp;
                   </span>
                   <span
-                    class="caption text-uppercase font-weight-regular text--secondary"
+                    class="caption font-weight-regular text--secondary"
                     v-else-if="item.from && item.from !== address"
                     :title="`${item.parent} from`"
                   >
-                    {{ item.parent }}&nbsp;From&nbsp;
+                    {{ item.parent }}&nbsp;from&nbsp;
                   </span>
                   <span
                     v-else-if="!item.from && address === item.to"
-                    class="caption text-uppercase font-weight-regular secondary--text"
+                    class="caption font-weight-regular secondary--text"
                     :title="item.parent || 'Mint'"
                   >
                     {{ item.parent || 'Mint' }}&nbsp;
@@ -122,7 +122,7 @@
                   />&nbsp;
                   <span
                     v-if="item.to && address !== item.to"
-                    class="caption text-uppercase font-weight-regular text--secondary"
+                    class="caption font-weight-regular text--secondary"
                     :title="`${item.parent} to`"
                     >&nbsp;{{ item.parent }}&nbsp;to&nbsp;</span
                   >
