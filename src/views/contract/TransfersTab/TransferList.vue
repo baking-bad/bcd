@@ -79,7 +79,7 @@
               <v-col
                   cols="4"
                   class="d-flex align-center text-truncate pl-4 pr-6"
-                  :title="`${getItemAmount(item)} ${token.symbol}`"
+                  :title="`${getItemAmount(item)} ${token.symbol ? token.symbol : ''}`"
               >
                 <span class="body-2">
                   {{ getItemAmount(item) }}
