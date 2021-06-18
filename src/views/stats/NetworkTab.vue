@@ -146,7 +146,7 @@ export default {
     getDetails(network) {
       this.loading = true;
 
-      this.api
+      this.api_stats
         .getNetworkStats(network)
         .then(res => {
           this.details = res;
@@ -157,7 +157,7 @@ export default {
         })
         .finally(() => (this.loading = false));
 
-      this.api
+      this.api_stats
         .getNetworkStatsSeries(network, "contract", "month")
         .then(res => {
           this.contractSeries = res;
@@ -168,7 +168,7 @@ export default {
           this.showError(err);
         });
 
-      this.api
+      this.api_stats
         .getNetworkStatsSeries(network, "operation", "month")
         .then(res => {
           this.operationSeries = res;
@@ -179,7 +179,7 @@ export default {
           this.showError(err);
         });
 
-      this.api
+      this.api_stats
         .getNetworkStatsSeries(network, "paid_storage_size_diff", "month")
         .then(res => {
           this.paidStorageSizeDiffSeries = res;
@@ -190,7 +190,7 @@ export default {
           this.showError(err);
         });
 
-      this.api
+      this.api_stats
         .getNetworkStatsSeries(network, "consumed_gas", "month")
         .then(res => {
           this.consumedGasSeries = res;

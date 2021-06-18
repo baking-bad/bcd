@@ -109,7 +109,7 @@ export default {
       this.$set(this, 'model', val);
     },
     callOffchainView() {
-      this.api
+      this.api_contract
           .executeMetadataView(this.network, this.address, {
             name: this.selectedItem.name,
             implementation: this.selectedItem.implementation,

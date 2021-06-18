@@ -58,7 +58,7 @@ export default {
     ...mapActions(["showError"]),
     getSchema() {
       this.loading = true;
-      this.api
+      this.api_contract
         .getContractStorageSchema(
           this.$route.params.network,
           this.$route.params.address,

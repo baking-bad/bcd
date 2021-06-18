@@ -140,7 +140,7 @@ export default {
       let token = this.tokens[this.selectedToken - 1];
 
       this.loadingTokenSeries = true;
-      this.api
+      this.api_tokens
         .getTokenVolumeSeries(
           "mainnet",
           period,
@@ -166,7 +166,7 @@ export default {
       if (this.selectedToken in this.data) return;
       this.loadingTokenSeries = true;
 
-      this.api
+      this.api_stats
         .getNetworkStatsSeries("mainnet", "volume", period, this.contracts)
         .then((res) => {
           this.data[this.selectedToken] = this.prepareSeries(res);

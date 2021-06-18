@@ -181,7 +181,7 @@ export default {
     random() {
       if (this.pickingRandom) return;
       this.pickingRandom = true;
-      this.api
+      this.api_other
           .getRandomContract()
           .then((res) => {
             this.$router.push({ path: `/${res.network}/${res.address}` });

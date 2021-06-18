@@ -116,7 +116,7 @@ export default {
     ...mapActions(["showError"]),
     requestData() {
       this.loading = true;
-      this.api
+      this.api_bigmap
         .getContractBigMapHistory(
           this.network,
           this.ptr,

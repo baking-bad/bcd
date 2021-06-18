@@ -120,7 +120,7 @@ export default {
     getTokensInfo(network, version) {
       this.loading = true;
 
-      this.api
+      this.api_tokens
         .getTokensByVersion(network, version, this.tokens.length, PAGE_SIZE)
         .then((res) => {
           if (!res) return;

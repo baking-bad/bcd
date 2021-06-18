@@ -60,7 +60,7 @@ export default {
     getDApp(slug) {
       this.loading = true;
 
-      this.api
+      this.api_other
         .getDApp(slug)
         .then((res) => {
           this.dapp = res;

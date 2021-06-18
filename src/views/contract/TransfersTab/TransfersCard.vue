@@ -124,7 +124,7 @@ export default {
       return Number(item.balance/Math.pow(10, item.decimals)).toFixed(this.maxLengthTokenDecimals);
     },
     getTokenBalances(offset, size) {
-      this.api
+      this.api_account
         .getAccountTokenBalances(this.network, this.address, offset, size)
         .then((res) => {
           if (!res) return;

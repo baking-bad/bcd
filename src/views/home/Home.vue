@@ -160,7 +160,7 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     getHead() {
-      this.api
+      this.api_other
         .getHead()
         .then((res) => {
           this.stats = res;
@@ -177,7 +177,7 @@ export default {
       const isSelectPressed = val.target && val.target.closest('.network-select');
       if (isSelectPressed || this.pickingRandom) return;
       this.pickingRandom = true;
-      this.api
+      this.api_other
         .getRandomContract(val.target ? '' : val)
         .then((res) => {
           this.$router.push({ path: `/${res.network}/${res.address}` });

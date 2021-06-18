@@ -233,7 +233,7 @@ export default {
     },
     getEntrypoints() {
       if (!this.isContract) return;
-      this.api
+      this.api_contract
         .getContractEntrypoints(this.network, this.address)
         .then((res) => {
           if (!res) return;
@@ -268,7 +268,7 @@ export default {
       let entries = this.entrypoints;
       let timestamps = this.getTimestamps();
 
-      await this.api
+      await this.api_contract
         .getContractOperations(
           this.network,
           this.address,
@@ -301,7 +301,7 @@ export default {
       if (this.mempoolLoading) return;
       this.mempoolLoading = true;
 
-      this.api
+      this.api_contract
         .getContractMempool(this.network, this.address)
         .then((res) => {
           this.mempool = res;

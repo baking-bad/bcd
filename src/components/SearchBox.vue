@@ -354,7 +354,7 @@ export default {
       clearTimeout(this._timerId);
 
       this._timerId = setTimeout(() => {
-        this.api
+        this.api_other
           .search(text)
           .then((res) => {
             if (seqno === this.seqno) {
