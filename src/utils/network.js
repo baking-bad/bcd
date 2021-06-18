@@ -1,0 +1,6 @@
+export const DATA_LOADING_STATUSES = {
+    NOTHING: 'NOTHING',
+    PROGRESS: 'PROGRESS',
+    SUCCESS: 'SUCCESS',
+    ERROR: 'ERROR',
+}
