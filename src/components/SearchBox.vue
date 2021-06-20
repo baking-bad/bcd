@@ -3,6 +3,7 @@
     v-model="model"
     :search-input.sync="searchText"
     :items="suggests"
+    :loading="isSuggestionsLoading"
     item-text="value"
     @focus="handleSearchBoxFocus"
     @keyup.enter="onEnter(searchText)"
@@ -25,6 +26,15 @@
     @blur="handleSearchBoxBlur"
     :class="searchBoxClassName"
   >
+    <template v-slot:progress>
+      <v-progress-circular
+          class="searchbox-custom-progress-circular"
+          indeterminate
+          color="var(--v-primary-base)"
+          size="24"
+          width="2"
+      ></v-progress-circular>
+    </template>
     <template v-slot:item="{ item }">
       <v-list-item-avatar>
         <v-icon v-if="item.type === 'contract'">mdi-code-json</v-icon>
@@ -197,6 +207,7 @@ export default {
   },
   data: () => ({
     suggests: [],
+    isSuggestionsLoading: false,
     model: null,
     searchText: null,
     _locked: false,
@@ -354,6 +365,7 @@ export default {
       clearTimeout(this._timerId);
 
       this._timerId = setTimeout(() => {
+        this.isSuggestionsLoading = true;
         this.api
           .search(text)
           .then((res) => {
@@ -368,6 +380,9 @@ export default {
           .catch((err) => {
             console.log(err);
             this.showError(err);
+          })
+          .finally(() => {
+            this.isSuggestionsLoading = false;
           });
       }, 100);
     },
@@ -377,7 +392,10 @@ export default {
     },
   },
   watch: {
-    searchText(val) {
+    searchText(val, oldVal) {
+      if (val !== oldVal) {
+        this.$set(this, 'suggests', []);
+      }
       if (this._locked) return;
       this.menuProps = {};
       this.onSearch();
@@ -452,5 +470,10 @@ export default {
 .unfocused-searchbar {
   min-width: auto !important;
   left: auto !important;
+}
+.searchbox-custom-progress-circular {
+  position: absolute;
+  align-self: center;
+  right: 60px;
 }
 </style>
