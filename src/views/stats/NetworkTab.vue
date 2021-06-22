@@ -22,7 +22,7 @@
             <v-card-text class="data pa-0">
               <ColumnChart
                 :data="operationSeries"
-                :title="`Contract calls (total ${details.operations_count})`"
+                :title="`Contract calls (total ${details.contract_calls})`"
                 name="Contract calls"
                 zoom
               ></ColumnChart>
