@@ -8,6 +8,9 @@ export class RequestFailedError extends Error {
   constructor(response) {
     super(response);
     this.code = response.status;
+    if (typeof response !== 'string') {
+        this.message = response.statusText;
+    }
   }
 }
 
