@@ -157,6 +157,7 @@ export default {
             pointerEvents: "none",
             fontSize: "14px",
           },
+          shared: true,
           pointFormatter: this.tooltipFormatterFunction,
         },
         legend: {

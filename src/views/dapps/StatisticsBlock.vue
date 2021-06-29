@@ -28,6 +28,7 @@
             <ColumnChart
               :data="series.users"
               title="Unique accounts"
+              name="Accounts"
             ></ColumnChart>
           </v-card-text>
         </v-card>
