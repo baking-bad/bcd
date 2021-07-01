@@ -10,6 +10,7 @@
 import { Chart } from "highcharts-vue";
 import Highcharts from "highcharts";
 import stockInit from "highcharts/modules/stock";
+import { MONTH_IN_MS } from "@/utils/date";
 
 stockInit(Highcharts);
 
@@ -46,6 +47,37 @@ export default {
   },
   components: {
     highcharts: Chart,
+  },
+  methods: {
+    setDefaultButtons() {
+      const firstElement = this.data[0];
+      const firstData = firstElement[0];
+      if (new Date() - firstData < MONTH_IN_MS * 6) {
+        return [
+          {
+            type: "all",
+            text: "All",
+          },
+        ];
+      } else {
+        return [
+          {
+            type: "month",
+            count: 6,
+            text: "6m",
+          },
+          {
+            type: "year",
+            count: 1,
+            text: "1Y",
+          },
+          {
+            type: "all",
+            text: "All",
+          },
+        ];
+      }
+    }
   },
   computed: {
     labelFormatterFunction() {
@@ -194,6 +226,7 @@ export default {
       if (this.zoom) {
         options = Object.assign(options, {
           rangeSelector: {
+            allButtonsEnabled: true,
             buttonPosition: {
               y: -32,
               x: -10,
@@ -225,24 +258,8 @@ export default {
                 },
               },
             },
-            buttons: [
-              {
-                type: "month",
-                count: 6,
-                text: "6m",
-              },
-              {
-                type: "year",
-                count: 1,
-                text: "1Y",
-              },
-              {
-                type: "all",
-                count: 1,
-                text: "All",
-              },
-            ],
-            selected: 1,
+            buttons: this.setDefaultButtons(),
+            selected: 0,
             labelStyle: {
               color: "transparent",
             },
