@@ -10,7 +10,7 @@ import Stats from '@/views/stats/Stats.vue'
 import NetworkTab from '@/views/stats/NetworkTab.vue'
 import TokensTab from '@/views/stats/TokensTab.vue'
 import DomainsTab from '@/views/stats/DomainsTab.vue'
-
+import Diff from '@/views/diff/Diff.vue'
 import Docs from '@/views/docs/Docs.vue'
 
 import Contract from '@/views/contract/Contract.vue'
@@ -123,6 +123,14 @@ const router = new Router({
           props: true
         }
       ]
+    },
+    {
+      path: '/diff',
+      components: {
+        default: Diff,
+      },
+      name: 'diff',
+      props: { default: true },
     },
     {
       path: '/docs',
