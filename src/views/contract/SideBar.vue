@@ -1,5 +1,5 @@
 <template>
-  <div class="fill-height canvas">
+  <div class="fill-height canvas" :key="address">
     <v-list-item style="height: 74px">
       <v-list-item-content two-line>
         <v-list-item-title class="headline">
@@ -162,13 +162,23 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel class="ma-0 bb-1" v-if="isContract && sameCount > 0">
+        <v-expansion-panel
+            v-if="isContract && contract.same_count > 0"
+            class="ma-0 bb-1"
+            @click="requestSame"
+        >
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span
-              class="caption font-weight-bold text-uppercase text--secondary"
-              >Same contracts ({{ sameCount }})</span
-            >
+              <span
+                  class="caption font-weight-bold text-uppercase text--secondary"
+              >Same contracts ({{ contract.same_count }})</span
+              >
           </v-expansion-panel-header>
+          <v-skeleton-loader
+              v-if="isSameInitialLoading"
+              type="image"
+              :loading="isSameInitialLoading"
+          >
+          </v-skeleton-loader>
           <v-expansion-panel-content color="data">
             <v-list class="contract-list">
               <template v-for="(contract, i) in same">
@@ -181,10 +191,11 @@
                 />
               </template>
               <v-divider></v-divider>
-              <v-list-item v-if="same.length < sameCount">
+              <v-list-item v-if="same.length < same_count">
                 <v-list-item-content>
                   <v-list-item-title class="d-flex align-center justify-center">
                     <v-btn
+                      v-if="!isSameInitialLoading"
                       class="text--secondary"
                       :loading="sameLoading"
                       text
@@ -200,15 +211,22 @@
         </v-expansion-panel>
 
         <v-expansion-panel
-          class="ma-0 bb-1"
-          v-if="isContract && similarCount > 0"
+            v-if="isContract && contract.similar_count > 0"
+            class="ma-0 bb-1"
+            @click="requestSimilar"
         >
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span
-              class="caption font-weight-bold text-uppercase text--secondary"
-              >Similar contracts ({{ similarCount }})</span
-            >
+              <span
+                  class="caption font-weight-bold text-uppercase text--secondary"
+              >Similar contracts ({{ contract.similar_count }})</span
+              >
           </v-expansion-panel-header>
+          <v-skeleton-loader
+              v-if="isSimilarInitialLoading"
+              type="image"
+              :loading="isSimilarInitialLoading"
+          >
+          </v-skeleton-loader>
           <v-expansion-panel-content color="data">
             <v-list class="contract-list">
               <template v-for="(contract, i) in similar">
@@ -222,10 +240,11 @@
                 />
               </template>
               <v-divider></v-divider>
-              <v-list-item v-if="similar.length < similarCount">
+              <v-list-item v-if="similar.length < similar_count">
                 <v-list-item-content>
                   <v-list-item-title class="d-flex align-center justify-center">
                     <v-btn
+                      v-if="!isSimilarInitialLoading"
                       class="text--secondary"
                       :loading="similarLoading"
                       text
@@ -274,6 +293,7 @@ import SimilarItem from "@/views/contract/SimilarItem.vue";
 import LogItem from "@/views/contract/LogItem.vue";
 import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
+import { DATA_LOADING_STATUSES } from "@/utils/network";
 
 export default {
   name: "SideBar",
@@ -294,20 +314,25 @@ export default {
   },
   data: () => ({
     same: [],
-    sameCount: 0,
+    same_count: 0,
     similar: [],
-    similarCount: 0,
+    similar_count: 0,
     similarLoading: false,
     sameLoading: false,
     domain: undefined,
+    sameInitialLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
+    similarInitialLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
   }),
   created() {
-    if (this.isContract) {
-      this.requestSameSimilar();
-    }
     this.resolveDomain();
   },
   computed: {
+    isSameInitialLoading() {
+      return this.sameInitialLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
+    isSimilarInitialLoading() {
+      return this.similarInitialLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
     isContract() {
       return this.address.startsWith("KT");
     },
@@ -356,22 +381,34 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
-    requestSameSimilar() {
-      if (!this.isContract) return;
+    requestSame() {
+      if (!this.isContract
+          || this.sameInitialLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
+      ) return;
+
+      this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
       this.same = [];
       this.sameCount = 0;
       this.api
-        .getSameContracts(this.network, this.address, 0)
-        .then((res) => {
-          if (!res) return;
-          this.same = res.contracts;
-          this.sameCount = res.count;
-        })
-        .catch((err) => {
-          this.showError(err);
-          console.log(err);
-        });
+          .getSameContracts(this.network, this.address, 0)
+          .then((res) => {
+            if (!res) return;
+            this.same = res.contracts;
+            this.sameCount = res.count;
+            this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
+          })
+          .catch((err) => {
+            this.showError(err);
+            console.log(err);
+            this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+          });
+    },
+    requestSimilar() {
+      if (!this.isContract
+        || this.similarInitialLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
+      ) return;
 
+      this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
       this.similar = [];
       this.similarCount = 0;
       this.api
@@ -380,10 +417,12 @@ export default {
           if (!res) return;
           this.similar = res.contracts;
           this.similarCount = res.count;
+          this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
         })
         .catch((err) => {
           this.showError(err);
           console.log(err);
+          this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.ERROR;
         });
     },
     requestMoreSame() {
@@ -428,8 +467,15 @@ export default {
     },
   },
   watch: {
-    address: "requestSameSimilar",
-  },
+    contract(newVal) {
+      this.same_count = newVal.same_count;
+      this.similar_count = newVal.similar_count;
+      this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
+      this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
+      this.$set(this, 'same', []);
+      this.$set(this, 'similar', []);
+    }
+  }
 };
 </script>
 

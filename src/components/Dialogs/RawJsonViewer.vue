@@ -224,11 +224,12 @@ export default {
 
       res
         .then((r) => {
+          const data = r.data.contents ? r.data.contents : r.data;
           if (JSON.stringify(r.data).length > BIG_SIZE_JSON_SYMBOLS) {
             this.isShowRenderingWarning = true;
-            this.loadCodePartially(r.data);
+            this.loadCodePartially(data);
           } else {
-            this.data = r.data;
+            this.data = data;
           }
           this.url = r.url;
           this.loaded = true;

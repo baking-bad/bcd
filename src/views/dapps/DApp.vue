@@ -1,28 +1,34 @@
 <template>
-  <div v-if="dapp">
-    <v-row no-gutters>
-      <v-col cols="12">
-        <HeaderBlock class="mb-10" :dapp="dapp" :loading="loading" />
-      </v-col>
-      <v-col cols="12" v-if="dapp.screenshots">
-        <ScreenshotsBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
-      </v-col>
-      <v-col cols="12">
-        <InformationBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
-      </v-col>
-      <v-col cols="12">
-        <StatisticsBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
-      </v-col>
-      <v-col cols="12" v-if="dapp.categories.includes('DEX') && dapp.dex_tokens">
-        <DEXBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
-      </v-col>
-      <v-col cols="12" v-if="dapp.categories.includes('Token') && dapp.tokens">
-        <TokenBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
-      </v-col>
-      <v-col cols="12" v-if="dapp.agora_review_post_id || dapp.agora_qa_post_id">
-        <AgoraBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
-      </v-col>
-    </v-row>
+  <div>
+    <v-skeleton-loader
+      v-if="!dapp"
+      type="card"
+    />
+    <div v-if="dapp">
+      <v-row no-gutters>
+        <v-col cols="12">
+          <HeaderBlock class="mb-10" :dapp="dapp" :loading="loading" />
+        </v-col>
+        <v-col cols="12" v-if="dapp.screenshots">
+          <ScreenshotsBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
+        </v-col>
+        <v-col cols="12">
+          <InformationBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
+        </v-col>
+        <v-col cols="12">
+          <StatisticsBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
+        </v-col>
+        <v-col cols="12" v-if="dapp.categories.includes('DEX') && dapp.dex_tokens">
+          <DEXBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
+        </v-col>
+        <v-col cols="12" v-if="dapp.categories.includes('Token') && dapp.tokens">
+          <TokenBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
+        </v-col>
+        <v-col cols="12" v-if="dapp.agora_review_post_id || dapp.agora_qa_post_id">
+          <AgoraBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
+        </v-col>
+      </v-row>
+    </div>
   </div>
 </template>
 
