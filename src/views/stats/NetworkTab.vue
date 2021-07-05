@@ -167,7 +167,7 @@ export default {
     },
     requestStatsData(network, index, key) {
       this.api
-          .getNetworkStatsSeries(network, index, "month")
+          .getNetworkStatsSeries(network, index, "all")
           .then(res => this.setRes(key, res))
           .catch(err => this.setErr(key, err));
     },
