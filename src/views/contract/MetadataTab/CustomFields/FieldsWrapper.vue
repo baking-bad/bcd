@@ -2,6 +2,14 @@
   <v-list class="data" ref="list">
     <h2 class="ml-4 my-4 hash font-weight-regular text--secondary">
       <span>Extra fields</span>
+      <v-btn
+        class="ml-3"
+        small
+        color="dark"
+        @click="toggleVueJsonDeep"
+      >
+        {{ messageToggleButton }}
+      </v-btn>
     </h2>
     <v-list-item
         v-for="(field, idx) in fields"
@@ -21,7 +29,7 @@
           <vue-json-pretty
             class="value-field"
             :data="field.value"
-            :deep="1"
+            :deep="vueJsonDeep"
         />
         </v-col>
       </v-row>
@@ -33,6 +41,10 @@
 <script>
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
+
+const DEFAULT_VUE_JSON_DEEP = 1;
+const DEFAULT_TOGGLE_BUTTON_MESSAGE = 'Show all';
+const NOT_DEFAULT_TOGGLE_BUTTON_MESSAGE = 'Hide all';
 
 export default {
   name: "FieldsWrapper",
@@ -47,6 +59,23 @@ export default {
   components: {
     VueJsonPretty,
   },
+  computed: {
+    messageToggleButton() {
+      return this.vueJsonDeep === DEFAULT_VUE_JSON_DEEP
+        ? DEFAULT_TOGGLE_BUTTON_MESSAGE
+        : NOT_DEFAULT_TOGGLE_BUTTON_MESSAGE;
+    }
+  },
+  methods: {
+    toggleVueJsonDeep() {
+      this.vueJsonDeep = this.vueJsonDeep === DEFAULT_VUE_JSON_DEEP ? Infinity : DEFAULT_VUE_JSON_DEEP;
+    }
+  },
+  data() {
+    return {
+      vueJsonDeep: 1,
+    }
+  }
 }
 </script>
 
