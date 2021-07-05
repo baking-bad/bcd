@@ -167,4 +167,8 @@ input:-webkit-autofill:active  {
 .text-align-end {
   text-align: end;
 }
+
+.vjs-tree__node.is-highlight, .vjs-tree__node:hover {
+  background-color: var(--v-postHeader-darken1) !important;
+}
 </style>
