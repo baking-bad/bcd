@@ -48,9 +48,6 @@ export default {
     this.requestData();
   },
   computed: {
-    isAuthorized() {
-      return this.$store.state.isAuthorized;
-    },
     query() {
       const params = this.$route.query;
       const left = {
