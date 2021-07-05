@@ -168,7 +168,13 @@ input:-webkit-autofill:active  {
   text-align: end;
 }
 
-.vjs-tree__node.is-highlight, .vjs-tree__node:hover {
+.vjs-tree__node.is-highlight,
+.vjs-tree__node:hover {
+  background-color: unset !important;
+}
+
+
+.vjs-tree:not(.is-root) > div:first-child:hover {
   background-color: var(--v-postHeader-darken1) !important;
 }
 </style>
