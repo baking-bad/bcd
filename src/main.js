@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import Clipboard from 'v-clipboard'
-import App from './App.vue'
+import App from './App.vue';
 
-import './styles';
+import './setups/styles';
 
 import store from '@/store'
 import router from '@/router'
@@ -10,6 +10,8 @@ import VueAnalytics from 'vue-analytics'
 
 import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
+import './setups/dayjs';
+import './setups/filters';
 
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { getJwt, logout, getBool } from "@/utils/auth.js";
@@ -18,9 +20,7 @@ import { NodeRPC } from "@/api/rpc.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
 
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import utc from 'dayjs/plugin/utc';
+import './setups/components';
 
 import { fixNavigationCurrentLocationProblem } from '@/setups/router';
 
@@ -35,49 +35,7 @@ Vue.component('VJsf', VJsf)
 
 Vue.config.productionTip = false;
 
-dayjs.extend(relativeTime);
-dayjs.extend(utc);
-
-Vue.use(Clipboard)
-
-Vue.filter('formatDate', function (value) {
-  if (value) {
-    return dayjs(value).format('D MMMM YYYY');
-  }
-})
-
-Vue.filter('formatTime', function (value) {
-  if (value) {
-    return dayjs(value).format('D MMMM YYYY HH:mm');
-  }
-})
-
-
-Vue.filter('formatShortTime', function (value) {
-  if (value) {
-    return dayjs(value).format('D MMM YYYY HH:mm');
-  }
-})
-
-Vue.filter('fromNow', function (value) {
-  if (value) {
-    return dayjs(value).fromNow();
-  }
-})
-
-Vue.filter('uxtz', function (value) {
-  let xtz = (value / 1000000).toLocaleString(undefined, { maximumFractionDigits: 6 });
-  return `${xtz} \uA729`;
-})
-
-Vue.filter('mutez', function (value) {
-  let xtz = (value / 1000000).toLocaleString(undefined, { maximumFractionDigits: 6 });
-  return `${xtz}`;
-})
-
-Vue.filter('bytes', function (value) {
-  return `${value} bytes`;
-})
+Vue.use(Clipboard);
 
 let config = {
   API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,

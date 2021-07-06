@@ -10,15 +10,21 @@
     >
       <template v-slot:default="{ open }">
         <v-row no-gutters class="py-1">
-          <v-col cols="2">
+          <v-col :cols="isClosedWithNoTotalLockedWithdrawn && isClosedWithInvoker ? 2 : 3">
             <v-list-item class="fill-height pa-0">
               <v-list-item-content>
-                <v-list-item-title class="hash">{{
-                  helpers.formatDatetime(value.timestamp, {
-                    val: 15,
-                    unit: "minute"
-                  })
-                }}</v-list-item-title>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-list-item-title
+                        class="hash"
+                        v-bind="attrs"
+                        v-on="on"
+                    >
+                      {{showTimestamp(value.timestamp)}}
+                    </v-list-item-title>
+                  </template>
+                  <span>{{new Date(value.timestamp).toLocaleString()}}</span>
+                </v-tooltip>
                 <v-list-item-subtitle
                   class="font-weight-light hash text--secondary"
                 >
@@ -28,7 +34,7 @@
               </v-list-item-content>
             </v-list-item>
           </v-col>
-          <v-col cols="2">
+          <v-col :cols="isClosedWithNoTotalLockedWithdrawn && isClosedWithInvoker ? 2 : 3">
             <v-list-item class="fill-height pa-0">
               <v-list-item-content>
                 <v-list-item-title class="hash">
@@ -57,10 +63,9 @@
               </v-list-item-content>
             </v-list-item>
           </v-col>
-          <v-col cols="2">
+          <v-col v-if="isClosedWithNoTotalLockedWithdrawn" cols="2">
             <v-list-item
               class="fill-height pl-1"
-              v-if="!open && totalLockedWithdrawn !== 0"
             >
               <v-list-item-content>
                 <v-list-item-title class="hash">{{
@@ -101,8 +106,8 @@
               </v-list-item-content>
             </v-list-item>
           </v-col>
-          <v-col cols="2">
-            <v-list-item class="fill-height pa-0" v-if="!open && invoker">
+          <v-col v-if="isClosedWithInvoker" cols="2">
+            <v-list-item class="fill-height pa-0">
               <v-list-item-content>
                 <v-list-item-title>
                   <span class="font-weight-light">by</span>
@@ -132,8 +137,8 @@
 <script>
 import InternalOperation from "@/components/InternalOperation.vue";
 import { getContentItemHeaderClass } from '@/utils/styles';
-import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import dayjs from "dayjs";
 
 dayjs.extend(relativeTime);
 
@@ -150,6 +155,12 @@ export default {
     this.value = Object.assign({}, this.data);
   },
   computed: {
+    isClosedWithNoTotalLockedWithdrawn() {
+      return !this.open && this.totalLockedWithdrawn !== 0;
+    },
+    isClosedWithInvoker() {
+      return !this.open && this.invoker;
+    },
     entryName() {
       if (
         this.value.entrypoint &&
@@ -228,6 +239,9 @@ export default {
     value: null,
   }),
   methods: {
+    showTimestamp(timestamp) {
+      return dayjs(timestamp).fromNow(timestamp);
+    },
     getOrientedAmount(data, sign) {
       if (this.address !== undefined && !isNaN(data.amount) && (
           (data.source === this.address && sign < 0) ||
