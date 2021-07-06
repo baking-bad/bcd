@@ -3,7 +3,6 @@ import Router from 'vue-router'
 import VueRouter from 'vue-router'
 
 import Home from '@/views/home/Home.vue'
-import Welcome from '@/views/home/Welcome.vue'
 
 import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
@@ -11,9 +10,7 @@ import Stats from '@/views/stats/Stats.vue'
 import NetworkTab from '@/views/stats/NetworkTab.vue'
 import TokensTab from '@/views/stats/TokensTab.vue'
 import DomainsTab from '@/views/stats/DomainsTab.vue'
-
 import Diff from '@/views/diff/Diff.vue'
-
 import Docs from '@/views/docs/Docs.vue'
 
 import Contract from '@/views/contract/Contract.vue'
@@ -33,11 +30,6 @@ import BigMap from '@/views/big_map/BigMap.vue'
 import BigMapKeys from '@/views/big_map/KeysTab.vue'
 import BigMapHistory from '@/views/big_map/HistoryTab.vue'
 
-import Dashboard from '@/views/dashboard/Dashboard.vue'
-import EventsTab from '@/views/dashboard/EventsTab.vue'
-import TasksTab from '@/views/dashboard/TasksTab.vue'
-import CompilationsTab from '@/views/dashboard/CompilationsTab.vue'
-
 import DAppList from '@/views/dapps/List.vue'
 import DApp from '@/views/dapps/DApp.vue'
 import MainDApp from '@/views/dapps/Main.vue'
@@ -55,14 +47,6 @@ const router = new Router({
         default: Home
       },
       name: 'home'
-    },
-    {
-      path: '/welcome',
-      components: {
-        default: Welcome,
-      },
-      name: 'welcome',
-      props: { default: true }
     },
     {
       path: '/search',
@@ -250,38 +234,6 @@ const router = new Router({
           component: TransfersTab,
           props: true
         },
-      ]
-    },
-    {
-      path: '/dashboard',
-      components: {
-        default: Dashboard
-      },
-      props: { default: true },
-      children: [
-        {
-          path: '',
-          name: 'dashboard',
-          redirect: 'events'
-        },
-        {
-          path: 'events',
-          name: 'events',
-          component: EventsTab,
-          props: true
-        },
-        {
-          path: 'tasks',
-          name: 'tasks',
-          component: TasksTab,
-          props: true
-        },
-        {
-          path: 'compilations',
-          name: 'compilations',
-          component: CompilationsTab,
-          props: true
-        }
       ]
     },
     {

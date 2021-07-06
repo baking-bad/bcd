@@ -32,10 +32,6 @@ Reloaded each time you press F5 in the browser.
 * `MEMPOOL_ENABLED` query mempool operations
 * `HOME_PAGE` redirect to this page unless it's `home`
 
-#### Sandbox environment
-* `SANDBOX_MODE` activate single user mode
-* `JUPYTER_PATH` base URL for Jupyter notebook server
-
 
 ## Docker image
 BCD docker images are being built on [dockerhub](https://hub.docker.com/r/bakingbad/bcdhub-gui). Two types of tags are provided:
