@@ -76,7 +76,7 @@ import SchemaCmdLine from "./schemaDialog/SchemaCmdLine";
 import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
 import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
-import { DAppClient, TezosOperationType, AbortedBeaconError, BroadcastBeaconError } from '@airgap/beacon-sdk'
+import { DAppClient, TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@airgap/beacon-sdk'
 
 const walletsToIcons = {
   "Temple - Tezos Wallet (ex. Thanos)": "mdi-alpha-t",
@@ -341,27 +341,19 @@ export default {
     getWalletEventHandlers() {
       return {
         PERMISSION_REQUEST_SUCCESS: {
-          handler: () => {
+          handler: async (data) => {
             this.addLastUsedOption();
-            return null;
-          },
+            await defaultEventCallbacks.PERMISSION_REQUEST_SUCCESS(data);
+          }
         },
-        PERMISSION_REQUEST_ERROR: { handler: () => null },
-        OPERATION_REQUEST_ERROR: { handler: () => null },
-        SIGN_REQUEST_ERROR: { handler: () => null },
-        BROADCAST_REQUEST_ERROR: { handler: () => null },
-        INTERNAL_ERROR: { handler: () => null },
-        UNKNOWN: { handler: () => null },
-        CHANNEL_CLOSED: { handler: () => null },
-        NO_PERMISSIONS: { handler: () => null },
-        LOCAL_RATE_LIMIT_REACHED: { handler: () => null },
         OPERATION_REQUEST_SUCCESS: {
-          handler: (data) => {
+          handler: async (data) => {
             const link = `/${data.account.network.type}/opg/${data.output.transactionHash}`;
             const successMessage = `The transaction
                has successfully been <a href="${link}">broadcasted</a>
                 to the network.`;
             this.showSuccessMessage(successMessage);
+            await defaultEventCallbacks.OPERATION_REQUEST_SUCCESS(data);
           }
         }
       }
