@@ -12,8 +12,7 @@ import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
 
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
-import { getJwt, logout, getBool } from "@/utils/auth.js";
-import { BetterCallApi, UnauthorizedError } from "@/api/bcd.js";
+import { BetterCallApi } from "@/api/bcd.js";
 import { NodeRPC } from "@/api/rpc.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
@@ -89,10 +88,6 @@ let api = new BetterCallApi(config.API_URI);
 api.getConfig().then(response => {
   Object.assign(config, response);
 
-  if (config.sandbox_mode) {
-    config.HOME_PAGE = 'dashboard';
-  }
-
   let rpc = new NodeRPC(config.rpc_endpoints);
 
   let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress, round }
@@ -136,41 +131,6 @@ api.getConfig().then(response => {
     }
   ]);
 
-  router.beforeEach((to, from, next) => {
-    const privatePages = ['/dashboard', '/dashboard/'];
-    const authRequired = privatePages.includes(to.path);
-    const loggedIn = config.sandbox_mode || getJwt() !== null;
-
-    store.dispatch('setIsAuthorized', loggedIn)
-    if (authRequired && !loggedIn) {
-      return next('/');
-    }
-
-    if (loggedIn && store.state.profile === null) {
-      api.getProfile()
-        .then(res => {
-          let subs = res.subscriptions;
-          delete res['subscriptions'];
-          store.dispatch('setProfile', res);
-          store.dispatch('setSubscriptions', subs);
-        })
-        .catch(err => {
-          if (err instanceof UnauthorizedError) {
-            store.dispatch('setIsAuthorized', false);
-            store.dispatch('setProfile', null);
-            store.dispatch('showError', 'Unauthorized access. Please sign in');
-          } else {
-            store.dispatch('showError', err);
-          }
-          logout();
-          // eslint-disable-next-line
-          console.log(err)
-        });
-    }
-
-    next();
-  })
-
   if (config.GA_ENABLED || config.ga_enabled) {
     Vue.use(VueAnalytics, {
       id: "UA-160856677-1",
@@ -191,7 +151,7 @@ api.getConfig().then(response => {
     });
   }
 
-  const isDark = getBool('dark', true);
+  const isDark = localStorage.getItem('dark') ? localStorage.getItem : true;
   if (isDark) {
     document.body.classList.add('dark-theme-background');
   }

@@ -42,7 +42,6 @@
           >mdi-swap-horizontal</v-icon
         >
         <v-icon v-else-if="item.type === 'bigmapdiff'">mdi-database-edit</v-icon>
-        <v-icon v-else-if="item.type === 'subscription'">mdi-eye-outline</v-icon>
         <v-icon v-else-if="item.type === 'token_metadata'"
           >mdi-circle-multiple-outline</v-icon
         >
@@ -105,11 +104,6 @@
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span class="hash">{{ item.body.name }}</span>
           </template>
-          <template v-if="item.type === 'subscription'">
-            <span class="text--secondary hash">Subscriptions</span>
-            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
-            <span>{{ item.body.alias }}</span>
-          </template>
           <template v-if="item.type === 'recent'">
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
             <span
@@ -138,10 +132,6 @@
           <span v-else-if="item.type === 'token_metadata' && item.group">&nbsp;|&nbsp;{{
             helpers.plural(item.group.count, "token")
           }}</span>
-          <span v-else-if="item.type === 'subscription'"
-            >&nbsp;|&nbsp;Subscribed at
-            {{ helpers.formatDate(item.body.subscribed_at) }}</span
-          >
           <span v-else-if="item.type === 'recent' && item.body.second">&nbsp;|&nbsp;{{
             item.body.second
           }}</span>
@@ -162,7 +152,6 @@
                 'alias',
                 'key_strings',
                 'entrypoint',
-                'subscription',
                 'recent',
                 'name',
                 '',
@@ -250,13 +239,11 @@ export default {
     },
     isShouldSentToValue(value) {
       return (
-          (
-              (
-                  this.isModelsArrayInclude("contract") ||
-                  this.isModelsArrayInclude("tezos_domain")
-              ) &&
-              checkAddress(value)
-          ) || this.isModelsArrayInclude("subscription")
+        (
+            this.isModelsArrayInclude("contract") ||
+            this.isModelsArrayInclude("tezos_domain")
+        ) &&
+        checkAddress(value)
       );
     },
     onSearch() {
@@ -313,28 +300,6 @@ export default {
         this.$router.push({ name: "search", query: { text: searchText } });
       }
     },
-    getPrivateItems(searchText) {
-      let result = [];
-      if (this.$store.state.subscriptions.length == 0) return result;
-
-      this.$store.state.subscriptions
-        .filter((sub) =>
-          sub.alias.toLowerCase().startsWith(searchText.toLowerCase())
-        )
-        .forEach((item) => {
-          result.push({
-            type: "subscription",
-            body: Object.assign(
-              {
-                found_by: "subscription",
-              },
-              item
-            ),
-            value: item.address,
-          });
-        });
-      return result;
-    },
     getHistoryItems(searchText) {
       let result = [];
       let history = getHistory();
@@ -371,7 +336,6 @@ export default {
           .then((res) => {
             if (seqno === this.seqno) {
               this.suggests = this.getHistoryItems(text);
-              this.suggests.push(...this.getPrivateItems(text));
               if (res && res.items) {
                 this.suggests.push(...res.items);
               }

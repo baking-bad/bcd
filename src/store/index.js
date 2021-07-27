@@ -8,19 +8,10 @@ export default new Vuex.Store({
     warning: null,
     error: null,
     success: null,
-    isAuthorized: false,
-    profile: null,
-    subscriptions: []
   },
   mutations: {
     setError(state, value) {
       state.error = value
-    },
-    setIsAuthorized(state, value) {
-      state.isAuthorized = value
-    },
-    setProfile(state, value) {
-      state.profile = value
     },
     setSuccess(state, value) {
       state.success = value;
@@ -28,9 +19,6 @@ export default new Vuex.Store({
     setWarning(state, value) {
       state.warning = value;
     },
-    setSubscriptions(state, value) {
-      state.subscriptions = value;
-    }
   },
   actions: {
     showError({ commit }, text) {
@@ -59,18 +47,5 @@ export default new Vuex.Store({
     hideWarning({ commit }) {
       commit('setWarning', null)
     },
-    setIsAuthorized({ commit }, value) {
-      commit('setIsAuthorized', value)
-    },
-    setProfile({ commit }, value) {
-      commit('setProfile', value)
-    },
-    setSubscriptions({ commit }, value) {
-      commit('setSubscriptions', value)
-    },
-    logout({ commit }) {
-      commit('setProfile', null);
-      commit('setIsAuthorized', false);
-    }
   }
 });
