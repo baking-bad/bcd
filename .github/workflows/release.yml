@@ -16,11 +16,11 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 10.x
-      - name: npm install, lint and build
+      - name: install, lint and build
         run: |
-          npm install @vue/cli
-          npm run lint
-          npm run build
+          yarn
+          yarn lint
+          yarn build
       - name: archive dist
         run: tar cfvz bcd.tar.gz dist
       - name: automatic release
