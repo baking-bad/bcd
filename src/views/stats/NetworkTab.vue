@@ -144,7 +144,7 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     setDetailsDataToDefault() {
-      this.$set(this, 'details', {});
+      this.details = {};
       ['contractSeries', 'operationSeries', 'consumedGasSeries', 'paidStorageSizeDiffSeries']
           .forEach((key) => this.setRes(key, null));
     },
@@ -172,12 +172,12 @@ export default {
           .catch(err => this.setErr(key, err));
     },
     setErr(key, err) {
-      this.$set(this, key, []);
+      this[key] = [];
       console.log(err);
       this.showError(err);
     },
     setRes(key, res) {
-      this.$set(this, key, res);
+      this[key] = res;
     },
   },
   watch: {

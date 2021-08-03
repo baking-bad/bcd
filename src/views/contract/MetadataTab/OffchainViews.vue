@@ -106,7 +106,7 @@ export default {
   },
   methods: {
     setModel(val) {
-      this.$set(this, 'model', val);
+      this.model = val;
     },
     callOffchainView() {
       this.api
@@ -122,12 +122,12 @@ export default {
           })
           .catch((err) => {
             this.isErrorShown = false;
-            this.$set(this, 'fullErrorValue', {
+            this.fullErrorValue = {
               name: `${err.response.statusText} — ${err.response.status}`,
               val: err.response.data.message,
               realPrim: 'string',
               label: err.response.data.message,
-            });
+            };
             this.$nextTick(() => {
               this.isErrorShown = true;
             });

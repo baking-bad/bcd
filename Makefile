@@ -2,16 +2,16 @@
 .PHONY: release
 
 dev:
-	npm run serve
+	yarn serve
 
 white:
-	npm run serve -- --mode white
+	yarn serve -- --mode white
 
 test:
-	npm run serve -- --mode test
+	yarn serve -- --mode test
 
 api:
-	npm run serve -- --mode api
+	yarn serve -- --mode api
 
 image:
 	docker build -t bakingbad/bcdhub-gui:latest .

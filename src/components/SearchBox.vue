@@ -223,8 +223,8 @@ export default {
     },
     handleSearchBoxBlur() {
       this.isFocused = false;
-      this.$set(this, 'menuProps', {});
-      this.$set(this, 'model', null);
+      this.menuProps = {};
+      this.model = null;
     },
     pushTo(path) {
       if (this.$route.path !== `${path}/operations`) {
@@ -358,7 +358,7 @@ export default {
   watch: {
     searchText(val, oldVal) {
       if (val !== oldVal) {
-        this.$set(this, 'suggests', []);
+        this.suggests = [];
       }
       if (this._locked) return;
       this.menuProps = {};

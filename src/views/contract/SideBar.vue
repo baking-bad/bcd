@@ -472,8 +472,8 @@ export default {
       this.similar_count = newVal.similar_count;
       this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
       this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
-      this.$set(this, 'same', []);
-      this.$set(this, 'similar', []);
+      this.same = [];
+      this.similar = [];
     }
   }
 };

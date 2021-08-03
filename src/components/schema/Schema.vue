@@ -611,7 +611,7 @@ export default {
           .getContractStorageSchema(this.network, this.address, newValue)
           .then((res) => {
             if (!res) return;
-            this.$set(this, 'model', res.default_model);
+            this.model = res.default_model;
           })
           .catch((err) => {
             this.showError(err);
@@ -629,7 +629,7 @@ export default {
           )
           .then((res) => {
             if (!res) return;
-            this.$set(this, 'model', res.default_model);
+            this.model = res.default_model;
           })
           .catch((err) => {
             this.showError(err);

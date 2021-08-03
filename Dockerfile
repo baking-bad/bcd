@@ -1,9 +1,11 @@
 FROM node:latest AS build
 WORKDIR /better-call-dev
-COPY . .
-RUN rm -rf node_modules package-lock.json
-RUN npm i && npm run build
 
+COPY package.json yarn.lock ./
+RUN yarn
+
+COPY . .
+RUN yarn build
 
 FROM nginx:latest AS release
 COPY default.conf /etc/nginx/conf.d/default.conf

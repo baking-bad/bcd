@@ -88,8 +88,12 @@ let api = new BetterCallApi(config.API_URI);
 api.getConfig().then(response => {
   Object.assign(config, response);
 
-  let rpc = new NodeRPC(config.rpc_endpoints);
+  config.rpc_endpoints = Object.fromEntries(
+    Object.entries(config.rpc_endpoints)
+      .map(([k, v]) => [k, v.replace('sandbox', '127.0.0.1')])
+  );
 
+  let rpc = new NodeRPC(config.rpc_endpoints);
   let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress, round }
 
   Vue.mixin({
