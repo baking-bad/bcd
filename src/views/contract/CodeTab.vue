@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import { mapActions } from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
@@ -185,7 +186,7 @@ export default {
         .getContractCode(this.network, this.address, protocol, level)
         .then(res => {
           if (!res) return;
-          this.$set(this.code, protocol, res);
+          Vue.set(this.code, protocol, res);
           this.$nextTick(() => {
             this.setCodeByParts();
           });

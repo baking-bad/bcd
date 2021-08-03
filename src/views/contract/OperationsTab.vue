@@ -138,6 +138,7 @@ import { mapActions } from "vuex";
 import ContentItem from "@/views/contract/ContentItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
+import Vue from 'vue';
 
 export default {
   name: "OperationsTab",
@@ -247,16 +248,16 @@ export default {
       if (this.operationsLoading || (this.downloaded && !clearData)) return;
       this.operationsLoading = true;
       if (clearData) {
-        this.$set(this, 'operations', []);
+        this.operations = [];
         this.downloaded = false;
-        this.$set(this, 'last_id', null);
+        this.last_id = null;
       }
       if (resetFilters) {
-        this.$set(this, 'status', []);
-        this.$set(this, 'dates', []);
-        this.$set(this, 'datesBuf', []);
+        this.status = [];
+        this.dates = [];
+        this.datesBuf = [];
         this.datesModal = false;
-        this.$set(this, 'entrypoints', []);
+        this.entrypoints = [];
       }
 
       const onChainStatuses = ["applied", "failed", "skipped", "backtracked"];
@@ -284,7 +285,7 @@ export default {
             this.downloaded = true; // prevent endless polling
           } else {
             this.downloaded = res.operations.length === 0;
-            this.$set(this, 'last_id', res.last_id);
+            this.last_id = res.last_id;
             this.pushOperations(res.operations);
           }
         })
@@ -353,7 +354,7 @@ export default {
           lastEl.internal_operations.push(
               element
           );
-          this.$set(this.operations, this.operations.length - 1, lastEl);
+          Vue.set(this.operations, this.operations.length - 1, lastEl);
         } else {
           element.internal_operations = [];
           this.operations.push(element);
