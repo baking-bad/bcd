@@ -10,7 +10,6 @@
                 :title="`New deployments (total ${details.contracts_count})<br/>
                 <div class='text--secondary caption text-center'>Excluding manager.tz</div>`"
                 name="New deployments"
-                zoom
               ></ColumnChart>
             </v-card-text>
           </v-card>
@@ -24,7 +23,6 @@
                 :data="operationSeries"
                 :title="`Contract calls (total ${details.contract_calls})`"
                 name="Contract calls"
-                zoom
               ></ColumnChart>
             </v-card-text>
           </v-card>
@@ -39,7 +37,6 @@
                 formatter="kilobyte"
                 title="Paid storage size diff, KB"
                 name="Paid storage size diff"
-                zoom
               ></ColumnChart>
             </v-card-text>
           </v-card>
@@ -54,7 +51,6 @@
                 :title="`Consumed gas × 10\u2076`"
                 formatter="gas"
                 name="Consumed gas"
-                zoom
               ></ColumnChart>
             </v-card-text>
           </v-card>
@@ -167,7 +163,7 @@ export default {
     },
     requestStatsData(network, index, key) {
       this.api
-          .getNetworkStatsSeries(network, index, "all")
+          .getNetworkStatsSeries(network, index, "month")
           .then(res => this.setRes(key, res))
           .catch(err => this.setErr(key, err));
     },
