@@ -155,7 +155,7 @@ api.getConfig().then(response => {
     });
   }
 
-  const isDark = localStorage.getItem('dark') ? localStorage.getItem : true;
+  const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
   if (isDark) {
     document.body.classList.add('dark-theme-background');
   }
