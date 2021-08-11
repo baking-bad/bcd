@@ -92,6 +92,7 @@
           v-if="loaded"
           :data="data"
           :highlightMouseoverNode="true"
+          :customValueFormatter="formatValue"
         ></vue-json-pretty>
       </v-card-text>
     </v-card>
@@ -172,6 +173,14 @@ export default {
         }, 0);
       }, 0);
     },
+    formatValue(data, key, path, defaultFormatResult) {
+      return defaultFormatResult
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
   },
   beforeUpdate() {
     if (this.isLastBigDataPushed && this.isShowRenderingWarning) {
