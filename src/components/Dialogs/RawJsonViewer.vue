@@ -162,16 +162,22 @@ export default {
       return this.data;
     },
     loadCodePartially(data) {
-      this.data = [data[0]];
-      setTimeout(() => {
-        this.data.push(data[1]);
-        this.renderingStep = this.renderingStep + 1;
-        setTimeout(() => {
-          this.data.push(data[2]);
-          this.renderingStep = this.renderingStep + 1;
-          this.isLastBigDataPushed = true;
-        }, 0);
-      }, 0);
+      if (Array.isArray(data)) {
+        const load = function(idx = 0) {
+          if (idx < data.length) {
+            setTimeout(() => {
+              this.data.push(data[idx]);
+              this.renderingStep = this.renderingStep + 1;
+              load(idx + 1);
+            }, 0);
+          }
+        }
+        this.data = [];
+        this.renderingStep = 0;
+        load();
+      } else {
+        this.data = data;
+      }
     },
     formatValue(data, key, path, defaultFormatResult) {
       return defaultFormatResult
