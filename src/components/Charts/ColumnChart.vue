@@ -1,6 +1,5 @@
 <template>
   <highcharts
-    :constructor-type="'stockChart'"
     ref="chart"
     :options="options"
   ></highcharts>
@@ -8,11 +7,7 @@
 
 <script>
 import { Chart } from "highcharts-vue";
-import Highcharts from "highcharts";
-import stockInit from "highcharts/modules/stock";
 import { MONTH_IN_MS } from "@/utils/date";
-
-stockInit(Highcharts);
 
 function kilobyteFormatter(value, digits = 4) {
   return (value / 1024).toLocaleString(undefined, {
@@ -126,6 +121,8 @@ export default {
           title: {
             enabled: false,
           },
+          minPadding: 0.05,
+          maxPadding: 0.05,
           tickWidth: 0,
           lineWidth: 0,
           endOfTick: false,
