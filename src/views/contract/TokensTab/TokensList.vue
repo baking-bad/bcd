@@ -128,7 +128,7 @@ export default {
     },
     tokensTotal: {
       handler(newVal) { 
-        this.tokensPageCount = Math.ceil(newVal / this.getNextTokensAmount());
+        this.tokensPageCount = Math.ceil(newVal / this.itemsPerPage);
       },
       immediate: true
     },
