@@ -68,13 +68,13 @@ export default {
         .then((res) => {
           if (!res) return;
           if (this.tokensPage === 1) {
+            const token_id = getQuery(TOKEN_ID_QUERY);
             if (isQuery(TOKEN_ID_QUERY) && !this.tokens.length) {
-              const token_id = getQuery(TOKEN_ID_QUERY);
               this.getSpecificToken(token_id).then((res) => {
-                this.tokens = this.tokens.concat(res);
+                this.tokens = this.tokens.filter(token => token.token_id !== Number(token_id)).concat(res);
               });
             } else if (isQuery(TOKEN_ID_QUERY) && this.tokens.length) {
-              this.tokens = this.tokens.concat(res);
+              this.tokens = this.tokens.filter(token => token.token_id !== Number(token_id)).concat(res);
             } else {
               this.tokens = res;
             }
