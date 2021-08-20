@@ -34,9 +34,7 @@ export default {
         navigator.share({
           title: this.alias,
           url: this.link
-        }).then(() => {
-          this.showClipboardOK();
-        }).catch(this.showError);
+        });
       } else {
         this.$clipboard(this.link);
         this.showClipboardOK();
