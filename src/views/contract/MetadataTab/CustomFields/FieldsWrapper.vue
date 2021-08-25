@@ -44,7 +44,6 @@ import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 
 const DEFAULT_VUE_JSON_DEEP = 1;
-const EXPANDED_JSON_DEEP = 10 ** 6;
 const DEFAULT_TOGGLE_BUTTON_MESSAGE = 'Show all';
 const NOT_DEFAULT_TOGGLE_BUTTON_MESSAGE = 'Hide all';
 
@@ -70,8 +69,7 @@ export default {
   },
   methods: {
     toggleVueJsonDeep() {
-      this.vueJsonDeep = this.vueJsonDeep === DEFAULT_VUE_JSON_DEEP ? EXPANDED_JSON_DEEP : DEFAULT_VUE_JSON_DEEP
-      console.log('this.vueJsonDeep: ', this.vueJsonDeep);
+      this.vueJsonDeep = this.vueJsonDeep === DEFAULT_VUE_JSON_DEEP ? Infinity : DEFAULT_VUE_JSON_DEEP
     }
   },
   data() {
