@@ -27,6 +27,7 @@
         </v-col>
         <v-col>
           <vue-json-pretty
+            :key="`${vueJsonDeep}-pretty`"
             class="value-field"
             :data="field.value"
             :deep="vueJsonDeep"
