@@ -68,12 +68,13 @@ export default {
   },
   methods: {
     toggleVueJsonDeep() {
-      this.vueJsonDeep = this.vueJsonDeep === DEFAULT_VUE_JSON_DEEP ? Infinity : DEFAULT_VUE_JSON_DEEP;
+      this.vueJsonDeep = this.vueJsonDeep === DEFAULT_VUE_JSON_DEEP ? Infinity : DEFAULT_VUE_JSON_DEEP
+      console.log('this.vueJsonDeep: ', this.vueJsonDeep);
     }
   },
   data() {
     return {
-      vueJsonDeep: 1,
+      vueJsonDeep: DEFAULT_VUE_JSON_DEEP,
     }
   }
 }
