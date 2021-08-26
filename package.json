@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@airgap/beacon-sdk": "^2.2.9",
-    "@baking-bad/vjsf": "^1.20.11",
+    "@baking-bad/vjsf": "^1.20.12",
     "@sentry/browser": "^5.27.6",
     "@sentry/integrations": "^5.27.6",
     "@taquito/beacon-wallet": "^9.1.1",
