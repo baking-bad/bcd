@@ -31,10 +31,10 @@
                 outlined
                 :value="props.value"
                 :placeholder="props.label"
-                :hint="schema.properties[props.modelKey].tag ? `\'Fill\' button finds the newest contract with this contract type. If contract's absent nothing is set.` : ``"
+                :hint="schema.properties[props.modelKey] && schema.properties[props.modelKey].tag ? `\'Fill\' button finds the newest contract with this contract type. If contract's absent nothing is set.` : ``"
                 persistent-hint
             >
-              <template v-slot:append-outer v-if="schema.properties[props.modelKey].tag">
+              <template v-slot:append-outer v-if="schema.properties[props.modelKey] && schema.properties[props.modelKey].tag">
                 <v-btn text small @click="$emit('getRandomContract', props)" class="text--secondary">
                   <v-icon small left>mdi-format-horizontal-align-left</v-icon>fill
                 </v-btn>
