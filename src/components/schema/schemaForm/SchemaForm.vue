@@ -22,6 +22,17 @@
               <Michelson v-on="on" :code="value" mutable></Michelson>
             </div>
           </template>
+          <template slot="custom-nat" slot-scope="props">
+            <v-text-field
+              :ref="props.fullKey"
+              :label="props.label"
+              v-on="props.on"
+              dense
+              outlined
+              :value="props.value"
+              :placeholder="props.label">
+            </v-text-field>
+          </template>
           <template slot="custom-contract" slot-scope="props">
             <v-text-field
                 :ref="props.fullKey"
