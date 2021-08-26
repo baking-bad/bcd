@@ -104,7 +104,7 @@
               <v-col>{{ item.unique_contracts }}</v-col>
               <v-col>{{ item.fa_count }}</v-col>
               <v-col>{{ item.contract_calls }}</v-col>
-              <v-col class="body-2 text-left pl-12">{{
+              <v-col class="body-2 text-center pl-12">{{
                 helpers.formatDatetime(item.time, { val: 1, unit: "day", isArticle: false })
               }}</v-col>
             </v-row>
