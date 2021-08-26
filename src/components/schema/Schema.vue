@@ -127,6 +127,7 @@ export default {
     tezosClientCmdline: null,
     parametersJSON: null,
     isGettingWalletProgress: false,
+    isPermissionGiven: false,
     successText: '',
     settings: {
       source: null,
@@ -447,19 +448,26 @@ export default {
       if (!isLast) {
         await this.wallet.clearActiveAccount();
       } else {
-        this.wallet.setActiveAccount(this.getLastUsedAccount());
+        await this.wallet.setActiveAccount(this.getLastUsedAccount());
       }
-      await this.wallet.requestPermissions({ network: { type, rpcUrl } });
-      this.isGettingWalletProgress = false;
+      try {
+        await this.wallet.requestPermissions({ network: { type, rpcUrl } });
+        this.isPermissionGiven = true;
+      } finally {
+        this.isGettingWalletProgress = false;
+      }
     },
     async getClient(isLast) {
       let client;
       if (this.wallet && !isLast) {
+        this.isPermissionGiven = false;
         await this.getNewPermissions(isLast);
         client = this.wallet ? this.wallet : await this.getWallet();
       } else {
         client = this.wallet ? this.wallet : await this.getWallet();
-        await this.getNewPermissions(isLast);
+        if (!this.isPermissionGiven) {
+          await this.getNewPermissions(isLast);
+        }
       }
       return client;
     },
