@@ -992,10 +992,10 @@
     "@babel/helper-validator-identifier" "^7.14.9"
     to-fast-properties "^2.0.0"
 
-"@baking-bad/vjsf@^1.20.11":
-  version "1.20.11"
-  resolved "https://registry.yarnpkg.com/@baking-bad/vjsf/-/vjsf-1.20.11.tgz#51066c2bf9f956bd6f186046f93628b096781237"
-  integrity sha512-WDYj8HGjDZ9OnvSZgsdwD02bTuRBzO+VnkT2WSOkma6714yyKVLyLD0dgnc/j1Y98dzcQXZ2EjNkuok/fi2DkA==
+"@baking-bad/vjsf@^1.20.12":
+  version "1.20.12"
+  resolved "https://registry.yarnpkg.com/@baking-bad/vjsf/-/vjsf-1.20.12.tgz#83244b2535eb1fba2f2deec5d449a51fbab579f4"
+  integrity sha512-gWoQkGj0gBu96dMBb0JsBDxPk01EFU8lNImo4zK6y/nsqfyY0XUlRU2h7oEo4gXkIh3F2gAuCHV/hVtilkdjPg==
   dependencies:
     "@mdi/js" "^5.5.55"
     ajv "^6.12.0"

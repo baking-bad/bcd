@@ -83,7 +83,6 @@
 import SchemaOptionalSettings from "./SchemaOptionalSettings";
 import SchemaFormExecutionActions from "./SchemaFormExecutionActions";
 import Michelson from "@/components/Michelson";
-import Vue from 'vue';
 
 export default {
 name: "SchemaForm",
@@ -122,10 +121,10 @@ name: "SchemaForm",
       this.$emit('modelChange', val)
     },
     schemaModel(val) {
-      Vue.set(this, 'model', val);
+      this.model = val;
     },
     schemaSelectedFillType(val) {
-      Vue.set(this, 'selectedFillType', val);
+      this.selectedFillType = val;
     },
   },
   data() {

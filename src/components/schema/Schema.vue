@@ -202,7 +202,7 @@ export default {
       this.selectedFillType = val;
     },
     setModel(val) {
-      Vue.set(this, 'model', val);
+      this.model = val;
     },
     setSelectedNetwork(val) {
       this.selectedNetwork = val;

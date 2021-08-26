@@ -102,7 +102,7 @@ api.getConfig().then(response => {
     }
   });
 
-  if (config.sentry_dsn !== "") {
+  if (process.env.NODE_ENV !== "development" && config.sentry_dsn !== "") {
     Sentry.init({
       dsn: config.sentry_dsn,
       integrations: [new VueIntegration({
