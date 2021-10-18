@@ -437,6 +437,7 @@ export default {
       this.wallet = new DAppClient({
         name: "Better Call Dev",
         eventHandlers: this.getWalletEventHandlers(),
+        preferredNetwork: this.selectedNetwork,
       });
       return this.wallet;
     },
