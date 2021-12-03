@@ -86,6 +86,10 @@ const walletsToIcons = {
   "default": "mdi-alpha-w",
 };
 
+const CORRECT_NETWORK_TYPES = {
+  "hangzhou2net": "hangzhounet",
+}
+
 export default {
   name: "Schema",
   components: {
@@ -452,7 +456,12 @@ export default {
         await this.wallet.setActiveAccount(this.getLastUsedAccount());
       }
       try {
-        await this.wallet.requestPermissions({ network: { type, rpcUrl } });
+        await this.wallet.requestPermissions({
+          network: {
+            type: type in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[type] : type,
+            rpcUrl
+          }
+        });
         this.isPermissionGiven = true;
       } finally {
         this.isGettingWalletProgress = false;
