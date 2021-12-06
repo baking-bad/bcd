@@ -147,7 +147,7 @@ export default {
 
       this.api
         .getNetworkStats(network)
-        .then(res => this.setRes('details', res))
+        .then(res => { this.details = res; })
         .catch(err => {
           console.log(err);
           this.showError(err);
