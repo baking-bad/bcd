@@ -2,11 +2,11 @@
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-row>
       <v-col cols="6">
-        <v-skeleton-loader :loading="!contractSeries" type="image">
+        <v-skeleton-loader :loading="!series.contract" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0" v-if="contractSeries">
+            <v-card-text class="data pa-0" v-if="series.contract">
               <ColumnChart
-                :data="contractSeries"
+                :data="series.contract"
                 :title="`New deployments (total ${details.contracts_count})<br/>
                 <div class='text--secondary caption text-center'>Excluding manager.tz</div>`"
                 name="New deployments"
@@ -16,11 +16,11 @@
         </v-skeleton-loader>
       </v-col>
       <v-col cols="6">
-        <v-skeleton-loader :loading="!operationSeries" type="image">
+        <v-skeleton-loader :loading="!series.operation" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0" v-if="operationSeries">
+            <v-card-text class="data pa-0" v-if="series.operation">
               <ColumnChart
-                :data="operationSeries"
+                :data="series.operation"
                 :title="`Contract calls (total ${details.contract_calls})`"
                 name="Contract calls"
               ></ColumnChart>
@@ -29,11 +29,11 @@
         </v-skeleton-loader>
       </v-col>
       <v-col cols="6">
-        <v-skeleton-loader :loading="!paidStorageSizeDiffSeries" type="image">
+        <v-skeleton-loader :loading="!series.paidStorageSizeDiff" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0" v-if="paidStorageSizeDiffSeries">
+            <v-card-text class="data pa-0" v-if="series.paidStorageSizeDiff">
               <ColumnChart
-                :data="paidStorageSizeDiffSeries"
+                :data="series.paidStorageSizeDiff"
                 formatter="kilobyte"
                 title="Paid storage size diff, KB"
                 name="Paid storage size diff"
@@ -43,11 +43,11 @@
         </v-skeleton-loader>
       </v-col>
       <v-col cols="6">
-        <v-skeleton-loader :loading="!consumedGasSeries" type="image">
+        <v-skeleton-loader :loading="!series.consumedGas" type="image">
           <v-card flat outlined>
-            <v-card-text class="data pa-0" v-if="consumedGasSeries">
+            <v-card-text class="data pa-0" v-if="series.consumedGas">
               <ColumnChart
-                :data="consumedGasSeries"
+                :data="series.consumedGas"
                 :title="`Consumed gas × 10\u2076`"
                 formatter="gas"
                 name="Consumed gas"
@@ -95,6 +95,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import { mapActions } from "vuex";
 import ColumnChart from "@/components/Charts/ColumnChart.vue";
 
@@ -114,10 +115,7 @@ export default {
   data: () => ({
     loading: true,
     details: {},
-    contractSeries: null,
-    operationSeries: null,
-    consumedGasSeries: null,
-    paidStorageSizeDiffSeries: null
+    series: {},
   }),
   computed: {
     languages() {
@@ -141,7 +139,7 @@ export default {
     ...mapActions(["showError"]),
     setDetailsDataToDefault() {
       this.details = {};
-      ['contractSeries', 'operationSeries', 'consumedGasSeries', 'paidStorageSizeDiffSeries']
+      ['contract', 'operation', 'consumedGas', 'paidStorageSizeDiff']
           .forEach((key) => this.setRes(key, null));
     },
     getDetails(network) {
@@ -149,17 +147,17 @@ export default {
 
       this.api
         .getNetworkStats(network)
-        .then(res => this.setRes('details', res))
+        .then(res => { this.details = res; })
         .catch(err => {
           console.log(err);
           this.showError(err);
         })
         .finally(() => (this.loading = false));
 
-      this.requestStatsData(network, "contract", 'contractSeries');
-      this.requestStatsData(network, "operation", 'operationSeries');
-      this.requestStatsData(network, "paid_storage_size_diff", 'paidStorageSizeDiffSeries');
-      this.requestStatsData(network, "consumed_gas", 'consumedGasSeries');
+      this.requestStatsData(network, "contract", 'contract');
+      this.requestStatsData(network, "operation", 'operation');
+      this.requestStatsData(network, "paid_storage_size_diff", 'paidStorageSizeDiff');
+      this.requestStatsData(network, "consumed_gas", 'consumedGas');
     },
     requestStatsData(network, index, key) {
       this.api
@@ -168,12 +166,12 @@ export default {
           .catch(err => this.setErr(key, err));
     },
     setErr(key, err) {
-      this[key] = [];
+      Vue.set(this.series, key, []);
       console.log(err);
       this.showError(err);
     },
     setRes(key, res) {
-      this[key] = res;
+      Vue.set(this.series, key, res);
     },
   },
   watch: {
