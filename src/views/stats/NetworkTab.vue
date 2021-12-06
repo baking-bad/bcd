@@ -166,12 +166,12 @@ export default {
           .catch(err => this.setErr(key, err));
     },
     setErr(key, err) {
-      Vue.set(key, []);
+      Vue.set(this.series, key, []);
       console.log(err);
       this.showError(err);
     },
     setRes(key, res) {
-      Vue.set(key, res);
+      Vue.set(this.series, key, res);
     },
   },
   watch: {
