@@ -14,7 +14,7 @@
     "@sentry/integrations": "^5.27.6",
     "@taquito/beacon-wallet": "^11.0.2",
     "@taquito/taquito": "^11.0.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bignumber.js": "^9.0.1",
     "bs58check": "^2.1.2",
     "codemirror": "^5.58.2",
