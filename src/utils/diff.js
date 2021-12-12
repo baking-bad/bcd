@@ -77,48 +77,9 @@ function unwrap(x) {
     return String(x).replace(/^"(.*)"$/, '$1');
 }
 
-function removeQuotationFromString(name) {
-    return name.replace(/['"]+/g, '');
-}
-
-function isLeftName(name) {
-    return name.indexOf("Left") === 0;
-}
-
-function isRightName(name) {
-    return name.indexOf("Right") === 0;
-}
-
-function getLeftRightValue(name) {
-    if (isLeftName(name)) {
-        const LEFT_LENGTH = 4;
-        return removeQuotationFromString(name.slice(LEFT_LENGTH).trim());
-    }
-
-    if (isRightName(name)) {
-        const RIGHT_LENGTH = 5;
-        return removeQuotationFromString(name.slice(RIGHT_LENGTH).trim());
-    }
-}
-
-function compactizePairs(x) {
-    if (!('name' in x)) {
-        return x.type;
-    }
-    if (isLeftName(x.name) || isRightName(x.name)) {
-        return getLeftRightValue(x.name);
-    }
-    const pairs = x.name.split('Pair');
-    let reduced = pairs.reduce((a, b) => {
-        a = a + `${b.trim().split(' ')[0]}:`
-        return a;
-    }, '');
-    return reduced.slice(1, -1).trim();
-}
-
 function parseItem(x, compactPair) {
     let item = {
-        name: compactPair ? compactizePairs(x) : x.name,
+        name: x.name,
         children: [],
         value: getValue(x),
         type: "value",
