@@ -2,7 +2,7 @@
 # yarn lockfile v1
 
 
-"@airgap/beacon-sdk@^2.3.7", "@airgap/beacon-sdk@^2.3.8":
+"@airgap/beacon-sdk@^2.3.8":
   version "2.3.8"
   resolved "https://registry.yarnpkg.com/@airgap/beacon-sdk/-/beacon-sdk-2.3.8.tgz#cde9435d86209314ddb77737fb1c4265b76357a0"
   integrity sha512-8f2MydsVMC5fqSzcsyWfVloFL3YCXWLHglV6faQtgchbs+XGr5Jdkd1ilLLVGvgp4h/oIDgC7B2dRrNr4FAv0A==
@@ -1331,28 +1331,28 @@
   resolved "https://registry.yarnpkg.com/@stablelib/wipe/-/wipe-1.0.1.tgz#d21401f1d59ade56a62e139462a97f104ed19a36"
   integrity sha512-WfqfX/eXGiAd3RJe4VU2snh/ZPwtSjLG4ynQ/vYzvghTh7dHFcI1wl+nrkWG6lGhukOxOsUHfv8dUXr58D0ayg==
 
-"@taquito/beacon-wallet@11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@taquito/beacon-wallet/-/beacon-wallet-11.0.1.tgz#dc37ee353a13ad1135e3efc33501fa7e6cd41cb9"
-  integrity sha512-YTjpcXk3e8mKqYE7hBOTVVpUNNfXAiEoAMCnTpoQvAxjyZfRb39fDx89UbNbpyJpl3h5B1LjMU0VDSFCMiczKQ==
+"@taquito/beacon-wallet@^11.0.2":
+  version "11.0.2"
+  resolved "https://registry.yarnpkg.com/@taquito/beacon-wallet/-/beacon-wallet-11.0.2.tgz#b07191177be926d6b6d58bb4dfc54245664861bb"
+  integrity sha512-8nB/4e0578taWOcCWTI6femaeX/tuLk2dxVHG6KhCseBhhomcyxxXVVy+bG1O+oUiAHi3cwVrsAlb5krrPqafg==
   dependencies:
-    "@airgap/beacon-sdk" "^2.3.7"
-    "@taquito/taquito" "^11.0.1"
-    "@taquito/utils" "^11.0.1"
+    "@airgap/beacon-sdk" "^2.3.8"
+    "@taquito/taquito" "^11.0.2"
+    "@taquito/utils" "^11.0.2"
 
-"@taquito/http-utils@^11.0.1", "@taquito/http-utils@^11.0.2":
+"@taquito/http-utils@^11.0.2":
   version "11.0.2"
   resolved "https://registry.yarnpkg.com/@taquito/http-utils/-/http-utils-11.0.2.tgz#d2c46f84cf1778bb904299d2a8e59efd2b572fa4"
   integrity sha512-nO1yPkwaFElcXakahgBsPHvi9BEhhL+k7AfJCgS2bB1faLUzvTUx5l/hGV3h/k3FSDVPnekU8GsMy8J70gEN8g==
   dependencies:
     xhr2-cookies "^1.1.0"
 
-"@taquito/michel-codec@^11.0.1", "@taquito/michel-codec@^11.0.2":
+"@taquito/michel-codec@^11.0.2":
   version "11.0.2"
   resolved "https://registry.yarnpkg.com/@taquito/michel-codec/-/michel-codec-11.0.2.tgz#1f5057aedefe58d611623169a749ad8b266d5a05"
   integrity sha512-COtXAGpaWfcksmllyvwoLrmlHZ47hSJfKto/PpkmrrTYw6tCV9utfdM7J3WfAwGm9s6jEDHqEbakJXAh4x0WYQ==
 
-"@taquito/michelson-encoder@^11.0.1", "@taquito/michelson-encoder@^11.0.2":
+"@taquito/michelson-encoder@^11.0.2":
   version "11.0.2"
   resolved "https://registry.yarnpkg.com/@taquito/michelson-encoder/-/michelson-encoder-11.0.2.tgz#dd64b121cc34d5b56ff16f40fb47ad1a6c2a0a81"
   integrity sha512-bi/EdLIQ249KEDgB0UHOpBKuOVDGGZH7cd+gRQ3Rdf4G2oU0/LeezqyY+TrItazQkpjftoEF7PAIX59jHgFYdQ==
@@ -1362,7 +1362,7 @@
     bignumber.js "^9.0.1"
     fast-json-stable-stringify "^2.1.0"
 
-"@taquito/rpc@^11.0.1", "@taquito/rpc@^11.0.2":
+"@taquito/rpc@^11.0.2":
   version "11.0.2"
   resolved "https://registry.yarnpkg.com/@taquito/rpc/-/rpc-11.0.2.tgz#48e6545b19507b3630f47c20e44f94c5168ca127"
   integrity sha512-gWxCMvfMdbC9Yx9gE04PFswPdP8rIV2ydkRYl25aXCUmhLZyvJmQ9EYPSL28h6cZxr9VvTwaWxuJmis2yL8+og==
@@ -1372,20 +1372,7 @@
     lodash.get "^4.4.2"
     lodash.set "^4.3.2"
 
-"@taquito/taquito@11.0.1":
-  version "11.0.1"
-  resolved "https://registry.yarnpkg.com/@taquito/taquito/-/taquito-11.0.1.tgz#cdd0d03579d95036a4783373f83233bbfdf72bc3"
-  integrity sha512-kH4odKaJcqHcQliNTBHkzfSWXrwC+Xpga7LeOsjt8RN5a98J671qHIrg2Qq7vMXVhQYPUsOlpEMeR+pAHtm7uQ==
-  dependencies:
-    "@taquito/http-utils" "^11.0.1"
-    "@taquito/michel-codec" "^11.0.1"
-    "@taquito/michelson-encoder" "^11.0.1"
-    "@taquito/rpc" "^11.0.1"
-    "@taquito/utils" "^11.0.1"
-    bignumber.js "^9.0.1"
-    rxjs "^6.6.3"
-
-"@taquito/taquito@^11.0.1":
+"@taquito/taquito@^11.0.2":
   version "11.0.2"
   resolved "https://registry.yarnpkg.com/@taquito/taquito/-/taquito-11.0.2.tgz#8d1d66a9c130c247c0609f76e77296e0c95b2362"
   integrity sha512-gul9ThTK3r7PWpWiJ4+qXqHVwAybsLX7pLupRBu3lxnOMuf0hY9xW5v+2pSRh1IQTIbYEz2yDlOp806By3Sq3A==
@@ -1398,7 +1385,7 @@
     bignumber.js "^9.0.1"
     rxjs "^6.6.3"
 
-"@taquito/utils@^11.0.1", "@taquito/utils@^11.0.2":
+"@taquito/utils@^11.0.2":
   version "11.0.2"
   resolved "https://registry.yarnpkg.com/@taquito/utils/-/utils-11.0.2.tgz#796916fbee48243661977d1eb7867a0f84a2e450"
   integrity sha512-F8SVw6GIL9li427D4bg/XwyUVuUfRBzD2V0dQqTBbX9lvv9GmiEQydefhf+wbGNVIQOPXL79WMUJOAhzC8LK/Q==
