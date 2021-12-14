@@ -389,11 +389,11 @@ export default {
             this.parametersJSON = resJSON;
             this.showRawJSON = show;
           } else {
-            const arg = res.replace(/\\n/gm, "").replace(/^"|"$/g, "");
+            const arg = res.replace(/^"|"$|\\n/gm, "");
             const amount = this.settings.amount || 0;
             const src = this.settings.source || "%YOUR_ADDRESS%";
             const entrypoint = this.name;
-            this.tezosClientCmdline = `transfer ${amount} from ${src} to ${this.address} --entrypoint '${entrypoint}' --arg '${arg}'`;
+            this.tezosClientCmdline = `transfer ${amount} from ${src} to ${this.address} --entrypoint "${entrypoint}" --arg "${arg}"`;
             this.setCmdline(show);
           }
           return resJSON;
