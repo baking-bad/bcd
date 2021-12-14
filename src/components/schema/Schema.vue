@@ -384,18 +384,19 @@ export default {
           rawJSON ? "" : "michelson"
         )
         .then((res) => {
+          const resJSON = JSON.parse(res);
           if (rawJSON) {
-            this.parametersJSON = res;
+            this.parametersJSON = resJSON;
             this.showRawJSON = show;
           } else {
-            const arg = String(res).replace(/\n|\s+/gm, " ");
+            const arg = res.replace(/\\n/gm, "").replace(/^"|"$/g, "");
             const amount = this.settings.amount || 0;
             const src = this.settings.source || "%YOUR_ADDRESS%";
             const entrypoint = this.name;
             this.tezosClientCmdline = `transfer ${amount} from ${src} to ${this.address} --entrypoint '${entrypoint}' --arg '${arg}'`;
             this.setCmdline(show);
           }
-          return res;
+          return resJSON;
         })
         .catch((err) => {
           this.showError(err.response ? err.response.data.message : err);
@@ -495,7 +496,7 @@ export default {
             amount: String(parseInt(this.settings.amount || "0")),
             parameters: {
               entrypoint: this.name,
-              value: JSON.parse(JSON.stringify(parameter))
+              value: parameter
             },
           }]
         });
