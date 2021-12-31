@@ -46,6 +46,6 @@ export default new Vuex.Store({
     },
     hideWarning({ commit }) {
       commit('setWarning', null)
-    },
+    }
   }
 });
