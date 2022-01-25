@@ -128,9 +128,11 @@ export default {
     selectedPeriod: function (newValue) {
       this.getSeries(newValue);
     },
-    contracts: function() {
-      this.getSeries(this.selectedPeriod);
-      this.getGeneralStats();
+    contracts: function(newValue) {
+      if (newValue && newValue.length > 0) {
+        this.getSeries(this.selectedPeriod);
+        this.getGeneralStats();
+      }
     }
   },
 };

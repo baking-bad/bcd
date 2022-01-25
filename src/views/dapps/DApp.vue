@@ -65,7 +65,9 @@ export default {
         .then((res) => {
           for (var i = 0; i < res.length; i++) {
             if (res[i].slug == slug) {
-              this.dapp = res[i];
+              if (this.dapp == null) {
+                this.dapp = res[i];
+              }
               return;
             }
           }          
