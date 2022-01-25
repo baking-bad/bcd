@@ -61,14 +61,7 @@
               <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}/metadata`">
                 <span v-html="highlight(item.body.name)" class="hash"></span>
               </router-link>
-            </template>
-            <template v-else-if="item.type === 'tezos_domain'">
-              <span class="hash">Domains</span>
-              <span class="text--secondary" style="font-size: 20px;"> → </span>
-              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
-                <span v-html="highlight(item.body.name)" class="hash"></span>
-              </router-link>
-            </template>
+            </template>          
           </v-list-item-title>
 
           <v-list-item-subtitle>

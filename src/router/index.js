@@ -9,7 +9,6 @@ import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 import Stats from '@/views/stats/Stats.vue'
 import NetworkTab from '@/views/stats/NetworkTab.vue'
 import TokensTab from '@/views/stats/TokensTab.vue'
-import DomainsTab from '@/views/stats/DomainsTab.vue'
 import Diff from '@/views/diff/Diff.vue'
 import Docs from '@/views/docs/Docs.vue'
 
@@ -114,12 +113,6 @@ const router = new Router({
           path: 'fa2',
           name: 'stats_fa20',
           component: TokensTab,
-          props: true
-        },
-        {
-          path: 'domains',
-          name: 'domains',
-          component: DomainsTab,
           props: true
         }
       ]
