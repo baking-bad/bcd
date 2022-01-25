@@ -2,6 +2,7 @@
   <v-expansion-panel
     class="bl-1 br-1 bt-1 op-panel"
     active-class="op-active-panel"
+    @change="onPanelStateChange"
   >
     <v-expansion-panel-header
       class="py-0 px-4"
@@ -133,6 +134,7 @@
 import InternalOperation from "@/components/InternalOperation.vue";
 import { getContentItemHeaderClass } from '@/utils/styles';
 import dayjs from "dayjs";
+import Vue from 'vue';
 import relativeTime from "dayjs/plugin/relativeTime";
 
 dayjs.extend(relativeTime);
@@ -226,6 +228,7 @@ export default {
   },
   data: () => ({
     value: null,
+    loading: false
   }),
   methods: {
     getOrientedAmount(data, sign) {
@@ -259,6 +262,18 @@ export default {
         return null;
       }
     },
+    onPanelStateChange() {
+      if (this.value.storage_diff == undefined && !this.value.mempool) {
+        this.api.getOPG(this.value.hash, false)
+          .then((opg) => {
+            const diffs = Object.fromEntries(opg.map(op => [op.id, op.storage_diff])); 
+            Vue.set(this.value, 'storage_diff', diffs[this.value.id]);
+            for (var i = 0; i < this.value.internal_operations.length; i++) {
+              Vue.set(this.value.internal_operations[i], 'storage_diff', diffs[this.value.internal_operations[i].id]);
+            }
+          })
+      }
+    }
   },
 };
 </script>

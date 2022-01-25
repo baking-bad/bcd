@@ -16,9 +16,6 @@
         <v-tab :to="{name: 'stats_general'}" replace>
           <v-icon left small>mdi-align-vertical-bottom</v-icon>&nbsp;General
         </v-tab>
-        <v-tab :to="{name: 'domains'}" replace>
-          <v-icon left small>mdi-web</v-icon>&nbsp;Domains
-        </v-tab>
         <v-tab :to="{name: 'stats_fa12'}" replace>
           <v-icon left small>mdi-bank-outline</v-icon>&nbsp;FA1.2
         </v-tab>

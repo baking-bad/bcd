@@ -49,7 +49,6 @@
           >mdi-puzzle-outline</v-icon
         >
         <v-icon v-else-if="item.type === 'recent'">mdi-history</v-icon>
-        <v-icon v-else-if="item.type === 'tezos_domain'">mdi-web</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title>
@@ -98,12 +97,7 @@
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.name">{{ item.body.name }}</span>
             <span v-else v-html="helpers.shortcut(item.value)"></span>
-          </template>
-          <template v-else-if="item.type === 'tezos_domain'">
-            <span class="text--secondary hash">Domains</span>
-            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
-            <span class="hash">{{ item.body.name }}</span>
-          </template>
+          </template>         
           <template v-if="item.type === 'recent'">
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
             <span
@@ -240,8 +234,7 @@ export default {
     isShouldSentToValue(value) {
       return (
         (
-            this.isModelsArrayInclude("contract") ||
-            this.isModelsArrayInclude("tezos_domain")
+            this.isModelsArrayInclude("contract")
         ) &&
         checkAddress(value)
       );
