@@ -72,7 +72,7 @@ const router = new Router({
           components: {
             default: DAppList
           },
-          name: 'dapps-list',
+          name: 'dapps_list',
           props: { default: true },
         },
         {

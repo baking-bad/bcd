@@ -332,6 +332,7 @@ export default {
               if (res && res.items) {
                 this.suggests.push(...res.items);
               }
+              this.$gtag.pageview(`/suggest?text=${text}`);
             }
           })
           .catch((err) => {
@@ -341,7 +342,7 @@ export default {
           .finally(() => {
             this.isSuggestionsLoading = false;
           });
-      }, 100);
+      }, 500);
     },
     onRemoveClick(text) {
       removeHistoryItem(text);
