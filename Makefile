@@ -4,15 +4,6 @@
 dev:
 	yarn serve
 
-white:
-	yarn serve -- --mode white
-
-test:
-	yarn serve -- --mode test
-
-api:
-	yarn serve -- --mode api
-
 image:
 	docker build -t bakingbad/bcdhub-gui:latest .
 
