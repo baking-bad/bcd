@@ -306,7 +306,9 @@ export default {
 
             if (text !== this.$route.query.text) {
               this.$router.replace({ query: { text: text } });
-              this.$gtag.pageview(`/search?text=${text}`);
+              if (this.$gtag) {
+                this.$gtag.pageview(`/search?text=${text}`);
+              }
             }
           })
           .catch((err) => {

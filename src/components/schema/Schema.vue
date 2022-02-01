@@ -221,10 +221,12 @@ export default {
       this.showCmdline = val;
     },
     fireEvent(action, category) {
-      this.$gtag.event(action, {
-        "event_category": category,
-        "event_label": this.$router.currentRoute.fullPath
-      });
+      if (this.$gtag) {
+        this.$gtag.event(action, {
+          "event_category": category,
+          "event_label": this.$router.currentRoute.fullPath
+        });
+      }
     },
     simulateActionCallback() {
       return this.isParameter 

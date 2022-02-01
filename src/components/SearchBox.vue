@@ -332,7 +332,9 @@ export default {
               if (res && res.items) {
                 this.suggests.push(...res.items);
               }
-              this.$gtag.pageview(`/suggest?text=${text}`);
+              if (this.$gtag) {
+                this.$gtag.pageview(`/suggest?text=${text}`);
+              }
             }
           })
           .catch((err) => {
