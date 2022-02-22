@@ -81,4 +81,15 @@ export class NodeRPC {
         return { data: res.data, url };
       })
   }
+
+  getTezosBalance(network, level, address) {
+    return this.getApi(network).get(`/chains/main/blocks/${level}/context/contracts/${address}/balance`)
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        let url = `${res.config.baseURL}${res.config.url}`
+        return { data: parseInt(res.data, 10), url };
+      })
+  }
 }
