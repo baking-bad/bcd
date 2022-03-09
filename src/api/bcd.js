@@ -649,6 +649,16 @@ export class BetterCallApi {
       });
   }
 
+  getTezosDayVolume(slug) {
+    return getCancellable(this.api, `/dapps/${slug}/dex/tezos_volume`, {})
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data;
+      });
+  }
+
   listDomains(network, offset = 0, size = maxSize) {
     let params = {}
     if (size > 0) {

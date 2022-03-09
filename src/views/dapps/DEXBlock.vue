@@ -36,13 +36,17 @@
               <v-list-item-action>
                 <v-list-item-action-text>
                   {{
-                    `${helpers.round(checkVol(dapp.volume_24_hours), 6)} \uA729`
+                    isTezosDayVolumeLoading
+                      ? '...'
+                      : isTezosDayVolumeFailed
+                        ? 'Failed'
+                        : `${helpers.round(checkVol(tezosDayVolume), 6)} \uA729`
                   }}
                   (24h)
                 </v-list-item-action-text>
               </v-list-item-action>
             </v-list-item>
-            <v-list-item v-for="(token, i) in dapp.dex_tokens" :key="i">
+            <v-list-item v-for="(token, i) in dexTokens" :key="i">
               <v-list-item-content>
                 <v-list-item-title>{{ token.name }} </v-list-item-title>
               </v-list-item-content>
@@ -86,6 +90,7 @@
 <script>
 import { mapActions } from "vuex";
 import ColumnChart from "@/components/Charts/ColumnChart.vue";
+import {DATA_LOADING_STATUSES} from "../../utils/network";
 
 export default {
   name: "DEXBlock",
@@ -104,9 +109,11 @@ export default {
       this.dapp.contracts.forEach((x) => contracts.push(x.address));
       return contracts;
     },
-    tokens() {
-      if (!this.dapp) return [];
-      return this.dapp.dex_tokens;
+    isTezosDayVolumeLoading() {
+      return this.tezosDayVolumeLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
+    isTezosDayVolumeFailed() {
+      return this.tezosDayVolumeLoadingStatus === DATA_LOADING_STATUSES.ERROR;
     },
     token() {
       if (
@@ -119,12 +126,14 @@ export default {
   },
   data: () => ({
     loadingTokenSeries: true,
+    tezosDayVolume: 0,
     data: {},
     selectedToken: 0,
     selectedPeriod: "day",
   }),
   mounted() {
     this.getSeries(this.selectedPeriod, this.selectedToken);
+    this.getTezosDayVolume();
   },
   methods: {
     ...mapActions(["showError"]),
@@ -163,6 +172,20 @@ export default {
           this.loadingTokenSeries = false;
         });
     },
+    getTezosDayVolume() {
+      this.tezosDayVolumeLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+      this.api
+        .getTezosDayVolume(this.$route.params.slug)
+        .then((res) => {
+          this.tezosDayVolume = res;
+          this.tezosDayVolumeLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.showError(err);
+          this.tezosDayVolumeLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+        })
+    },
     getTezosVolume(period) {
       if (this.selectedToken in this.data) return;
       this.loadingTokenSeries = true;
@@ -195,7 +218,7 @@ export default {
     getSeries(period, selectedToken) {
       if (selectedToken > 0) {
         this.getTokenSeries(this.selectedPeriod);
-      } else if (selectedToken == 0) {
+      } else if (selectedToken === 0) {
         this.getTezosVolume(period);
       }
     },
