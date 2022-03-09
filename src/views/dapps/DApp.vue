@@ -41,7 +41,7 @@ import StatisticsBlock from "@/views/dapps/StatisticsBlock.vue";
 import AgoraBlock from "@/views/dapps/AgoraBlock.vue";
 import DEXBlock from "@/views/dapps/DEXBlock.vue";
 import TokenBlock from "@/views/dapps/TokenBlock.vue";
-import {DAPP_CATEGORIES} from "../../constants/dapp_categories";
+import { DAPP_CATEGORIES } from "../../constants/dapp_categories";
 
 export default {
   name: "DApp",
