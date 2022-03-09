@@ -18,10 +18,10 @@
         <v-col cols="12">
           <StatisticsBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
         </v-col>
-        <v-col cols="12" v-if="dapp.categories.includes('DEX') && dapp.dex_tokens">
-          <DEXBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
+        <v-col cols="12" v-if="dexTokens && dexTokens.length">
+          <DEXBlock class="island elevation-1" :dapp="dapp" :dex-tokens="dexTokens" :loading="loading" />
         </v-col>
-        <v-col cols="12" v-if="dapp.categories.includes('Token') && dapp.tokens">
+        <v-col cols="12" v-if="isTokenCategory && dapp.tokens">
           <TokenBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
         </v-col>
         <v-col cols="12" v-if="dapp.agora_review_post_id || dapp.agora_qa_post_id">
@@ -41,6 +41,7 @@ import StatisticsBlock from "@/views/dapps/StatisticsBlock.vue";
 import AgoraBlock from "@/views/dapps/AgoraBlock.vue";
 import DEXBlock from "@/views/dapps/DEXBlock.vue";
 import TokenBlock from "@/views/dapps/TokenBlock.vue";
+import {DAPP_CATEGORIES} from "../../constants/dapp_categories";
 
 export default {
   name: "DApp",
@@ -53,10 +54,19 @@ export default {
     DEXBlock,
     TokenBlock,
   },
+  computed: {
+    isDexCategory() {
+      return this.dapp && this.dapp.categories.includes(DAPP_CATEGORIES.DEX);
+    },
+    isTokenCategory() {
+      return this.dapp && this.dapp.categories.includes(DAPP_CATEGORIES.TOKEN);
+    },
+  },
   data: () => ({
     loading: true,
     dapp: null,
     fab: false,
+    dexTokens: null,
   }),
   created() {
     this.getDApp(this.$route.params.slug);
@@ -70,9 +80,12 @@ export default {
         .getDApp(slug)
         .then((res) => {
           this.dapp = res;
+          return this.isDexCategory ? this.api.getDexDappTokens(slug) : this.dapp.dex_tokens;
+        })
+        .then((res) => {
+          this.dexTokens = res;
         })
         .catch((err) => {
-          console.log(err);
           this.showError(err);
         })
         .finally(() => {

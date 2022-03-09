@@ -22,7 +22,7 @@
         </v-btn-toggle>
       </v-skeleton-loader>
     </v-col>
-    <v-col cols="4" v-if="dapp.dex_tokens">
+    <v-col cols="4" v-if="dexTokens">
       <v-skeleton-loader
         :loading="loading || loadingTokenSeries"
         type="list-item@4"
@@ -62,7 +62,7 @@
         </v-list>
       </v-skeleton-loader>
     </v-col>
-    <v-col cols="8" v-if="dapp.dex_tokens">
+    <v-col cols="8" v-if="dexTokens">
       <v-skeleton-loader :loading="loading || loadingTokenSeries" type="image">
         <v-card flat outlined>
           <v-card-text class="data pa-0" v-if="this.data[this.selectedToken]">
@@ -92,6 +92,7 @@ export default {
   props: {
     dapp: Object,
     loading: Boolean,
+    dexTokens: Array,
   },
   components: {
     ColumnChart,
@@ -136,8 +137,8 @@ export default {
     },
     getTokenSeries(period) {
       if (this.selectedToken in this.data) return;
-      if (this.tokens.length == 0) return;
-      let token = this.tokens[this.selectedToken - 1];
+      if (this.dexTokens.length === 0) return;
+      let token = this.dexTokens[this.selectedToken - 1];
 
       this.loadingTokenSeries = true;
       this.api

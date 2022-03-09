@@ -587,7 +587,8 @@ export class BetterCallApi {
     if (index) {
       params.push(`name=${index}`)
     }
-    return getCancellable(this.api, `/stats/${network}/series?${params.join('&')}`, {})
+    const slug = `/stats/${network}/series?${params.join('&')}`;
+    return getCancellable(this.api, slug, {})
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {
@@ -636,6 +637,16 @@ export class BetterCallApi {
         }
         return res.data
       })
+  }
+
+  getDexDappTokens(slug) {
+    return getCancellable(this.api, `/dapps/${slug}/dex/tokens`, {})
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data;
+      });
   }
 
   listDomains(network, offset = 0, size = maxSize) {

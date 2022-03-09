@@ -3,7 +3,7 @@
     <v-col cols="12">
       <h3>Tokens</h3>
     </v-col>
-    <v-col cols="12" v-if="dapp.tokens">
+    <v-col cols="12">
       <v-skeleton-loader :loading="loading" type="table">
         <v-data-table :headers="headers" :items="tokens" class="transparent">
           <template v-slot:item.supply="{ item }"
@@ -27,6 +27,7 @@ export default {
   name: "TokenBlock",
   props: {
     dapp: Object,
+    tokens: Array,
     loading: Boolean,
   },
   computed: {
@@ -35,10 +36,6 @@ export default {
       let contracts = [];
       this.dapp.contracts.forEach((x) => contracts.push(x.address));
       return contracts;
-    },
-    tokens() {
-      if (!this.dapp) return [];
-      return this.dapp.tokens;
     },
     headers() {
       return [
