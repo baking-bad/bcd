@@ -118,9 +118,9 @@ export default {
     token() {
       if (
         this.selectedToken > 0 &&
-        this.selectedToken <= this.dapp.dex_tokens.length
+        this.selectedToken <= this.dexTokens.length
       )
-        return this.dapp.dex_tokens[this.selectedToken - 1];
+        return this.dexTokens[this.selectedToken - 1];
       return null;
     },
   },
