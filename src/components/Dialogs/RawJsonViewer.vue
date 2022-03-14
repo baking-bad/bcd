@@ -163,7 +163,7 @@ export default {
     },
     loadCodePartially(data) {
       if (Array.isArray(data)) {
-        const load = function(idx = 0) {
+        const load = (idx = 0) => {
           if (idx < data.length) {
             setTimeout(() => {
               this.data.push(data[idx]);
