@@ -45,7 +45,7 @@
         <v-icon v-else-if="item.type === 'token_metadata'"
           >mdi-circle-multiple-outline</v-icon
         >
-        <v-icon v-else-if="item.type === 'tzip'"
+        <v-icon v-else-if="item.type === 'contract_metadata'"
           >mdi-puzzle-outline</v-icon
         >
         <v-icon v-else-if="item.type === 'recent'">mdi-history</v-icon>
@@ -87,7 +87,7 @@
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.key }}</span>
           </template>
-          <template v-else-if="item.type === 'tzip'">
+          <template v-else-if="item.type === 'contract_metadata'">
             <span class="text--secondary hash">Metadata</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.name }}</span>
@@ -254,7 +254,7 @@ export default {
         this.pushTo(`/${network}/big_map/${ptr}/${value}`);
       } else if (this.isModelsArrayInclude("token_metadata") && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/tokens`);
-      } else if (this.isModelsArrayInclude("tzip") && checkAddress(value)) {
+      } else if (this.isModelsArrayInclude("contract_metadata") && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/metadata`);
       } else if (this.model.type === "recent") {
         this.$router.push({ name: "search", query: { text: value } });
