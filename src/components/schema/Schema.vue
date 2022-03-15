@@ -220,28 +220,52 @@ export default {
     setCmdline(val) {
       this.showCmdline = val;
     },
+    fireEvent(action, category) {
+      if (this.$gtag) {
+        this.$gtag.event(action, {
+          "event_category": category,
+          "event_label": this.$router.currentRoute.fullPath
+        });
+      }
+    },
     simulateActionCallback() {
-      return this.isParameter ? () => this.simulateOperation() : null;
+      return this.isParameter 
+        ? () => {
+          this.fireEvent("Simulate", "interact");
+          this.simulateOperation();
+        }
+        : null;
     },
     showSuccessMessage(text) {
       this.successText = text;
     },
     rawJsonActionCallback() {
       if (this.isParameter) {
-        return () => this.generateParameters(true, true)
+        return () => {
+          this.fireEvent("Raw JSON", "interact");
+          this.generateParameters(true, true);
+        }
       } else if (this.isDeploy) {
         return null;
       }
-      return () => this.prepareContractToFork(true);
+
+      return () => {
+        this.fireEvent("Raw JSON", "fork");
+        this.prepareContractToFork(true);
+      }
     },
     tezosClientActionCallback() {
       return this.isParameter
-          ? () => this.generateParameters(false, true)
+          ? () => {
+            this.fireEvent("Tezos Client", "interact");
+            this.generateParameters(false, true);
+          }
           : null;
     },
     beaconClientActionCallback(isLast) {
       if (this.isParameter) {
         return async () => {
+          this.fireEvent("Beacon Wallet", "interact");
           await this.callContract(isLast);
         }
       } else if (this.isDeploy) {
@@ -251,6 +275,7 @@ export default {
       }
 
       return async () => {
+        this.fireEvent("Tezos Client", "fork");
         await this.fork(isLast);
       }
     },
@@ -407,7 +432,6 @@ export default {
       if (this.execution) return;
 
       this.execution = true;
-
       this.api
         .getContractEntrypointTrace(
           this.network,
@@ -442,7 +466,7 @@ export default {
       this.wallet = new DAppClient({
         name: "Better Call Dev",
         eventHandlers: this.getWalletEventHandlers(),
-        preferredNetwork: this.selectedNetwork,
+        preferredNetwork: this.selectedNetwork in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[this.selectedNetwork] : this.selectedNetwork,
       });
       return this.wallet;
     },
@@ -530,6 +554,8 @@ export default {
     },
     async fork(isLast) {
       if (this.execution) return;
+
+      
 
       this.execution = true;
       try {

@@ -56,40 +56,6 @@
           </v-card>
         </v-skeleton-loader>
       </v-col>
-      <v-col cols="6">
-        <v-skeleton-loader :loading="loading" type="image">
-          <v-card flat outlined>
-            <v-card-title class="data d-flex align-center justify-center" style="font-size: 18px;">
-              <span style="font-family: 'Roboto Condensed', monospace">Activated protocols</span>
-            </v-card-title>
-            <v-card-text class="pa-0 data">
-              <v-timeline>
-                <v-timeline-item
-                  v-for="(protocol, idx) in details.protocols"
-                  :key="idx"
-                  color="primary"
-                  icon="mdi-chevron-up"
-                  small
-                >
-                  <div style="text-align: right;" :slot="idx % 2 === 0 ? 'opposite' : 'default'">
-                    <span class="hash">
-                      level
-                      <span class="text--primary">{{ protocol.start_level }}</span>
-                    </span>
-                  </div>
-                  <div :slot="idx % 2 === 0 ? 'default' : 'opposite'">
-                    <span class="body-1 text--primary">{{ protocol.alias }}</span>
-                    <span
-                      class="hash ml-2"
-                      v-if="!protocol.hash.startsWith(protocol.alias)"
-                    >{{ protocol.hash.slice(0, 8) }}</span>
-                  </div>
-                </v-timeline-item>
-              </v-timeline>
-            </v-card-text>
-          </v-card>
-        </v-skeleton-loader>
-      </v-col>
     </v-row>
   </v-container>
 </template>

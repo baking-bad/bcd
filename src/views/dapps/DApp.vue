@@ -7,7 +7,7 @@
     <div v-if="dapp">
       <v-row no-gutters>
         <v-col cols="12">
-          <HeaderBlock class="mb-10" :dapp="dapp" :loading="loading" />
+          <HeaderBlock class="mb-10" :dapp="dapp" />
         </v-col>
         <v-col cols="12" v-if="dapp.screenshots">
           <ScreenshotsBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
@@ -23,10 +23,7 @@
         </v-col>
         <v-col cols="12" v-if="isTokenCategory && dapp.tokens">
           <TokenBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
-        </v-col>
-        <v-col cols="12" v-if="dapp.agora_review_post_id || dapp.agora_qa_post_id">
-          <AgoraBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
-        </v-col>
+        </v-col>       
       </v-row>
     </div>
   </div>
@@ -38,7 +35,6 @@ import HeaderBlock from "@/views/dapps/HeaderBlock.vue";
 import InformationBlock from "@/views/dapps/InformationBlock.vue";
 import ScreenshotsBlock from "@/views/dapps/ScreenshotsBlock.vue";
 import StatisticsBlock from "@/views/dapps/StatisticsBlock.vue";
-import AgoraBlock from "@/views/dapps/AgoraBlock.vue";
 import DEXBlock from "@/views/dapps/DEXBlock.vue";
 import TokenBlock from "@/views/dapps/TokenBlock.vue";
 import { DAPP_CATEGORIES } from "../../constants/dapp_categories";
@@ -50,7 +46,6 @@ export default {
     ScreenshotsBlock,
     InformationBlock,
     StatisticsBlock,
-    AgoraBlock,
     DEXBlock,
     TokenBlock,
   },
@@ -69,13 +64,27 @@ export default {
     dexTokens: null,
   }),
   created() {
+    this.getBasicInfo(this.$route.params.slug);
     this.getDApp(this.$route.params.slug);
   },
   methods: {
     ...mapActions(["showError"]),
+    getBasicInfo(slug) {
+      this.api
+        .getDApps()
+        .then((res) => {
+          for (var i = 0; i < res.length; i++) {
+            if (res[i].slug == slug) {
+              if (this.dapp == null) {
+                this.dapp = res[i];
+              }
+              return;
+            }
+          }          
+        })
+    },
     getDApp(slug) {
       this.loading = true;
-
       this.api
         .getDApp(slug)
         .then((res) => {
@@ -90,11 +99,12 @@ export default {
         })
         .finally(() => {
           this.loading = false;
-        });
+        })
     },
   },
   watch: {
     $route: function () {
+      this.getBasicInfo(this.$route.params.slug);
       this.getDApp(this.$route.params.slug);
     },
   },

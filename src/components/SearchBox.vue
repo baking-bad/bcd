@@ -45,11 +45,10 @@
         <v-icon v-else-if="item.type === 'token_metadata'"
           >mdi-circle-multiple-outline</v-icon
         >
-        <v-icon v-else-if="item.type === 'tzip'"
+        <v-icon v-else-if="item.type === 'contract_metadata'"
           >mdi-puzzle-outline</v-icon
         >
         <v-icon v-else-if="item.type === 'recent'">mdi-history</v-icon>
-        <v-icon v-else-if="item.type === 'tezos_domain'">mdi-web</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title>
@@ -88,7 +87,7 @@
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.key }}</span>
           </template>
-          <template v-else-if="item.type === 'tzip'">
+          <template v-else-if="item.type === 'contract_metadata'">
             <span class="text--secondary hash">Metadata</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.name }}</span>
@@ -98,12 +97,7 @@
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.name">{{ item.body.name }}</span>
             <span v-else v-html="helpers.shortcut(item.value)"></span>
-          </template>
-          <template v-else-if="item.type === 'tezos_domain'">
-            <span class="text--secondary hash">Domains</span>
-            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
-            <span class="hash">{{ item.body.name }}</span>
-          </template>
+          </template>         
           <template v-if="item.type === 'recent'">
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
             <span
@@ -240,8 +234,7 @@ export default {
     isShouldSentToValue(value) {
       return (
         (
-            this.isModelsArrayInclude("contract") ||
-            this.isModelsArrayInclude("tezos_domain")
+            this.isModelsArrayInclude("contract")
         ) &&
         checkAddress(value)
       );
@@ -261,7 +254,7 @@ export default {
         this.pushTo(`/${network}/big_map/${ptr}/${value}`);
       } else if (this.isModelsArrayInclude("token_metadata") && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/tokens`);
-      } else if (this.isModelsArrayInclude("tzip") && checkAddress(value)) {
+      } else if (this.isModelsArrayInclude("contract_metadata") && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/metadata`);
       } else if (this.model.type === "recent") {
         this.$router.push({ name: "search", query: { text: value } });
@@ -339,6 +332,9 @@ export default {
               if (res && res.items) {
                 this.suggests.push(...res.items);
               }
+              if (this.$gtag) {
+                this.$gtag.pageview(`/suggest?text=${text}`);
+              }
             }
           })
           .catch((err) => {
@@ -348,7 +344,7 @@ export default {
           .finally(() => {
             this.isSuggestionsLoading = false;
           });
-      }, 100);
+      }, 500);
     },
     onRemoveClick(text) {
       removeHistoryItem(text);

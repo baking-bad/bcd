@@ -73,7 +73,7 @@ export default {
     tabs: [],
   }),
   created() {
-    if (this.dapp) {
+    if (this.dapp && this.dapp.screenshots) {
       this.initTabs();
     }
   },

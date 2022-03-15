@@ -544,8 +544,8 @@ export class BetterCallApi {
       })
   }
 
-  getOPG(hash) {
-    return getCancellable(this.api, `/opg/${hash}?with_mempool=true`, {})
+  getOPG(hash, with_mempool=true) {
+    return getCancellable(this.api, `/opg/${hash}?with_mempool=${with_mempool}`, {})
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -657,38 +657,6 @@ export class BetterCallApi {
         }
         return res.data;
       });
-  }
-
-  listDomains(network, offset = 0, size = maxSize) {
-    let params = {}
-    if (size > 0) {
-      params['size'] = size
-    }
-    if (offset > 0) {
-      params['offset'] = offset
-    }
-    return getCancellable(this.api, `/domains/${network}`, {
-      params: params
-    })
-      .then((res) => {
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
-
-  resolveDomain(network, address) {
-    return getCancellable(this.api, `/domains/${network}/resolve?address=${address}`, {})
-      .then((res) => {
-        if (res.status == 204) {
-          return {}
-        }
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
   }
 
   getTokenVolumeSeries(network, period, contract, token_id, slug = '') {

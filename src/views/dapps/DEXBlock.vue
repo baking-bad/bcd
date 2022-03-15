@@ -4,23 +4,21 @@
       <h3>DEX Volume</h3>
     </v-col>
     <v-col cols="8" class="d-flex justify-end">
-      <v-skeleton-loader :loading="loading" type="actions">
-        <v-btn-toggle v-model="selectedPeriod" color="primary" dense mandatory>
-          <v-btn
-            :disabled="loading || loadingTokenSeries"
-            small
-            :value="period"
-            v-for="(text, period) in {
-              hour: 'Hourly',
-              day: 'Daily',
-              month: 'Monthly',
-              year: 'Yearly',
-            }"
-            :key="period"
-            >{{ text }}</v-btn
-          >
-        </v-btn-toggle>
-      </v-skeleton-loader>
+      <v-btn-toggle v-model="selectedPeriod" color="primary" dense mandatory>
+        <v-btn
+          :disabled="loading || loadingTokenSeries"
+          small
+          :value="period"
+          v-for="(text, period) in {
+            hour: 'Hourly',
+            day: 'Daily',
+            month: 'Monthly',
+            year: 'Yearly',
+          }"
+          :key="period"
+          >{{ text }}</v-btn
+        >
+      </v-btn-toggle>
     </v-col>
     <v-col cols="4" v-if="dexTokens">
       <v-skeleton-loader
@@ -104,7 +102,7 @@ export default {
   },
   computed: {
     contracts() {
-      if (!this.dapp) return [];
+      if (!this.dapp || !this.dapp.contracts) return [];
       let contracts = [];
       this.dapp.contracts.forEach((x) => contracts.push(x.address));
       return contracts;

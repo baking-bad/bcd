@@ -32,7 +32,7 @@ export default {
   },
   computed: {
     contracts() {
-      if (!this.dapp) return [];
+      if (!(this.dapp && this.dapp.contracts)) return [];
       let contracts = [];
       this.dapp.contracts.forEach((x) => contracts.push(x.address));
       return contracts;
