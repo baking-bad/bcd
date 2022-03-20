@@ -77,6 +77,13 @@ Vue.filter('mutez', function (value) {
 
 Vue.filter('bytes', function (value) {
   return `${value} bytes`;
+});
+
+Vue.filter('snakeToCamel', (str) => {
+  if (!(/[_-]/).test(str)) return str;
+
+  return str.toLowerCase()
+                          .replace(/([-_])([a-z])/g, (_match, _p1, p2) => p2.toUpperCase());
 })
 
 let config = {

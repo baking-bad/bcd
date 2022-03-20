@@ -36,7 +36,7 @@
           <template v-slot:label="{ item }">
             <div @click="showTreeInfo(item)">
               <span class="key">
-                {{item.name.split(':')[0].trim()}}:
+                {{item.name.split(':')[0].trim() | snakeToCamel }}:
               </span>
               <span
                 v-if="isTreeViewable(item)"
@@ -50,7 +50,7 @@
                   <template v-slot:label="{ item }">
                     <div @click.exact.stop.prevent="showTreeInfo(item)">
                       <span class="key">
-                        {{item.name.split(':')[0].trim()}}:
+                        {{item.name.split(':')[0].trim() | snakeToCamel }}:
                       </span>
                       <span
                           class="value"
