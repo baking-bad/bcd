@@ -11,7 +11,7 @@
       <v-card-title class="sidebar py-2" primary-title>
         <span class="body-1 font-weight-medium text-uppercase text--secondary">
           Raw JSON:
-          <span class="text--primary">{{ type }} </span>
+          <span class="text--primary">{{ type }}</span>
         </span>
         <span
             v-if="isShowRenderingWarning"
@@ -102,6 +102,7 @@
 <script>
 import { mapActions } from "vuex";
 import VueJsonPretty from "vue-json-pretty";
+import {keysToCamel} from "../../utils/object";
 
 const BIG_SIZE_JSON_SYMBOLS = 10000;
 
@@ -143,6 +144,9 @@ export default {
         return this.raw
       }
     },
+    isTokenMetadata() {
+      return this.type.toLowerCase() === 'token metadata';
+    },
     handleKeyUp(e) {
       if (e.key === "Escape"){
         this.close();
@@ -161,12 +165,15 @@ export default {
       }
       return this.data;
     },
+    parseData(data) {
+      return this.isTokenMetadata() ? keysToCamel(data) : data;
+    },
     loadCodePartially(data) {
       if (Array.isArray(data)) {
         const load = (idx = 0) => {
           if (idx < data.length) {
             setTimeout(() => {
-              this.data.push(data[idx]);
+              this.data.push(this.parseData(data[idx]));
               this.renderingStep = this.renderingStep + 1;
               load(idx + 1);
             }, 0);
@@ -176,7 +183,7 @@ export default {
         this.renderingStep = 0;
         load();
       } else {
-        this.data = data;
+        this.data = this.parseData(data);
       }
     },
     formatValue(data, key, path, defaultFormatResult) {
@@ -209,7 +216,7 @@ export default {
           this.isShowRenderingWarning = true;
           this.loadCodePartially(this.raw);
         } else {
-          this.data = this.raw;
+          this.data = this.parseData(this.raw);
         }
         this.loaded = true;
         return;
@@ -244,7 +251,7 @@ export default {
             this.isShowRenderingWarning = true;
             this.loadCodePartially(data);
           } else {
-            this.data = data;
+            this.data = this.parseData(data);
           }
           this.url = r.url;
           this.loaded = true;
