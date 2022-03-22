@@ -1,5 +1,4 @@
 # Better Call Dev
-[![Netlify Status](https://api.netlify.com/api/v1/badges/6a60986c-ca93-4186-a391-1d9ddc5d2606/deploy-status)](https://app.netlify.com/sites/better-call-dev/deploys)
 [![Made With: Vue.js](https://img.shields.io/badge/vue-2.6.10-green.svg?)](https://vuejs.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
