@@ -10,6 +10,7 @@
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
+                    small
                     v-on="on"
                     icon
                     @click="
@@ -19,7 +20,7 @@
                       }
                     "
                   >
-                    <v-icon class="text--secondary">mdi-content-copy</v-icon>
+                    <v-icon small class="text--secondary">mdi-content-copy</v-icon>
                   </v-btn>
                 </template>
                 Copy Token ID
@@ -37,6 +38,7 @@
               <v-tooltip bottom>
                 <template v-slot:activator="{ on }">
                   <v-btn
+                    small
                     v-on="on"
                     icon
                     class="mr-2"
@@ -47,7 +49,7 @@
                       }
                     "
                   >
-                    <v-icon class="text--secondary">mdi-content-copy</v-icon>
+                    <v-icon small class="text--secondary">mdi-content-copy</v-icon>
                   </v-btn>
                 </template>
                 Copy address
