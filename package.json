@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "rm -rf dist/js && rm -rf dist/css && vue-cli-service build --no-clean",
+    "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
@@ -14,7 +14,7 @@
     "@sentry/integrations": "^5.27.6",
     "@taquito/beacon-wallet": "^11.0.2",
     "@taquito/taquito": "^11.0.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.4",
     "bignumber.js": "^9.0.1",
     "bs58check": "^2.1.2",
     "codemirror": "^5.58.2",
@@ -27,7 +27,7 @@
     "is-ipfs": "^1.0.3",
     "json-view": "^0.4.0",
     "null": "^2.0.0",
-    "redoc": "^2.0.0-rc.45",
+    "redoc": "^2.0.0-rc.65",
     "v-clipboard": "^2.2.2",
     "vue": "^2.6.10",
     "vue-codemirror": "^4.0.6",
@@ -50,7 +50,7 @@
     "babel-eslint": "^10.1.0",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
-    "sass": "^1.26.3",
+    "sass": "~1.32.6",
     "sass-loader": "^8.0.2",
     "vue-cli-plugin-vuetify": "^2.0.5",
     "vue-template-compiler": "^2.6.10",

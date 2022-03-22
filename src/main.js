@@ -149,8 +149,9 @@ api.getConfig().then(response => {
 
   if (config.GA_ENABLED || config.ga_enabled) {
     Vue.use(VueGtag, {
-      config: { 
-        id: "UA-160856677-1"
+      pageTrackerUseFullPath: true,
+      config: {
+        id: "UA-160856677-1",
       }
     }, router);
   }
