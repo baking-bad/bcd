@@ -13,6 +13,6 @@ jobs:
         node-version: 12.x
     - name: install, lint and build
       run: |
-        yarn
-        yarn lint
-        yarn build
+        npm i
+        npm run lint
+        npm run build

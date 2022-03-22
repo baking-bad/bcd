@@ -1,8 +1,6 @@
 name: Deploy
-on:
-  push:
-    branches:
-      - master
+on: push
+#  push:
 #    tags:
 #      - "*.*.*"
 
@@ -20,8 +18,8 @@ jobs:
           node-version: 12.x
       - name: install deps and build
         run: |
-          yarn
-          yarn build
+          npm install
+          npm run build
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.2
         with:
