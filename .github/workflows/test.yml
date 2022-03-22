@@ -1,9 +1,9 @@
 on: push
-name: Run linter and test build
+name: Test
 
 jobs:
   build:
-    name: Build
+    name: Install deps, lint, and build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
