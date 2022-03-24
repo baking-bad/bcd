@@ -46,7 +46,7 @@ export default {
   methods: {
     init: async function() {
       return initRedoc(
-        `${this.baseURL}/swagger.json`,
+        `${this.baseURL}/v1/swagger.json`,
         this.redocOptions,
         this.$refs["redoc-container"]
       );
@@ -58,7 +58,7 @@ export default {
       const noApiHostname = apiURL.hostname.indexOf('api.') === 0
           ? apiURL.hostname.slice(4)
           : apiURL.hostname;
-      return `${apiURL.protocol}//api.${noApiHostname}${apiURL.pathname}`;
+      return `${apiURL.protocol}//${noApiHostname}`;
     },
     theme() {
       return this.$vuetify.theme.themes[this.$vuetify.theme.isDark ? 'dark' : 'light'];
