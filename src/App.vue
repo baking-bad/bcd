@@ -20,12 +20,10 @@ import WarningSnackbar from "@/components/Snackbar/WarningSnackbar";
 import ErrorSnackbar from "@/components/Snackbar/ErrorSnackbar.vue";
 import SuccessSnackbar from "@/components/Snackbar/SuccessSnackbar.vue";
 import SurveySnackbar from "@/components/Snackbar/SurveySnackbar.vue";
-import DocsSnackbar from "@/components/Snackbar/DocsSnackbar";
 
 export default {
   name: "App",
   components: {
-    DocsSnackbar,
     WarningSnackbar,
     ErrorSnackbar,
     SuccessSnackbar,
