@@ -60,9 +60,7 @@ export class BetterCallApi {
     }
     params.sc = SEARCH_TABS[tab];
     params = Object.assign(params, time)
-    return this.api.get(`/search`, {
-      params: params
-    })
+    return this.api.get(`/search`, { params })
       .then((res) => {
         if (res.status !== 200) {
           throw new RequestFailedError(res);
