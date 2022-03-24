@@ -5,6 +5,7 @@
       <SuccessSnackbar v-if="!!$store.state.success" />
       <WarningSnackbar v-if="!!$store.state.warning" />
       <SurveySnackbar />
+      <DocsSnackbar />
       <router-view></router-view>
       <v-fab-transition v-if="$vuetify.breakpoint.smAndUp">
         <v-btn color="primary" fab fixed bottom right v-show="showToTop" @click="scrollToTop">
@@ -20,10 +21,12 @@ import WarningSnackbar from "@/components/Snackbar/WarningSnackbar";
 import ErrorSnackbar from "@/components/Snackbar/ErrorSnackbar.vue";
 import SuccessSnackbar from "@/components/Snackbar/SuccessSnackbar.vue";
 import SurveySnackbar from "@/components/Snackbar/SurveySnackbar.vue";
+import DocsSnackbar from "@/components/Snackbar/DocsSnackbar";
 
 export default {
   name: "App",
   components: {
+    DocsSnackbar,
     WarningSnackbar,
     ErrorSnackbar,
     SuccessSnackbar,

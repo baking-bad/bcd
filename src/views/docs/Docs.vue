@@ -1,17 +1,17 @@
 <template>
-<div id="docs-wrapper" :class="this.$vuetify.theme.isDark ? 'docs-wrapper_dark' : ''">
-  <div class="fill-height">
-    <v-navigation-drawer floating app permanent width="56" color="canvas" class="main-navigation">
-      <SideNavigation />
-    </v-navigation-drawer>
+  <div id="docs-wrapper" :class="this.$vuetify.theme.isDark ? 'docs-wrapper_dark' : ''">
+    <div class="fill-height">
+      <v-navigation-drawer floating app permanent width="56" color="canvas" class="main-navigation">
+        <SideNavigation />
+      </v-navigation-drawer>
+    </div>
+    <div v-show="isDocsRerendering" class="ma-3">
+      <h2 class="theme-is-changing">Theme is changing...</h2>
+    </div>
+    <v-container v-show="!isDocsRerendering" class="pa-0 ma-0" fluid>
+      <div id="docs" ref="redoc-container"></div>
+    </v-container>
   </div>
-  <div v-show="isDocsRerendering" class="ma-3">
-    <h2 class="theme-is-changing">Theme is changing...</h2>
-  </div>
-  <v-container v-show="!isDocsRerendering" class="pa-0 ma-0" fluid>
-    <div id="docs" ref="redoc-container"></div>
-  </v-container>
-</div>
 </template>
 
 <script>
@@ -46,20 +46,13 @@ export default {
   methods: {
     init: async function() {
       return initRedoc(
-        `${this.baseURL}/v1/swagger.json`,
+        `https://api.better-call.dev/v1/swagger.json`,
         this.redocOptions,
         this.$refs["redoc-container"]
       );
     }
   },
   computed: {
-    baseURL() {
-      const apiURL = new URL(this.config.API_URI);
-      const noApiHostname = apiURL.hostname.indexOf('api.') === 0
-          ? apiURL.hostname.slice(4)
-          : apiURL.hostname;
-      return `${apiURL.protocol}//${noApiHostname}`;
-    },
     theme() {
       return this.$vuetify.theme.themes[this.$vuetify.theme.isDark ? 'dark' : 'light'];
     },
