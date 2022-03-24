@@ -5,7 +5,7 @@
     right
     color="warning darken-1"
     :min-width="250"
-    timeout="-1"
+    :timeout="0"
   >
     <span
       >✌🏻 Please

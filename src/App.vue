@@ -43,7 +43,7 @@ export default {
         easing: "easeInOutCubic"
       });
     }
-  }
+  },
 };
 </script>
 
