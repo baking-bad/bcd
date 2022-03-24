@@ -5,7 +5,6 @@
       <SuccessSnackbar v-if="!!$store.state.success" />
       <WarningSnackbar v-if="!!$store.state.warning" />
       <SurveySnackbar />
-      <DocsSnackbar />
       <router-view></router-view>
       <v-fab-transition v-if="$vuetify.breakpoint.smAndUp">
         <v-btn color="primary" fab fixed bottom right v-show="showToTop" @click="scrollToTop">
@@ -46,7 +45,7 @@ export default {
         easing: "easeInOutCubic"
       });
     }
-  }
+  },
 };
 </script>
 

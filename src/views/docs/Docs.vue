@@ -1,5 +1,6 @@
 <template>
   <div id="docs-wrapper" :class="this.$vuetify.theme.isDark ? 'docs-wrapper_dark' : ''">
+    <DocsSnackbar />
     <div class="fill-height">
       <v-navigation-drawer floating app permanent width="56" color="canvas" class="main-navigation">
         <SideNavigation />
@@ -17,12 +18,14 @@
 <script>
 import SideNavigation from "@/components/SideNavigation.vue";
 import { init as initRedoc } from "redoc/bundles/redoc.standalone.js";
+import DocsSnackbar from "../../components/Snackbar/DocsSnackbar";
 
 const RERENDERING_TIMEOUT = 200;
 
 export default {
   name: "Docs",
   components: {
+    DocsSnackbar,
     SideNavigation,
   },
   mounted() {

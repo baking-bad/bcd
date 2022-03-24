@@ -6,7 +6,7 @@
     right
     color="warning darken-1"
     :min-width="250"
-    :timeout="10000"
+    :timeout="0"
   >
     <span
     >✌🏻 Read:
