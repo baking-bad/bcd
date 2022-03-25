@@ -678,9 +678,13 @@ export default {
             this.model = res.default_model;
             this.show = true;
           })
-          .catch(() => {
-            this.showError('404 Error: This contract most likely has not been called yet.');
-            this.show = false;
+          .catch((err) => {
+            if (newValue === "latest") {
+              this.showError('This contract most likely has not been called yet.');
+              this.show = false;
+            } else {
+              this.showError(err);
+            }
           });
       }
     },
