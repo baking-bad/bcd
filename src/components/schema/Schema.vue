@@ -191,7 +191,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["showError", "showClipboardOK"]),
+    ...mapActions(["showError", "showClipboardOK", "showWarning", "hideError"]),
     stopGettingWallet() {
       if (this.isGettingWalletProgress) {
         this.execution = false;
@@ -651,6 +651,7 @@ export default {
     },
     selectedFillType: function (newValue) {
       this.show = false;
+      this.hideError();
       if (this.isStorage || this.isDeploy) {
         this.api
           .getContractStorageSchema(this.network, this.address, newValue)
@@ -675,12 +676,11 @@ export default {
           .then((res) => {
             if (!res) return;
             this.model = res.default_model;
-          })
-          .catch((err) => {
-            this.showError(err);
-          })
-          .finally(() => {
             this.show = true;
+          })
+          .catch(() => {
+            this.showError('404 Error: This contract most likely has not been called yet.');
+            this.show = false;
           });
       }
     },

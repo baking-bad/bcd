@@ -349,7 +349,7 @@ export class BetterCallApi {
   getContractEntrypointSchema(network, address, entrypoint, fill_type = 'empty') {
     return this.api.get(`/contract/${network}/${address}/entrypoints/schema?fill_type=${fill_type}&entrypoint=${entrypoint}`)
       .then((res) => {
-        if (res.status != 200) {
+        if (res.status !== 200) {
           throw new RequestFailedError(res);
         }
         return res.data
