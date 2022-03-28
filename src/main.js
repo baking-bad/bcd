@@ -9,8 +9,8 @@ import router from '@/router'
 
 import VueGtag from "vue-gtag";
 
-import * as Sentry from "@sentry/browser";
-import { Vue as VueIntegration } from "@sentry/integrations";
+import * as Sentry from "@sentry/vue";
+import { BrowserTracing } from "@sentry/tracing";
 
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { BetterCallApi } from "@/api/bcd.js";
@@ -110,24 +110,6 @@ api.getConfig().then(response => {
     }
   });
 
-  if (process.env.NODE_ENV !== "development" && config.sentry_dsn !== "") {
-    Sentry.init({
-      dsn: config.sentry_dsn,
-      ignoreErrors: [
-        "Don't have an RPC endpoint"
-      ],
-      attachStacktrace: true,
-      integrations: [new VueIntegration({
-        Vue,
-        attachProps: true,
-        tracing: true,
-        tracingOptions: {
-          trackComponents: true,
-        },
-      })],
-    });
-  }
-
   router.addRoutes([
     {
       path: '/@:slug([a-zA-Z0-9_.:-]*)',
@@ -154,6 +136,31 @@ api.getConfig().then(response => {
         id: "UA-160856677-1",
       }
     }, router);
+  }
+
+  if (process.env.NODE_ENV !== "development" && config.sentry_dsn !== "") {
+    Sentry.init({
+      Vue,
+      dsn: "https://4335473a277d494b883a26cce80066e0@newsentry.baking-bad.org/5",
+      integrations: [new BrowserTracing({
+        routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+        tracingOrigins: ["localhost", "better-call.dev"],
+      })],
+      ignoreErrors: [
+        "Don't have an RPC endpoint"
+      ],
+      beforeSend(_, hint) {
+        const error = hint.originalException;
+        if (error && error['status']) {
+          const { status } = error;
+          const isNeededError = Number(status) >= 500 && Number(status) < 600;
+          if (!isNeededError) {
+            return null;
+          }
+        }
+      },
+      attachStacktrace: true,
+    });
   }
 
   const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;

@@ -10,8 +10,8 @@
   "dependencies": {
     "@airgap/beacon-sdk": "^2.3.8",
     "@baking-bad/vjsf": "^1.20.12",
-    "@sentry/browser": "^5.27.6",
-    "@sentry/integrations": "^5.27.6",
+    "@sentry/tracing": "^6.19.2",
+    "@sentry/vue": "^6.19.2",
     "@taquito/beacon-wallet": "^11.0.2",
     "@taquito/taquito": "^11.0.2",
     "axios": "^0.21.4",
