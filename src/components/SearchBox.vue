@@ -325,7 +325,7 @@ export default {
       this._timerId = setTimeout(() => {
         this.isSuggestionsLoading = true;
         this.api
-          .search(text)
+          .search(text, [], 0, [], {}, 0, 6)
           .then((res) => {
             if (seqno === this.seqno) {
               this.suggests = this.getHistoryItems(text);
