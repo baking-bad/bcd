@@ -144,7 +144,7 @@ api.getConfig().then(response => {
       dsn: process.env.VUE_APP_SENTRY_URI,
       integrations: [new BrowserTracing({
         routingInstrumentation: Sentry.vueRouterInstrumentation(router),
-        tracingOrigins: ["localhost", "better-call.dev"],
+        tracingOrigins: ["better-call.dev"],
       })],
       ignoreErrors: [
         "Don't have an RPC endpoint"
