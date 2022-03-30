@@ -284,7 +284,7 @@ export default {
 
       this._timerId = setTimeout(() => {
         this.api
-          .search(text, indices, offset, networks, time, 1)
+          .search(text, indices, offset, networks, time, 1, this.tab)
           .then((res) => {
             if (seqno !== this.seqno || !res) return;
 

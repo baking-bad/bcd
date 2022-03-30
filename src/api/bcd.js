@@ -1,3 +1,5 @@
+import {SEARCH_TABS} from "../constants/searchTabs";
+
 const axios = require('axios').default;
 const maxSize = 10;
 
@@ -40,7 +42,7 @@ export class BetterCallApi {
       })
   }
 
-  search(text, indices = [], offset = 0, networks = [], time = {}, group = 0) {
+  search(text, indices = [], offset = 0, networks = [], time = {}, group = 0, tab = 0) {
     let params = {
       q: text
     }
@@ -56,10 +58,9 @@ export class BetterCallApi {
     if (group >= 0) {  // maybe remove group parameter?
       params.g = 1
     }
+    params.sc = SEARCH_TABS[tab];
     params = Object.assign(params, time)
-    return this.api.get(`/search`, {
-      params: params
-    })
+    return this.api.get(`/search`, { params })
       .then((res) => {
         if (res.status !== 200) {
           throw new RequestFailedError(res);
