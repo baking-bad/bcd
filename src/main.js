@@ -138,10 +138,10 @@ api.getConfig().then(response => {
     }, router);
   }
 
-  if (process.env.NODE_ENV !== "development" && config.sentry_dsn !== "") {
+  if (process.env.VUE_APP_SENTRY_URI) {
     Sentry.init({
       Vue,
-      dsn: "https://4335473a277d494b883a26cce80066e0@newsentry.baking-bad.org/5",
+      dsn: process.env.VUE_APP_SENTRY_URI,
       integrations: [new BrowserTracing({
         routingInstrumentation: Sentry.vueRouterInstrumentation(router),
         tracingOrigins: ["localhost", "better-call.dev"],
@@ -149,13 +149,15 @@ api.getConfig().then(response => {
       ignoreErrors: [
         "Don't have an RPC endpoint"
       ],
-      beforeSend(_, hint) {
-        const error = hint.originalException;
-        if (error && error['status']) {
-          const { status } = error;
-          const isNeededError = Number(status) >= 500 && Number(status) < 600;
-          if (!isNeededError) {
-            return null;
+      beforeSend(errorObj) {
+        const { exception } = errorObj;
+        if (exception && exception.values && exception.values[0]) {
+          const { value } = exception.values[0];
+          const splittedString = value.split('Request failed with status code ');
+          if (splittedString[1]) {
+            const codeNumber = Number(splittedString[1]);
+            const isInRange = codeNumber >= 500 && codeNumber < 600;
+            if (!isInRange) return null;
           }
         }
       },
