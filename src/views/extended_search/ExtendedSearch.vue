@@ -327,18 +327,26 @@ export default {
     isOpgHash() {
       return /^o[1-9A-HJ-NP-Za-km-z]{50}$/.test(this.searchText);
     },
+    clearTotal() {
+      this.suggests = [];
+      this.total = 0;
+      this.cold = true;
+    }
   },
   watch: {
     searchText(val) {
+      if (!val) {
+        this.clearTotal();
+        return;
+      }
+      if (val.length < 3) return;
       if (this._locked || this.initializing) return;
       this._locked = true;
       this.searchText = val ? val.trim() : "";
       if (this.searchText) {
         this.fetchSearchDebounced(this.searchText, ++this.seqno);
       } else {
-        this.suggests = [];
-        this.total = 0;
-        this.cold = true;
+        this.clearTotal();
       }
       this._locked = false;
     },
