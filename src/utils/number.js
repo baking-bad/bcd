@@ -1,21 +1,15 @@
-export const trauncateFractionAndFormat = (parts, digits) => {
-  console.log('parts: ', parts);
-  return parts.map(({ type, value }) => {
-    if (type !== 'fraction' || !value || value.length < digits) {
-      return value;
-    }
+export function roundDownSignificantDigits(number, decimals) {
+  let significantDigits = (parseInt(number.toExponential().split('e-')[1])) || 0;
+  let decimalsUpdated = (decimals || 0) +  significantDigits - 1;
+  decimals = Math.min(decimalsUpdated, number.toString().length);
 
-    let retVal = "";
-    for (let idx = 0, counter = 0; idx < value.length && counter < digits; idx++) {
-      if (value[idx] !== '0') {
-        counter++;
-      }
-      retVal += value[idx];
-    }
-    return retVal;
-  }).reduce((string, part) => string + part);
-};
+  return (Math.floor(number * Math.pow(10, decimals)) / Math.pow(10, decimals));
+}
 
 export const SIFormatter = new Intl.NumberFormat('en', {
-  notation: 'compact'
+  notation: 'compact',
+  minimumFractionDigits: 1,
+  maximumFractionDigits: 3,
+  minimumSignificantDigits: 1,
+  maximumSignificantDigits: 3
 });
