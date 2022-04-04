@@ -103,7 +103,7 @@
           </template>
           <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
         </template>
-        <template v-else-if="searchText == '' || searchText == null">
+        <template v-else-if="searchText == null || searchText.length < 3">
           <v-card flat outlined class="mt-8 pa-8 data">
             <div class="d-flex flex-row justify-start align-center">
               <v-icon size="50">mdi-sort-ascending</v-icon>
@@ -128,7 +128,7 @@
             text="Empty set is also a result, otherwise try a broader query"
           />
         </template>
-        <v-overlay v-else :value="cold" color="data" absolute>
+        <v-overlay v-else-if="loading" :value="cold" color="data" absolute>
           <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
         </v-overlay>
       </div>
@@ -339,8 +339,7 @@ export default {
         this.clearTotal();
         return;
       }
-      if (val.length < 3) return;
-      if (this._locked || this.initializing) return;
+      if (val.length < 3 || this._locked || this.initializing) return;
       this._locked = true;
       this.searchText = val ? val.trim() : "";
       if (this.searchText) {
