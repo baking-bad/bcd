@@ -30,6 +30,7 @@ import VJsf from '@baking-bad/vjsf/lib/VJsf.js';
 import '@baking-bad/vjsf/lib/VJsf.css';
 
 import draggable from 'vuedraggable';
+import {SIFormatter, trauncateFractionAndFormat} from "./utils/number";
 Vue.component('draggable', draggable);
 Vue.component('VJsf', VJsf)
 
@@ -38,7 +39,12 @@ Vue.config.productionTip = false;
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
-Vue.use(Clipboard)
+Vue.use(Clipboard);
+
+Vue.filter('numberToCompactSIFormat', function (value) {
+  const formatted = SIFormatter.formatToParts(Number(value));
+  return trauncateFractionAndFormat(formatted, 4);
+});
 
 Vue.filter('formatDate', function (value) {
   if (value) {
