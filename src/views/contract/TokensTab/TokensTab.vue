@@ -6,7 +6,11 @@
         <TokenHolders class="mt-3" :token="selectedToken" />
       </v-col>
       <v-col cols="4" class="pa-2">
-        <TokensList :network="network" :address="address" :tokensTotal="tokensTotal" @selectedToken="updateSelectedToken"
+        <TokensList
+          :network="network"
+          :address="address"
+          :tokensTotal="tokensTotal"
+          @selectedToken="updateSelectedToken"
         />
       </v-col>
     </v-row>

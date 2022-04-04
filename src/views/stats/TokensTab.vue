@@ -150,7 +150,7 @@ export default {
     },
     right() {
       this.page++;
-      if (this.tokens.length == this.page * PAGE_SIZE) {
+      if (this.tokens.length === this.page * PAGE_SIZE) {
         this.getTokensInfo(this.network, this.selectedVersion);
       }
     }
