@@ -183,6 +183,7 @@ import {
   addHistoryItem,
   removeHistoryItem,
 } from "@/utils/history.js";
+import {SEARCH_TABS} from "../constants/searchTabs";
 
 export default {
   props: {
@@ -325,7 +326,7 @@ export default {
       this._timerId = setTimeout(() => {
         this.isSuggestionsLoading = true;
         this.api
-          .search(text, [], 0, [], {}, 0, 6)
+          .search(text, [], 0, [], {}, 0)
           .then((res) => {
             if (seqno === this.seqno) {
               this.suggests = this.getHistoryItems(text);
@@ -333,7 +334,7 @@ export default {
                 this.suggests.push(...res.items);
               }
               if (this.$gtag) {
-                this.$gtag.pageview(`/suggest?text=${text}`);
+                this.$gtag.pageview(`/suggest?text=${text}&sc=${SEARCH_TABS[6]}`);
               }
             }
           })
