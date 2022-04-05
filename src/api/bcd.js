@@ -1,5 +1,3 @@
-import {SEARCH_TABS} from "../constants/searchTabs";
-
 const axios = require('axios').default;
 const maxSize = 10;
 
