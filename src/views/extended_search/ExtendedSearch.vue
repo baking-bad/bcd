@@ -143,6 +143,7 @@ import SearchFilters from "@/views/extended_search/SearchFilters.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import ResultItem from "@/views/extended_search/ResultItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
+import {SEARCH_TABS} from "../../constants/searchTabs";
 
 export default {
   name: "ExtendedSearch",
@@ -284,7 +285,7 @@ export default {
 
       this._timerId = setTimeout(() => {
         this.api
-          .search(text, indices, offset, networks, time, 1, this.tab)
+          .search(text, indices, offset, networks, time, 1)
           .then((res) => {
             if (seqno !== this.seqno || !res) return;
 
@@ -307,7 +308,7 @@ export default {
             if (text !== this.$route.query.text) {
               this.$router.replace({ query: { text: text } });
               if (this.$gtag) {
-                this.$gtag.pageview(`/search?text=${text}`);
+                this.$gtag.pageview(`/search?text=${text}&sc=${SEARCH_TABS[this.tab]}`);
               }
             }
           })
