@@ -100,3 +100,15 @@ export function round(value, decimals) {
     }
     return parseFloat((value / 10 ** decimals).toFixed(decimals));
 }
+
+export function isKT1Address(val) {
+    return val.startsWith('KT1') && val.length === 36;
+}
+
+export function isTZAddress(val) {
+    return val.startsWith('tz') && val.length === 36;
+}
+
+export function isOperationHash(val) {
+    return val.startsWith('o') && val.length === 51;
+}

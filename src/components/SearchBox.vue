@@ -184,6 +184,7 @@ import {
   removeHistoryItem,
 } from "@/utils/history.js";
 import {SEARCH_TABS} from "../constants/searchTabs";
+import {isKT1Address, isOperationHash, isTZAddress} from "../utils/tz";
 
 export default {
   props: {
@@ -209,7 +210,7 @@ export default {
         return 'focused-searchbar';
       }
       return 'unfocused-searchbar';
-    }
+    },
   },
   methods: {
     ...mapActions(["showError"]),
@@ -287,6 +288,28 @@ export default {
     onEnter(searchText) {
       this.isFocused = true;
 
+      if (isTZAddress(searchText)) {
+        this.$router.push({path: `/mainnet/${searchText}`});
+        return;
+      }
+      if (this.suggests && this.suggests.length) {
+        if (isKT1Address(searchText)) {
+          const firstContractSuggest = this.suggests.find((suggest) => suggest.type === 'contract');
+          if (firstContractSuggest) {
+            const { body } = firstContractSuggest;
+            this.$router.push({path: `/${body.network}/${body.address}`});
+            return;
+          }
+        }
+        if (isOperationHash(searchText)) {
+          const firstOperationSuggest = this.suggests.find((suggest) => suggest.type === 'operation');
+          if (firstOperationSuggest) {
+            const { body } = firstOperationSuggest;
+            this.$router.push({path: `/${body.network}/opg/${body.hash}`});
+            return;
+          }
+        }
+      }
       if (searchText !== null && searchText.length > 2) {
         addHistoryItem({
           value: searchText,
