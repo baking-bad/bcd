@@ -102,13 +102,9 @@ export function round(value, decimals) {
 }
 
 export function isKT1Address(val) {
-    return val.startsWith('KT1') && val.length === 36;
-}
-
-export function isTZAddress(val) {
-    return val.startsWith('tz') && val.length === 36;
+    return /^(KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(val);
 }
 
 export function isOperationHash(val) {
-    return val.startsWith('o') && val.length === 51;
+    return /^o[1-9A-HJ-NP-Za-km-z]{50}$/.test(val);
 }
