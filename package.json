@@ -8,7 +8,7 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "@airgap/beacon-sdk": "^2.3.8",
+    "@airgap/beacon-sdk": "^2.3.11",
     "@baking-bad/vjsf": "^1.20.12",
     "@sentry/browser": "^5.27.6",
     "@sentry/integrations": "^5.27.6",
