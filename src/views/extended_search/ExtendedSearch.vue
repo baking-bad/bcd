@@ -322,12 +322,6 @@ export default {
           });
       }, 500);
     },
-    isAddress() {
-      return /^(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(this.searchText);
-    },
-    isOpgHash() {
-      return /^o[1-9A-HJ-NP-Za-km-z]{50}$/.test(this.searchText);
-    },
     clearTotal() {
       this.suggests = [];
       this.total = 0;

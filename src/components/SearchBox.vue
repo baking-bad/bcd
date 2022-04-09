@@ -184,6 +184,8 @@ import {
   removeHistoryItem,
 } from "@/utils/history.js";
 import {SEARCH_TABS} from "../constants/searchTabs";
+import { isKT1Address, isOperationHash } from "../utils/tz";
+import waitUntil from "async-wait-until";
 
 export default {
   props: {
@@ -197,11 +199,15 @@ export default {
     _locked: false,
     _timerId: null,
     isFocused: false,
+    isSearchCalled: false,
     seqno: 0,
     menuProps: {},
   }),
   created() {
     this.suggests = this.getHistoryItems("");
+  },
+  destroyed() {
+    clearTimeout(this._timerId);
   },
   computed: {
     searchBoxClassName() {
@@ -209,7 +215,7 @@ export default {
         return 'focused-searchbar';
       }
       return 'unfocused-searchbar';
-    }
+    },
   },
   methods: {
     ...mapActions(["showError"]),
@@ -284,14 +290,31 @@ export default {
       }
       return historyItem;
     },
-    onEnter(searchText) {
+    async onEnter(searchText) {
       this.isFocused = true;
 
+      await waitUntil(() => this.isSearchCalled === false);
+      if (isKT1Address(searchText)) {
+        const firstContractSuggest = this.suggests.find((suggest) => suggest.type === 'contract');
+        if (firstContractSuggest) {
+          const { body } = firstContractSuggest;
+          await this.$router.push({path: `/${body.network}/${body.address}`});
+          return;
+        }
+      }
+      if (isOperationHash(searchText)) {
+        const firstOperationSuggest = this.suggests.find((suggest) => suggest.type === 'operation');
+        if (firstOperationSuggest) {
+          const { body } = firstOperationSuggest;
+          await this.$router.push({path: `/${body.network}/opg/${body.hash}`});
+          return;
+        }
+      }
       if (searchText !== null && searchText.length > 2) {
         addHistoryItem({
           value: searchText,
         });
-        this.$router.push({ name: "search", query: { text: searchText } });
+        await this.$router.push({ name: "search", query: { text: searchText } });
       }
     },
     getHistoryItems(searchText) {
@@ -321,6 +344,7 @@ export default {
     fetchSearchDebounced(text, seqno) {
       if (!text || text.length < 3) return;
 
+      this.isSearchCalled = true;
       clearTimeout(this._timerId);
 
       this._timerId = setTimeout(() => {
@@ -344,6 +368,7 @@ export default {
           })
           .finally(() => {
             this.isSuggestionsLoading = false;
+            this.isSearchCalled = false;
           });
       }, 500);
     },
