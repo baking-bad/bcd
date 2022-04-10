@@ -59,7 +59,7 @@ export default {
   },
   computed: {
     isLoading() {
-      return !this.isSpecificLoaded && !this.isTokensLoaded;
+      return !this.isTokensLoaded;
     }
   },
   beforeCreate() {
