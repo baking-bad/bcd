@@ -6,7 +6,8 @@ import './styles';
 
 import store from '@/store'
 import router from '@/router'
-import VueAnalytics from 'vue-analytics'
+
+import VueGtag from "vue-gtag";
 
 import * as Sentry from "@sentry/browser";
 import { Vue as VueIntegration } from "@sentry/integrations";
@@ -76,7 +77,14 @@ Vue.filter('mutez', function (value) {
 
 Vue.filter('bytes', function (value) {
   return `${value} bytes`;
-})
+});
+
+Vue.filter('snakeToCamel', (str) => {
+  if (!(/[_-]/).test(str)) return str;
+
+  return str.toLowerCase()
+                          .replace(/([-_])([a-z])/g, (_match, _p1, p2) => p2.toUpperCase());
+});
 
 let config = {
   API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
@@ -102,9 +110,13 @@ api.getConfig().then(response => {
     }
   });
 
-  if (config.sentry_dsn !== "") {
+  if (process.env.NODE_ENV !== "development" && config.sentry_dsn !== "") {
     Sentry.init({
       dsn: config.sentry_dsn,
+      ignoreErrors: [
+        "Don't have an RPC endpoint"
+      ],
+      attachStacktrace: true,
       integrations: [new VueIntegration({
         Vue,
         attachProps: true,
@@ -136,23 +148,12 @@ api.getConfig().then(response => {
   ]);
 
   if (config.GA_ENABLED || config.ga_enabled) {
-    Vue.use(VueAnalytics, {
-      id: "UA-160856677-1",
-      router,
-      autoTracking: {
-        pageviewTemplate(route) {
-          return {
-            page: route.name,
-            title: document.title,
-            location: window.location.href
-          }
-        }
-      },
-      debug: {
-        enabled: false,
-        sendHitTask: true
+    Vue.use(VueGtag, {
+      pageTrackerUseFullPath: true,
+      config: {
+        id: "UA-160856677-1",
       }
-    });
+    }, router);
   }
 
   const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;

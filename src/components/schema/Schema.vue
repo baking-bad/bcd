@@ -86,6 +86,10 @@ const walletsToIcons = {
   "default": "mdi-alpha-w",
 };
 
+const CORRECT_NETWORK_TYPES = {
+  "hangzhou2net": "hangzhounet",
+}
+
 export default {
   name: "Schema",
   components: {
@@ -127,6 +131,7 @@ export default {
     tezosClientCmdline: null,
     parametersJSON: null,
     isGettingWalletProgress: false,
+    isPermissionGiven: false,
     successText: '',
     settings: {
       source: null,
@@ -186,7 +191,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["showError", "showClipboardOK"]),
+    ...mapActions(["showError", "showClipboardOK", "showWarning", "hideError"]),
     stopGettingWallet() {
       if (this.isGettingWalletProgress) {
         this.execution = false;
@@ -201,7 +206,7 @@ export default {
       this.selectedFillType = val;
     },
     setModel(val) {
-      Vue.set(this, 'model', val);
+      this.model = val;
     },
     setSelectedNetwork(val) {
       this.selectedNetwork = val;
@@ -215,28 +220,52 @@ export default {
     setCmdline(val) {
       this.showCmdline = val;
     },
+    fireEvent(action, category) {
+      if (this.$gtag) {
+        this.$gtag.event(action, {
+          "event_category": category,
+          "event_label": this.$router.currentRoute.fullPath
+        });
+      }
+    },
     simulateActionCallback() {
-      return this.isParameter ? () => this.simulateOperation() : null;
+      return this.isParameter 
+        ? () => {
+          this.fireEvent("Simulate", "interact");
+          this.simulateOperation();
+        }
+        : null;
     },
     showSuccessMessage(text) {
       this.successText = text;
     },
     rawJsonActionCallback() {
       if (this.isParameter) {
-        return () => this.generateParameters(true, true)
+        return () => {
+          this.fireEvent("Raw JSON", "interact");
+          this.generateParameters(true, true);
+        }
       } else if (this.isDeploy) {
         return null;
       }
-      return () => this.prepareContractToFork(true);
+
+      return () => {
+        this.fireEvent("Raw JSON", "fork");
+        this.prepareContractToFork(true);
+      }
     },
     tezosClientActionCallback() {
       return this.isParameter
-          ? () => this.generateParameters(false, true)
+          ? () => {
+            this.fireEvent("Tezos Client", "interact");
+            this.generateParameters(false, true);
+          }
           : null;
     },
     beaconClientActionCallback(isLast) {
       if (this.isParameter) {
         return async () => {
+          this.fireEvent("Beacon Wallet", "interact");
           await this.callContract(isLast);
         }
       } else if (this.isDeploy) {
@@ -246,6 +275,7 @@ export default {
       }
 
       return async () => {
+        this.fireEvent("Tezos Client", "fork");
         await this.fork(isLast);
       }
     },
@@ -379,18 +409,19 @@ export default {
           rawJSON ? "" : "michelson"
         )
         .then((res) => {
+          const resJSON = JSON.parse(res);
           if (rawJSON) {
-            this.parametersJSON = res;
+            this.parametersJSON = resJSON;
             this.showRawJSON = show;
           } else {
-            const arg = String(res).replace(/\n|\s+/gm, " ");
+            const arg = res.replace(/^"|"$|\\n/gm, "");
             const amount = this.settings.amount || 0;
             const src = this.settings.source || "%YOUR_ADDRESS%";
             const entrypoint = this.name;
-            this.tezosClientCmdline = `transfer ${amount} from ${src} to ${this.address} --entrypoint '${entrypoint}' --arg '${arg}'`;
+            this.tezosClientCmdline = `transfer ${amount} from ${src} to ${this.address} --entrypoint "${entrypoint}" --arg "${arg}"`;
             this.setCmdline(show);
           }
-          return res;
+          return resJSON;
         })
         .catch((err) => {
           this.showError(err.response ? err.response.data.message : err);
@@ -401,7 +432,6 @@ export default {
       if (this.execution) return;
 
       this.execution = true;
-
       this.api
         .getContractEntrypointTrace(
           this.network,
@@ -436,6 +466,7 @@ export default {
       this.wallet = new DAppClient({
         name: "Better Call Dev",
         eventHandlers: this.getWalletEventHandlers(),
+        preferredNetwork: this.selectedNetwork in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[this.selectedNetwork] : this.selectedNetwork,
       });
       return this.wallet;
     },
@@ -447,19 +478,31 @@ export default {
       if (!isLast) {
         await this.wallet.clearActiveAccount();
       } else {
-        this.wallet.setActiveAccount(this.getLastUsedAccount());
+        await this.wallet.setActiveAccount(this.getLastUsedAccount());
       }
-      await this.wallet.requestPermissions({ network: { type, rpcUrl } });
-      this.isGettingWalletProgress = false;
+      try {
+        await this.wallet.requestPermissions({
+          network: {
+            type: type in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[type] : type,
+            rpcUrl
+          }
+        });
+        this.isPermissionGiven = true;
+      } finally {
+        this.isGettingWalletProgress = false;
+      }
     },
     async getClient(isLast) {
       let client;
       if (this.wallet && !isLast) {
+        this.isPermissionGiven = false;
         await this.getNewPermissions(isLast);
         client = this.wallet ? this.wallet : await this.getWallet();
       } else {
         client = this.wallet ? this.wallet : await this.getWallet();
-        await this.getNewPermissions(isLast);
+        if (!this.isPermissionGiven) {
+          await this.getNewPermissions(isLast);
+        }
       }
       return client;
     },
@@ -477,7 +520,7 @@ export default {
             amount: String(parseInt(this.settings.amount || "0")),
             parameters: {
               entrypoint: this.name,
-              value: JSON.parse(JSON.stringify(parameter))
+              value: parameter
             },
           }]
         });
@@ -511,6 +554,8 @@ export default {
     },
     async fork(isLast) {
       if (this.execution) return;
+
+      
 
       this.execution = true;
       try {
@@ -606,6 +651,7 @@ export default {
     },
     selectedFillType: function (newValue) {
       this.show = false;
+      this.hideError();
       if (this.isStorage || this.isDeploy) {
         this.api
           .getContractStorageSchema(this.network, this.address, newValue)
@@ -630,12 +676,15 @@ export default {
           .then((res) => {
             if (!res) return;
             this.model = res.default_model;
+            this.show = true;
           })
           .catch((err) => {
-            this.showError(err);
-          })
-          .finally(() => {
-            this.show = true;
+            if (newValue === "latest") {
+              this.showError('This contract most likely has not been called yet.');
+              this.show = false;
+            } else {
+              this.showError(err);
+            }
           });
       }
     },

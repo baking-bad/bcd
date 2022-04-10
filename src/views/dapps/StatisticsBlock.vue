@@ -4,10 +4,9 @@
       <h3>Statistics</h3>
     </v-col>
     <v-col cols="10" class="d-flex justify-end">
-      <v-skeleton-loader :loading="loading" type="actions">
         <v-btn-toggle v-model="selectedPeriod" color="primary" dense mandatory>
           <v-btn
-            :disabled="loading || loadingSeries || loadingSummary"
+            :disabled="loadingSeries || loadingSummary"
             small
             :value="period"
             v-for="(text, period) in {
@@ -19,10 +18,9 @@
             :key="period"
           >{{ text }}</v-btn>
         </v-btn-toggle>
-      </v-skeleton-loader>
     </v-col>
     <v-col cols="6">
-      <v-skeleton-loader :loading="loading || loadingSeries || loadingSummary" type="image">
+      <v-skeleton-loader :loading="loadingSeries || loadingSummary" type="image">
         <v-card flat outlined>
           <v-card-text class="data pa-0">
             <ColumnChart
@@ -35,7 +33,7 @@
       </v-skeleton-loader>
     </v-col>
     <v-col cols="6">
-      <v-skeleton-loader :loading="loading || loadingSeries || loadingSummary" type="image">
+      <v-skeleton-loader :loading="loadingSeries || loadingSummary" type="image">
         <v-card flat outlined>
           <v-card-text class="data pa-0">
             <ColumnChart
@@ -66,7 +64,7 @@ export default {
   },
   computed: {
     contracts() {
-      if (!this.dapp) return [];
+      if (!this.dapp || !this.dapp.contracts) return [];
       let contracts = [];
       this.dapp.contracts.forEach((x) => contracts.push(x.address));
       return contracts;
@@ -83,10 +81,6 @@ export default {
     selectedPeriod: "day",
     summary: null,
   }),
-  mounted() {
-    this.getSeries(this.selectedPeriod);
-    this.getGeneralStats();
-  },
   methods: {
     ...mapActions(["showError"]),
     getSeries(period) {
@@ -134,6 +128,12 @@ export default {
     selectedPeriod: function (newValue) {
       this.getSeries(newValue);
     },
+    contracts: function(newValue) {
+      if (newValue && newValue.length > 0) {
+        this.getSeries(this.selectedPeriod);
+        this.getGeneralStats();
+      }
+    }
   },
 };
 </script>

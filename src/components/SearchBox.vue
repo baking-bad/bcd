@@ -45,11 +45,10 @@
         <v-icon v-else-if="item.type === 'token_metadata'"
           >mdi-circle-multiple-outline</v-icon
         >
-        <v-icon v-else-if="item.type === 'tzip'"
+        <v-icon v-else-if="item.type === 'contract_metadata'"
           >mdi-puzzle-outline</v-icon
         >
         <v-icon v-else-if="item.type === 'recent'">mdi-history</v-icon>
-        <v-icon v-else-if="item.type === 'tezos_domain'">mdi-web</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title>
@@ -88,7 +87,7 @@
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.key }}</span>
           </template>
-          <template v-else-if="item.type === 'tzip'">
+          <template v-else-if="item.type === 'contract_metadata'">
             <span class="text--secondary hash">Metadata</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span>{{ item.body.name }}</span>
@@ -98,12 +97,7 @@
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.name">{{ item.body.name }}</span>
             <span v-else v-html="helpers.shortcut(item.value)"></span>
-          </template>
-          <template v-else-if="item.type === 'tezos_domain'">
-            <span class="text--secondary hash">Domains</span>
-            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
-            <span class="hash">{{ item.body.name }}</span>
-          </template>
+          </template>         
           <template v-if="item.type === 'recent'">
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
             <span
@@ -189,6 +183,9 @@ import {
   addHistoryItem,
   removeHistoryItem,
 } from "@/utils/history.js";
+import {SEARCH_TABS} from "../constants/searchTabs";
+import { isKT1Address, isOperationHash } from "../utils/tz";
+import waitUntil from "async-wait-until";
 
 export default {
   props: {
@@ -202,11 +199,15 @@ export default {
     _locked: false,
     _timerId: null,
     isFocused: false,
+    isSearchCalled: false,
     seqno: 0,
     menuProps: {},
   }),
   created() {
     this.suggests = this.getHistoryItems("");
+  },
+  destroyed() {
+    clearTimeout(this._timerId);
   },
   computed: {
     searchBoxClassName() {
@@ -214,7 +215,7 @@ export default {
         return 'focused-searchbar';
       }
       return 'unfocused-searchbar';
-    }
+    },
   },
   methods: {
     ...mapActions(["showError"]),
@@ -240,8 +241,7 @@ export default {
     isShouldSentToValue(value) {
       return (
         (
-            this.isModelsArrayInclude("contract") ||
-            this.isModelsArrayInclude("tezos_domain")
+            this.isModelsArrayInclude("contract")
         ) &&
         checkAddress(value)
       );
@@ -262,6 +262,8 @@ export default {
       } else if (this.isModelsArrayInclude("token_metadata") && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/tokens?token_id=${this.model.body.token_id}`);
       } else if (this.isModelsArrayInclude("tzip") && checkAddress(value)) {
+        this.pushTo(`/${network}/${value}/tokens`);
+      } else if (this.isModelsArrayInclude("contract_metadata") && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/metadata`);
       } else if (this.model.type === "recent") {
         this.$router.push({ name: "search", query: { text: value } });
@@ -290,14 +292,31 @@ export default {
       }
       return historyItem;
     },
-    onEnter(searchText) {
+    async onEnter(searchText) {
       this.isFocused = true;
 
+      await waitUntil(() => this.isSearchCalled === false);
+      if (isKT1Address(searchText)) {
+        const firstContractSuggest = this.suggests.find((suggest) => suggest.type === 'contract');
+        if (firstContractSuggest) {
+          const { body } = firstContractSuggest;
+          await this.$router.push({path: `/${body.network}/${body.address}`});
+          return;
+        }
+      }
+      if (isOperationHash(searchText)) {
+        const firstOperationSuggest = this.suggests.find((suggest) => suggest.type === 'operation');
+        if (firstOperationSuggest) {
+          const { body } = firstOperationSuggest;
+          await this.$router.push({path: `/${body.network}/opg/${body.hash}`});
+          return;
+        }
+      }
       if (searchText !== null && searchText.length > 2) {
         addHistoryItem({
           value: searchText,
         });
-        this.$router.push({ name: "search", query: { text: searchText } });
+        await this.$router.push({ name: "search", query: { text: searchText } });
       }
     },
     getHistoryItems(searchText) {
@@ -327,17 +346,21 @@ export default {
     fetchSearchDebounced(text, seqno) {
       if (!text || text.length < 3) return;
 
+      this.isSearchCalled = true;
       clearTimeout(this._timerId);
 
       this._timerId = setTimeout(() => {
         this.isSuggestionsLoading = true;
         this.api
-          .search(text)
+          .search(text, [], 0, [], {}, 0)
           .then((res) => {
             if (seqno === this.seqno) {
               this.suggests = this.getHistoryItems(text);
               if (res && res.items) {
                 this.suggests.push(...res.items);
+              }
+              if (this.$gtag) {
+                this.$gtag.pageview(`/suggest?text=${text}&sc=${SEARCH_TABS[6]}`);
               }
             }
           })
@@ -347,8 +370,9 @@ export default {
           })
           .finally(() => {
             this.isSuggestionsLoading = false;
+            this.isSearchCalled = false;
           });
-      }, 100);
+      }, 500);
     },
     onRemoveClick(text) {
       removeHistoryItem(text);

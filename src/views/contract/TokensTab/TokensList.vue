@@ -37,6 +37,7 @@
       <v-pagination
         v-model="tokensPage"
         :length="tokensPageCount"
+        :total-visible="5"
         v-if="tokensTotal > itemsPerPage"
       ></v-pagination>
     </div>

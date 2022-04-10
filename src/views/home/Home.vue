@@ -20,6 +20,7 @@
             </v-col>
             <v-col cols="12" align="center">
               <v-btn
+                v-if="!config.sandbox_mode"
                 large
                 depressed
                 color="border"
@@ -37,6 +38,7 @@
                 >Advanced Search</v-btn
               >
               <v-btn
+                v-if="!config.sandbox_mode"
                 large
                 depressed
                 color="border"

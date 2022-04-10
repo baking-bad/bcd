@@ -16,6 +16,9 @@ export function applyStyles(node) {
         if (node.prim === "contract") {
             node["x-display"] = "custom-contract";
         }
+        if (node.prim === "nat" || node.prim === "mutez") {
+            node["x-display"] = "custom-nat"
+        }
     }
     if (node.properties) {
         for (var prop in node.properties) {

@@ -244,6 +244,15 @@ export default {
           if (!this.isContract) {
             this.contract = res;
           }
+          if (res.balance !== undefined) {
+            this.balance = res.balance || 0;
+            return;
+          }
+
+          return this.rpc.getTezosBalance(this.network, 'head', this.address);
+        })
+        .then((res) => {
+          if (!res) return;
           this.balance = res.balance || 0;
         })
         .catch((err) => {
