@@ -44,9 +44,11 @@
 </template>
 
 <script>
-import { getQuery, isQuery } from "../../../utils/url";
+import {getQuery, isQuery, setQuery} from "../../../utils/url";
+import {mapActions} from "vuex";
 
 const TOKEN_ID_QUERY = 'token_id';
+const SESSION_STORAGE_TOKEN_KEY = `START_UP_TOKEN_ID`;
 
 export default {
   name: "TokensList",
@@ -60,30 +62,37 @@ export default {
       return !this.isSpecificLoaded && !this.isTokensLoaded;
     }
   },
+  beforeCreate() {
+    if (sessionStorage.getItem(SESSION_STORAGE_TOKEN_KEY)) {
+      sessionStorage.removeItem(SESSION_STORAGE_TOKEN_KEY);
+    }
+    const startUpTokenID = getQuery(TOKEN_ID_QUERY);
+    if (startUpTokenID) {
+      sessionStorage.setItem(SESSION_STORAGE_TOKEN_KEY, startUpTokenID);
+    }
+  },
   methods: {
-    getTokens(offset, size) {
+    ...mapActions(["showError"]),
+    async getTokens(offset, size) {
       this.isTokensLoaded = false;
+      const startUpTokenID = sessionStorage.getItem(SESSION_STORAGE_TOKEN_KEY);
       this.api
         .getContractTokens(this.network, this.address, offset, size)
-        .then((res) => {
+        .then(async (res) => {
           if (!res) return;
           if (this.tokensPage === 1) {
-            const token_id = getQuery(TOKEN_ID_QUERY);
-            if (isQuery(TOKEN_ID_QUERY) && !this.tokens.length) {
-              this.getSpecificToken(token_id).then((res) => {
-                this.tokens = this.tokens.filter(token => token.token_id !== Number(token_id)).concat(res);
-              });
-            } else if (isQuery(TOKEN_ID_QUERY) && this.tokens.length) {
-              this.tokens = this.tokens.filter(token => token.token_id !== Number(token_id)).concat(res);
+            if (startUpTokenID) {
+              this.isSpecificLoaded = false;
+              const specificToken = await this.getSpecificToken(startUpTokenID);
+              this.isSpecificLoaded = true;
+              this.tokens = specificToken.concat(res.filter(token => token.token_id !== Number(startUpTokenID)));
             } else {
               this.tokens = res;
             }
           } else {
-            this.tokens = res.filter(token => token.token_id !== Number(getQuery(TOKEN_ID_QUERY)));
+            this.tokens = res.filter(token => token.token_id !== Number(startUpTokenID));
           }
-          if (this.tokensPage === 1 && !isQuery(TOKEN_ID_QUERY) || this.tokensPage > 1) {
-            this.selectedToken = this.tokens[0];
-          }
+          this.selectedToken = this.tokens[0];
         })
         .catch((err) => {
           this.showError(err);
@@ -93,18 +102,8 @@ export default {
         })
     },
     getSpecificToken(token_id) {
-      this.isSpecificLoaded = false;
       return this.api
-        .getContractToken(this.network, this.address, token_id)
-        .then((res) => {
-          if (res && res[0]) {
-            this.tokens = res;
-            this.selectedToken = res[0];
-          }
-        })
-        .finally(() => {
-          this.isSpecificLoaded = true;
-        })
+        .getContractToken(this.network, this.address, token_id);
     },
     getNextTokensAmount() {
       const minusator = isQuery(TOKEN_ID_QUERY) && this.tokensPage === 1 ? 1 : 0;
@@ -114,15 +113,8 @@ export default {
   watch: {
     tokensPage: {
       handler(newVal) {
-        if (newVal === 1 && isQuery(TOKEN_ID_QUERY)) {
-          const token_id = getQuery(TOKEN_ID_QUERY);
-          this.getSpecificToken(token_id)
-            .then(() => {
-              this.getTokens((this.tokensPage - 1) * this.itemsPerPage, this.getNextTokensAmount());
-            })
-        } else {
-          this.getTokens((newVal - 1) * this.itemsPerPage, this.getNextTokensAmount());
-        }
+        this.tokens = [];
+        this.getTokens((newVal - 1) * this.itemsPerPage, this.getNextTokensAmount());
       },
       immediate: true
     },
@@ -134,7 +126,8 @@ export default {
     },
     selectedToken: {
       handler(newVal) {
-        this.$emit('selectedToken', newVal)
+        this.$emit('selectedToken', newVal);
+        setQuery(TOKEN_ID_QUERY, newVal.token_id);
       },
       deep: true,
       immediate: true
