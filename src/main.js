@@ -30,7 +30,9 @@ import VJsf from '@baking-bad/vjsf/lib/VJsf.js';
 import '@baking-bad/vjsf/lib/VJsf.css';
 
 import draggable from 'vuedraggable';
+import {roundDownSignificantDigits, SIFormatter} from "./utils/number";
 import {SEARCH_TABS} from "./constants/searchTabs";
+
 Vue.component('draggable', draggable);
 Vue.component('VJsf', VJsf)
 
@@ -39,7 +41,11 @@ Vue.config.productionTip = false;
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
-Vue.use(Clipboard)
+Vue.use(Clipboard);
+
+Vue.filter('numberToCompactSIFormat', function (value) {
+  return SIFormatter.format(roundDownSignificantDigits(Number(value)));
+});
 
 Vue.filter('formatDate', function (value) {
   if (value) {
