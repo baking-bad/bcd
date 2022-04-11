@@ -7,7 +7,7 @@
           mandatory
         >
           <template v-for="(item, i) in tokens">
-            <v-divider :key="`${i}-divider`" v-if="i != 0" />
+            <v-divider :key="`${i}-divider`" v-if="i !== 0" />
             <v-list-item @click="selectedToken = item" :key="`${item.contract}:${item.token_id}`" class="token-card">
               <v-list-item-content>
                 <v-list-item-title>
@@ -30,6 +30,7 @@
       <v-pagination
         v-model="tokensPage"
         :length="tokensPageCount"
+        :total-visible="5"
         v-if="tokensTotal > itemsPerPage"
       ></v-pagination>
     </div>

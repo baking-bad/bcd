@@ -103,7 +103,7 @@
           </template>
           <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
         </template>
-        <template v-else-if="searchText == '' || searchText == null">
+        <template v-else-if="searchText == null || searchText.length < 3">
           <v-card flat outlined class="mt-8 pa-8 data">
             <div class="d-flex flex-row justify-start align-center">
               <v-icon size="50">mdi-sort-ascending</v-icon>
@@ -128,7 +128,7 @@
             text="Empty set is also a result, otherwise try a broader query"
           />
         </template>
-        <v-overlay v-else :value="cold" color="data" absolute>
+        <v-overlay v-else-if="loading" :value="cold" color="data" absolute>
           <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
         </v-overlay>
       </div>
@@ -143,6 +143,7 @@ import SearchFilters from "@/views/extended_search/SearchFilters.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import ResultItem from "@/views/extended_search/ResultItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
+import {SEARCH_TABS} from "../../constants/searchTabs";
 
 export default {
   name: "ExtendedSearch",
@@ -284,7 +285,7 @@ export default {
 
       this._timerId = setTimeout(() => {
         this.api
-          .search(text, indices, offset, networks, time, 1, this.tab)
+          .search(text, indices, offset, networks, time, 1)
           .then((res) => {
             if (seqno !== this.seqno || !res) return;
 
@@ -306,9 +307,9 @@ export default {
 
             if (text !== this.$route.query.text) {
               this.$router.replace({ query: { text: text } });
-              if (this.$gtag) {
-                this.$gtag.pageview(`/search?text=${text}`);
-              }
+            }
+            if (this.$gtag) {
+              this.$gtag.pageview(`/search?text=${text}&sc=${SEARCH_TABS[this.tab]}`);
             }
           })
           .catch((err) => {
@@ -321,24 +322,25 @@ export default {
           });
       }, 500);
     },
-    isAddress() {
-      return /^(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(this.searchText);
-    },
-    isOpgHash() {
-      return /^o[1-9A-HJ-NP-Za-km-z]{50}$/.test(this.searchText);
-    },
+    clearTotal() {
+      this.suggests = [];
+      this.total = 0;
+      this.cold = true;
+    }
   },
   watch: {
     searchText(val) {
-      if (this._locked || this.initializing) return;
+      if (!val) {
+        this.clearTotal();
+        return;
+      }
+      if (val.length < 3 || this._locked || this.initializing) return;
       this._locked = true;
       this.searchText = val ? val.trim() : "";
       if (this.searchText) {
         this.fetchSearchDebounced(this.searchText, ++this.seqno);
       } else {
-        this.suggests = [];
-        this.total = 0;
-        this.cold = true;
+        this.clearTotal();
       }
       this._locked = false;
     },

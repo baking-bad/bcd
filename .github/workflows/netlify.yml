@@ -20,6 +20,8 @@ jobs:
         run: |
           npm install
           npm run build
+        env:
+          VUE_APP_SENTRY_URI: ${{ secrets.VUE_APP_SENTRY_URI }}
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.2
         with:

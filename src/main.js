@@ -31,6 +31,8 @@ import '@baking-bad/vjsf/lib/VJsf.css';
 
 import draggable from 'vuedraggable';
 import {roundDownSignificantDigits, SIFormatter} from "./utils/number";
+import {SEARCH_TABS} from "./constants/searchTabs";
+
 Vue.component('draggable', draggable);
 Vue.component('VJsf', VJsf)
 
@@ -140,7 +142,7 @@ api.getConfig().then(response => {
       beforeEnter: async function (to, from, next) {
         return await api.getContractBySlug(to.params.slug)
           .then(res => next(`/${res.network}/${res.address}`))
-          .catch(() => next(`/search?text=${to.params.slug}`))
+          .catch(() => next(`/search?text=${to.params.slug}&sc=${SEARCH_TABS[7]}`))
       }
     },
     {

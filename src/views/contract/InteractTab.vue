@@ -9,7 +9,7 @@
             type="parameter"
             v-if="selectedItem"
             v-model="model"
-            :schema="selectedItem.schema"
+            :schema="addValidatorsToSchema(selectedItem.schema)"
             :name="selectedItem.name"
             :network="network"
             :address="address"
@@ -94,6 +94,23 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
+    addValidatorsToSchema(schema) {
+      const modifiedSchema = Object.assign({}, schema);
+      const { properties } = modifiedSchema;
+      if (properties) {
+        Object.keys(properties).forEach(propertyKey => {
+          if (properties[propertyKey].prim === "bytes") {
+            properties[propertyKey].pattern = "^[0-9a-fA-F]+$"
+            properties[propertyKey]["x-options"] = {
+              "messages": {
+                "pattern": "String must be HEX"
+              }
+            };
+          }
+        });
+      }
+      return modifiedSchema;
+    },
     getEntrypoints(selectedName = undefined) {
       this.loading = true;
       this.api
