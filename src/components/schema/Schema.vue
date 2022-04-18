@@ -77,6 +77,7 @@ import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
 import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
 import { DAppClient, TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@airgap/beacon-sdk'
+import TZKTBlockExplorer from "../../utils/tzkt";
 
 const walletsToIcons = {
   "Temple - Tezos Wallet (ex. Thanos)": "mdi-alpha-t",
@@ -191,7 +192,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["showError", "showClipboardOK"]),
+    ...mapActions(["showError", "showClipboardOK", "showWarning", "hideError"]),
     stopGettingWallet() {
       if (this.isGettingWalletProgress) {
         this.execution = false;
@@ -467,6 +468,7 @@ export default {
         name: "Better Call Dev",
         eventHandlers: this.getWalletEventHandlers(),
         preferredNetwork: this.selectedNetwork in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[this.selectedNetwork] : this.selectedNetwork,
+        blockExplorer: new TZKTBlockExplorer(),
       });
       return this.wallet;
     },
@@ -651,6 +653,7 @@ export default {
     },
     selectedFillType: function (newValue) {
       this.show = false;
+      this.hideError();
       if (this.isStorage || this.isDeploy) {
         this.api
           .getContractStorageSchema(this.network, this.address, newValue)
@@ -675,12 +678,15 @@ export default {
           .then((res) => {
             if (!res) return;
             this.model = res.default_model;
+            this.show = true;
           })
           .catch((err) => {
-            this.showError(err);
-          })
-          .finally(() => {
-            this.show = true;
+            if (newValue === "latest") {
+              this.showError('This contract most likely has not been called yet.');
+              this.show = false;
+            } else {
+              this.showError(err);
+            }
           });
       }
     },

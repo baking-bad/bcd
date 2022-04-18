@@ -183,6 +183,9 @@ import {
   addHistoryItem,
   removeHistoryItem,
 } from "@/utils/history.js";
+import {SEARCH_TABS} from "../constants/searchTabs";
+import { isKT1Address, isOperationHash } from "../utils/tz";
+import waitUntil from "async-wait-until";
 
 export default {
   props: {
@@ -196,11 +199,15 @@ export default {
     _locked: false,
     _timerId: null,
     isFocused: false,
+    isSearchCalled: false,
     seqno: 0,
     menuProps: {},
   }),
   created() {
     this.suggests = this.getHistoryItems("");
+  },
+  destroyed() {
+    clearTimeout(this._timerId);
   },
   computed: {
     searchBoxClassName() {
@@ -208,7 +215,7 @@ export default {
         return 'focused-searchbar';
       }
       return 'unfocused-searchbar';
-    }
+    },
   },
   methods: {
     ...mapActions(["showError"]),
@@ -253,6 +260,8 @@ export default {
         const ptr = this.model.body.ptr;
         this.pushTo(`/${network}/big_map/${ptr}/${value}`);
       } else if (this.isModelsArrayInclude("token_metadata") && checkAddress(value)) {
+        this.pushTo(`/${network}/${value}/tokens?token_id=${this.model.body.token_id}`);
+      } else if (this.isModelsArrayInclude("tzip") && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/tokens`);
       } else if (this.isModelsArrayInclude("contract_metadata") && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/metadata`);
@@ -283,14 +292,31 @@ export default {
       }
       return historyItem;
     },
-    onEnter(searchText) {
+    async onEnter(searchText) {
       this.isFocused = true;
 
+      await waitUntil(() => this.isSearchCalled === false);
+      if (isKT1Address(searchText)) {
+        const firstContractSuggest = this.suggests.find((suggest) => suggest.type === 'contract');
+        if (firstContractSuggest) {
+          const { body } = firstContractSuggest;
+          await this.$router.push({path: `/${body.network}/${body.address}`});
+          return;
+        }
+      }
+      if (isOperationHash(searchText)) {
+        const firstOperationSuggest = this.suggests.find((suggest) => suggest.type === 'operation');
+        if (firstOperationSuggest) {
+          const { body } = firstOperationSuggest;
+          await this.$router.push({path: `/${body.network}/opg/${body.hash}`});
+          return;
+        }
+      }
       if (searchText !== null && searchText.length > 2) {
         addHistoryItem({
           value: searchText,
         });
-        this.$router.push({ name: "search", query: { text: searchText } });
+        await this.$router.push({ name: "search", query: { text: searchText } });
       }
     },
     getHistoryItems(searchText) {
@@ -320,12 +346,13 @@ export default {
     fetchSearchDebounced(text, seqno) {
       if (!text || text.length < 3) return;
 
+      this.isSearchCalled = true;
       clearTimeout(this._timerId);
 
       this._timerId = setTimeout(() => {
         this.isSuggestionsLoading = true;
         this.api
-          .search(text)
+          .search(text, [], 0, [], {}, 0)
           .then((res) => {
             if (seqno === this.seqno) {
               this.suggests = this.getHistoryItems(text);
@@ -333,7 +360,7 @@ export default {
                 this.suggests.push(...res.items);
               }
               if (this.$gtag) {
-                this.$gtag.pageview(`/suggest?text=${text}`);
+                this.$gtag.pageview(`/suggest?text=${text}&sc=${SEARCH_TABS[6]}`);
               }
             }
           })
@@ -343,6 +370,7 @@ export default {
           })
           .finally(() => {
             this.isSuggestionsLoading = false;
+            this.isSearchCalled = false;
           });
       }, 500);
     },

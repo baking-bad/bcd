@@ -42,5 +42,9 @@ https://baking-bad.org/blog/2020/06/10/better-call-dev-strikes-again/
 * Slack: https://tezos-dev.slack.com/archives/CV5NX7F2L
 * Discord: https://discord.gg/aG8XKuwsQd
 
+## Other
+node-ipc is overriden in the package.json, because it contains malicious code.
+Read more: https://www.lunasec.io/docs/blog/node-ipc-protestware/
+
 ## About
 Project is supported by [Tezos Foundation](https://tezos.foundation/)

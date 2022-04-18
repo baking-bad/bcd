@@ -32,7 +32,6 @@
           <v-chip
             small
             class="caption"
-            :to="`/search?text=${tags.tag}`"
             target="_blank"
             >{{ tags.text }}</v-chip
           >
