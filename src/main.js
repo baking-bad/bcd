@@ -117,7 +117,7 @@ api.getConfig().then(response => {
     }
   });
 
-  router.beforeEach((to, from, next) => {
+  router.beforeEach((_to, _from, next) => {
     store.dispatch('hideError');
     next();
   });
