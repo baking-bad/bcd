@@ -227,12 +227,12 @@ export default {
       this.menuProps = {};
       this.model = null;
     },
-    pushTo(path) {
+    pushTo(path, SEARCH_TAB) {
       if (this.$route.path !== `${path}/operations`) {
         this.$router.push({
           path,
           query: {
-            sc: SEARCH_TABS[6],
+            sc: SEARCH_TABS[SEARCH_TAB || 6],
           }
         });
       }
@@ -258,9 +258,9 @@ export default {
 
       addHistoryItem(this.buildHistoryItem(this.model, value || this.searchText));
       if (this.isModelsArrayInclude("operation") && checkOperation(value)) {
-        this.pushTo(`/${network}/opg/${value}`);
+        this.pushTo(`/${network}/opg/${value}`, 2);
       } else if (this.isShouldSentToValue(value)) {
-        this.pushTo(`/${network}/${value}`);
+        this.pushTo(`/${network}/${value}`, 1);
       } else if (this.isModelsArrayInclude("bigmapdiff") && checkKeyHash(value)) {
         const ptr = this.model.body.ptr;
         this.pushTo(`/${network}/big_map/${ptr}/${value}`);
