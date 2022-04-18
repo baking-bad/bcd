@@ -2,26 +2,6 @@
   <div>
     <v-btn
       icon
-      class="text--secondary mr-2"
-      href="tg://resolve?domain=baking_bad_chat"
-      target="_blank"
-      rel="nofollow noopener"
-      @click="sendSocialGtag('Telegram')"
-    >
-      <v-icon>mdi-telegram</v-icon>
-    </v-btn>
-    <v-btn
-      icon
-      class="text--secondary mr-2"
-      href="https://twitter.com/TezosBakingBad"
-      target="_blank"
-      rel="nofollow noopener"
-      @click="sendSocialGtag('Twitter')"
-    >
-      <v-icon>mdi-twitter</v-icon>
-    </v-btn>
-    <v-btn
-      icon
       class="text--secondary"
       href="https://github.com/baking-bad/bcd"
       target="_blank"
