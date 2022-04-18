@@ -229,7 +229,12 @@ export default {
     },
     pushTo(path) {
       if (this.$route.path !== `${path}/operations`) {
-        this.$router.push({ path });
+        this.$router.push({
+          path,
+          query: {
+            sc: SEARCH_TABS[6],
+          }
+        });
       }
       this.$nextTick(() => {
         this.model = null;
@@ -356,9 +361,6 @@ export default {
               this.suggests = this.getHistoryItems(text);
               if (res && res.items) {
                 this.suggests.push(...res.items);
-              }
-              if (this.$gtag) {
-                this.$gtag.pageview(`/suggest?text=${text}&sc=${SEARCH_TABS[6]}`);
               }
             }
           })

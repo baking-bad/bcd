@@ -99,7 +99,12 @@
             class="text--secondary caption ml-4"
           >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
           <template v-for="(item, idx) in suggests">
-            <ResultItem :key="idx" :item="item" :words="getSearchWords()" />
+            <ResultItem
+              :key="idx"
+              :item="item"
+              :words="getSearchWords()"
+              :tab="tab"
+            />
           </template>
           <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
         </template>

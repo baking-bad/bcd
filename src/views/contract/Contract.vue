@@ -35,21 +35,21 @@
         slider-color="primary"
         class="ml-4"
       >
-        <v-tab :to="{ name: 'operations' }" replace style="width: 175px">
+        <v-tab :to="pushTo({ name: 'operations' })" replace style="width: 175px">
           <v-icon left small>mdi-swap-horizontal</v-icon>operations
           <span class="ml-1">({{ contract.tx_count || 0 }})</span>
         </v-tab>
-        <v-tab :to="{ name: 'storage' }" replace v-if="isContract">
+        <v-tab :to="pushTo({ name: 'storage' })" replace v-if="isContract">
           <v-icon left small>mdi-database</v-icon>Storage
         </v-tab>
-        <v-tab :to="{ name: 'code' }" replace v-if="isContract">
+        <v-tab :to="pushTo({ name: 'code' })" replace v-if="isContract">
           <v-icon left small>mdi-code-braces</v-icon>Code
         </v-tab>
-        <v-tab :to="{ name: 'interact' }" replace v-if="isContract">
+        <v-tab :to="pushTo({ name: 'interact' })" replace v-if="isContract">
           <v-icon left small>mdi-play-box-outline</v-icon>Interact
         </v-tab>
         <v-tab
-          :to="{ name: 'tokens' }"
+          :to="pushTo({ name: 'tokens' })"
           replace
           v-if="isContract && tokensTotal > 0"
         >
@@ -57,20 +57,20 @@
           <span class="ml-1">({{ tokensTotal }})</span>
         </v-tab>
         <v-tab
-          :to="{ name: 'transfers' }"
+          :to="pushTo({ name: 'transfers' })"
           replace
           v-if="tokenBalancesTotal > 0"
         >
           <v-icon left small>mdi-transfer</v-icon>Transfers
         </v-tab>
         <v-tab
-          :to="{ name: 'metadata' }"
+          :to="pushTo({ name: 'metadata' })"
           replace
           v-if="metadata"
         >
           <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
         </v-tab>
-        <v-tab :to="{ name: 'fork' }" replace v-if="showFork && isContract">
+        <v-tab :to="pushTo({ name: 'fork' })" replace v-if="showFork && isContract">
           <v-icon left small>mdi-source-fork</v-icon>Fork
         </v-tab>
       </v-tabs>
@@ -107,6 +107,7 @@ import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/contract/SideBar.vue";
 import { mapActions } from "vuex";
 import { cancelRequests } from "@/utils/cancellation.js";
+import {SEARCH_TABS} from "../../constants/searchTabs";
 
 const MIN_SEARCHBOX_WIDTH = 240;
 
@@ -135,6 +136,15 @@ export default {
     contractLink: '',
     isComboBoxExpanded: false,
   }),
+  created() {
+    if (!this.$route.query.sc) {
+      this.$router.push({
+        query: {
+          sc: SEARCH_TABS[0],
+        }
+      });
+    }
+  },
   computed: {
     loading() {
       return this.contractLoading || this.migrationsLoading;
@@ -154,6 +164,11 @@ export default {
     ...mapActions({
       showError: "showError",
     }),
+    pushTo(obj) {
+      return Object.assign({
+        query: this.$route.query,
+      }, obj);
+    },
     handleSearchBoxFocus() {
       const { width } = this.$refs.searchbox.$el.getBoundingClientRect();
       if (width < MIN_SEARCHBOX_WIDTH) {
