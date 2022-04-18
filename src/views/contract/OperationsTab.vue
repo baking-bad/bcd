@@ -278,7 +278,7 @@ export default {
           timestamps[1],
           status,
           entries,
-          true
+          false // no diffs at this point, load them if expanded only
         )
         .then((res) => {
           if (!res) {

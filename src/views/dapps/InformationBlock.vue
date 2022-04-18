@@ -2,7 +2,6 @@
   <v-row>
     <v-col cols="6">
       <h3 class="mb-1">Information</h3>
-      <v-skeleton-loader :loading="loading" type="list-item-two-line@4">
         <div>
           <v-list disabled style="background-color: transparent">
             <v-list-item
@@ -65,12 +64,11 @@
             </template>
           </div>
         </div>
-      </v-skeleton-loader>
     </v-col>
     <v-col cols="6">
       <h3 class="mb-1">Contracts</h3>
 
-      <v-skeleton-loader :loading="loading" type="list-item-two-line@4">
+      <v-skeleton-loader :loading="loading" type="list-item-two-line@3">
         <v-data-table
           :items="dapp.contracts"
           :page.sync="contractsPage"
@@ -108,7 +106,7 @@
           <v-pagination
             v-model="contractsPage"
             :length="contractsPageCount"
-            v-if="dapp.contracts.length > 3"
+            v-if="dapp.contracts && dapp.contracts.length > 3"
           ></v-pagination>
         </div>
       </v-skeleton-loader>

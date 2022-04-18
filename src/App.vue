@@ -24,7 +24,7 @@ export default {
   components: {
     WarningSnackbar,
     ErrorSnackbar,
-    SuccessSnackbar
+    SuccessSnackbar,
   },
   data: () => ({
     showToTop: false
@@ -40,7 +40,7 @@ export default {
         easing: "easeInOutCubic"
       });
     }
-  }
+  },
 };
 </script>
 

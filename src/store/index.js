@@ -29,6 +29,9 @@ export default new Vuex.Store({
     hideError({ commit }) {
       commit('setError', null)
     },
+    showWarning({ commit }, value) {
+      commit('setWarning', value);
+    },
     showClipboardWarning({ commit }) {
       commit('setWarning', 'Copied! Text might be truncated due to its size');
     },
@@ -46,6 +49,6 @@ export default new Vuex.Store({
     },
     hideWarning({ commit }) {
       commit('setWarning', null)
-    },
+    }
   }
 });

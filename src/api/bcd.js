@@ -57,9 +57,7 @@ export class BetterCallApi {
       params.g = 1
     }
     params = Object.assign(params, time)
-    return this.api.get(`/search`, {
-      params: params
-    })
+    return this.api.get(`/search`, { params })
       .then((res) => {
         if (res.status !== 200) {
           throw new RequestFailedError(res);
@@ -250,9 +248,22 @@ export class BetterCallApi {
       })
   }
 
+  getContractToken(network, address, token_id) {
+      return getCancellable(this.api, `/contract/${network}/${address}/tokens`, {
+          params: { token_id }
+      })
+          .then((res) => {
+              if (!res) { return res; }
+              if (res.status != 200) {
+                  throw new RequestFailedError(res);
+              }
+              return res.data
+          })
+  }
+
   getContractTokens(network, address, offset=0, size=maxSize) {
     return getCancellable(this.api, `/contract/${network}/${address}/tokens`, {
-      params: {offset, size}
+      params: { offset, size }
     })
       .then((res) => {
         if (!res) { return res; }
@@ -349,7 +360,7 @@ export class BetterCallApi {
   getContractEntrypointSchema(network, address, entrypoint, fill_type = 'empty') {
     return this.api.get(`/contract/${network}/${address}/entrypoints/schema?fill_type=${fill_type}&entrypoint=${entrypoint}`)
       .then((res) => {
-        if (res.status != 200) {
+        if (res.status !== 200) {
           throw new RequestFailedError(res);
         }
         return res.data
@@ -544,8 +555,8 @@ export class BetterCallApi {
       })
   }
 
-  getOPG(hash) {
-    return getCancellable(this.api, `/opg/${hash}?with_mempool=true`, {})
+  getOPG(hash, with_mempool=true) {
+    return getCancellable(this.api, `/opg/${hash}?with_mempool=${with_mempool}`, {})
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -587,7 +598,8 @@ export class BetterCallApi {
     if (index) {
       params.push(`name=${index}`)
     }
-    return getCancellable(this.api, `/stats/${network}/series?${params.join('&')}`, {})
+    const slug = `/stats/${network}/series?${params.join('&')}`;
+    return getCancellable(this.api, slug, {})
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {
@@ -638,36 +650,24 @@ export class BetterCallApi {
       })
   }
 
-  listDomains(network, offset = 0, size = maxSize) {
-    let params = {}
-    if (size > 0) {
-      params['size'] = size
-    }
-    if (offset > 0) {
-      params['offset'] = offset
-    }
-    return getCancellable(this.api, `/domains/${network}`, {
-      params: params
-    })
+  getDexDappTokens(slug) {
+    return getCancellable(this.api, `/dapps/${slug}/dex/tokens`, {})
       .then((res) => {
-        if (res.status != 200) {
+        if (res.status !== 200) {
           throw new RequestFailedError(res);
         }
-        return res.data
-      })
+        return res.data;
+      });
   }
 
-  resolveDomain(network, address) {
-    return getCancellable(this.api, `/domains/${network}/resolve?address=${address}`, {})
+  getTezosDayVolume(slug) {
+    return getCancellable(this.api, `/dapps/${slug}/dex/tezos_volume`, {})
       .then((res) => {
-        if (res.status == 204) {
-          return {}
-        }
-        if (res.status != 200) {
+        if (res.status !== 200) {
           throw new RequestFailedError(res);
         }
-        return res.data
-      })
+        return res.data;
+      });
   }
 
   getTokenVolumeSeries(network, period, contract, token_id, slug = '') {

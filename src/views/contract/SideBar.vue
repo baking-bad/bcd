@@ -32,7 +32,6 @@
           <v-chip
             small
             class="caption"
-            :to="`/search?text=${tags.tag}`"
             target="_blank"
             >{{ tags.text }}</v-chip
           >
@@ -132,17 +131,7 @@
                     <span>{{ balance | uxtz }}</span>
                   </v-list-item-title>
                 </v-list-item-content>
-              </v-list-item>
-              <v-list-item v-if="domain">
-                <v-list-item-content>
-                  <v-list-item-subtitle class="overline"
-                    >Domain</v-list-item-subtitle
-                  >
-                  <v-list-item-title class="body-2">
-                    <span>{{ domain }}</span>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
+              </v-list-item>              
               <AccountBox
                 v-if="contract.manager"
                 title="Deployed by"
@@ -319,12 +308,10 @@ export default {
     similar_count: 0,
     similarLoading: false,
     sameLoading: false,
-    domain: undefined,
     sameInitialLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
     similarInitialLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
   }),
   created() {
-    this.resolveDomain();
   },
   computed: {
     isSameInitialLoading() {
@@ -457,12 +444,6 @@ export default {
       this.$emit("fork", {
         address: this.address,
         network: this.network,
-      });
-    },
-    resolveDomain() {
-      this.api.resolveDomain(this.network, this.address).then((res) => {
-        if (!res && res.name && res.name !== "") return;
-        this.domain = res.name;
       });
     },
   },

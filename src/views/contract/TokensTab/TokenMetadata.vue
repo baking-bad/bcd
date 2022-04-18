@@ -1,19 +1,60 @@
 <template>
   <div v-if="token" class="py-2 px-7 mr-6 metadata-base">
     <v-row no-gutters>
-      <v-col cols="2">
+      <v-col cols="3">
         <v-list-item class="pl-1">
           <v-list-item-content>
             <v-list-item-subtitle class="overline">Token ID</v-list-item-subtitle>
-            <v-list-item-title class="key-hash">{{ token.token_id }}</v-list-item-title>
+            <div class="d-flex">
+              <v-list-item-title class="key-hash">{{ token.token_id }}</v-list-item-title>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    small
+                    v-on="on"
+                    icon
+                    @click="
+                      () => {
+                        $clipboard(token.token_id);
+                        showClipboardOK();
+                      }
+                    "
+                  >
+                    <v-icon small class="text--secondary">mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
+                Copy Token ID
+              </v-tooltip>
+            </div>
           </v-list-item-content>
         </v-list-item>
       </v-col>
-      <v-col cols="7">
+      <v-col cols="6">
         <v-list-item v-if="ipfsURI" class="pl-1">
           <v-list-item-content>
             <v-list-item-subtitle class="overline">Metadata URI</v-list-item-subtitle>
-            <v-list-item-title class="hash">{{ ipfsURI }}</v-list-item-title>
+            <div class="d-flex">
+              <v-list-item-title class="hash">{{ ipfsURI }}</v-list-item-title>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-btn
+                    small
+                    v-on="on"
+                    icon
+                    class="mr-2"
+                    @click="
+                      () => {
+                        $clipboard(ipfsURI);
+                        showClipboardOK();
+                      }
+                    "
+                  >
+                    <v-icon small class="text--secondary">mdi-content-copy</v-icon>
+                  </v-btn>
+                </template>
+                Copy address
+              </v-tooltip>
+            </div>
           </v-list-item-content>
         </v-list-item>
       </v-col>
@@ -36,7 +77,7 @@
           <template v-slot:label="{ item }">
             <div @click="showTreeInfo(item)">
               <span class="key">
-                {{item.name.split(':')[0].trim()}}:
+                {{item.name.split(':')[0].trim() | snakeToCamel }}:
               </span>
               <span
                 v-if="isTreeViewable(item)"
@@ -50,7 +91,7 @@
                   <template v-slot:label="{ item }">
                     <div @click.exact.stop.prevent="showTreeInfo(item)">
                       <span class="key">
-                        {{item.name.split(':')[0].trim()}}:
+                        {{item.name.split(':')[0].trim() | snakeToCamel }}:
                       </span>
                       <span
                           class="value"
@@ -90,6 +131,7 @@
 import { makeTreeview } from '@/utils/parsing';
 import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer";
+import {mapActions} from "vuex";
 
 export default {
   name: "TokenMetadata",
@@ -113,6 +155,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["showClipboardOK"]),
     isTreeViewable(item) {
       return this.isObjectValue(this.getValueFromName(item.name));
     },
@@ -195,6 +238,12 @@ export default {
     opacity: 0.8;
     font-weight: 300;
   }
+}
+.key-hash {
+  max-width: 50%;
+}
+.hash {
+  max-width: 33%;
 }
 .metadata-base {
   background-color: var(--v-data-base);

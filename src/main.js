@@ -6,10 +6,11 @@ import './styles';
 
 import store from '@/store'
 import router from '@/router'
-import VueAnalytics from 'vue-analytics'
 
-import * as Sentry from "@sentry/browser";
-import { Vue as VueIntegration } from "@sentry/integrations";
+import VueGtag from "vue-gtag";
+
+import * as Sentry from "@sentry/vue";
+import { BrowserTracing } from "@sentry/tracing";
 
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { BetterCallApi } from "@/api/bcd.js";
@@ -29,6 +30,9 @@ import VJsf from '@baking-bad/vjsf/lib/VJsf.js';
 import '@baking-bad/vjsf/lib/VJsf.css';
 
 import draggable from 'vuedraggable';
+import {roundDownSignificantDigits, SIFormatter} from "./utils/number";
+import {SEARCH_TABS} from "./constants/searchTabs";
+
 Vue.component('draggable', draggable);
 Vue.component('VJsf', VJsf)
 
@@ -37,7 +41,11 @@ Vue.config.productionTip = false;
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
-Vue.use(Clipboard)
+Vue.use(Clipboard);
+
+Vue.filter('numberToCompactSIFormat', function (value) {
+  return SIFormatter.format(roundDownSignificantDigits(Number(value)));
+});
 
 Vue.filter('formatDate', function (value) {
   if (value) {
@@ -76,7 +84,14 @@ Vue.filter('mutez', function (value) {
 
 Vue.filter('bytes', function (value) {
   return `${value} bytes`;
-})
+});
+
+Vue.filter('snakeToCamel', (str) => {
+  if (!(/[_-]/).test(str)) return str;
+
+  return str.toLowerCase()
+                          .replace(/([-_])([a-z])/g, (_match, _p1, p2) => p2.toUpperCase());
+});
 
 let config = {
   API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
@@ -102,25 +117,11 @@ api.getConfig().then(response => {
     }
   });
 
-  if (config.sentry_dsn !== "") {
-    Sentry.init({
-      dsn: config.sentry_dsn,
-      integrations: [new VueIntegration({
-        Vue,
-        attachProps: true,
-        tracing: true,
-        tracingOptions: {
-          trackComponents: true,
-        },
-      })],
-    });
-  }
-
   router.beforeEach((to, from, next) => {
     store.dispatch('hideError');
     next();
-  })
-
+  });
+  
   router.addRoutes([
     {
       path: '/@:slug([a-zA-Z0-9_.:-]*)',
@@ -128,7 +129,7 @@ api.getConfig().then(response => {
       beforeEnter: async function (to, from, next) {
         return await api.getContractBySlug(to.params.slug)
           .then(res => next(`/${res.network}/${res.address}`))
-          .catch(() => next(`/search?text=${to.params.slug}`))
+          .catch(() => next(`/search?text=${to.params.slug}&sc=${SEARCH_TABS[7]}`))
       }
     },
     {
@@ -141,22 +142,38 @@ api.getConfig().then(response => {
   ]);
 
   if (config.GA_ENABLED || config.ga_enabled) {
-    Vue.use(VueAnalytics, {
-      id: "UA-160856677-1",
-      router,
-      autoTracking: {
-        pageviewTemplate(route) {
-          return {
-            page: route.name,
-            title: document.title,
-            location: window.location.href
+    Vue.use(VueGtag, {
+      pageTrackerUseFullPath: true,
+      config: {
+        id: "UA-160856677-1",
+      }
+    }, router);
+  }
+
+  if (process.env.VUE_APP_SENTRY_URI) {
+    Sentry.init({
+      Vue,
+      dsn: process.env.VUE_APP_SENTRY_URI,
+      integrations: [new BrowserTracing({
+        routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+        tracingOrigins: ["better-call.dev"],
+      })],
+      ignoreErrors: [
+        "Don't have an RPC endpoint"
+      ],
+      beforeSend(errorObj) {
+        const { exception } = errorObj;
+        if (exception && exception.values && exception.values[0]) {
+          const { value } = exception.values[0];
+          const splittedString = value.split('Request failed with status code ');
+          if (splittedString[1]) {
+            const codeNumber = Number(splittedString[1]);
+            const isInRange = codeNumber >= 500 && codeNumber < 600;
+            if (!isInRange) return null;
           }
         }
       },
-      debug: {
-        enabled: false,
-        sendHitTask: true
-      }
+      attachStacktrace: true,
     });
   }
 

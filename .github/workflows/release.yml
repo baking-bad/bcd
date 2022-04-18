@@ -1,4 +1,4 @@
-name: Build release and make notifications
+name: Release
 on:
   push:
     tags:
@@ -6,27 +6,14 @@ on:
 
 jobs:
   build:
-    name: Build
+    name: Change notes
     runs-on: ubuntu-latest
     env:
       ACTIONS_ALLOW_UNSECURE_COMMANDS: true
     steps:
       - uses: actions/checkout@master
-      - name: setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 12.x
-      - name: install, lint and build
-        run: |
-          yarn
-          yarn lint
-          yarn build
-      - name: archive dist
-        run: tar cfvz bcd.tar.gz dist
       - name: automatic release
         uses: "marvinpinto/action-automatic-releases@latest"
         with:
           repo_token: "${{ secrets.GITHUB_TOKEN }}"
           prerelease: false
-          files: |
-            bcd.tar.gz

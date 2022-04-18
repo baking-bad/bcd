@@ -4,25 +4,23 @@
       <h3>DEX Volume</h3>
     </v-col>
     <v-col cols="8" class="d-flex justify-end">
-      <v-skeleton-loader :loading="loading" type="actions">
-        <v-btn-toggle v-model="selectedPeriod" color="primary" dense mandatory>
-          <v-btn
-            :disabled="loading || loadingTokenSeries"
-            small
-            :value="period"
-            v-for="(text, period) in {
-              hour: 'Hourly',
-              day: 'Daily',
-              month: 'Monthly',
-              year: 'Yearly',
-            }"
-            :key="period"
-            >{{ text }}</v-btn
-          >
-        </v-btn-toggle>
-      </v-skeleton-loader>
+      <v-btn-toggle v-model="selectedPeriod" color="primary" dense mandatory>
+        <v-btn
+          :disabled="loading || loadingTokenSeries"
+          small
+          :value="period"
+          v-for="(text, period) in {
+            hour: 'Hourly',
+            day: 'Daily',
+            month: 'Monthly',
+            year: 'Yearly',
+          }"
+          :key="period"
+          >{{ text }}</v-btn
+        >
+      </v-btn-toggle>
     </v-col>
-    <v-col cols="4" v-if="dapp.dex_tokens">
+    <v-col cols="4" v-if="dexTokens">
       <v-skeleton-loader
         :loading="loading || loadingTokenSeries"
         type="list-item@4"
@@ -36,13 +34,17 @@
               <v-list-item-action>
                 <v-list-item-action-text>
                   {{
-                    `${helpers.round(checkVol(dapp.volume_24_hours), 6)} \uA729`
+                    isTezosDayVolumeLoading
+                      ? '...'
+                      : isTezosDayVolumeFailed
+                        ? 'Failed'
+                        : `${helpers.round(checkVol(tezosDayVolume), 6)} \uA729`
                   }}
                   (24h)
                 </v-list-item-action-text>
               </v-list-item-action>
             </v-list-item>
-            <v-list-item v-for="(token, i) in dapp.dex_tokens" :key="i">
+            <v-list-item v-for="(token, i) in dexTokens" :key="i">
               <v-list-item-content>
                 <v-list-item-title>{{ token.name }} </v-list-item-title>
               </v-list-item-content>
@@ -62,7 +64,7 @@
         </v-list>
       </v-skeleton-loader>
     </v-col>
-    <v-col cols="8" v-if="dapp.dex_tokens">
+    <v-col cols="8" v-if="dexTokens">
       <v-skeleton-loader :loading="loading || loadingTokenSeries" type="image">
         <v-card flat outlined>
           <v-card-text class="data pa-0" v-if="this.data[this.selectedToken]">
@@ -86,44 +88,50 @@
 <script>
 import { mapActions } from "vuex";
 import ColumnChart from "@/components/Charts/ColumnChart.vue";
+import {DATA_LOADING_STATUSES} from "../../utils/network";
 
 export default {
   name: "DEXBlock",
   props: {
     dapp: Object,
     loading: Boolean,
+    dexTokens: Array,
   },
   components: {
     ColumnChart,
   },
   computed: {
     contracts() {
-      if (!this.dapp) return [];
+      if (!this.dapp || !this.dapp.contracts) return [];
       let contracts = [];
       this.dapp.contracts.forEach((x) => contracts.push(x.address));
       return contracts;
     },
-    tokens() {
-      if (!this.dapp) return [];
-      return this.dapp.dex_tokens;
+    isTezosDayVolumeLoading() {
+      return this.tezosDayVolumeLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
+    isTezosDayVolumeFailed() {
+      return this.tezosDayVolumeLoadingStatus === DATA_LOADING_STATUSES.ERROR;
     },
     token() {
       if (
         this.selectedToken > 0 &&
-        this.selectedToken <= this.dapp.dex_tokens.length
+        this.selectedToken <= this.dexTokens.length
       )
-        return this.dapp.dex_tokens[this.selectedToken - 1];
+        return this.dexTokens[this.selectedToken - 1];
       return null;
     },
   },
   data: () => ({
     loadingTokenSeries: true,
+    tezosDayVolume: 0,
     data: {},
     selectedToken: 0,
     selectedPeriod: "day",
   }),
   mounted() {
     this.getSeries(this.selectedPeriod, this.selectedToken);
+    this.getTezosDayVolume();
   },
   methods: {
     ...mapActions(["showError"]),
@@ -136,8 +144,8 @@ export default {
     },
     getTokenSeries(period) {
       if (this.selectedToken in this.data) return;
-      if (this.tokens.length == 0) return;
-      let token = this.tokens[this.selectedToken - 1];
+      if (this.dexTokens.length === 0) return;
+      let token = this.dexTokens[this.selectedToken - 1];
 
       this.loadingTokenSeries = true;
       this.api
@@ -161,6 +169,20 @@ export default {
         .finally(() => {
           this.loadingTokenSeries = false;
         });
+    },
+    getTezosDayVolume() {
+      this.tezosDayVolumeLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+      this.api
+        .getTezosDayVolume(this.$route.params.slug)
+        .then((res) => {
+          this.tezosDayVolume = res;
+          this.tezosDayVolumeLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.showError(err);
+          this.tezosDayVolumeLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+        })
     },
     getTezosVolume(period) {
       if (this.selectedToken in this.data) return;
@@ -194,7 +216,7 @@ export default {
     getSeries(period, selectedToken) {
       if (selectedToken > 0) {
         this.getTokenSeries(this.selectedPeriod);
-      } else if (selectedToken == 0) {
+      } else if (selectedToken === 0) {
         this.getTezosVolume(period);
       }
     },

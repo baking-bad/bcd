@@ -180,8 +180,8 @@
               </v-tooltip>
               <span
                 class="text--secondary caption"
-                v-if="data.result"
-              >{{ data.result.storage_size | bytes}}</span>
+                v-if="data"
+              >{{ data.storage_size | bytes}}</span>
               <MiguelTreeView :miguel="data.storage_diff" :network="data.network" diffMode />
             </template>
           </v-col>
@@ -280,11 +280,11 @@ export default {
       return this.data.storage_limit;
     },
     consumedGas() {
-      if (this.data.result && this.data.result.consumed_gas) {
-        let s = `${this.data.result.consumed_gas}`;
+      if (this.data && this.data.consumed_gas) {
+        let s = `${this.data.consumed_gas}`;
         if (this.gasLimit > 0) {
           s += ` (${(
-            (this.data.result.consumed_gas * 100) /
+            (this.data.consumed_gas * 100) /
             this.gasLimit
           ).toFixed(0)}%)`;
         }
@@ -296,13 +296,13 @@ export default {
       return this.data.allocated_destination_contract_burned || 0;
     },
     paidStorageDiff() {
-      if (this.data.result && this.data.result.paid_storage_size_diff) {
+      if (this.data && this.data.paid_storage_size_diff) {
         let s = this.$options.filters.bytes(
-          this.data.result.paid_storage_size_diff
+          this.data.paid_storage_size_diff
         );
         if (this.storageLimit > 0) {
           s += ` (${(
-            (this.data.result.paid_storage_size_diff * 100) /
+            (this.data.paid_storage_size_diff * 100) /
             this.storageLimit
           ).toFixed(0)}%)`;
         }
