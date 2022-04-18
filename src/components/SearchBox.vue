@@ -265,6 +265,8 @@ export default {
         const ptr = this.model.body.ptr;
         this.pushTo(`/${network}/big_map/${ptr}/${value}`);
       } else if (this.isModelsArrayInclude("token_metadata") && checkAddress(value)) {
+        this.pushTo(`/${network}/${value}/tokens?token_id=${this.model.body.token_id}`);
+      } else if (this.isModelsArrayInclude("tzip") && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/tokens`);
       } else if (this.isModelsArrayInclude("contract_metadata") && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/metadata`);

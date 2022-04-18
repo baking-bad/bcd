@@ -35,9 +35,9 @@
         slider-color="primary"
         class="ml-4"
       >
-        <v-tab :to="pushTo({ name: 'operations' })" replace style="width: 175px">
+        <v-tab :to="pushTo({ name: 'operations' })" :title="contract.tx_count" replace style="width: 175px">
           <v-icon left small>mdi-swap-horizontal</v-icon>operations
-          <span class="ml-1">({{ contract.tx_count || 0 }})</span>
+          <span class="ml-1">({{ contract.tx_count || 0 | numberToCompactSIFormat }})</span>
         </v-tab>
         <v-tab :to="pushTo({ name: 'storage' })" replace v-if="isContract">
           <v-icon left small>mdi-database</v-icon>Storage
@@ -50,11 +50,12 @@
         </v-tab>
         <v-tab
           :to="pushTo({ name: 'tokens' })"
+          :title="tokensTotal"
           replace
           v-if="isContract && tokensTotal > 0"
         >
           <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
-          <span class="ml-1">({{ tokensTotal }})</span>
+          <span class="ml-1">({{ tokensTotal | numberToCompactSIFormat }})</span>
         </v-tab>
         <v-tab
           :to="pushTo({ name: 'transfers' })"
