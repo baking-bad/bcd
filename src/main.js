@@ -9,8 +9,8 @@ import router from '@/router'
 
 import VueGtag from "vue-gtag";
 
-import * as Sentry from "@sentry/browser";
-import { Vue as VueIntegration } from "@sentry/integrations";
+import * as Sentry from "@sentry/vue";
+import { BrowserTracing } from "@sentry/tracing";
 
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { BetterCallApi } from "@/api/bcd.js";
@@ -117,24 +117,6 @@ api.getConfig().then(response => {
     }
   });
 
-  if (process.env.NODE_ENV !== "development" && config.sentry_dsn !== "") {
-    Sentry.init({
-      dsn: config.sentry_dsn,
-      ignoreErrors: [
-        "Don't have an RPC endpoint"
-      ],
-      attachStacktrace: true,
-      integrations: [new VueIntegration({
-        Vue,
-        attachProps: true,
-        tracing: true,
-        tracingOptions: {
-          trackComponents: true,
-        },
-      })],
-    });
-  }
-
   router.addRoutes([
     {
       path: '/@:slug([a-zA-Z0-9_.:-]*)',
@@ -161,6 +143,33 @@ api.getConfig().then(response => {
         id: "UA-160856677-1",
       }
     }, router);
+  }
+
+  if (process.env.VUE_APP_SENTRY_URI) {
+    Sentry.init({
+      Vue,
+      dsn: process.env.VUE_APP_SENTRY_URI,
+      integrations: [new BrowserTracing({
+        routingInstrumentation: Sentry.vueRouterInstrumentation(router),
+        tracingOrigins: ["better-call.dev"],
+      })],
+      ignoreErrors: [
+        "Don't have an RPC endpoint"
+      ],
+      beforeSend(errorObj) {
+        const { exception } = errorObj;
+        if (exception && exception.values && exception.values[0]) {
+          const { value } = exception.values[0];
+          const splittedString = value.split('Request failed with status code ');
+          if (splittedString[1]) {
+            const codeNumber = Number(splittedString[1]);
+            const isInRange = codeNumber >= 500 && codeNumber < 600;
+            if (!isInRange) return null;
+          }
+        }
+      },
+      attachStacktrace: true,
+    });
   }
 
   const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
