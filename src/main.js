@@ -117,6 +117,11 @@ api.getConfig().then(response => {
     }
   });
 
+  router.beforeEach((_to, _from, next) => {
+    store.dispatch('hideError');
+    next();
+  });
+  
   router.addRoutes([
     {
       path: '/@:slug([a-zA-Z0-9_.:-]*)',
