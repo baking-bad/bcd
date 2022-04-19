@@ -26,36 +26,7 @@
         ></v-combobox>
       </div>
       <v-spacer></v-spacer>
-      <div class="d-flex align-center justify-end mt-4">
-        <v-btn
-          icon
-          class="text--secondary mr-2"
-          href="tg://resolve?domain=baking_bad_chat"
-          target="_blank"
-          rel="nofollow noopener"
-        >
-          <v-icon>mdi-telegram</v-icon>
-        </v-btn>
-        <v-btn
-          icon
-          class="text--secondary mr-2"
-          href="https://twitter.com/TezosBakingBad"
-          target="_blank"
-          rel="nofollow noopener"
-        >
-          <v-icon>mdi-twitter</v-icon>
-        </v-btn>
-        <v-btn
-          icon
-          class="text--secondary"
-          href="https://github.com/baking-bad"
-          target="_blank"
-          rel="nofollow noopener"
-        >
-          <v-icon>mdi-github</v-icon>
-        </v-btn>
-      </div>
-
+      <SocialsList class="d-flex align-center justify-end mt-4" />
       <template v-slot:extension>
         <v-tabs v-model="tab" style="margin-left: 228px;">
           <v-tab>
@@ -144,10 +115,12 @@ import SideNavigation from "@/components/SideNavigation.vue";
 import ResultItem from "@/views/extended_search/ResultItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import {SEARCH_TABS} from "../../constants/searchTabs";
+import SocialsList from "../../components/SocialsList";
 
 export default {
   name: "ExtendedSearch",
   components: {
+    SocialsList,
     SearchFilters,
     SideNavigation,
     ResultItem,
