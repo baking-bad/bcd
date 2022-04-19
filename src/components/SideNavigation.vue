@@ -81,6 +81,7 @@
 
     <template v-slot:append>
       <div class="d-flex flex-column align-center justify-center pa-5">
+        <SocialsList class="socials-list"/>
         <v-tooltip right>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon to="/docs">
@@ -106,9 +107,11 @@
 
 <script>
 import { mapActions } from "vuex";
+import SocialsList from "./SocialsList";
 
 export default {
   name: "SideNavigation",
+  components: {SocialsList},
   props: {
     app: Boolean,
   },
@@ -158,3 +161,12 @@ export default {
   },
 };
 </script>
+
+<style lang="scss" scoped>
+.socials-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-bottom: 1.5rem;
+}
+</style>
