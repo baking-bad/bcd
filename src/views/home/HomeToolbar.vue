@@ -16,39 +16,16 @@
     </v-btn>
 
     <v-spacer></v-spacer>
-    <v-btn
-      icon
-      class="text--secondary mr-2"
-      href="tg://resolve?domain=baking_bad_chat"
-      target="_blank"
-      rel="nofollow noopener"
-    >
-      <v-icon>mdi-telegram</v-icon>
-    </v-btn>
-    <v-btn
-      icon
-      class="text--secondary mr-2"
-      href="https://twitter.com/TezosBakingBad"
-      target="_blank"
-      rel="nofollow noopener"
-    >
-      <v-icon>mdi-twitter</v-icon>
-    </v-btn>
-    <v-btn
-      icon
-      class="text--secondary"
-      href="https://github.com/baking-bad"
-      target="_blank"
-      rel="nofollow noopener"
-    >
-      <v-icon>mdi-github</v-icon>
-    </v-btn>
+    <SocialsList />
   </v-app-bar>
 </template>
 
 <script>
+import SocialsList from '../../components/SocialsList';
+
 export default {
   name: "HomeToolbar",
+  components: {SocialsList},
   computed: {
     apiDocsUrl() {
       return `${window.location.origin}/docs`;
