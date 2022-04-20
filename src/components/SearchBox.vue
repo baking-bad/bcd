@@ -364,6 +364,9 @@ export default {
               if (res && res.items) {
                 this.suggests.push(...res.items);
               }
+              if (this.$gtag) {
+                this.$gtag.pageview(`/suggest?text=${text}&sc=${SEARCH_TABS[6]}`);
+              }
             }
           })
           .catch((err) => {
