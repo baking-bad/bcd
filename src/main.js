@@ -136,7 +136,7 @@ api.getConfig().then(response => {
       path: '*',
       redirect: to => {
         const text = urlExtractBase58(to.path) || to.path.split('/').join(' ');
-        return { name: 'search', query: { text } };
+        return { name: 'search', query: { text, sc: SEARCH_TABS[7], redirected: 'true' } };
       }
     }
   ]);

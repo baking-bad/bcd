@@ -7,7 +7,7 @@
             <template v-if="item.type === 'contract'">
               <span class="hash">Contracts</span>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
-              <router-link class="serp-link" target="_blank" :to="sendTo(`/${item.body.network}/${item.value}`)">
+              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
                 <span v-if="item.body.alias" v-html="highlight(item.body.alias)" class="alias"></span>
                 <span v-else v-html="highlight(item.value)" class="hash"></span>
               </router-link>
@@ -16,7 +16,7 @@
               <span class="hash">Operations</span>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
               <template v-if="item.body.destination.startsWith('KT')">
-                <router-link class="serp-link" target="_blank" :to="sendTo(`/${item.body.network}/${item.body.destination}`)">
+                <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.body.destination}`">
                   <span
                     v-if="item.body.destination_alias"
                     v-html="highlight(item.body.destination_alias)"
@@ -26,7 +26,7 @@
                 </router-link>
                 <span class="text--secondary" style="font-size: 20px;"> → </span>
               </template>
-              <router-link class="serp-link" target="_blank" :to="sendTo(`/${item.body.network}/opg/${item.value}`)">
+              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/opg/${item.value}`">
                 <span
                   v-if="item.body.entrypoint"
                   class="hash"
@@ -39,26 +39,26 @@
             </template>
             <template v-else-if="item.type === 'bigmapdiff'">
               <router-link class="serp-link" target="_blank"
-                :to="sendTo(`/${item.body.network}/big_map/${item.body.ptr}`)">
+                :to="`/${item.body.network}/big_map/${item.body.ptr}`">
                 <span class="hash text--primary">Big_map {{ item.body.ptr }}</span>
               </router-link>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
               <router-link class="serp-link" target="_blank"
-                :to="sendTo(`/${item.body.network}/big_map/${item.body.ptr}/${item.body.key_hash}`)">
+                :to="`/${item.body.network}/big_map/${item.body.ptr}/${item.body.key_hash}`">
                 <span class="hash" v-html="highlight(item.body.key)"></span>
               </router-link>
             </template>
              <template v-else-if="item.type === 'token_metadata'">
               <span class="hash">Tokens</span>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
-              <router-link class="serp-link" target="_blank" :to="sendTo(`/${item.body.network}/${item.value}/tokens/?token_id=${item.body.token_id}`)">
+              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}/tokens/?token_id=${item.body.token_id}`">
                 <span v-if="item.body.name" v-html="highlight(item.body.name)" class="alias"></span>
               </router-link>
             </template>
             <template v-else-if="item.type === 'contract_metadata'">
               <span class="hash">Metadata</span>
               <span class="text--secondary" style="font-size: 20px;"> → </span>
-              <router-link class="serp-link" target="_blank" :to="sendTo(`/${item.body.network}/${item.value}/metadata`)">
+              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}/metadata`">
                 <span v-html="highlight(item.body.name)" class="hash"></span>
               </router-link>
             </template>          
@@ -128,8 +128,6 @@
 </template>
 
 <script>
-import {SEARCH_TABS} from "../../constants/searchTabs";
-
 export default {
   name: "ResultItem",
   props: {
@@ -146,9 +144,6 @@ export default {
       }
       return s;
     },
-    sendTo(destination) {
-      return `${destination}${destination.indexOf('/?') === -1 ? '?' : '&'}sc=${SEARCH_TABS[this.tab]}`;
-    }
   }
 };
 </script>
