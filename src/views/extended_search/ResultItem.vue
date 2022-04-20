@@ -147,7 +147,7 @@ export default {
       return s;
     },
     sendTo(destination) {
-      return `${destination}?sc=${SEARCH_TABS[this.tab]}`;
+      return `${destination}${destination.indexOf('/?') === -1 ? '?' : '&'}sc=${SEARCH_TABS[this.tab]}`;
     }
   }
 };
