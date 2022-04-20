@@ -227,13 +227,10 @@ export default {
       this.menuProps = {};
       this.model = null;
     },
-    pushTo(path, SEARCH_TAB) {
+    pushTo(path) {
       if (this.$route.path !== `${path}/operations`) {
         this.$router.push({
           path,
-          query: {
-            sc: SEARCH_TABS[SEARCH_TAB || 6],
-          }
         });
       }
       this.$nextTick(() => {

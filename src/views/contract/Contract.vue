@@ -108,7 +108,6 @@ import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/contract/SideBar.vue";
 import { mapActions } from "vuex";
 import { cancelRequests } from "@/utils/cancellation.js";
-import {SEARCH_TABS} from "../../constants/searchTabs";
 
 const MIN_SEARCHBOX_WIDTH = 240;
 
@@ -137,15 +136,6 @@ export default {
     contractLink: '',
     isComboBoxExpanded: false,
   }),
-  created() {
-    if (!this.$route.query.sc) {
-      this.$router.push({
-        query: {
-          sc: SEARCH_TABS[0],
-        }
-      });
-    }
-  },
   computed: {
     loading() {
       return this.contractLoading || this.migrationsLoading;
