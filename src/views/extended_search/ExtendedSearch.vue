@@ -290,6 +290,7 @@ export default {
             if (this.$route.query.redirected) {
               const query = {
                 ...this.$route.query,
+                sc: undefined,
                 redirected: undefined,
               };
               this.$router.replace({ query });
