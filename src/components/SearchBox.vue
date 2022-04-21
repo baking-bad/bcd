@@ -255,9 +255,9 @@ export default {
 
       addHistoryItem(this.buildHistoryItem(this.model, value || this.searchText));
       if (this.isModelsArrayInclude("operation") && checkOperation(value)) {
-        this.pushTo(`/${network}/opg/${value}`, 2);
+        this.pushTo(`/${network}/opg/${value}`);
       } else if (this.isShouldSentToValue(value)) {
-        this.pushTo(`/${network}/${value}`, 1);
+        this.pushTo(`/${network}/${value}`);
       } else if (this.isModelsArrayInclude("bigmapdiff") && checkKeyHash(value)) {
         const ptr = this.model.body.ptr;
         this.pushTo(`/${network}/big_map/${ptr}/${value}`);
