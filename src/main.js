@@ -32,6 +32,7 @@ import '@baking-bad/vjsf/lib/VJsf.css';
 import draggable from 'vuedraggable';
 import {roundDownSignificantDigits, SIFormatter} from "./utils/number";
 import {SEARCH_TABS} from "./constants/searchTabs";
+import {isKT1Address, isOperationHash, isTzAddress} from "./utils/tz";
 
 Vue.component('draggable', draggable);
 Vue.component('VJsf', VJsf)
@@ -136,7 +137,16 @@ api.getConfig().then(response => {
       path: '*',
       redirect: to => {
         const text = urlExtractBase58(to.path) || to.path.split('/').join(' ');
-        return { name: 'search', query: { text, sc: SEARCH_TABS[7], redirected: 'true' } };
+        if (to.query.redirected) {
+          return { name: 'search', query: { text, redirected: 'true' } };
+        }
+        if (isKT1Address(text) || isTzAddress(text)) {
+          return `/mainnet/${text}`;
+        }
+        if (isOperationHash(text)) {
+          return `/mainnet/opg/${text}`;
+        }
+        return { name: 'search', query: { text, redirected: 'true' } };
       }
     }
   ]);

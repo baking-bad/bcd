@@ -105,6 +105,10 @@ export function isKT1Address(val) {
     return /^(KT)[1-9A-HJ-NP-Za-km-z]{34}$/.test(val);
 }
 
+export function isTzAddress(val) {
+    return /^(tz)[1-9A-HJ-NP-Za-km-z]{34}$/.test(val);
+}
+
 export function isOperationHash(val) {
     return /^o[1-9A-HJ-NP-Za-km-z]{50}$/.test(val);
 }
