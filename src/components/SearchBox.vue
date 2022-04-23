@@ -229,7 +229,9 @@ export default {
     },
     pushTo(path) {
       if (this.$route.path !== `${path}/operations`) {
-        this.$router.push({ path });
+        this.$router.push({
+          path,
+        });
       }
       this.$nextTick(() => {
         this.model = null;
@@ -359,8 +361,11 @@ export default {
               if (res && res.items) {
                 this.suggests.push(...res.items);
               }
+              const isKT = isKT1Address(text);
+              const isOperation = isOperationHash(text);
+              const sc = isKT ? SEARCH_TABS[1] : isOperation ? SEARCH_TABS[2] : SEARCH_TABS[6];
               if (this.$gtag) {
-                this.$gtag.pageview(`/suggest?text=${text}&sc=${SEARCH_TABS[6]}`);
+                this.$gtag.pageview(`/search?text=${text}&sc=${sc}`);
               }
             }
           })

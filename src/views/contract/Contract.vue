@@ -35,26 +35,22 @@
         slider-color="primary"
         class="ml-4"
       >
-        <v-tab
-          :title="contract.tx_count"
-          :to="{ name: 'operations' }"
-          replace style="width: 175px"
-        >
+        <v-tab :to="pushTo({ name: 'operations' })" :title="contract.tx_count" replace style="width: 175px">
           <v-icon left small>mdi-swap-horizontal</v-icon>operations
           <span class="ml-1">({{ contract.tx_count || 0 | numberToCompactSIFormat }})</span>
         </v-tab>
-        <v-tab :to="{ name: 'storage' }" replace v-if="isContract">
+        <v-tab :to="pushTo({ name: 'storage' })" replace v-if="isContract">
           <v-icon left small>mdi-database</v-icon>Storage
         </v-tab>
-        <v-tab :to="{ name: 'code' }" replace v-if="isContract">
+        <v-tab :to="pushTo({ name: 'code' })" replace v-if="isContract">
           <v-icon left small>mdi-code-braces</v-icon>Code
         </v-tab>
-        <v-tab :to="{ name: 'interact' }" replace v-if="isContract">
+        <v-tab :to="pushTo({ name: 'interact' })" replace v-if="isContract">
           <v-icon left small>mdi-play-box-outline</v-icon>Interact
         </v-tab>
         <v-tab
+          :to="pushTo({ name: 'tokens' })"
           :title="tokensTotal"
-          :to="{ name: 'tokens' }"
           replace
           v-if="isContract && tokensTotal > 0"
         >
@@ -62,20 +58,20 @@
           <span class="ml-1">({{ tokensTotal | numberToCompactSIFormat }})</span>
         </v-tab>
         <v-tab
-          :to="{ name: 'transfers' }"
+          :to="pushTo({ name: 'transfers' })"
           replace
           v-if="tokenBalancesTotal > 0"
         >
           <v-icon left small>mdi-transfer</v-icon>Transfers
         </v-tab>
         <v-tab
-          :to="{ name: 'metadata' }"
+          :to="pushTo({ name: 'metadata' })"
           replace
           v-if="metadata"
         >
           <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
         </v-tab>
-        <v-tab :to="{ name: 'fork' }" replace v-if="showFork && isContract">
+        <v-tab :to="pushTo({ name: 'fork' })" replace v-if="showFork && isContract">
           <v-icon left small>mdi-source-fork</v-icon>Fork
         </v-tab>
       </v-tabs>
@@ -159,6 +155,11 @@ export default {
     ...mapActions({
       showError: "showError",
     }),
+    pushTo(obj) {
+      return Object.assign({
+        query: this.$route.query,
+      }, obj);
+    },
     handleSearchBoxFocus() {
       const { width } = this.$refs.searchbox.$el.getBoundingClientRect();
       if (width < MIN_SEARCHBOX_WIDTH) {

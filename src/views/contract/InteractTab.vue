@@ -92,6 +92,9 @@ export default {
   created() {
     this.getEntrypoints(this.$route.query.entrypoint);
   },
+  destroyed() {
+    this.$router.push({path: this.$route.path, query: { ...this.$route.query, entrypoint: undefined }})
+  },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
     addValidatorsToSchema(schema) {
@@ -140,7 +143,7 @@ export default {
     selectedItem: function (newValue) {
       if (newValue === null) return;
       if (this.$route.query.entrypoint !== newValue.name) {
-        this.$router.replace({ query: { entrypoint: newValue.name } });
+        this.$router.push({path: this.$route.path, query: { ...this.$route.query, entrypoint: newValue.name }})
       }
       this.model = Object.assign({}, newValue.default_model);
     },

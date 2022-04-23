@@ -70,7 +70,12 @@
             class="text--secondary caption ml-4"
           >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
           <template v-for="(item, idx) in suggests">
-            <ResultItem :key="idx" :item="item" :words="getSearchWords()" />
+            <ResultItem
+              :key="idx"
+              :item="item"
+              :words="getSearchWords()"
+              :tab="tab"
+            />
           </template>
           <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
         </template>
@@ -279,7 +284,17 @@ export default {
             this.elasticTime = res.time;
 
             if (text !== this.$route.query.text) {
-              this.$router.replace({ query: { text: text } });
+              const query = { ...this.$route.query, text };
+              this.$router.replace({ query });
+            }
+            if (this.$route.query.redirected) {
+              const query = {
+                ...this.$route.query,
+                sc: undefined,
+                redirected: undefined,
+              };
+              this.$router.replace({ query });
+              return;
             }
             if (this.$gtag) {
               this.$gtag.pageview(`/search?text=${text}&sc=${SEARCH_TABS[this.tab]}`);

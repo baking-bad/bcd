@@ -132,7 +132,8 @@ export default {
   name: "ResultItem",
   props: {
     item: Object,
-    words: Array
+    words: Array,
+    tab: Number,
   },
   methods: {
     highlight(s) {
@@ -142,7 +143,7 @@ export default {
         s = s.replace(re, "<span class='highlight'>$1</span>");
       }
       return s;
-    }
+    },
   }
 };
 </script>
