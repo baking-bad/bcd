@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid class="pa-8 canvas fill-canvas">
+  <v-container fluid class="pa-8 pt-2 canvas fill-canvas">
     <v-row>
       <v-col cols="6" class="pr-4">
         <v-breadcrumbs
