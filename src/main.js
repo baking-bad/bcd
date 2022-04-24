@@ -141,10 +141,10 @@ api.getConfig().then(response => {
           return { name: 'search', query: { text, redirected: 'true' } };
         }
         if (isKT1Address(text) || isTzAddress(text)) {
-          return `/mainnet/${text}`;
+          return `/mainnet/${text}/operations`;
         }
         if (isOperationHash(text)) {
-          return `/mainnet/opg/${text}`;
+          return `/mainnet/opg/${text}/contents`;
         }
         return { name: 'search', query: { text, redirected: 'true' } };
       }
