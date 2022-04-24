@@ -111,7 +111,7 @@ export default {
     },
   },
   created() {
-    this.getEntrypoints(this.$route.query.entrypoint);
+    this.getEntrypoints(this.$route.params.entrypoint);
   },
   destroyed() {
     this.$router.push({path: this.$route.path, query: { ...this.$route.query, entrypoint: undefined }})
@@ -163,8 +163,10 @@ export default {
     address: "getEntrypoints",
     selectedItem: function (newValue) {
       if (newValue === null) return;
-      if (this.$route.query.entrypoint !== newValue.name) {
-        this.$router.push({path: this.$route.path, query: { ...this.$route.query, entrypoint: newValue.name }})
+      if (this.$route.params.entrypoint !== newValue.name) {
+        this.$router.push({
+          path: `/${this.network}/${this.address}/interact/${newValue.name}`,
+        });
       }
       this.model = Object.assign({}, newValue.default_model);
     },

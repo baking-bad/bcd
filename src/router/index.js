@@ -224,7 +224,7 @@ const router = new Router({
       ]
     },
     {
-      path: '/:network/:address([0-9A-z]{36})/interact/',
+      path: '/:network/:address([0-9A-z]{36})/interact/:entrypoint?',
       name: 'interact',
       component: InteractTab,
       props: true
