@@ -9,7 +9,7 @@
     @keyup.enter="onEnter(searchText)"
     @mousedown="handleSearchBoxFocus"
     return-object
-    placeholder="Search anything"
+    placeholder="Search on BCD"
     autocomplete="off"
     no-filter
     append-icon
