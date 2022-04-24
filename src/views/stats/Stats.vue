@@ -23,9 +23,6 @@
           <v-icon left small>mdi-bank</v-icon>&nbsp;FA2.0
         </v-tab>
       </v-tabs>
-      <div class="mr-6 mt-6" style="width: 800px;">
-        <SearchBox :inplace="true"></SearchBox>
-      </div>
     </v-toolbar>
 
     <router-view :network="currentNetwork"></router-view>
@@ -34,14 +31,12 @@
 
 <script>
 import { mapActions } from "vuex";
-import SearchBox from "@/components/SearchBox.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/stats/SideBar.vue";
 
 export default {
   name: "Stats",
   components: {
-    SearchBox,
     SideNavigation,
     SideBar,
   },

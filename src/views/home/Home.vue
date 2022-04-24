@@ -1,6 +1,5 @@
 <template>
   <v-container class="fill-height canvas" fluid>
-    <HomeToolbar />
     <v-container class="fill-height canvas main-rows-wrapper" fluid>
       <v-row no-gutters class="search-row">
         <v-col cols="12">
@@ -139,13 +138,11 @@
 
 <script>
 import { mapActions } from "vuex";
-import HomeToolbar from "@/views/home/HomeToolbar.vue";
 import SearchBox from "@/components/SearchBox.vue";
 
 export default {
   name: "Home",
   components: {
-    HomeToolbar,
     SearchBox,
   },
   data: () => ({

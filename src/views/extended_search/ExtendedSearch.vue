@@ -1,14 +1,8 @@
 <template>
   <div class="fill-height canvas">
     <SideNavigation :app="true" />
-    <v-app-bar extended fixed app flat class="search-bar px-4" height="75">
-      <v-toolbar-title class="headline mt-4">
-        <span class="font-weight-light">
-          BETTER CALL
-          <span class="font-weight-regular">DEV</span>
-        </span>
-      </v-toolbar-title>
-      <div style="width: 770px;" class="mt-4 ml-8">
+    <v-app-bar extended fixed app flat class="search-bar px-4" style="margin-top: var(--main-header-weight);" height="75">
+      <div style="width: 100%;" class="mt-4 ml-8">
         <v-combobox
           rounded
           :search-input.sync="searchText"
@@ -25,8 +19,6 @@
           full-width
         ></v-combobox>
       </div>
-      <v-spacer></v-spacer>
-      <SocialsList class="d-flex align-center justify-end mt-4" />
       <template v-slot:extension>
         <v-tabs v-model="tab" style="margin-left: 228px;">
           <v-tab>
@@ -44,7 +36,7 @@
           <v-tab>
             <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
           </v-tab>
-           <v-tab>
+          <v-tab>
             <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
           </v-tab>
           <div class="d-flex ml-8" style="margin-top: 6px;">
@@ -120,12 +112,10 @@ import SideNavigation from "@/components/SideNavigation.vue";
 import ResultItem from "@/views/extended_search/ResultItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import {SEARCH_TABS} from "../../constants/searchTabs";
-import SocialsList from "../../components/SocialsList";
 
 export default {
   name: "ExtendedSearch",
   components: {
-    SocialsList,
     SearchFilters,
     SideNavigation,
     ResultItem,

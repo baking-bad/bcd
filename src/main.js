@@ -101,6 +101,13 @@ let config = {
 
 let api = new BetterCallApi(config.API_URI);
 
+const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
+if (isDark) {
+  document.body.classList.add('dark-theme-background');
+}
+
+export const vuetify = makeVuetify(isDark);
+
 api.getConfig().then(response => {
   Object.assign(config, response);
 
@@ -186,13 +193,6 @@ api.getConfig().then(response => {
       attachStacktrace: true,
     });
   }
-
-  const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
-  if (isDark) {
-    document.body.classList.add('dark-theme-background');
-  }
-
-  let vuetify = makeVuetify(isDark);
 
   new Vue({
     router,

@@ -75,19 +75,6 @@
           <v-icon left small>mdi-source-fork</v-icon>Fork
         </v-tab>
       </v-tabs>
-      <div
-          class="mr-6 mt-6 combobox-wrapper"
-          :class="comboboxWrapperClassName"
-      >
-        <SearchBox
-            :key="address"
-            :inplace="true"
-            @focus="handleSearchBoxFocus"
-            @blur="handleSearchBoxBlur"
-            @search="handleSearchBoxBlur"
-            ref="searchbox"
-        ></SearchBox>
-      </div>
     </v-toolbar>
 
     <router-view
@@ -103,7 +90,6 @@
 </template>
 
 <script>
-import SearchBox from "@/components/SearchBox.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/contract/SideBar.vue";
 import { mapActions } from "vuex";
@@ -114,7 +100,6 @@ const MIN_SEARCHBOX_WIDTH = 240;
 export default {
   name: "Contract",
   components: {
-    SearchBox,
     SideNavigation,
     SideBar,
   },
@@ -142,13 +127,6 @@ export default {
     },
     isContract() {
       return this.address.startsWith("KT");
-    },
-    comboboxWrapperClassName() {
-      if (this.isComboBoxExpanded) {
-        return 'combobox-wrapper_expanded';
-      }
-
-      return '';
     },
   },
   methods: {
@@ -308,12 +286,5 @@ export default {
 .v-tabs {
   font-family: "Roboto Condensed", sans-serif;
   font-weight: 500;
-}
-.combobox-wrapper {
-  width: calc(100% - 48px);
-}
-.combobox-wrapper_expanded {
-  position: absolute;
-  right: 0;
 }
 </style>

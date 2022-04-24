@@ -1,6 +1,7 @@
 <template>
   <v-app>
-    <v-content>
+    <v-content class="v-content-class">
+      <MainHeaderDescriptive :no-search="isNoSearchInHeader" />
       <ErrorSnackbar v-if="!!$store.state.error" />
       <SuccessSnackbar v-if="!!$store.state.success" />
       <WarningSnackbar v-if="!!$store.state.warning" />
@@ -18,13 +19,21 @@
 import WarningSnackbar from "@/components/Snackbar/WarningSnackbar";
 import ErrorSnackbar from "@/components/Snackbar/ErrorSnackbar.vue";
 import SuccessSnackbar from "@/components/Snackbar/SuccessSnackbar.vue";
+import MainHeaderDescriptive from "./components/MainHeaderDescriptive";
 
 export default {
   name: "App",
   components: {
+    MainHeaderDescriptive,
     WarningSnackbar,
     ErrorSnackbar,
     SuccessSnackbar,
+  },
+  computed: {
+    isNoSearchInHeader() {
+      const pathsNoSearchInHeader = ['/', '/search'];
+      return pathsNoSearchInHeader.includes(this.$route.path);
+    },
   },
   data: () => ({
     showToTop: false
@@ -176,5 +185,9 @@ input:-webkit-autofill:active  {
 
 .vjs-tree:not(.is-root) > div:first-child:hover {
   background-color: var(--v-postHeader-darken1) !important;
+}
+
+.v-content-class {
+  margin-top: var(--main-header-weight);
 }
 </style>

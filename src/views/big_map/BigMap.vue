@@ -27,9 +27,6 @@
           <span class="ml-1">({{ count }})</span>
         </v-tab>  
       </v-tabs>
-      <div class="mr-6 mt-6" style="width: 800px;">
-        <SearchBox :inplace="true"></SearchBox>
-      </div>
     </v-toolbar>
 
     <router-view :address="address" :count.sync="count"></router-view>
@@ -37,7 +34,6 @@
 </template>
 
 <script>
-import SearchBox from "@/components/SearchBox.vue";
 import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/big_map/SideBar.vue";
 import { mapActions } from "vuex";
@@ -45,7 +41,6 @@ import { mapActions } from "vuex";
 export default {
   name: "BigMap",
   components: {
-    SearchBox,
     SideBar,
     SideNavigation,
   },

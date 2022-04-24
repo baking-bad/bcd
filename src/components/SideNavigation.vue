@@ -1,14 +1,5 @@
 <template>
-  <v-navigation-drawer :app="app" dark mini-variant permanent floating color="sidenav">
-    <router-link
-        :to="{name: config.HOME_PAGE}"
-        class="d-flex justify-center align-center mt-1"
-        style="height: 63px"
-    >
-      <v-avatar color="primary" size="38" class="elevation-1">
-        <span class="sidenav--text" style="font-family: 'Roboto Condensed', monospace;">BCD</span>
-      </v-avatar>
-    </router-link>
+  <v-navigation-drawer :app="app" dark mini-variant permanent floating color="sidenav" class="top-margin-from-main-header">
 
     <v-list nav>
       <v-list-item-group>
@@ -78,40 +69,15 @@
         <span>Pick random</span>
       </v-tooltip>
     </div>
-
-    <template v-slot:append>
-      <div class="d-flex flex-column align-center justify-center pa-5">
-        <SocialsList class="socials-list"/>
-        <v-tooltip right>
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" icon to="/docs">
-              <v-icon color="grey lighten-2">mdi-api</v-icon>
-            </v-btn>
-          </template>
-          API reference
-        </v-tooltip>
-        <v-tooltip right>
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" icon @click="toggleTheme" class="mt-6">
-              <v-icon v-if="$vuetify.theme.dark" color="grey lighten-2">mdi-white-balance-sunny</v-icon>
-              <v-icon v-else color="frey lighten-2">mdi-weather-night</v-icon>
-            </v-btn>
-          </template>
-          <span v-if="$vuetify.theme.dark">Disable dark theme</span>
-          <span v-else>Enable dark theme</span>
-        </v-tooltip>
-      </div>
-    </template>
   </v-navigation-drawer>
 </template>
 
 <script>
 import { mapActions } from "vuex";
-import SocialsList from "./SocialsList";
+import { toggleTheme } from '../utils/vuetify';
 
 export default {
   name: "SideNavigation",
-  components: {SocialsList},
   props: {
     app: Boolean,
   },
@@ -136,6 +102,7 @@ export default {
     ...mapActions({
       showError: "showError",
     }),
+    toggleTheme,
     random() {
       if (this.pickingRandom) return;
       this.pickingRandom = true;
@@ -153,10 +120,6 @@ export default {
           .finally(() => {
             this.pickingRandom = false;
           });
-    },
-    toggleTheme() {
-      this.$vuetify.theme.dark = !this.$vuetify.theme.dark;
-      localStorage.setItem("dark", this.$vuetify.theme.dark);
     },
   },
 };

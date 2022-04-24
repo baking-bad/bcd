@@ -1,0 +1,16 @@
+:root {
+    --main-header-weight: 4rem;
+    --z-index-main-header: 900;
+}
+
+.top-margin-from-main-header {
+    margin-top: var(--main-header-weight);
+}
+
+.text-small {
+    font-size: 0.75rem;
+}
+
+.no-decoration {
+    text-decoration: none;
+}
