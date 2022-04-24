@@ -14,3 +14,7 @@
 .no-decoration {
     text-decoration: none;
 }
+
+.vertical-align-middle {
+    vertical-align: middle;
+}

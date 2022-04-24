@@ -1,5 +1,31 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
+    <v-row>
+      <v-col cols="6" class="pr-4">
+        <v-breadcrumbs
+          class="pl-0"
+          divider="/"
+          :items="breadcrumbsItems"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="3" class="pr-4">
+        <router-link class="text--secondary no-decoration" :to="`/${network}/${address}/operations`">
+          <p>
+            <v-icon class="text--secondary">
+              mdi-arrow-left
+            </v-icon>
+            <span class="vertical-align-middle ml-2">Go to contract</span>
+          </p>
+        </router-link>
+      </v-col>
+      <v-col cols="9">
+        <div class="pl-9">
+
+        </div>
+      </v-col>
+    </v-row>
     <v-row no-gutters>
       <v-col cols="3" class="pr-4">
         <v-skeleton-loader
@@ -99,6 +125,30 @@ export default {
     model: {},
   }),
   computed: {
+    breadcrumbsItems() {
+      return [
+        {
+          text: 'Home',
+          to: '/',
+        },
+        {
+          disabled: true,
+          text: this.network,
+        },
+        {
+          text: this.address.slice(0, 7) + '...' + this.address.slice(-4),
+          to: `/${this.network}/${this.address}/operations`,
+        },
+        {
+          disabled: true,
+          text: 'Interact',
+        },
+        {
+          disabled: true,
+          text: this.selected === -1 ? '...' : this.entrypoints[this.selected].name,
+        },
+      ];
+    },
     selectedItem() {
       if (this.selected < 0 || this.entrypoints.length < this.selected) {
         return null;
