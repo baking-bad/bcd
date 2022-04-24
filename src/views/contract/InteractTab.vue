@@ -1,23 +1,7 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-row no-gutters>
-      <v-col cols="8" class="pr-4">
-        <v-skeleton-loader :loading="loading" type="card-heading, image">
-          <Schema
-            header="Parameters"
-            title="Call"
-            type="parameter"
-            v-if="selectedItem"
-            v-model="model"
-            :schema="addValidatorsToSchema(selectedItem.schema)"
-            :name="selectedItem.name"
-            :network="network"
-            :address="address"
-          />
-          <div v-else></div>
-        </v-skeleton-loader>
-      </v-col>
-      <v-col cols="4" class="pl-4">
+      <v-col cols="3" class="pr-4">
         <v-skeleton-loader
           :loading="loading"
           type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
@@ -37,16 +21,53 @@
                   :class="i > 0 ? 'bt-1' : ''"
                   class="entrypoint-panel"
                 >
-                  <v-expansion-panel-header>
+                  <v-expansion-panel-header disable-icon-rotate>
                     <div class="d-flex">
                       <span class="hash">{{ item.name }}</span>
                     </div>
+                    <template v-slot:actions>
+                      <v-icon></v-icon>
+                    </template>
                   </v-expansion-panel-header>
-                  <v-expansion-panel-content>
-                    <TypeDef :typedef="item.typedef" first="parameter"/>
-                  </v-expansion-panel-content>
                 </v-expansion-panel>
               </v-expansion-panels>
+            </v-navigation-drawer>
+          </v-card>
+        </v-skeleton-loader>
+      </v-col>
+      <v-col cols="6" class="pr-4">
+        <v-skeleton-loader :loading="loading" type="card-heading, image">
+          <Schema
+            header="Parameters"
+            title="Call"
+            type="parameter"
+            v-if="selectedItem"
+            v-model="model"
+            :schema="addValidatorsToSchema(selectedItem.schema)"
+            :name="selectedItem.name"
+            :network="network"
+            :address="address"
+          />
+          <div v-else></div>
+        </v-skeleton-loader>
+      </v-col>
+      <v-col cols="3" class="pl-4">
+        <v-skeleton-loader
+          :loading="loading"
+          type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
+        >
+          <v-card flat outlined style="max-width: 500px;">
+            <v-navigation-drawer floating permanent style="max-height: 80vh; width: 100%;">
+              <div class="pa-3">
+                <TypeDef
+                  v-if="entrypoints[selected].typedef"
+                  :typedef="entrypoints[selected].typedef"
+                  first="parameter"
+                />
+                <p v-else class="mb-0">
+                  No typedef for this entrypoint.
+                </p>
+              </div>
             </v-navigation-drawer>
           </v-card>
         </v-skeleton-loader>
