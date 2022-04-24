@@ -1,5 +1,5 @@
 <template>
-  <header class="header-class pl-3 pr-6">
+  <header class="header-class pl-8 pr-6">
     <div class="d-flex align-center">
       <RouterLink to="/" class="white--text no-decoration">
         <h2>BCD</h2>
