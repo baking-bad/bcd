@@ -31,7 +31,6 @@ import '@baking-bad/vjsf/lib/VJsf.css';
 
 import draggable from 'vuedraggable';
 import {roundDownSignificantDigits, SIFormatter} from "./utils/number";
-import {SEARCH_TABS} from "./constants/searchTabs";
 import {isKT1Address, isOperationHash, isTzAddress} from "./utils/tz";
 
 Vue.component('draggable', draggable);
