@@ -187,55 +187,6 @@
           </v-expansion-panel-content>
         </v-expansion-panel>
 
-        <v-expansion-panel
-            v-if="isContract && contract.similar_count > 0"
-            class="ma-0 bb-1"
-            @click="requestSimilar"
-        >
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-              <span
-                  class="caption font-weight-bold text-uppercase text--secondary"
-              >Similar contracts ({{ contract.similar_count }})</span
-              >
-          </v-expansion-panel-header>
-          <v-skeleton-loader
-              v-if="isSimilarInitialLoading"
-              type="image"
-              :loading="isSimilarInitialLoading"
-          >
-          </v-skeleton-loader>
-          <v-expansion-panel-content color="data">
-            <v-list class="contract-list">
-              <template v-for="(contract, i) in similar">
-                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <SimilarItem
-                  :key="i"
-                  :diff="true"
-                  :item="contract"
-                  :address="address"
-                  :network="network"
-                />
-              </template>
-              <v-divider></v-divider>
-              <v-list-item v-if="similar.length < similar_count">
-                <v-list-item-content>
-                  <v-list-item-title class="d-flex align-center justify-center">
-                    <v-btn
-                      v-if="!isSimilarInitialLoading"
-                      class="text--secondary"
-                      :loading="similarLoading"
-                      text
-                      small
-                      @click="requestMoreSimilar"
-                      >Load more</v-btn
-                    >
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-
         <v-expansion-panel class="ma-0 bb-1" v-if="migrations.length > 0">
           <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span
@@ -294,21 +245,14 @@ export default {
   data: () => ({
     same: [],
     same_count: 0,
-    similar: [],
-    similar_count: 0,
-    similarLoading: false,
     sameLoading: false,
     sameInitialLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
-    similarInitialLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
   }),
   created() {
   },
   computed: {
     isSameInitialLoading() {
       return this.sameInitialLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
-    },
-    isSimilarInitialLoading() {
-      return this.similarInitialLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
     isContract() {
       return this.address.startsWith("KT");
@@ -380,28 +324,6 @@ export default {
             this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.ERROR;
           });
     },
-    requestSimilar() {
-      if (!this.isContract
-        || this.similarInitialLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
-      ) return;
-
-      this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
-      this.similar = [];
-      this.similarCount = 0;
-      this.api
-        .getSimilarContracts(this.network, this.address, 0)
-        .then((res) => {
-          if (!res) return;
-          this.similar = res.contracts;
-          this.similarCount = res.count;
-          this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
-        })
-        .catch((err) => {
-          this.showError(err);
-          console.log(err);
-          this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.ERROR;
-        });
-    },
     requestMoreSame() {
       this.sameLoading = true;
       this.api
@@ -416,20 +338,6 @@ export default {
         })
         .finally(() => (this.sameLoading = false));
     },
-    requestMoreSimilar() {
-      this.similarLoading = true;
-      this.api
-        .getSimilarContracts(this.network, this.address, this.similar.length)
-        .then((res) => {
-          if (!res) return;
-          this.similar.push(...res.contracts);
-        })
-        .catch((err) => {
-          this.showError(err);
-          console.log(err);
-        })
-        .finally(() => (this.similarLoading = false));
-    },
     onForkClick() {
       this.$emit("fork", {
         address: this.address,
@@ -440,11 +348,8 @@ export default {
   watch: {
     contract(newVal) {
       this.same_count = newVal.same_count;
-      this.similar_count = newVal.similar_count;
       this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
-      this.similarInitialLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
       this.same = [];
-      this.similar = [];
     }
   }
 };
