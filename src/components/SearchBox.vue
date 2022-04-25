@@ -363,7 +363,7 @@ export default {
               }
               const isKT = isKT1Address(text);
               const isOperation = isOperationHash(text);
-              const sc = isKT ? SEARCH_TABS[1] : isOperation ? SEARCH_TABS[2] : SEARCH_TABS[6];
+              const sc = isKT ? SEARCH_TABS[7] : isOperation ? SEARCH_TABS[8] : SEARCH_TABS[6];
               if (this.$gtag) {
                 this.$gtag.pageview(`/search?text=${text}&sc=${sc}`);
               }
