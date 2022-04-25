@@ -27,16 +27,9 @@
           >
         </v-list-item-subtitle>
       </v-list-item-content>
-      <v-list-item-action v-if="tags">
-        <v-list-item-action-text>
-          <v-chip
-            small
-            class="caption"
-            target="_blank"
-            >{{ tags.text }}</v-chip
-          >
-        </v-list-item-action-text>
-      </v-list-item-action>
+      <Tags
+        :contract="contract"
+      />
     </v-list-item>
     <v-divider></v-divider>
     <div class="d-flex align-center px-4 sidebar" style="height: 48px">
@@ -272,6 +265,7 @@ import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
 import { DATA_LOADING_STATUSES } from "@/utils/network";
 import ShareLink from "../../components/Buttons/ShareLink";
+import Tags from "../../components/Tags";
 
 export default {
   name: "SideBar",
@@ -285,6 +279,7 @@ export default {
     balance: Number,
   },
   components: {
+    Tags,
     ShareLink,
     SimilarItem,
     LogItem,
@@ -319,23 +314,6 @@ export default {
           return this.contract.alias;
         } else if (this.metadata && this.metadata.name) {
           return this.metadata.name;
-        }
-      }
-      return null;
-    },
-    tags() {
-      const standards = {
-        fa2: "FA2",
-        fa12: "FA1.2",
-        fa1: "FA1",
-        delegator: "Delegator",
-        multisig: "Multisig",
-      };
-      if (this.contract && this.contract.tags) {
-        for (var tag in standards) {
-          if (this.contract.tags.includes(tag)) {
-            return { tag, text: standards[tag] };
-          }
         }
       }
       return null;

@@ -50,6 +50,22 @@ export function shortcut(value, tail = 4) {
         `${value.slice(value.length - tail)}`
 }
 
+export function shortcutOnly(value, tail = 4) {
+    if (!value) return '';
+
+    let head = 0;
+    if (value.startsWith('tz') || value.startsWith('KT')) {
+        head = 7;
+    } else if (value.startsWith('o')) {
+        head = 1;
+    } else if (value.startsWith('expr')) {
+        head = 4;
+    } else {
+        return value;
+    }
+    return `${value.slice(0, head)}...${value.slice(-1 * tail)}`;
+}
+
 export function formatDatetime(timestamp, minDate = {val: 1, unit: "day"}) {
     let d = dayjs(timestamp);
     if (timestamp) {

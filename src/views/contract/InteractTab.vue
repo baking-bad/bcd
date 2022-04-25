@@ -21,8 +21,46 @@
         </router-link>
       </v-col>
       <v-col cols="9">
-        <div class="pl-9">
-
+        <div class="pl-9 d-flex justify-space-between v-card align-center pr-9">
+          <div class="d-flex flex-column justify-center">
+            <h1 class="text--secondary">
+              {{ contract.alias || contract.address }}
+              <Tags :contract="contract" />
+            </h1>
+            <p class="text--secondary mb-2">
+              <span>{{ contract.alias ? shortcutOnly(address) : '' }}</span>
+              <VBtn icon class="ml-1"
+                @click="
+                  () => {
+                    $clipboard(address);
+                    showClipboardOK();
+                  }
+              ">
+                <v-icon class="text--secondary" small>mdi-content-copy</v-icon>
+              </VBtn>
+            </p>
+          </div>
+          <div class="d-flex flex-column justify-center">
+            <VBtn
+              @click="openTzktContract(contract)"
+              small
+            >
+              <v-icon small>
+                mdi-earth
+              </v-icon>
+              <span class="ml-2">
+                View on TZKT
+              </span>
+            </VBtn>
+            <VBtn
+              v-if="isShareable"
+              @click="shareContract(contract)"
+              class="mt-2"
+              small
+            >
+              Share
+            </VBtn>
+          </div>
         </div>
       </v-col>
     </v-row>
@@ -107,6 +145,10 @@ import { mapActions } from "vuex";
 import { applyStyles } from '@/utils/styles.js';
 import Schema from "@/components/schema/Schema.vue";
 import TypeDef from "@/views/contract/TypeDef";
+import { shortcutOnly } from "../../utils/tz";
+import Tags from "../../components/Tags";
+import {shareContract} from "../../utils/navigation";
+import {openTzktContract} from "../../utils/tzkt";
 
 export default {
   name: "InteractTab",
@@ -115,6 +157,7 @@ export default {
     network: String,
   },
   components: {
+    Tags,
     Schema,
     TypeDef
   },
@@ -123,8 +166,12 @@ export default {
     entrypoints: [],
     selected: -1,
     model: {},
+    contract: null,
   }),
   computed: {
+    isShareable() {
+      return navigator.share;
+    },
     breadcrumbsItems() {
       return [
         {
@@ -136,7 +183,7 @@ export default {
           text: this.network,
         },
         {
-          text: this.address.slice(0, 7) + '...' + this.address.slice(-4),
+          text: shortcutOnly(this.address),
           to: `/${this.network}/${this.address}/operations`,
         },
         {
@@ -162,12 +209,20 @@ export default {
   },
   created() {
     this.getEntrypoints(this.$route.params.entrypoint);
+    this.api
+      .getContract(this.network, this.address)
+      .then((contract) => {
+        this.contract = contract;
+      });
   },
   destroyed() {
     this.$router.push({path: this.$route.path, query: { ...this.$route.query, entrypoint: undefined }})
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
+    shortcutOnly,
+    shareContract,
+    openTzktContract,
     addValidatorsToSchema(schema) {
       const modifiedSchema = Object.assign({}, schema);
       const { properties } = modifiedSchema;
