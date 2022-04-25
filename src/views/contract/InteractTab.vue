@@ -24,11 +24,11 @@
         <div class="pl-9 d-flex justify-space-between v-card align-center pr-9">
           <div class="d-flex flex-column justify-center">
             <h1 class="text--secondary">
-              {{ contract.alias || contract.address }}
+              {{ contract ? (contract.alias || contract.address) : address }}
               <Tags :contract="contract" />
             </h1>
             <p class="text--secondary mb-2">
-              <span>{{ contract.alias ? shortcutOnly(address) : '' }}</span>
+              <span>{{ contract ? (contract.alias ? shortcutOnly(address) : '') : '...' }}</span>
               <VBtn icon class="ml-1"
                 @click="
                   () => {
@@ -124,7 +124,7 @@
             <v-navigation-drawer floating permanent style="max-height: 80vh; width: 100%;">
               <div class="pa-3">
                 <TypeDef
-                  v-if="entrypoints[selected].typedef"
+                  v-if="entrypoints[selected] ? entrypoints[selected].typedef : false"
                   :typedef="entrypoints[selected].typedef"
                   first="parameter"
                 />
