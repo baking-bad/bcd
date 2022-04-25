@@ -191,11 +191,7 @@ export default {
         },
         {
           disabled: true,
-          text: 'Interact',
-        },
-        {
-          disabled: true,
-          text: this.selected === -1 ? '...' : this.entrypoints[this.selected].name,
+          text: `Interact${this.selected === -1 ? '' : `: ${this.entrypoints[this.selected].name}`}`,
         },
       ];
     },
