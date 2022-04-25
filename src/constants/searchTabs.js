@@ -6,5 +6,6 @@ export const SEARCH_TABS = {
   4: 'tokens',
   5: 'metadata',
   6: 'suggests',
-  7: 'notfound',
+  7: 'contract',
+  8: 'operation',
 }

@@ -130,7 +130,7 @@ api.getConfig().then(response => {
       beforeEnter: async function (to, from, next) {
         return await api.getContractBySlug(to.params.slug)
           .then(res => next(`/${res.network}/${res.address}`))
-          .catch(() => next(`/search?text=${to.params.slug}&sc=${SEARCH_TABS[7]}`))
+          .catch(() => next(`/search?text=${to.params.slug}`))
       }
     },
     {
