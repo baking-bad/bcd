@@ -203,7 +203,7 @@ export default {
       if (typeof this.selected === "number") {
         return this.entrypoints[this.selected];
       }
-      const entrypointQuery = this.$route.query.entrypoint;
+      const entrypointQuery = this.$route.params.entrypoint;
       return this.entrypoints.find(item => item.name === entrypointQuery)
     },
   },
@@ -274,6 +274,14 @@ export default {
         });
       }
       this.model = Object.assign({}, newValue.default_model);
+    },
+    $route(newVal) {
+      const { entrypoint } = newVal.params;
+      if (!entrypoint) {
+        this.$router.back();
+      } else {
+        this.selected = this.entrypoints.findIndex((item) => item.name === entrypoint);
+      }
     },
   },
 };
