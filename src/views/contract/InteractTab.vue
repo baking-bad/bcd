@@ -21,23 +21,14 @@
         </router-link>
       </v-col>
       <v-col cols="9">
-        <div class="pl-9 d-flex justify-space-between v-card align-center pr-9">
+        <div class="pl-9 d-flex justify-space-between v-card align-center pr-9 pt-2 pb-2">
           <div class="d-flex flex-column justify-center">
-            <h1 class="text--secondary">
-              {{ contract ? (contract.alias || contract.address) : address }}
-              <Tags :contract="contract" />
+            <h1 class="text--secondary d-flex align-center">
+              <span>{{ contract ? (contract.alias || shortcutOnly(contract.address)) : shortcutOnly(address) }}</span>
+              <Tags class="ml-2" :contract="contract" />
             </h1>
             <p class="text--secondary mb-2">
               <span>{{ contract ? (contract.alias ? shortcutOnly(address) : '') : '...' }}</span>
-              <VBtn icon class="ml-1"
-                @click="
-                  () => {
-                    $clipboard(address);
-                    showClipboardOK();
-                  }
-              ">
-                <v-icon class="text--secondary" small>mdi-content-copy</v-icon>
-              </VBtn>
             </p>
           </div>
           <div class="d-flex flex-column justify-center">
@@ -59,6 +50,18 @@
               small
             >
               Share
+            </VBtn>
+            <VBtn
+              v-else
+              small
+              class="ml-1 mt-2"
+              @click="
+                () => {
+                  $clipboard(address);
+                  showClipboardOK();
+                }
+              ">
+              Copy address
             </VBtn>
           </div>
         </div>
