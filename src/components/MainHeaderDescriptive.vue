@@ -4,13 +4,10 @@
       <RouterLink to="/" class="white--text no-decoration">
         <h2>BCD</h2>
       </RouterLink>
-      <span class="ml-3 text-small white--text">Tezos Smart Contract Explorer</span>
-      <SocialsList class="socials-list ml-3"/>
+      <span class="ml-3 text-small overline white--text">Tezos Contract Explorer</span>
     </div>
     <div class="searchbox-wrapper">
       <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
-      <ThemeSwitcher />
-      <PickRandomButton class="ml-3" />
       <v-btn
         text
         class="ml-2 white--text"
@@ -28,6 +25,8 @@
       <v-btn text small :to="{ name: 'dapps' }" class="white--text">
         Dapps
       </v-btn>
+      <ThemeSwitcher />
+      <SocialsList class="socials-list ml-3"/>
     </div>
   </header>
 </template>
@@ -36,11 +35,10 @@
 import SocialsList from "./SocialsList";
 import SearchBox from "./SearchBox";
 import ThemeSwitcher from "./ThemeSwitcher";
-import PickRandomButton from "./PickRandomButton";
 
 export default {
   name: "MainHeaderDescriptive",
-  components: {PickRandomButton, ThemeSwitcher, SearchBox, SocialsList},
+  components: { ThemeSwitcher, SearchBox, SocialsList},
   props: {
     noSearch: Boolean,
   },
