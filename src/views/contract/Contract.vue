@@ -9,10 +9,7 @@
       class="main-navigation"
     >
       <v-row class="fill-height br-1" no-gutters>
-        <v-col cols="2">
-          <SideNavigation />
-        </v-col>
-        <v-col cols="10">
+        <v-col cols="12">
           <SideBar
             :loading="loading"
             :address="address"
@@ -90,7 +87,6 @@
 </template>
 
 <script>
-import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/contract/SideBar.vue";
 import { mapActions } from "vuex";
 import { cancelRequests } from "@/utils/cancellation.js";
@@ -100,7 +96,6 @@ const MIN_SEARCHBOX_WIDTH = 240;
 export default {
   name: "Contract",
   components: {
-    SideNavigation,
     SideBar,
   },
   props: {

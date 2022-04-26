@@ -1,6 +1,5 @@
 <template>
   <div class="fill-height canvas">
-    <SideNavigation :app="true" />
     <v-container fluid class="pa-4">
       <v-row v-if="loading" no-gutters>
         <v-col cols="6" class="pr-1">
@@ -26,14 +25,12 @@
 
 <script>
 import { mapActions } from "vuex";
-import SideNavigation from "@/components/SideNavigation.vue";
 import DiffViewer from "@/views/diff/DiffViewer.vue";
 import ErrorState from "@/components/ErrorState.vue";
 
 export default {
   name: "Diff",
   components: {
-    SideNavigation,
     DiffViewer,
     ErrorState,
   },

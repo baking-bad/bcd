@@ -1,6 +1,5 @@
 <template>
   <div class="fill-height canvas">
-    <SideNavigation :app="true" />
     <div>
       <v-toolbar flat class color="toolbar" height="75">
         <v-toolbar-title class="headline">
@@ -20,12 +19,7 @@
 </template>
 
 <script>
-import SideNavigation from "@/components/SideNavigation.vue";
-
 export default {
   name: "MainDApp",
-  components: {
-    SideNavigation,
-  },
 };
 </script>

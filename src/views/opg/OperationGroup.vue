@@ -2,10 +2,7 @@
   <div class="fill-height">
     <v-navigation-drawer floating app permanent width="336" color="canvas" class="main-navigation">
       <v-row class="fill-height br-1" no-gutters>
-        <v-col cols="2">
-          <SideNavigation/>
-        </v-col>
-        <v-col cols="10">
+        <v-col cols="12">
           <SideBar :loading="loading" :network="network" :hash="hash" :operations="operations" />
         </v-col>
       </v-row>
@@ -25,14 +22,12 @@
 </template>
 
 <script>
-import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/opg/SideBar.vue";
 import { mapActions } from "vuex";
 
 export default {
   name: "OperationGroup",
   components: {
-    SideNavigation,
     SideBar
   },
   props: {

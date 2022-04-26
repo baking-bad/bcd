@@ -1,6 +1,5 @@
 <template>
   <div class="fill-height canvas">
-    <SideNavigation :app="true" />
     <v-app-bar extended fixed app flat class="search-bar px-4" style="margin-top: var(--main-header-weight);" height="75">
       <div style="width: 100%;" class="mt-4 ml-8">
         <v-combobox
@@ -108,7 +107,6 @@
 <script>
 import { mapActions } from "vuex";
 import SearchFilters from "@/views/extended_search/SearchFilters.vue";
-import SideNavigation from "@/components/SideNavigation.vue";
 import ResultItem from "@/views/extended_search/ResultItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import {SEARCH_TABS} from "../../constants/searchTabs";
@@ -117,7 +115,6 @@ export default {
   name: "ExtendedSearch",
   components: {
     SearchFilters,
-    SideNavigation,
     ResultItem,
     EmptyState,
   },
