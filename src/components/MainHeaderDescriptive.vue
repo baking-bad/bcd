@@ -27,6 +27,9 @@
       </v-btn>
     </div>
     <div class="searchbox-wrapper">
+      <v-btn text small @click="openFeedback" class="text--secondary" active-class="bg-before-transparent">
+        Send Feedback
+      </v-btn>
       <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
       <SocialsList class="socials-list ml-3"/>
       <ThemeSwitcher />
@@ -52,6 +55,17 @@ export default {
       }
       return 'bg-canvas-base';
     }
+  },
+  methods: {
+    openFeedback() {
+      window.open('https://docs.google.com/forms/d/1fnBzOgrZRc6-eV5gWW7zRh0u4PT8oc8q8FinBoehV2g/edit', '_blank');
+      if (this.$gtag) {
+        this.$gtag.event('Social Click', {
+          'event_category': 'Feedback',
+          'event_label': this.$router.currentRoute.fullPath
+        });
+      }
+    }
   }
 }
 </script>
@@ -70,6 +84,7 @@ export default {
 }
 .searchbox-wrapper {
   display: flex;
+  justify-content: space-between;
   align-items: center;
   height: 2.5rem;
   gap: 0.75rem;
