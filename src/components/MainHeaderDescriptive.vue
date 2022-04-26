@@ -27,10 +27,10 @@
       </v-btn>
     </div>
     <div class="searchbox-wrapper">
+      <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
       <v-btn text small @click="openFeedback" class="text--secondary" active-class="bg-before-transparent">
         Send Feedback
       </v-btn>
-      <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
       <SocialsList class="socials-list ml-3"/>
       <ThemeSwitcher />
     </div>
