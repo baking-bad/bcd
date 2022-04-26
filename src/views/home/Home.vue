@@ -8,9 +8,12 @@
               cols="12"
               class="d-flex align-center justify-center primary--text"
             >
-              <span style="font-family: Script1-Casual, monospace; font-size: 72px"
-                >Better Call Dev</span
+              <span
+                class="script-casual"
+                style="font-size: 72px"
               >
+                Better Call Dev
+              </span>
             </v-col>
           </v-row>
           <v-row justify="center" no-gutters>
@@ -197,12 +200,6 @@ export default {
 };
 </script>
 
-<style lang="scss">
-@font-face {
-  font-family: "Script1-Casual";
-  src: url("/fonts/script1-script-casual-normal.ttf");
-}
-</style>
 <style lang="scss" scoped>
 .main-rows-wrapper {
   .search-row {

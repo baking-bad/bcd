@@ -1,32 +1,35 @@
 <template>
-  <header class="header-class pl-4 pr-4">
+  <header class="header-class pl-4 pr-4" :class="headerAdditionalClass">
     <div class="d-flex align-center">
-      <RouterLink to="/" class="white--text no-decoration">
-        <h2>BCD</h2>
+      <RouterLink to="/" class="no-decoration d-flex align-center">
+        <h2 class="script-casual primary--text">BCD</h2>
+        <span class="ml-3 text-small overline text--secondary">Tezos Contract Explorer</span>
       </RouterLink>
-      <span class="ml-3 text-small overline white--text">Tezos Contract Explorer</span>
     </div>
-    <div class="searchbox-wrapper">
-      <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
+    <div>
       <v-btn
         text
-        class="ml-2 white--text"
+        active-class="bg-before-transparent"
+        class="ml-2 text--secondary"
         to="/docs"
         small
       >
         API
       </v-btn>
-      <v-btn text small :to="{ name: 'search' }" class="white--text">
-        Advanced search
+      <v-btn text small :to="{ name: 'search' }" class="text--secondary" active-class="bg-before-transparent">
+        Search
       </v-btn>
-      <v-btn text small :to="{ path: `/stats/${config.networks[0]}/general` }" class="white--text">
+      <v-btn text small :to="{ path: `/stats/${config.networks[0]}/general` }" class="text--secondary" active-class="bg-before-transparent">
         Stats
       </v-btn>
-      <v-btn text small :to="{ name: 'dapps' }" class="white--text">
+      <v-btn text small :to="{ name: 'dapps' }" class="text--secondary" active-class="bg-before-transparent">
         Dapps
       </v-btn>
-      <ThemeSwitcher />
+    </div>
+    <div class="searchbox-wrapper">
+      <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
       <SocialsList class="socials-list ml-3"/>
+      <ThemeSwitcher />
     </div>
   </header>
 </template>
@@ -42,6 +45,14 @@ export default {
   props: {
     noSearch: Boolean,
   },
+  computed: {
+    headerAdditionalClass() {
+      if (this.$route.path === '/') {
+        return 'bg-sidenav-base';
+      }
+      return 'bg-canvas-base';
+    }
+  }
 }
 </script>
 
@@ -56,12 +67,12 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--v-sidenav-base);
 }
 .searchbox-wrapper {
   display: flex;
   align-items: center;
   height: 2.5rem;
+  gap: 0.75rem;
   & > * {
     height: 2.5rem;
   }
@@ -69,6 +80,11 @@ export default {
 .list-class {
   padding: 0;
   background: transparent;
+}
+.socials-list {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 .list-item-group-class {
   display: flex;

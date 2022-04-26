@@ -2,7 +2,7 @@
   <div>
     <v-btn
       icon
-      class="white--text"
+      class="text--secondary"
       href="https://github.com/baking-bad/bcd"
       target="_blank"
       rel="nofollow noopener"
@@ -12,7 +12,7 @@
     </v-btn>
     <v-btn
       icon
-      class="white--text"
+      class="text--secondary"
       href="https://discord.gg/aG8XKuwsQd"
       target="_blank"
       rel="nofollow noopener"
