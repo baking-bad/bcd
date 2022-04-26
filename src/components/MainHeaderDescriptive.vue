@@ -19,13 +19,13 @@
       >
         API
       </v-btn>
-      <v-btn text small :to="{ name: 'search' }">
+      <v-btn text small :to="{ name: 'search' }" class="white--text">
         Advanced search
       </v-btn>
-      <v-btn text small :to="{ path: `/stats/${config.networks[0]}/general` }">
+      <v-btn text small :to="{ path: `/stats/${config.networks[0]}/general` }" class="white--text">
         Stats
       </v-btn>
-      <v-btn text small :to="{ name: 'dapps' }">
+      <v-btn text small :to="{ name: 'dapps' }" class="white--text">
         Dapps
       </v-btn>
     </div>
