@@ -2,10 +2,7 @@
   <div class="fill-height">
     <v-navigation-drawer floating app permanent width="336" color="canvas" class="main-navigation">
       <v-row class="fill-height br-1" no-gutters>
-        <v-col cols="2">
-          <SideNavigation />
-        </v-col>
-        <v-col cols="10">
+        <v-col cols="12">
           <SideBar :loading="loading" :states="states" :network="currentNetwork" />
         </v-col>
       </v-row>
@@ -23,9 +20,6 @@
           <v-icon left small>mdi-bank</v-icon>&nbsp;FA2.0
         </v-tab>
       </v-tabs>
-      <div class="mr-6 mt-6" style="width: 800px;">
-        <SearchBox :inplace="true"></SearchBox>
-      </div>
     </v-toolbar>
 
     <router-view :network="currentNetwork"></router-view>
@@ -34,15 +28,11 @@
 
 <script>
 import { mapActions } from "vuex";
-import SearchBox from "@/components/SearchBox.vue";
-import SideNavigation from "@/components/SideNavigation.vue";
 import SideBar from "@/views/stats/SideBar.vue";
 
 export default {
   name: "Stats",
   components: {
-    SearchBox,
-    SideNavigation,
     SideBar,
   },
   data: () => ({

@@ -1,0 +1,37 @@
+@font-face {
+    font-family: "Script1-Casual";
+    src: url("/fonts/script1-script-casual-normal.ttf");
+}
+
+:root {
+    --main-header-weight: 4rem;
+    --z-index-main-header: 900;
+}
+
+.top-margin-from-main-header {
+    margin-top: var(--main-header-weight);
+}
+
+.text-small {
+    font-size: 0.75rem;
+}
+
+.no-decoration {
+    text-decoration: none;
+}
+
+.script-casual {
+    font-family: Script1-Casual, monospace;
+}
+
+.bg-sidenav-base {
+    background: var(--v-sidenav-base);
+}
+
+.bg-canvas-base {
+    background: var(--v-canvas-base);
+}
+
+.bg-before-transparent::before {
+    background: transparent;
+}

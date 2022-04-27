@@ -1,5 +1,5 @@
 <template>
-  <div class="fill-height canvas">
+  <div class="fill-height canvas top-margin-from-main-header">
     <v-list-item style="height: 74px;">
       <v-list-item-content two-line>
         <v-list-item-title class="headline">Statistics</v-list-item-title>

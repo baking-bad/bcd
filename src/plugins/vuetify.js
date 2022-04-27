@@ -15,7 +15,7 @@ export function makeVuetify(dark) {
                     primary: '#5b942a',
                     secondary: '#246100',
                     accent: "#7B1FA2",
-                    sidenav: '#404040',
+                    sidenav: '#eaeaea',
                     sidebar: '#e9e9e9',
                     canvas: '#f3f3f3',
                     border: '#ddd',

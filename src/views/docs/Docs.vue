@@ -1,11 +1,6 @@
 <template>
   <div id="docs-wrapper" :class="this.$vuetify.theme.isDark ? 'docs-wrapper_dark' : ''">
     <DocsSnackbar />
-    <div class="fill-height">
-      <v-navigation-drawer floating app permanent width="56" color="canvas" class="main-navigation">
-        <SideNavigation />
-      </v-navigation-drawer>
-    </div>
     <div v-show="isDocsRerendering" class="ma-3">
       <h2 class="theme-is-changing">Theme is changing...</h2>
     </div>
@@ -16,7 +11,6 @@
 </template>
 
 <script>
-import SideNavigation from "@/components/SideNavigation.vue";
 import { init as initRedoc } from "redoc/bundles/redoc.standalone.js";
 import DocsSnackbar from "../../components/Snackbar/DocsSnackbar";
 
@@ -26,7 +20,6 @@ export default {
   name: "Docs",
   components: {
     DocsSnackbar,
-    SideNavigation,
   },
   mounted() {
     this.init();
@@ -81,7 +74,7 @@ export default {
             },
           },
           rightPanel: {
-            backgroundColor: this.theme.sidenav,
+            backgroundColor: this.$vuetify.theme.themes.dark.sidenav,
             textColor: this.$vuetify.theme.themes.dark.text
           },
           codeBlock: {

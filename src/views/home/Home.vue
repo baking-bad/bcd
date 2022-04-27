@@ -1,6 +1,5 @@
 <template>
   <v-container class="fill-height canvas" fluid>
-    <HomeToolbar />
     <v-container class="fill-height canvas main-rows-wrapper" fluid>
       <v-row no-gutters class="search-row">
         <v-col cols="12">
@@ -9,9 +8,12 @@
               cols="12"
               class="d-flex align-center justify-center primary--text"
             >
-              <span style="font-family: Script1-Casual, monospace; font-size: 72px"
-                >Better Call Dev</span
+              <span
+                class="script-casual"
+                style="font-size: 72px"
               >
+                Better Call Dev
+              </span>
             </v-col>
           </v-row>
           <v-row justify="center" no-gutters>
@@ -122,30 +124,22 @@
       class="d-flex justify-center align-center text--disabled"
       style="z-index: 0"
     >
-      <span class="overline">Tezos smart contract explorer by</span>
-      <v-btn
-        small
-        text
-        href="https://baking-bad.org/docs"
-        target="_blank"
-        class="text--secondary ml-1 pa-1"
-        style="margin-bottom: 2px;"
-      >
-        <span>Baking Bad</span>
-      </v-btn>
+      <span class="overline">Created by</span>
+      <a href="https://baking-bad.org/docs" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Baking Bad</a>
+      <span class="ml-1 mr-2">·</span>
+      <span class="overline">Hosted on</span>
+      <a href="https://www.netlify.com" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Netlify</a>
     </v-footer>
   </v-container>
 </template>
 
 <script>
 import { mapActions } from "vuex";
-import HomeToolbar from "@/views/home/HomeToolbar.vue";
 import SearchBox from "@/components/SearchBox.vue";
 
 export default {
   name: "Home",
   components: {
-    HomeToolbar,
     SearchBox,
   },
   data: () => ({
@@ -200,12 +194,6 @@ export default {
 };
 </script>
 
-<style lang="scss">
-@font-face {
-  font-family: "Script1-Casual";
-  src: url("/fonts/script1-script-casual-normal.ttf");
-}
-</style>
 <style lang="scss" scoped>
 .main-rows-wrapper {
   .search-row {
