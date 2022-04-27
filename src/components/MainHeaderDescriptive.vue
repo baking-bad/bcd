@@ -28,7 +28,7 @@
     </div>
     <div class="searchbox-wrapper">
       <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
-      <v-btn text small @click="openFeedback" class="text--secondary" outlined rounded active-class="bg-before-transparent">
+      <v-btn text small @click="openFeedback" class="text--secondary ml-5" outlined rounded active-class="bg-before-transparent">
         Feedback
       </v-btn>
       <SocialsList class="socials-list ml-3"/>
