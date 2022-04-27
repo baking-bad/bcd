@@ -106,7 +106,7 @@
         <v-skeleton-loader :loading="loading" type="card-heading, image">
           <Schema
             header="Parameters"
-            title="Call"
+            title="Interact:"
             type="parameter"
             v-if="selectedItem"
             v-model="model"
