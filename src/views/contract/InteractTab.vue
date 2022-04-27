@@ -21,7 +21,7 @@
         </router-link>
       </v-col>
       <v-col cols="9">
-        <div class="pl-9 d-flex justify-space-between v-card align-center pr-9 pt-2 pb-2">
+        <div class="pl-9 d-flex justify-space-between align-center pr-9 pt-9 pb-9">
           <div class="d-flex flex-column justify-center">
             <h1 class="text--secondary d-flex align-center">
               <span>{{ contract ? (contract.alias || shortcutOnly(contract.address)) : shortcutOnly(address) }}</span>
@@ -178,20 +178,20 @@ export default {
     breadcrumbsItems() {
       return [
         {
-          text: 'Home',
+          text: 'HOME',
           to: '/',
         },
         {
           disabled: true,
-          text: this.network,
+          text: this.network.toUpperCase(),
         },
         {
           text: shortcutOnly(this.address),
-          to: `/${this.network}/${this.address}/operations`,
+          to: `/${this.network}/${this.address}/operations`.toUpperCase(),
         },
         {
           disabled: true,
-          text: `Interact${this.selected === -1 ? '' : `: ${this.entrypoints[this.selected].name}`}`,
+          text: `Interact${this.selected === -1 ? '' : `: ${this.entrypoints[this.selected].name}`}`.toUpperCase(),
         },
       ];
     },
