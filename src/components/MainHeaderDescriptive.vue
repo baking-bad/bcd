@@ -50,9 +50,15 @@ export default {
   },
   computed: {
     headerAdditionalClass() {
-      let addClass = this.$route.path === '/' ? 'bg-sidenav-base ' : 'bg-canvas-base ';
+      let addClass = this.isHome ? 'home-header ' : '';
+      if (this.isHome && !this.isDarkTheme) {
+        addClass += 'bg-canvas-base ';
+      } else addClass += 'bg-sidenav-base ';
       addClass += this.isDarkTheme ? 'theme--dark ' : 'theme--light ';
       return addClass;
+    },
+    isHome() {
+      return this.$route.path === '/';
     },
     isDarkTheme() {
       return this.$vuetify.theme.dark;
@@ -83,13 +89,15 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom-width: thin;
-  border-bottom-style: solid;
-  &.theme--dark {
-    border-bottom-color: rgba(255,255,255,0.12);
-  }
-  &.theme--light {
-    border-bottom-color: rgba(0,0,0,0.12);
+  &:not(.home-header) {
+    border-bottom-width: thin;
+    border-bottom-style: solid;
+    &.theme--dark {
+      border-bottom-color: rgba(255,255,255,0.12);
+    }
+    &.theme--light {
+      border-bottom-color: rgba(0,0,0,0.12);
+    }
   }
 }
 .searchbox-wrapper {
