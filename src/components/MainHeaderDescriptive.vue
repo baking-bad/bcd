@@ -51,9 +51,9 @@ export default {
   computed: {
     headerAdditionalClass() {
       let addClass = this.isHome ? 'home-header ' : '';
-      if (this.isHome && !this.isDarkTheme) {
-        addClass += 'bg-canvas-base ';
-      } else addClass += 'bg-sidenav-base ';
+      if (this.isHome && this.isDarkTheme) {
+        addClass += 'bg-sidenav-base ';
+      } else addClass += 'bg-canvas-base ';
       addClass += this.isDarkTheme ? 'theme--dark ' : 'theme--light ';
       return addClass;
     },
