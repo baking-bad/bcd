@@ -39,3 +39,15 @@
 .bg-before-transparent::before {
     background: transparent;
 }
+
+.theme--light .themed-border {
+    border: thin solid rgba(0, 0, 0, 0.12);
+}
+
+.theme--dark .themed-border {
+    border: thin solid rgba(255, 255, 255, 0.12);
+}
+
+.radius-1 {
+    border-radius: 0.25rem;
+}
