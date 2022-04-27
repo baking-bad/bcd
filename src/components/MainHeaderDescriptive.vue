@@ -7,15 +7,6 @@
       </RouterLink>
     </div>
     <div>
-      <v-btn
-        text
-        active-class="bg-before-transparent"
-        class="ml-2 text--secondary"
-        to="/docs"
-        small
-      >
-        API
-      </v-btn>
       <v-btn text small :to="{ name: 'search' }" class="text--secondary" active-class="bg-before-transparent">
         Search
       </v-btn>
@@ -25,10 +16,19 @@
       <v-btn text small :to="{ name: 'dapps' }" class="text--secondary" active-class="bg-before-transparent">
         Dapps
       </v-btn>
+      <v-btn
+        text
+        active-class="bg-before-transparent"
+        class="text--secondary"
+        to="/docs"
+        small
+      >
+        API
+      </v-btn>
     </div>
     <div class="searchbox-wrapper">
       <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
-      <v-btn text small @click="openFeedback" class="text--secondary" active-class="bg-before-transparent">
+      <v-btn text small @click="openFeedback" class="text--secondary" outlined rounded active-class="bg-before-transparent">
         Send Feedback
       </v-btn>
       <SocialsList class="socials-list ml-3"/>
@@ -50,15 +50,17 @@ export default {
   },
   computed: {
     headerAdditionalClass() {
-      if (this.$route.path === '/') {
-        return 'bg-sidenav-base';
-      }
-      return 'bg-canvas-base';
+      let addClass = this.$route.path === '/' ? 'bg-sidenav-base ' : 'bg-canvas-base ';
+      addClass += this.isDarkTheme ? 'theme--dark ' : 'theme--light ';
+      return addClass;
+    },
+    isDarkTheme() {
+      return this.$vuetify.theme.dark;
     }
   },
   methods: {
     openFeedback() {
-      window.open('https://docs.google.com/forms/d/1fnBzOgrZRc6-eV5gWW7zRh0u4PT8oc8q8FinBoehV2g/edit', '_blank');
+      window.open('https://docs.google.com/forms/d/e/1FAIpQLSdTkewJ9UJHZByjpFndubp6kwEOENRBtvGIg9FisIdUJHB1mA/viewform', '_blank');
       if (this.$gtag) {
         this.$gtag.event('Social Click', {
           'event_category': 'Feedback',
@@ -81,6 +83,14 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom-width: thin;
+  border-bottom-style: solid;
+  &.theme--dark {
+    border-bottom-color: rgba(255,255,255,0.12);
+  }
+  &.theme--light {
+    border-bottom-color: rgba(0,0,0,0.12);
+  }
 }
 .searchbox-wrapper {
   display: flex;
