@@ -29,7 +29,7 @@
     <div class="searchbox-wrapper">
       <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
       <v-btn text small @click="openFeedback" class="text--secondary" outlined rounded active-class="bg-before-transparent">
-        Send Feedback
+        Feedback
       </v-btn>
       <SocialsList class="socials-list ml-3"/>
       <ThemeSwitcher />
