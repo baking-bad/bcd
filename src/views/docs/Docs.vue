@@ -74,7 +74,7 @@ export default {
             },
           },
           rightPanel: {
-            backgroundColor: this.theme.sidenav,
+            backgroundColor: this.$vuetify.theme.themes.dark.sidenav,
             textColor: this.$vuetify.theme.themes.dark.text
           },
           codeBlock: {

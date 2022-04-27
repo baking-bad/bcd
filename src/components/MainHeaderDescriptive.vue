@@ -50,12 +50,11 @@ export default {
   },
   computed: {
     headerAdditionalClass() {
-      let addClass = this.isHome ? 'home-header ' : '';
-      if (this.isHome && this.isDarkTheme) {
-        addClass += 'bg-sidenav-base ';
-      } else addClass += 'bg-canvas-base ';
-      addClass += this.isDarkTheme ? 'theme--dark ' : 'theme--light ';
-      return addClass;
+      if (this.isHome) {
+        return this.isDarkTheme ? '' : 'bg-canvas-base';
+      } else {
+        return 'bg-sidenav-base';
+      }
     },
     isHome() {
       return this.$route.path === '/';
@@ -89,16 +88,6 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  &:not(.home-header) {
-    border-bottom-width: thin;
-    border-bottom-style: solid;
-    &.theme--dark {
-      border-bottom-color: rgba(255,255,255,0.12);
-    }
-    &.theme--light {
-      border-bottom-color: rgba(0,0,0,0.12);
-    }
-  }
 }
 .searchbox-wrapper {
   display: flex;
