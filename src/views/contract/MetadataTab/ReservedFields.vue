@@ -31,16 +31,6 @@
               v-else-if="field.key === 'authors'"
               :value="field.value"
           />
-          <HomepageField
-              class="value-field"
-              v-else-if="field.key === 'homepage'"
-              :value="field.value"
-          />
-          <InterfacesField
-              class="value-field"
-              v-else-if="field.key === 'interfaces'"
-              :value="field.value"
-            />
           <SourcesField
               class="value-field"
               v-else-if="field.key === 'source'"
@@ -64,14 +54,12 @@
 <script>
 import AuthorsField from "@/views/contract/MetadataTab/CustomFields/AuthorsField";
 import LicenseField from "@/views/contract/MetadataTab/CustomFields/LicenseField";
-import HomepageField from "@/views/contract/MetadataTab/CustomFields/HomepageField";
-import InterfacesField from "@/views/contract/MetadataTab/CustomFields/InterfacesField";
 import SourcesField from "@/views/contract/MetadataTab/CustomFields/SourcesField";
 import ErrorsField from "@/views/contract/MetadataTab/CustomFields/ErrorsField";
 
 export default {
   name: "ReservedFields",
-  components: {ErrorsField, SourcesField, InterfacesField, HomepageField, LicenseField, AuthorsField},
+  components: {ErrorsField, SourcesField, LicenseField, AuthorsField},
   props: {
     metadata: Array,
   },
