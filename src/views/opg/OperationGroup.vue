@@ -3,7 +3,7 @@
     <v-navigation-drawer floating app permanent width="336" color="canvas" class="main-navigation">
       <v-row class="fill-height br-1" no-gutters>
         <v-col cols="12">
-          <SideBar :loading="loading" :network="network" :hash="hash" :operations="operations" />
+          <SideBar :loading="loading" :network="network" :hash="hash" :operations="operations" class="top-margin-from-main-header" />
         </v-col>
       </v-row>
     </v-navigation-drawer>
