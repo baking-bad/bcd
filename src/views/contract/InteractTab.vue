@@ -69,6 +69,7 @@
     </v-row>
     <v-row no-gutters>
       <v-col cols="3" class="pr-4">
+        <h2 class="mb-3 text--secondary outline">Entrypoints</h2>
         <v-skeleton-loader
           :loading="loading"
           type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
@@ -119,6 +120,7 @@
         </v-skeleton-loader>
       </v-col>
       <v-col cols="3" class="pl-4">
+        <h2 class="mb-3 text--secondary">Signatures</h2>
         <v-skeleton-loader
           :loading="loading"
           type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
