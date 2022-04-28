@@ -76,6 +76,8 @@
         >
           <v-list-item-group
             class="themed-border radius-1"
+            active-class="token-card-selected"
+            :value="selected"
             mandatory
           >
             <template v-for="(item, i) in entrypoints">
