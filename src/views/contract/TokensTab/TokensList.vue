@@ -148,7 +148,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .token-card {
   border-bottom: 1px solid var(--v-border-base);
 }

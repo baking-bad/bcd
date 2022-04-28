@@ -74,33 +74,21 @@
           :loading="loading"
           type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
         >
-          <v-card flat outlined style="max-width: 500px;">
-            <v-navigation-drawer floating permanent style="max-height: 80vh; width: 100%;">
-              <v-expansion-panels
-                flat
-                accordion
-                mandatory
-                active-class="entrypoint-selected"
-                v-model="selected"
-              >
-                <v-expansion-panel
-                  v-for="(item, i) in entrypoints"
-                  :key="i"
-                  :class="i > 0 ? 'bt-1' : ''"
-                  class="entrypoint-panel"
-                >
-                  <v-expansion-panel-header disable-icon-rotate>
-                    <div class="d-flex">
-                      <span class="hash">{{ item.name }}</span>
-                    </div>
-                    <template v-slot:actions>
-                      <v-icon></v-icon>
-                    </template>
-                  </v-expansion-panel-header>
-                </v-expansion-panel>
-              </v-expansion-panels>
-            </v-navigation-drawer>
-          </v-card>
+          <v-list-item-group
+            class="themed-border radius-1"
+            mandatory
+          >
+            <template v-for="(item, i) in entrypoints">
+              <v-list-item @click="selected = i" class="token-card" :key="'entrypoint-' + i">
+                <v-list-item-content>
+                  <v-list-item-title>
+                    <span v-if="item.name">{{ item.name }}</span>
+                    <span v-else class="text--disabled">NO NAME</span>
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+            </template>
+          </v-list-item-group>
         </v-skeleton-loader>
       </v-col>
       <v-col cols="6" class="pr-4">
