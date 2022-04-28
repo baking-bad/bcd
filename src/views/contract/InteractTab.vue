@@ -21,7 +21,7 @@
         </router-link>
       </v-col>
       <v-col cols="9" class="pl-2">
-        <div class="pl-9 d-flex justify-space-between align-center themed-border radius-1 pr-9 pt-9 pb-9">
+        <div class="d-flex justify-space-between align-center themed-border radius-1 pa-6">
           <div class="d-flex flex-column justify-center">
             <h1 class="text--secondary d-flex align-center">
               <span>{{ contract ? (contract.alias || shortcutOnly(contract.address)) : shortcutOnly(address) }}</span>
@@ -69,7 +69,7 @@
     </v-row>
     <v-row no-gutters>
       <v-col cols="3" class="pr-4">
-        <h2 class="mb-3 text--secondary outline">Entrypoints</h2>
+        <h3 class="mb-3 text--secondary outline">Entrypoints</h3>
         <v-skeleton-loader
           :loading="loading"
           type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
@@ -120,7 +120,7 @@
         </v-skeleton-loader>
       </v-col>
       <v-col cols="3" class="pl-4">
-        <h2 class="mb-3 text--secondary">Signatures</h2>
+        <h3 class="mb-3 text--secondary">Signatures</h3>
         <v-skeleton-loader
           :loading="loading"
           type="list-item, divider, list-item, divider, list-item, divider, list-item, divider, list-item"
