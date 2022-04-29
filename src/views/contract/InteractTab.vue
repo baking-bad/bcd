@@ -93,6 +93,7 @@ import { applyStyles } from '@/utils/styles.js';
 import Schema from "@/components/schema/Schema.vue";
 import TypeDef from "@/views/contract/TypeDef";
 import { shortcutOnly } from "../../utils/tz";
+import {toTitleCase} from "../../utils/string";
 
 export default {
   name: "InteractTab",
@@ -118,20 +119,20 @@ export default {
     breadcrumbsItems() {
       return [
         {
-          text: 'HOME',
+          text: 'Home',
           to: '/',
         },
         {
           disabled: true,
-          text: this.network.toUpperCase(),
+          text: toTitleCase(this.network),
         },
         {
           text: shortcutOnly(this.address),
-          to: `/${this.network}/${this.address}/operations`.toUpperCase(),
+          to: toTitleCase(`/${this.network}/${this.address}/operations`),
         },
         {
           disabled: true,
-          text: `Interact${this.selected === -1 ? '' : `: ${this.entrypoints[this.selected].name}`}`.toUpperCase(),
+          text: `Interact${this.selected === -1 ? '' : `: ${this.entrypoints[this.selected].name}`}`,
         },
       ];
     },
