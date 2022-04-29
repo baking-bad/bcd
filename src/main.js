@@ -31,7 +31,6 @@ import '@baking-bad/vjsf/lib/VJsf.css';
 
 import draggable from 'vuedraggable';
 import {roundDownSignificantDigits, SIFormatter} from "./utils/number";
-import {SEARCH_TABS} from "./constants/searchTabs";
 import {isKT1Address, isOperationHash, isTzAddress} from "./utils/tz";
 
 Vue.component('draggable', draggable);
@@ -137,7 +136,7 @@ api.getConfig().then(response => {
       beforeEnter: async function (to, from, next) {
         return await api.getContractBySlug(to.params.slug)
           .then(res => next(`/${res.network}/${res.address}`))
-          .catch(() => next(`/search?text=${to.params.slug}&sc=${SEARCH_TABS[7]}`))
+          .catch(() => next(`/search?text=${to.params.slug}`))
       }
     },
     {
@@ -148,10 +147,10 @@ api.getConfig().then(response => {
           return { name: 'search', query: { text, redirected: 'true' } };
         }
         if (isKT1Address(text) || isTzAddress(text)) {
-          return `/mainnet/${text}`;
+          return `/mainnet/${text}/operations`;
         }
         if (isOperationHash(text)) {
-          return `/mainnet/opg/${text}`;
+          return `/mainnet/opg/${text}/contents`;
         }
         return { name: 'search', query: { text, redirected: 'true' } };
       }
