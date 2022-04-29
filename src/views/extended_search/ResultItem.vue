@@ -61,7 +61,12 @@
               <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}/metadata`">
                 <span v-html="highlight(item.body.name)" class="hash"></span>
               </router-link>
-            </template>          
+            </template>
+            <template v-else>
+              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
+                <span class="hash">{{ item.body.name }}</span>
+              </router-link>
+            </template>
           </v-list-item-title>
 
           <v-list-item-subtitle>
