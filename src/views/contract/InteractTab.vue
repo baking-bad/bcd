@@ -1,18 +1,9 @@
 <template>
   <v-container fluid class="pa-8 pt-2 canvas fill-canvas">
     <v-row>
-      <v-col cols="6" class="pr-4">
-        <v-breadcrumbs
-          class="pl-0"
-          divider="/"
-          :items="breadcrumbsItems"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="3" class="pr-4">
+      <v-col cols="3" class="pr-4 flex align-center">
         <router-link class="text--secondary no-decoration" :to="`/${network}/${address}/operations`">
-          <p>
+          <p class="mb-0 py-3">
             <v-icon class="text--secondary">
               mdi-arrow-left
             </v-icon>
@@ -20,39 +11,12 @@
           </p>
         </router-link>
       </v-col>
-      <v-col cols="9" class="pl-2">
-        <div class="d-flex justify-space-between align-center themed-border radius-1 pa-6">
-          <div class="d-flex flex-column justify-center">
-            <h1 class="text--secondary d-flex align-center">
-              <span>{{ contract ? (contract.alias || shortcutOnly(contract.address)) : shortcutOnly(address) }}</span>
-              <Tags class="ml-2" :contract="contract" />
-            </h1>
-            <p class="text--secondary mb-2">
-              <span>{{ contract ? (contract.alias ? shortcutOnly(address) : '') : '...' }}</span>
-            </p>
-          </div>
-          <div class="d-flex flex-column justify-center">
-            <VBtn
-              @click="openTzktContract(contract)"
-              small
-            >
-              <v-icon small>
-                mdi-earth
-              </v-icon>
-              <span class="ml-2">
-                View on TZKT
-              </span>
-            </VBtn>
-            <VBtn
-              v-if="isShareable"
-              @click="shareContract(contract)"
-              class="mt-2"
-              small
-            >
-              Share
-            </VBtn>
-          </div>
-        </div>
+      <v-col cols="6" class="pr-4">
+        <v-breadcrumbs
+          class="pl-0"
+          divider="/"
+          :items="breadcrumbsItems"
+        />
       </v-col>
     </v-row>
     <v-row no-gutters>
@@ -129,9 +93,6 @@ import { applyStyles } from '@/utils/styles.js';
 import Schema from "@/components/schema/Schema.vue";
 import TypeDef from "@/views/contract/TypeDef";
 import { shortcutOnly } from "../../utils/tz";
-import Tags from "../../components/Tags";
-import {shareContract} from "../../utils/navigation";
-import {openTzktContract} from "../../utils/tzkt";
 
 export default {
   name: "InteractTab",
@@ -140,7 +101,6 @@ export default {
     network: String,
   },
   components: {
-    Tags,
     Schema,
     TypeDef
   },
@@ -199,9 +159,6 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
-    shortcutOnly,
-    shareContract,
-    openTzktContract,
     addValidatorsToSchema(schema) {
       const modifiedSchema = Object.assign({}, schema);
       const { properties } = modifiedSchema;

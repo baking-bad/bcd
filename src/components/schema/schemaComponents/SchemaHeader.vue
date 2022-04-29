@@ -3,13 +3,13 @@
     <p class="mr-2 hash mb-1">
       <span class="font-weight-thin">Interact with</span>
       &nbsp;
-      <v-btn text :to="`/${network}/${address}`" color="transparent" class="px-0">
+      <router-link text :to="`/${network}/${address}`" color="transparent" class="px-0 no-decoration">
         <span class="secondary--text">{{ shortcutOnly(address) }}</span>
-      </v-btn>
+      </router-link>
       <v-btn
         x-small
         icon
-        class="ml-1"
+        class="ml-2"
         @click="
         () => {
           $clipboard(address);
