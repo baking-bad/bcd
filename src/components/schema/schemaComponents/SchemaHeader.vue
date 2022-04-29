@@ -20,8 +20,7 @@
       </v-btn>
     </p>
     <span class="mr-2 hash font-weight-thin text-almost-medium">{{ title }}</span>
-    <span v-if="isStorage" class="accent--text text-almost-medium" v-html="storageHtml"></span>
-    <span v-else class="hash accent--text text-almost-medium">{{ storageName }}</span>
+    <span class="accent--text text-almost-medium">{{ storageName }}</span>
   </h2>
 </template>
 
