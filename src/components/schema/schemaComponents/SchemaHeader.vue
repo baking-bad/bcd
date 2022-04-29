@@ -6,7 +6,7 @@
     </div>
     <div>
       <router-link text :to="`/${network}/${address}`" color="transparent" class="px-0 no-decoration">
-        <span class="secondary--text text-almost-medium">{{ shortcutOnly(address) }}</span>
+        <span class="secondary--text text-almost-medium">{{ alias ? alias : shortcutOnly(address) }}</span>
       </router-link>
       <v-btn
         x-small
@@ -36,6 +36,7 @@ export default {
     storageName: String,
     title: String,
     address: String,
+    alias: String,
     network: String,
   },
   methods: {

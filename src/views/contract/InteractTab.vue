@@ -57,6 +57,7 @@
             :name="selectedItem.name"
             :network="network"
             :address="address"
+            :alias="contract.alias"
           />
           <div v-else></div>
         </v-skeleton-loader>

@@ -8,6 +8,7 @@
             :storage-name="name"
             :address="address"
             :network="network"
+            :alias="alias"
         />
         <SchemaForm
             :show="show"
@@ -106,6 +107,7 @@ export default {
     value: Object,
     schema: Object,
     name: String,
+    alias: String,
     address: String,
     network: String,
     header: String,
