@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-8 pt-2 canvas fill-canvas">
     <v-row>
-      <v-col cols="3" class="pr-4 flex align-center">
+      <v-col cols="3" class="pr-4">
         <router-link class="text--secondary no-decoration" :to="`/${network}/${address}/operations`">
           <p class="mb-0 py-3">
             <v-icon class="text--secondary">
