@@ -1,10 +1,12 @@
 <template>
-  <h2 class="ml-6 font-weight-regular">
-    <p class="mr-2 hash mb-1">
-      <span class="font-weight-thin">Interact with</span>
-      &nbsp;
+  <h2 class="d-flex justify-space-between font-weight-regular px-6">
+    <div>
+      <span class="hash">Interact: </span>
+      <span class="accent--text">{{ storageName }}</span>
+    </div>
+    <div>
       <router-link text :to="`/${network}/${address}`" color="transparent" class="px-0 no-decoration">
-        <span class="secondary--text">{{ shortcutOnly(address) }}</span>
+        <span class="secondary--text text-almost-medium">{{ shortcutOnly(address) }}</span>
       </router-link>
       <v-btn
         x-small
@@ -18,9 +20,7 @@
       ">
         <v-icon class="text--secondary">mdi-content-copy</v-icon>
       </v-btn>
-    </p>
-    <span class="mr-2 hash font-weight-thin text-almost-medium">{{ title }}</span>
-    <span class="accent--text text-almost-medium">{{ storageName }}</span>
+    </div>
   </h2>
 </template>
 
