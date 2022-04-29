@@ -35,3 +35,7 @@
 .bg-before-transparent::before {
     background: transparent;
 }
+
+.v-dialog--fullscreen {
+    padding-top: var(--main-header-weight);
+}
