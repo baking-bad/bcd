@@ -51,18 +51,6 @@
             >
               Share
             </VBtn>
-            <VBtn
-              v-else
-              small
-              class="ml-1 mt-2"
-              @click="
-                () => {
-                  $clipboard(address);
-                  showClipboardOK();
-                }
-              ">
-              Copy address
-            </VBtn>
           </div>
         </div>
       </v-col>
@@ -97,7 +85,7 @@
         <v-skeleton-loader :loading="loading" type="card-heading, image">
           <Schema
             header="Parameters"
-            title="Interact:"
+            title="Entrypoint:"
             type="parameter"
             v-if="selectedItem"
             v-model="model"

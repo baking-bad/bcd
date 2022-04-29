@@ -8,6 +8,8 @@
             :is-storage="true"
             :storage-html="helpers.shortcut(name)"
             :storage-name="name"
+            :address="address"
+            :network="network"
         />
         <SchemaForm
             :show="show"
