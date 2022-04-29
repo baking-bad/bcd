@@ -1,5 +1,6 @@
 <template>
   <v-card flat class="data mt-3">
+    {{ item }}
     <v-card-text class="pa-0 pt-1">
       <v-list-item two-line>
         <v-list-item-content>
@@ -61,7 +62,12 @@
               <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}/metadata`">
                 <span v-html="highlight(item.body.name)" class="hash"></span>
               </router-link>
-            </template>          
+            </template>
+            <template v-else>
+              <router-link class="serp-link" target="_blank" :to="`/${item.body.network}/${item.value}`">
+                <span v-html="highlight(item.body.name)" class="hash"></span>
+              </router-link>
+            </template>
           </v-list-item-title>
 
           <v-list-item-subtitle>
