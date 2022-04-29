@@ -1,16 +1,6 @@
 <template>
   <v-container fluid class="pa-8 pt-2 canvas fill-canvas">
     <v-row>
-      <v-col cols="3" class="pr-4">
-        <router-link class="text--secondary no-decoration" :to="`/${network}/${address}/operations`">
-          <p class="mb-0 py-3">
-            <v-icon class="text--secondary">
-              mdi-arrow-left
-            </v-icon>
-            <span class="vertical-align-middle ml-2">Go to contract</span>
-          </p>
-        </router-link>
-      </v-col>
       <v-col cols="6" class="pr-4">
         <v-breadcrumbs
           class="pl-0"
@@ -129,7 +119,7 @@ export default {
         },
         {
           text: shortcutOnly(this.address),
-          to: toTitleCase(`/${this.network}/${this.address}/operations`),
+          to: `/${this.network}/${this.address}/operations`,
         },
         {
           disabled: true,
