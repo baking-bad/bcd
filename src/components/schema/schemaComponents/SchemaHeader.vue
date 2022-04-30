@@ -1,17 +1,20 @@
 <template>
-  <h2 class="d-flex justify-space-between font-weight-regular px-6">
+  <h2 class="d-flex justify-space-between align-center font-weight-regular px-6">
     <div>
       <span class="hash">Interact: </span>
       <span class="accent--text">{{ storageName }}</span>
     </div>
-    <div>
-      <router-link text :to="`/${network}/${address}`" color="transparent" class="px-0 no-decoration">
-        <span class="secondary--text text-almost-medium">{{ alias ? alias : shortcutOnly(address) }}</span>
-      </router-link>
+    <div class="d-flex align-center">
+      <div class="d-flex flex-column">
+        <span class="text--primary text-almost-medium font-weight-light">{{ alias }}</span>
+        <router-link text :to="`/${network}/${address}`" color="transparent" class="px-0 no-decoration">
+          <span class="secondary--text text-almost-medium">{{ shortcutOnly(address) }}</span>
+        </router-link>
+      </div>
       <v-btn
         x-small
         icon
-        class="ml-2"
+        class="ml-2 align-self-end"
         @click="
         () => {
           $clipboard(address);
