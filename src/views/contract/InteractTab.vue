@@ -118,7 +118,7 @@ export default {
           text: toTitleCase(this.network),
         },
         {
-          text: shortcutOnly(this.address),
+          text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
           to: `/${this.network}/${this.address}/operations`,
         },
         {
