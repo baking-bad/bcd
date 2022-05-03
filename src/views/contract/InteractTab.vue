@@ -139,7 +139,8 @@ export default {
     },
   },
   created() {
-    this.getEntrypoints(this.$route.params.entrypoint);
+    const entrypoint = this.$route.params.entrypoint || this.$route.query.entrypoint;
+    this.getEntrypoints(entrypoint);
     this.api
       .getContract(this.network, this.address)
       .then((contract) => {
