@@ -32,6 +32,7 @@ import BigMapHistory from '@/views/big_map/HistoryTab.vue'
 import DAppList from '@/views/dapps/List.vue'
 import DApp from '@/views/dapps/DApp.vue'
 import MainDApp from '@/views/dapps/Main.vue'
+import NotFound from "../views/errors/NotFound";
 
 Vue.use(VueRouter)
 
@@ -46,6 +47,13 @@ const router = new Router({
         default: Home
       },
       name: 'home'
+    },
+    {
+      path: '/not_found',
+      components: {
+        default: NotFound,
+      },
+      name: 'not_found',
     },
     {
       path: '/search',
