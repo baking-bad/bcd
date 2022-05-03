@@ -145,7 +145,6 @@ import ContentItem from "@/views/contract/ContentItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
 import Vue from 'vue';
-import {ERROR_MESSAGE_404} from "../../constants/errors_messages_responses";
 
 export default {
   name: "OperationsTab",
@@ -300,14 +299,8 @@ export default {
           }
         })
         .catch((err) => {
-          if (err.message === ERROR_MESSAGE_404) {
-            this.$router.push({
-              name: 'not_found',
-            });
-          } else {
-            this.showError(err);
-            this.downloaded = true;
-          }
+          this.showError(err);
+          this.downloaded = true;
         })
         .finally(() => {
           this.operationsLoading = false;
