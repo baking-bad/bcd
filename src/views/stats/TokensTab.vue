@@ -7,7 +7,7 @@
             <td>
               <v-btn
                 class="text--secondary hash"
-                :to="`/${item.network}/${item.address}`"
+                :to="`${item.network}/${item.address}/`"
                 style="text-transform: none;"
                 target="_blank"
                 text>
