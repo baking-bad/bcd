@@ -3,6 +3,10 @@ import {
   NetworkType,
 } from "@airgap/beacon-sdk";
 
+export function openTzktContract(contract) {
+  window.open(`https://${contract.network === 'mainnet' ? '' : `${contract.network}.`}tzkt.io/${contract.address}`, '_blank');
+}
+
 export default class TZKTBlockExplorer extends BlockExplorer {
   constructor() {
     const rpcUrls = {

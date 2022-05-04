@@ -5,9 +5,10 @@
         <SchemaHeader
             v-if="title"
             :title="title"
-            :is-storage="true"
-            :storage-html="helpers.shortcut(name)"
             :storage-name="name"
+            :address="address"
+            :network="network"
+            :alias="alias"
         />
         <SchemaForm
             :show="show"
@@ -106,6 +107,7 @@ export default {
     value: Object,
     schema: Object,
     name: String,
+    alias: String,
     address: String,
     network: String,
     header: String,

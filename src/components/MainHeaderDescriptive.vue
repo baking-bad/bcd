@@ -50,11 +50,7 @@ export default {
   },
   computed: {
     headerAdditionalClass() {
-      if (this.isHome) {
-        return this.isDarkTheme ? '' : 'bg-canvas-base';
-      } else {
-        return 'bg-sidenav-base';
-      }
+      return this.isHome ? 'home-header ' : '';
     },
     isHome() {
       return this.$route.path === '/';
@@ -80,6 +76,7 @@ export default {
 <style lang="scss" scoped>
 .header-class {
   position: fixed;
+  background: var(--v-canvas-base);
   height: var(--main-header-weight);
   top: 0;
   left: 0;
@@ -88,6 +85,11 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  &:not(.home-header) {
+    border-bottom-width: thin;
+    border-bottom-style: solid;
+    border-bottom-color: var(--v-border-base);
+  }
 }
 .searchbox-wrapper {
   display: flex;

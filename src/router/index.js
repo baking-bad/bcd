@@ -191,12 +191,6 @@ const router = new Router({
           props: true
         },
         {
-          path: 'interact',
-          name: 'interact',
-          component: InteractTab,
-          props: true
-        },
-        {
           path: 'metadata',
           name: 'metadata',
           component: MetadataTab,
@@ -228,6 +222,12 @@ const router = new Router({
           props: true
         },
       ]
+    },
+    {
+      path: '/:network/:address([0-9A-z]{36})/interact/:entrypoint?',
+      name: 'interact',
+      component: InteractTab,
+      props: true
     },
     {
       path: '/:network/big_map/:ptr(\\d+)',

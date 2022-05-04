@@ -16,24 +16,32 @@
     font-size: 0.75rem;
 }
 
+.text-almost-medium {
+    font-size: 0.875rem;
+}
+
 .no-decoration {
     text-decoration: none;
+}
+
+.vertical-align-middle {
+    vertical-align: middle;
 }
 
 .script-casual {
     font-family: Script1-Casual, monospace;
 }
 
-.bg-sidenav-base {
-    background: var(--v-sidenav-base);
-}
-
-.bg-canvas-base {
-    background: var(--v-canvas-base);
-}
-
 .bg-before-transparent::before {
     background: transparent;
+}
+
+.themed-border {
+    border: thin solid var(--v-border-base);
+}
+
+.radius-1 {
+    border-radius: 0.25rem;
 }
 
 .v-dialog--fullscreen {
