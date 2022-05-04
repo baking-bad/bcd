@@ -124,9 +124,13 @@ export default {
       return this.address.startsWith("KT");
     },
   },
+  destroyed() {
+    this.hideError();
+  },
   methods: {
     ...mapActions({
       showError: "showError",
+      hideError: "hideError",
     }),
     pushTo(obj) {
       return Object.assign({
@@ -175,7 +179,13 @@ export default {
           this.contract = res;
         })
         .catch((err) => {
-          this.showError(err.message);
+          if (err.code === 204) {
+            return this.$router.push({
+              name: 'not_found',
+            });
+          } else {
+            this.showError(err);
+          }
         })
         .finally(() => (this.contractLoading = false));
     },

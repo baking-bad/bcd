@@ -217,8 +217,11 @@ export default {
       return this.address.startsWith("KT");
     },
   },
+  destroyed() {
+    this.hideError();
+  },
   methods: {
-    ...mapActions(["showError"]),
+    ...mapActions(["showError", "hideError"]),
     compareOperations(a, b) {
       if (a.timestamp < b.timestamp) {
         return 1;
@@ -296,7 +299,6 @@ export default {
           }
         })
         .catch((err) => {
-          console.error(err);
           this.showError(err);
           this.downloaded = true;
         })
