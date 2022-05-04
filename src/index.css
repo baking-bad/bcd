@@ -36,14 +36,14 @@
     background: transparent;
 }
 
-.theme--light .themed-border {
-    border: thin solid rgba(0, 0, 0, 0.12);
-}
-
-.theme--dark .themed-border {
-    border: thin solid rgba(255, 255, 255, 0.12);
+.themed-border {
+    border: thin solid var(--v-border-base);
 }
 
 .radius-1 {
     border-radius: 0.25rem;
+}
+
+.v-dialog--fullscreen {
+    padding-top: var(--main-header-weight);
 }
