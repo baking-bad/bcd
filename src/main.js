@@ -8,6 +8,7 @@ import store from '@/store'
 import router from '@/router'
 
 import VueGtag from "vue-gtag";
+import VueMeta from 'vue-meta'
 
 import * as Sentry from "@sentry/vue";
 import { BrowserTracing } from "@sentry/tracing";
@@ -136,7 +137,7 @@ api.getConfig().then(response => {
       beforeEnter: async function (to, from, next) {
         return await api.getContractBySlug(to.params.slug)
           .then(res => next(`/${res.network}/${res.address}`))
-          .catch(() => next(`/search?text=${to.params.slug}`))
+          .catch(() => next(`/not_found`))
       }
     },
     {
@@ -152,7 +153,7 @@ api.getConfig().then(response => {
         if (isOperationHash(text)) {
           return `/mainnet/opg/${text}/contents`;
         }
-        return { name: 'search', query: { text, redirected: 'true' } };
+        return { name: 'not_found' };
       }
     }
   ]);
@@ -192,6 +193,8 @@ api.getConfig().then(response => {
       attachStacktrace: true,
     });
   }
+
+  Vue.use(VueMeta);
 
   new Vue({
     router,

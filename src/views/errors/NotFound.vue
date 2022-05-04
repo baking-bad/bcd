@@ -38,6 +38,14 @@ import EmptyState from "../../components/Cards/EmptyState";
 export default {
   name: "NotFound",
   components: {EmptyState},
+  metaInfo: {
+    meta: [
+      {
+        name: 'robots',
+        content: 'noindex',
+      },
+    ],
+  },
 }
 </script>
 
