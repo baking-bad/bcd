@@ -35,7 +35,7 @@
           </v-list-item-group>
         </v-skeleton-loader>
       </v-col>
-      <v-col cols="6" class="pr-4">
+      <v-col cols="6" class="px-4">
         <v-skeleton-loader :loading="loading" type="card-heading, image">
           <Schema
             header="Parameters"

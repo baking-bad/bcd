@@ -32,14 +32,6 @@
     font-family: Script1-Casual, monospace;
 }
 
-.bg-sidenav-base {
-    background: var(--v-sidenav-base);
-}
-
-.bg-canvas-base {
-    background: var(--v-canvas-base);
-}
-
 .bg-before-transparent::before {
     background: transparent;
 }

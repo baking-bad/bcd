@@ -50,9 +50,7 @@ export default {
   },
   computed: {
     headerAdditionalClass() {
-      let addClass = this.isHome ? 'home-header bg-canvas-base ' : 'bg-sidenav-base ';
-      addClass += this.isDarkTheme ? 'theme--dark ' : 'theme--light ';
-      return addClass;
+      return this.isHome ? 'home-header ' : '';
     },
     isHome() {
       return this.$route.path === '/';
@@ -78,6 +76,7 @@ export default {
 <style lang="scss" scoped>
 .header-class {
   position: fixed;
+  background: var(--v-canvas-base);
   height: var(--main-header-weight);
   top: 0;
   left: 0;
@@ -89,12 +88,7 @@ export default {
   &:not(.home-header) {
     border-bottom-width: thin;
     border-bottom-style: solid;
-    &.theme--dark {
-      border-bottom-color: rgba(255,255,255,0.12);
-    }
-    &.theme--light {
-      border-bottom-color: rgba(0,0,0,0.12);
-    }
+    border-bottom-color: var(--v-border-base);
   }
 }
 .searchbox-wrapper {
