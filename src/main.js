@@ -144,9 +144,6 @@ api.getConfig().then(response => {
       path: '*',
       redirect: to => {
         const text = urlExtractBase58(to.path) || to.path.split('/').join(' ');
-        if (to.query.redirected) {
-          return { name: 'search', query: { text, redirected: 'true' } };
-        }
         if (isKT1Address(text) || isTzAddress(text)) {
           return `/mainnet/${text}/operations`;
         }
