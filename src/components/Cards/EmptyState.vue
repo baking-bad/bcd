@@ -2,8 +2,8 @@
   <v-card flat :class="color || 'transparent'" class="mt-10 pa-10 d-flex flex-column align-center justify-center">
     <v-icon size="85" class="text--disabled">{{ icon }}</v-icon>
     <span class="display-1 font-weight-light text--disabled">{{ title }}</span>
-    <span v-if="!htmlText" class="body-1 font-weight-light text--secondary mt-1">{{ text }}</span>
-    <span v-else v-html="htmlText"></span>
+    <span v-if="!hasDescriptionSlot" class="body-1 font-weight-light text--secondary mt-1">{{ text }}</span>
+    <slot v-else name="description" />
   </v-card>
 </template>
 
@@ -16,6 +16,11 @@ export default {
     text: String,
     htmlText: String,
     color: String
+  },
+  computed: {
+    hasDescriptionSlot() {
+      return !!this.$slots.description;
+    }
   }
 }
 </script>

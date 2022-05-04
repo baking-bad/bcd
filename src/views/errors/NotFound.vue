@@ -3,13 +3,14 @@
     <EmptyState
       icon="mdi-code-brackets"
       title="Error 404. Page not found."
-      html-text="
+    >
+      <template #description>
         <span class='body-1 font-weight-light text--secondary mt-1'>
           Please, try again or write to our team in&nbsp;
           <a class='no-decoration' href='https://discord.gg/aG8XKuwsQd' target='_blank'>Discord</a>.
         </span>
-      "
-    />
+      </template>
+    </EmptyState>
     <div class="d-flex justify-center">
       <v-btn
         class="text--secondary"
