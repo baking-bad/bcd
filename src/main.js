@@ -186,6 +186,7 @@ api.getConfig().then(response => {
             if (!isInRange) return null;
           }
         }
+        return errorObj;
       },
       attachStacktrace: true,
     });
