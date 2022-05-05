@@ -679,7 +679,7 @@ export default {
           )
           .then((res) => {
             if (!res) return;
-            this.model = res.default_model;
+            this.model = res.default_model[this.name];
             this.show = true;
           })
           .catch((err) => {
