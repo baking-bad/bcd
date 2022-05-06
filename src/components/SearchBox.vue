@@ -250,7 +250,11 @@ export default {
     },
     onSearch() {
       if (!this.model || !this.model.body) return;
-      const value = this.model.value || this.model;
+      const isToken = this.isModelsArrayInclude("token_metadata");
+      const isBigMap = this.isModelsArrayInclude("bigmapdiff");
+      const value = isToken || isBigMap
+        ? this.model.body[isToken ? 'contract' : 'key_hash']
+        : this.model.value;
       const network = this.model.body.network;
 
       addHistoryItem(this.buildHistoryItem(this.model, value || this.searchText));
@@ -258,10 +262,10 @@ export default {
         this.pushTo(`/${network}/opg/${value}`);
       } else if (this.isShouldSentToValue(value)) {
         this.pushTo(`/${network}/${value}`);
-      } else if (this.isModelsArrayInclude("bigmapdiff") && checkKeyHash(value)) {
+      } else if (isBigMap && checkKeyHash(value)) {
         const ptr = this.model.body.ptr;
         this.pushTo(`/${network}/big_map/${ptr}/${value}`);
-      } else if (this.isModelsArrayInclude("token_metadata") && checkAddress(value)) {
+      } else if (isToken && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/tokens?token_id=${this.model.body.token_id}`);
       } else if (this.isModelsArrayInclude("tzip") && checkAddress(value)) {
         this.pushTo(`/${network}/${value}/tokens`);
@@ -393,7 +397,7 @@ export default {
       this.menuProps = {};
       this.onSearch();
       this._locked = true;
-      this.searchText = val ? val.trim() : "";
+      this.searchText = this.model ? this.model.name : val ? val.trim() : '';
       if (this.searchText) {
         this.fetchSearchDebounced(this.searchText, ++this.seqno);
       } else {
