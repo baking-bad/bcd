@@ -133,6 +133,8 @@
 </template>
 
 <script>
+import sanitizeHtml from 'sanitize-html';
+
 export default {
   name: "ResultItem",
   props: {
@@ -145,7 +147,7 @@ export default {
       if (this.words === undefined) return s;
       for (var i = 0; i < this.words.length; i++) {
         let re = new RegExp(`(${this.words[i]})`, "gmi");
-        s = s.replace(re, "<span class='highlight'>$1</span>");
+        s = sanitizeHtml(s.replace(re, "<span class='highlight'>$1</span>"));
       }
       return s;
     },

@@ -150,6 +150,7 @@
 import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
 import { mapActions } from "vuex";
+import sanitizeHtml from "sanitize-html";
 
 export default {
   name: "SideBar",
@@ -210,7 +211,7 @@ export default {
         });
     },
     highlightType(expr) {
-      return expr.replace(/(\$\w+)/g, '<span class="accent--text">$1</span>');
+      return sanitizeHtml(expr.replace(/(\$\w+)/g, '<span class="accent--text">$1</span>'));
     },
   },
   watch: {
