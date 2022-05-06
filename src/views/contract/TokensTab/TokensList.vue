@@ -128,7 +128,9 @@ export default {
     selectedToken: {
       handler(newVal) {
         this.$emit('selectedToken', newVal);
-        setQuery(TOKEN_ID_QUERY, newVal.token_id);
+        if (newVal) {
+          setQuery(TOKEN_ID_QUERY, newVal.token_id);
+        }
       },
       deep: true,
       immediate: true
