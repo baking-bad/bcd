@@ -24,7 +24,7 @@
       </v-list-item>
     </v-card-title>
     <v-card-text class="mt-2 pr-0 pb-0">
-      <div class="post" v-html="content" />
+      <div class="post" v-html="sanitizeHtml(content)" />
       <v-expansion-panels v-if="post.reply_count > 0" flat hover>
         <v-expansion-panel
           style="background-color:transparent;"
@@ -46,6 +46,7 @@
 
 <script>
 import { mapActions } from "vuex";
+import sanitizeHtml from 'sanitize-html';
 
 export default {
   name: "Post",
@@ -75,6 +76,7 @@ export default {
   }),
   methods: {
     ...mapActions(["showError"]),
+    sanitizeHtml,
     getReplies() {
       if (!this.post || !this.post.reply_count) return;
 

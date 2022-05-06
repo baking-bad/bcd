@@ -56,7 +56,7 @@
             <span class="text--secondary hash">Contracts</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
-            <span v-else v-html="helpers.shortcut(item.value)"></span>
+            <span v-else v-html="sanitizeHtml(helpers.shortcut(item.value))"></span>
           </template>
           <template v-else-if="item.type === 'operation'">
             <span class="text--secondary hash">Operations</span>
@@ -69,7 +69,7 @@
               >
               <span
                 v-else
-                v-html="helpers.shortcut(item.body.destination)"
+                v-html="sanitizeHtml(helpers.shortcut(item.body.destination))"
                 class="text--secondary"
               ></span>
               <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
@@ -80,7 +80,7 @@
             <span v-else-if="item.body.kind === 'origination'"
               >origination</span
             >
-            <span v-else v-html="helpers.shortcut(item.value)"></span>
+            <span v-else v-html="sanitizeHtml(helpers.shortcut(item.value))"></span>
           </template>
           <template v-else-if="item.type === 'bigmapdiff'">
             <span class="text--secondary hash">Big_map {{ item.body.ptr }}</span>
@@ -96,7 +96,7 @@
             <span class="text--secondary hash">Tokens</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.name">{{ item.body.name }}</span>
-            <span v-else v-html="helpers.shortcut(item.value)"></span>
+            <span v-else v-html="sanitizeHtml(helpers.shortcut(item.value))"></span>
           </template>         
           <template v-if="item.type === 'recent'">
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
@@ -152,7 +152,7 @@
               ].includes(item.body.found_by) &&
               item.highlights[item.body.found_by]
             "
-            v-html="item.highlights[item.body.found_by][0]"
+            v-html="sanitizeHtml(item.highlights[item.body.found_by][0])"
           ></span>
         </v-list-item-action-text>
         <v-list-item-action-text>
@@ -186,6 +186,7 @@ import {
 import {SEARCH_TABS} from "../constants/searchTabs";
 import { isKT1Address, isOperationHash } from "../utils/tz";
 import waitUntil from "async-wait-until";
+import sanitizeHtml from 'sanitize-html';
 
 export default {
   props: {
@@ -219,6 +220,7 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    sanitizeHtml,
     handleSearchBoxFocus() {
       this.isFocused = true;
     },
