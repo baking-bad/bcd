@@ -1,5 +1,14 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
+    <v-row>
+      <v-col cols="6" class="pr-4">
+        <v-breadcrumbs
+          class="pl-0"
+          divider="/"
+          :items="breadcrumbsItems"
+        />
+      </v-col>
+    </v-row>
     <v-skeleton-loader :loading="loading" type="card-heading, image">
       <v-card v-if="storage || rawStorage" tile flat outlined class="pa-0">
         <v-card-title class="d-flex sidebar px-4 py-3">
@@ -119,6 +128,8 @@ import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
+import {toTitleCase} from "../../utils/string";
+import {shortcutOnly} from "../../utils/tz";
 
 export default {
   name: "StorageTab",
@@ -157,6 +168,26 @@ export default {
         });
       }
       return versions;
+    },
+    breadcrumbsItems() {
+      return [
+        {
+          text: 'Home',
+          to: '/',
+        },
+        {
+          disabled: true,
+          text: toTitleCase(this.network),
+        },
+        {
+          text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
+          to: `/${this.network}/${this.address}/operations`,
+        },
+        {
+          disabled: true,
+          text: 'Storage',
+        },
+      ];
     },
   },
   methods: {

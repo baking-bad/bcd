@@ -205,12 +205,6 @@ const router = new Router({
           props: true
         },
         {
-          path: 'storage',
-          name: 'storage',
-          component: StorageTab,
-          props: true
-        },
-        {
           path: 'fork',
           name: 'fork',
           components: {
@@ -235,6 +229,12 @@ const router = new Router({
       path: '/:network/:address([0-9A-z]{36})/interact/:entrypoint?',
       name: 'interact',
       component: InteractTab,
+      props: true
+    },
+    {
+      path: '/:network/:address([0-9A-z]{36})/storage',
+      name: 'storage',
+      component: StorageTab,
       props: true
     },
     {
