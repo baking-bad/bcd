@@ -13,7 +13,7 @@
       <h2 class="ml-7 font-weight-medium">
         {{ keyhash ? shortcutOnly(keyhash) : `Big Map ${ptr}` }}
       </h2>
-      <v-list class="list d-flex">
+      <v-list class="ml-6 list d-flex">
         <v-list-item class="pr-0">
           <v-list-item-content>
             <v-list-item-subtitle class="overline">Status</v-list-item-subtitle>
@@ -43,6 +43,7 @@
     </header>
     <v-row>
       <v-col :cols="keyhash ? '12' : '8'">
+        <h3 v-if="!keyhash" class="mb-3 text--secondary outline font-weight-medium ml-7">Keys</h3>
         <router-view class="ml-0" :address="address" :count.sync="count"></router-view>
       </v-col>
       <v-col v-if="!keyhash && actions" cols="4">
