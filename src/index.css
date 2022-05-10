@@ -36,6 +36,10 @@
     background: transparent;
 }
 
+.bg-canvas-base {
+    background-color: var(--v-canvas-base);
+}
+
 .themed-border {
     border: thin solid var(--v-border-base);
 }

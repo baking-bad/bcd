@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-0 ma-0 canvas fill-canvas">
-    <v-row class="px-8 pt-8" no-gutters>
+    <v-row class="px-8" no-gutters>
       <v-col cols="7">
         <v-text-field
           v-model="search"
