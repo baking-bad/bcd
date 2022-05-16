@@ -1,14 +1,5 @@
 <template>
-  <v-container fluid class="pa-8 canvas fill-canvas">
-    <v-row>
-      <v-col cols="6" class="pr-4">
-        <v-breadcrumbs
-          class="pl-0"
-          divider="/"
-          :items="breadcrumbsItems"
-        />
-      </v-col>
-    </v-row>
+  <v-container fluid class="px-8 py-4 canvas fill-canvas">
     <v-skeleton-loader :loading="loading" type="card-heading, image">
       <v-row>
         <v-col cols="8">
@@ -178,26 +169,6 @@ export default {
         });
       }
       return versions;
-    },
-    breadcrumbsItems() {
-      return [
-        {
-          text: 'Home',
-          to: '/',
-        },
-        {
-          disabled: true,
-          text: toTitleCase(this.network),
-        },
-        {
-          text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
-          to: `/${this.network}/${this.address}/operations`,
-        },
-        {
-          disabled: true,
-          text: 'Storage',
-        },
-      ];
     },
   },
   methods: {

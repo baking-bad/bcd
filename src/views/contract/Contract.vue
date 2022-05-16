@@ -1,40 +1,17 @@
 <template>
   <div class="fill-height">
-    <v-navigation-drawer
-      floating
-      app
-      permanent
-      width="336"
-      color="canvas"
-      class="main-navigation"
-    >
-      <v-row>
-        <v-col cols="6" class="pr-4 pb-4 ml-7">
-          <v-breadcrumbs
-            class="pl-0 pb-0"
-            divider="/"
-            :items="breadcrumbsItems"
-          />
-        </v-col>
-      </v-row>
-      <v-row class="fill-height br-1" no-gutters>
-        <v-col cols="12">
-          <SideBar
-            :loading="loading"
-            :address="address"
-            :network="network"
-            :migrations="migrations"
-            :contract="contract"
-            :metadata="metadata"
-            :balance="balance"
-            ref="sidebar"
-            v-on:fork="onFork"
-          />
-        </v-col>
-      </v-row>
-    </v-navigation-drawer>
+    <v-row class="bg-canvas-base">
+      <v-col cols="6" class="pr-4 pb-4 ml-7">
+        <v-breadcrumbs
+          class="pl-0 pb-0"
+          divider="/"
+          :items="breadcrumbsItems"
+        />
+      </v-col>
+    </v-row>
 
     <MenuToolbar
+      class="pl-7"
       :contract="contract"
       :address="address"
       :tokensTotal="tokensTotal"

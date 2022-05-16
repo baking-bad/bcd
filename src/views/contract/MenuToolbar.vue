@@ -1,10 +1,9 @@
 <template>
-  <v-toolbar flat class color="toolbar" height="75">
+  <v-toolbar flat class color="toolbar" height="48">
     <v-tabs
       center-active
       background-color="transparent"
       slider-color="primary"
-      class="ml-4"
     >
       <v-tab :to="pushTo({ name: 'operations' })" :title="contract.tx_count" replace style="width: 175px">
         <v-icon left small>mdi-swap-horizontal</v-icon>operations

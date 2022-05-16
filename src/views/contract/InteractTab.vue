@@ -1,14 +1,5 @@
 <template>
-  <v-container fluid class="pa-8 pt-2 canvas fill-canvas">
-    <v-row>
-      <v-col cols="6" class="pr-4">
-        <v-breadcrumbs
-          class="pl-0"
-          divider="/"
-          :items="breadcrumbsItems"
-        />
-      </v-col>
-    </v-row>
+  <v-container fluid class="pa-8 canvas fill-canvas">
     <v-row no-gutters>
       <v-col cols="3" class="pr-4">
         <h3 class="mb-3 text--secondary outline font-weight-medium">Entrypoints</h3>
@@ -106,26 +97,6 @@ export default {
   computed: {
     isShareable() {
       return navigator.share;
-    },
-    breadcrumbsItems() {
-      return [
-        {
-          text: 'Home',
-          to: '/',
-        },
-        {
-          disabled: true,
-          text: toTitleCase(this.network),
-        },
-        {
-          text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
-          to: `/${this.network}/${this.address}/operations`,
-        },
-        {
-          disabled: true,
-          text: `Interact${this.selected === -1 ? '' : `: ${this.entrypoints[this.selected].name}`}`,
-        },
-      ];
     },
     selectedItem() {
       if (this.selected < 0 || this.entrypoints.length < this.selected) {
