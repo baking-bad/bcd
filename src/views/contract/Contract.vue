@@ -8,6 +8,15 @@
       color="canvas"
       class="main-navigation"
     >
+      <v-row>
+        <v-col cols="6" class="pr-4 pb-4 ml-7">
+          <v-breadcrumbs
+            class="pl-0 pb-0"
+            divider="/"
+            :items="breadcrumbsItems"
+          />
+        </v-col>
+      </v-row>
       <v-row class="fill-height br-1" no-gutters>
         <v-col cols="12">
           <SideBar
@@ -25,54 +34,14 @@
       </v-row>
     </v-navigation-drawer>
 
-    <v-toolbar flat class color="toolbar" height="75">
-      <v-tabs
-        center-active
-        background-color="transparent"
-        slider-color="primary"
-        class="ml-4"
-      >
-        <v-tab :to="pushTo({ name: 'operations' })" :title="contract.tx_count" replace style="width: 175px">
-          <v-icon left small>mdi-swap-horizontal</v-icon>operations
-          <span class="ml-1">({{ contract.tx_count || 0 | numberToCompactSIFormat }})</span>
-        </v-tab>
-        <v-tab :to="pushTo({ name: 'storage' })" replace v-if="isContract">
-          <v-icon left small>mdi-database</v-icon>Storage
-        </v-tab>
-        <v-tab :to="pushTo({ name: 'code' })" replace v-if="isContract">
-          <v-icon left small>mdi-code-braces</v-icon>Code
-        </v-tab>
-        <v-tab :to="pushTo({ name: 'interact' })" replace v-if="isContract">
-          <v-icon left small>mdi-play-box-outline</v-icon>Interact
-        </v-tab>
-        <v-tab
-          :to="pushTo({ name: 'tokens' })"
-          :title="tokensTotal"
-          replace
-          v-if="isContract && tokensTotal > 0"
-        >
-          <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
-          <span class="ml-1">({{ tokensTotal | numberToCompactSIFormat }})</span>
-        </v-tab>
-        <v-tab
-          :to="pushTo({ name: 'transfers' })"
-          replace
-          v-if="tokenBalancesTotal > 0"
-        >
-          <v-icon left small>mdi-transfer</v-icon>Transfers
-        </v-tab>
-        <v-tab
-          :to="pushTo({ name: 'metadata' })"
-          replace
-          v-if="metadata"
-        >
-          <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
-        </v-tab>
-        <v-tab :to="pushTo({ name: 'fork' })" replace v-if="showFork && isContract">
-          <v-icon left small>mdi-source-fork</v-icon>Fork
-        </v-tab>
-      </v-tabs>
-    </v-toolbar>
+    <MenuToolbar
+      :contract="contract"
+      :address="address"
+      :tokensTotal="tokensTotal"
+      :tokenBalancesTotal="tokenBalancesTotal"
+      :metadata="metadata"
+      :show-fork="showFork"
+    />
 
     <router-view
       :address="address"
@@ -90,12 +59,16 @@
 import SideBar from "@/views/contract/SideBar.vue";
 import { mapActions } from "vuex";
 import { cancelRequests } from "@/utils/cancellation.js";
+import {toTitleCase} from "../../utils/string";
+import {shortcutOnly} from "../../utils/tz";
+import MenuToolbar from "./MenuToolbar";
 
 const MIN_SEARCHBOX_WIDTH = 240;
 
 export default {
   name: "Contract",
   components: {
+    MenuToolbar,
     SideBar,
   },
   props: {
@@ -123,6 +96,22 @@ export default {
     isContract() {
       return this.address.startsWith("KT");
     },
+    breadcrumbsItems() {
+      return [
+        {
+          text: 'Home',
+          to: '/',
+        },
+        {
+          disabled: true,
+          text: toTitleCase(this.network),
+        },
+        {
+          text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
+          to: `/${this.network}/${this.address}/operations`,
+        },
+      ];
+    },
   },
   destroyed() {
     this.hideError();
@@ -132,11 +121,6 @@ export default {
       showError: "showError",
       hideError: "hideError",
     }),
-    pushTo(obj) {
-      return Object.assign({
-        query: this.$route.query,
-      }, obj);
-    },
     handleSearchBoxFocus() {
       const { width } = this.$refs.searchbox.$el.getBoundingClientRect();
       if (width < MIN_SEARCHBOX_WIDTH) {
