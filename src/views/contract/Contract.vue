@@ -1,12 +1,50 @@
 <template>
   <div class="fill-height">
     <v-row class="bg-canvas-base">
-      <v-col cols="6" class="pr-4 pb-4 ml-7">
+      <v-col cols="9" class="pr-4 pb-4 pl-3 d-flex align-center">
         <v-breadcrumbs
-          class="pl-0 pb-0"
+          class="pl-0 pb-0 pt-0 ml-7"
           divider="/"
           :items="breadcrumbsItems"
         />
+        <Tags
+          :contract="contract"
+        />
+      </v-col>
+      <v-col cols="3" class="d-flex justify-end pr-7">
+        <div class="d-flex align-center justify-start pa-2 px-4">
+          <v-tooltip bottom v-if="isContract">
+            <template v-slot:activator="{ on }">
+              <v-btn v-on="on" icon class="mr-2" @click="onForkClick">
+                <v-icon class="text--secondary">mdi-source-fork</v-icon>
+              </v-btn>
+            </template>
+            Fork contract
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                icon
+                class="mr-2"
+                @click="
+                () => {
+                  $clipboard(address);
+                  showClipboardOK();
+                }
+            "
+              >
+                <v-icon class="text--secondary">mdi-content-copy</v-icon>
+              </v-btn>
+            </template>
+            Copy address
+          </v-tooltip>
+          <ShareLink
+            :alias="alias"
+            :link="link"
+            bottom
+          />
+        </div>
       </v-col>
     </v-row>
 
@@ -17,7 +55,6 @@
       :tokensTotal="tokensTotal"
       :tokenBalancesTotal="tokenBalancesTotal"
       :metadata="metadata"
-      :show-fork="showFork"
     />
 
     <router-view
@@ -39,12 +76,16 @@ import { cancelRequests } from "@/utils/cancellation.js";
 import {toTitleCase} from "../../utils/string";
 import {shortcutOnly} from "../../utils/tz";
 import MenuToolbar from "./MenuToolbar";
+import Tags from "../../components/Tags";
+import ShareLink from "../../components/Buttons/ShareLink";
 
 const MIN_SEARCHBOX_WIDTH = 240;
 
 export default {
   name: "Contract",
   components: {
+    ShareLink,
+    Tags,
     MenuToolbar,
     SideBar,
   },
@@ -61,12 +102,36 @@ export default {
     metadata: null,
     tokenBalancesTotal: 0,
     tokensTotal: 0,
-    showFork: false,
     contractTags: null,
     contractLink: '',
     isComboBoxExpanded: false,
   }),
   computed: {
+    alias() {
+      if (this.contract) {
+        if (this.contract.alias) {
+          return this.contract.alias;
+        } else if (this.metadata && this.metadata.name) {
+          return this.metadata.name;
+        }
+      }
+      return null;
+    },
+    link() {
+      let routeData = {};
+      if (this.contract && this.contract.slug) {
+        routeData = {href:`/@${this.contract.slug}`};
+      } else {
+        routeData = this.$router.resolve({
+          name: "contract",
+          params: {
+            address: this.address,
+            network: this.network,
+          },
+        });
+      }
+      return `${window.location.protocol}//${window.location.host}${routeData.href}`;
+    },
     loading() {
       return this.contractLoading || this.migrationsLoading;
     },
@@ -97,6 +162,7 @@ export default {
     ...mapActions({
       showError: "showError",
       hideError: "hideError",
+      showClipboardOK: "showClipboardOK",
     }),
     handleSearchBoxFocus() {
       const { width } = this.$refs.searchbox.$el.getBoundingClientRect();
@@ -113,7 +179,6 @@ export default {
       this.metadata = null;
       this.migrations = [];
       this.contract = {};
-      this.showFork = this.$route.name === "fork";
       if (this.isContract) {
         this.getContract();
         this.getTokensTotal();
@@ -221,9 +286,6 @@ export default {
           this.showError(err);
         });
     },
-    onFork() {
-      this.showFork = !this.showFork;
-    },
   },
   watch: {
     address: {
@@ -231,14 +293,6 @@ export default {
       handler() {
         cancelRequests();
         this.init();
-      }
-    },
-    showFork: function (newValue) {
-      const currentRouteName = this.$route.name;
-      if (newValue && currentRouteName !== "fork") {
-        this.$router.push({ name: "fork" });
-      } else if (!newValue && currentRouteName !== "operations") {
-        this.$router.push({ name: "operations" });
       }
     },
   },

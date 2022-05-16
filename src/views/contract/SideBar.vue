@@ -1,75 +1,12 @@
 <template>
   <div class="fill-height canvas top-margin-from-main-header" :key="address">
-    <v-list-item style="height: 74px">
-      <v-list-item-content two-line>
-        <v-list-item-title class="headline">
-          <v-tooltip bottom v-if="alias" :disabled="alias.length < 15">
-            <template v-slot:activator="{ on, attrs }">
-              <span v-bind="attrs" v-on="on">{{ alias }}</span>
-            </template>
-            <span>{{ alias }}</span>
-          </v-tooltip>
-          <span v-else v-html="helpers.shortcut(address)"></span>&nbsp;
-          <v-btn
-            icon
-            target="_blank"
-            :href="contract.verification_source"
-            v-if="contract && contract.verified"
-          >
-            <v-icon small color="primary">mdi-shield-check</v-icon>
-          </v-btn>
-        </v-list-item-title>
-        <v-list-item-subtitle>
-          <span
-            class="overline"
-            :class="network === 'mainnet' ? 'secondary--text' : ''"
-            >{{ network }}</span
-          >
-        </v-list-item-subtitle>
-      </v-list-item-content>
-      <Tags
-        :contract="contract"
-      />
-    </v-list-item>
     <v-divider></v-divider>
     <div class="d-flex align-center px-4 sidebar" style="height: 48px">
       <span class="caption font-weight-bold text-uppercase text--secondary"
         >Actions</span
       >
     </div>
-    <div class="d-flex align-center justify-start pa-2 px-4">
-      <v-tooltip bottom v-if="isContract">
-        <template v-slot:activator="{ on }">
-          <v-btn v-on="on" icon class="mr-2" @click="onForkClick">
-            <v-icon class="text--secondary">mdi-source-fork</v-icon>
-          </v-btn>
-        </template>
-        Fork contract
-      </v-tooltip>
-      <v-tooltip bottom>
-        <template v-slot:activator="{ on }">
-          <v-btn
-            v-on="on"
-            icon
-            class="mr-2"
-            @click="
-              () => {
-                $clipboard(address);
-                showClipboardOK();
-              }
-            "
-          >
-            <v-icon class="text--secondary">mdi-content-copy</v-icon>
-          </v-btn>
-        </template>
-        Copy address
-      </v-tooltip>
-      <ShareLink
-        :alias="alias"
-        :link="link"
-        bottom
-      />
-    </div>
+
     <v-divider></v-divider>
 
     <v-skeleton-loader
@@ -315,12 +252,6 @@ export default {
           console.log(err);
         })
         .finally(() => (this.sameLoading = false));
-    },
-    onForkClick() {
-      this.$emit("fork", {
-        address: this.address,
-        network: this.network,
-      });
     },
   },
   watch: {

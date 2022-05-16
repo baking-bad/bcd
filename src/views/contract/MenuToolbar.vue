@@ -41,7 +41,7 @@
       >
         <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
       </v-tab>
-      <v-tab :to="pushTo({ name: 'fork' })" replace v-if="showFork && isContract">
+      <v-tab :to="pushTo({ name: 'fork' })" replace v-if="isContract">
         <v-icon left small>mdi-source-fork</v-icon>Fork
       </v-tab>
     </v-tabs>
@@ -57,7 +57,6 @@ export default {
     tokensTotal: Number,
     tokenBalancesTotal: Number,
     metadata: Object,
-    showFork: Boolean,
   },
   computed: {
     isContract() {
