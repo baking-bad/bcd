@@ -74,8 +74,6 @@ import { mapActions } from "vuex";
 import { applyStyles } from '@/utils/styles.js';
 import Schema from "@/components/schema/Schema.vue";
 import TypeDef from "@/views/contract/TypeDef";
-import { shortcutOnly } from "../../utils/tz";
-import {toTitleCase} from "../../utils/string";
 
 export default {
   name: "InteractTab",

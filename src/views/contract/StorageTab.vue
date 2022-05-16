@@ -129,8 +129,6 @@ import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
-import {toTitleCase} from "../../utils/string";
-import {shortcutOnly} from "../../utils/tz";
 
 export default {
   name: "StorageTab",
