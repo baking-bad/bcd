@@ -90,7 +90,6 @@ import {toTitleCase} from "../../utils/string";
 import {shortcutOnly} from "../../utils/tz";
 import MenuToolbar from "./MenuToolbar";
 import Tags from "../../components/Tags";
-import ShareLink from "../../components/Buttons/ShareLink";
 import {openTzktContract} from "../../utils/tzkt";
 
 const MIN_SEARCHBOX_WIDTH = 240;
@@ -98,7 +97,6 @@ const MIN_SEARCHBOX_WIDTH = 240;
 export default {
   name: "Contract",
   components: {
-    ShareLink,
     Tags,
     MenuToolbar,
   },
