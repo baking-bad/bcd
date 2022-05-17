@@ -15,7 +15,7 @@
         <div class="d-flex align-center justify-start pa-2 px-4">
           <v-tooltip bottom v-if="isContract">
             <template v-slot:activator="{ on }">
-              <v-btn v-on="on" icon class="mr-2" @click="onForkClick">
+              <v-btn v-on="on" icon class="mr-2">
                 <v-icon class="text--secondary">mdi-source-fork</v-icon>
               </v-btn>
             </template>
@@ -57,20 +57,21 @@
       :metadata="metadata"
     />
 
-    <router-view
-      :address="address"
-      :network="network"
-      :contract="contract"
-      :migrations="migrations"
-      :tokensTotal="tokensTotal"
-      :tokenBalancesTotal="tokenBalancesTotal"
-      :metadata="metadata"
-    ></router-view>
+    <VContainer>
+      <router-view
+        :address="address"
+        :network="network"
+        :contract="contract"
+        :migrations="migrations"
+        :tokensTotal="tokensTotal"
+        :tokenBalancesTotal="tokenBalancesTotal"
+        :metadata="metadata"
+      ></router-view>
+    </VContainer>
   </div>
 </template>
 
 <script>
-import SideBar from "@/views/contract/SideBar.vue";
 import { mapActions } from "vuex";
 import { cancelRequests } from "@/utils/cancellation.js";
 import {toTitleCase} from "../../utils/string";
@@ -87,7 +88,6 @@ export default {
     ShareLink,
     Tags,
     MenuToolbar,
-    SideBar,
   },
   props: {
     network: String,
@@ -95,7 +95,6 @@ export default {
   },
   data: () => ({
     contractLoading: true,
-    migrationsLoading: true,
     contract: {},
     balance: 0,
     migrations: [],
@@ -117,6 +116,7 @@ export default {
       }
       return null;
     },
+
     link() {
       let routeData = {};
       if (this.contract && this.contract.slug) {
@@ -177,14 +177,10 @@ export default {
       this.tokensTotal = 0;
       this.tokenBalancesTotal = 0;
       this.metadata = null;
-      this.migrations = [];
       this.contract = {};
       if (this.isContract) {
         this.getContract();
         this.getTokensTotal();
-        this.getMigrations();
-      } else {
-        this.migrationsLoading = false;
       }
       this.getInfo();
       this.getTokenBalancesTotal();
@@ -214,19 +210,6 @@ export default {
           }
         })
         .finally(() => (this.contractLoading = false));
-    },
-    getMigrations() {
-      this.migrationsLoading = true;
-      this.api
-        .getContractMigrations(this.network, this.address)
-        .then((res) => {
-          if (!res) return;
-          this.migrations = res;
-        })
-        .catch((err) => {
-          this.showError(err);
-        })
-        .finally(() => (this.migrationsLoading = false));
     },
     getTokensTotal() {
       this.api

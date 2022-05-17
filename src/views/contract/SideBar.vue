@@ -13,132 +13,7 @@
       :loading="loading"
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
     >
-      <v-expansion-panels flat tile mandatory active-class="opened-panel">
-        <v-expansion-panel class="ma-0 bb-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span
-              class="caption font-weight-bold text-uppercase text--secondary"
-              >Details</span
-            >
-          </v-expansion-panel-header>
-          <v-expansion-panel-content color="canvas">
-            <v-list class="contract-list">
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle class="overline"
-                    >Was active</v-list-item-subtitle
-                  >
-                  <v-list-item-title class="body-2" v-if="isContract">
-                    {{ helpers.formatDatetime(contract.timestamp) }}
-                    <span v-if="contract.last_action > contract.timestamp"
-                      >—
-                      {{ helpers.formatDatetime(contract.last_action) }}</span
-                    >
-                  </v-list-item-title>
-                  <v-list-item-title class="body-2" v-else>
-                    {{ helpers.formatDatetime(contract.last_action) }}
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-              <v-list-item>
-                <v-list-item-content>
-                  <v-list-item-subtitle class="overline"
-                    >Balance</v-list-item-subtitle
-                  >
-                  <v-list-item-title class="body-2">
-                    <span>{{ balance | uxtz }}</span>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>              
-              <AccountBox
-                v-if="contract.manager"
-                title="Deployed by"
-                :address="contract.manager"
-                :network="contract.network"
-                gutters
-              />
-              <AccountBox
-                v-if="contract.delegate"
-                title="Delegated to"
-                :address="contract.delegate"
-                :network="contract.network"
-                :alias="contract.delegate_alias"
-                gutters
-              />
-            </v-list>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
 
-        <v-expansion-panel
-            v-if="isContract && contract.same_count > 0"
-            class="ma-0 bb-1"
-            @click="requestSame"
-        >
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-              <span
-                  class="caption font-weight-bold text-uppercase text--secondary"
-              >Same contracts ({{ contract.same_count }})</span
-              >
-          </v-expansion-panel-header>
-          <v-skeleton-loader
-              v-if="isSameInitialLoading"
-              type="image"
-              :loading="isSameInitialLoading"
-          >
-          </v-skeleton-loader>
-          <v-expansion-panel-content color="data">
-            <v-list class="contract-list">
-              <template v-for="(contract, i) in same">
-                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <SimilarItem
-                  :key="i"
-                  :item="contract"
-                  :address="address"
-                  :network="network"
-                />
-              </template>
-              <v-divider></v-divider>
-              <v-list-item v-if="same.length < same_count">
-                <v-list-item-content>
-                  <v-list-item-title class="d-flex align-center justify-center">
-                    <v-btn
-                      v-if="!isSameInitialLoading"
-                      class="text--secondary"
-                      :loading="sameLoading"
-                      text
-                      small
-                      @click="requestMoreSame"
-                      >Load more</v-btn
-                    >
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-
-        <v-expansion-panel class="ma-0 bb-1" v-if="migrations.length > 0">
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span
-              class="caption font-weight-bold text-uppercase text--secondary"
-              >Logs ({{ migrations.length }})</span
-            >
-          </v-expansion-panel-header>
-          <v-expansion-panel-content color="data">
-            <v-list class="contract-list">
-              <template v-for="(log, i) in migrations">
-                <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                <LogItem
-                  :key="i"
-                  :log="log"
-                  :network="network"
-                  :address="address"
-                />
-              </template>
-            </v-list>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
     </v-skeleton-loader>
 
     <BakingBadFooter />
@@ -148,7 +23,6 @@
 <script>
 import { mapActions } from "vuex";
 import SimilarItem from "@/views/contract/SimilarItem.vue";
-import LogItem from "@/views/contract/LogItem.vue";
 import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import BakingBadFooter from "@/components/BakingBadFooter.vue";
 import { DATA_LOADING_STATUSES } from "@/utils/network";
@@ -170,22 +44,16 @@ export default {
     Tags,
     ShareLink,
     SimilarItem,
-    LogItem,
     AccountBox,
     BakingBadFooter,
   },
   data: () => ({
-    same: [],
-    same_count: 0,
-    sameLoading: false,
-    sameInitialLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
+
   }),
   created() {
   },
   computed: {
-    isSameInitialLoading() {
-      return this.sameInitialLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
-    },
+
     isContract() {
       return this.address.startsWith("KT");
     },
@@ -217,42 +85,6 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
-    requestSame() {
-      if (!this.isContract
-          || this.sameInitialLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
-      ) return;
-
-      this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
-      this.same = [];
-      this.sameCount = 0;
-      this.api
-          .getSameContracts(this.network, this.address, 0)
-          .then((res) => {
-            if (!res) return;
-            this.same = res.contracts;
-            this.sameCount = res.count;
-            this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
-          })
-          .catch((err) => {
-            this.showError(err);
-            console.log(err);
-            this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.ERROR;
-          });
-    },
-    requestMoreSame() {
-      this.sameLoading = true;
-      this.api
-        .getSameContracts(this.network, this.address, this.same.length)
-        .then((res) => {
-          if (!res) return;
-          this.same.push(...res.contracts);
-        })
-        .catch((err) => {
-          this.showError(err);
-          console.log(err);
-        })
-        .finally(() => (this.sameLoading = false));
-    },
   },
   watch: {
     contract(newVal) {
