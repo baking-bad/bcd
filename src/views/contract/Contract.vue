@@ -1,5 +1,5 @@
 <template>
-  <div class="fill-height">
+  <div class="fill-height bg-canvas-base">
     <v-row class="bg-canvas-base">
       <v-col cols="9" class="pr-4 pb-4 pl-3 d-flex align-center">
         <v-breadcrumbs

@@ -2,10 +2,9 @@
   <v-container fluid class="px-8 py-4 canvas fill-canvas">
     <v-skeleton-loader :loading="loading" type="card-heading, image">
       <v-row>
-        <v-col cols="8">
-          <h3 v-if="storage || rawStorage" class="mb-3 text--secondary outline font-weight-medium">Storage</h3>
-          <v-card v-if="storage || rawStorage" tile flat outlined class="pa-0">
-            <v-card-title class="d-flex sidebar px-4 py-3">
+        <v-col cols="12">
+          <div class="d-flex justify-space-between">
+            <div>
               <v-select
                 v-if="storageVersions.length > 0"
                 v-model="level"
@@ -20,7 +19,8 @@
                 class="mb-1"
                 hide-details
               ></v-select>
-              <v-spacer></v-spacer>
+            </div>
+            <div>
               <v-btn @click="showRaw = true" small text class="text--secondary">
                 <v-icon class="mr-1" small>mdi-code-json</v-icon>
                 <span>Raw JSON</span>
@@ -77,10 +77,12 @@
                 <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
                 <span>Switch to Micheline</span>
               </v-btn>
-            </v-card-title>
+            </div>
+          </div>
+          <v-card v-if="storage || rawStorage" tile flat outlined class="pa-0 mt-2">
             <v-card-text class="pa-0 data">
               <v-row no-gutters>
-                <v-col cols="8">
+                <v-col cols="7">
                   <Michelson v-if="raw" :code="rawStorage"></Michelson>
                   <div v-else class="py-4 data">
                     <MiguelTreeView
@@ -91,24 +93,19 @@
                     />
                   </div>
                 </v-col>
-                <v-divider vertical></v-divider>
+                <v-divider vertical />
+                <v-col v-if="schema" cols="4">
+                  <TypeDef
+                    :typedef="schema.typedef"
+                    first="storage"
+                    class="pt-3 pb-1 px-6"
+                    style="opacity: 0.8"
+                  />
+                </v-col>
               </v-row>
             </v-card-text>
           </v-card>
           <ErrorState v-else />
-        </v-col>
-        <v-col cols="4">
-          <h3 v-if="schema" class="mb-3 text--secondary outline font-weight-medium">Type</h3>
-          <v-card v-if="schema" tile flat outlined class="pa-0">
-            <v-card-text>
-              <TypeDef
-                :typedef="schema.typedef"
-                first="storage"
-                class="pt-3 pb-1 px-6"
-                style="opacity: 0.8"
-              />
-            </v-card-text>
-          </v-card>
         </v-col>
       </v-row>
     </v-skeleton-loader>
