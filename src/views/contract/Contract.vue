@@ -48,6 +48,7 @@
                   }
                 "
               >
+                <v-icon class="text--secondary" small>mdi-logout-variant</v-icon>
                 <span class="ml-1 text--secondary">
                   Open in TZKT
                 </span>
