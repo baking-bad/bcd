@@ -49,7 +49,7 @@
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
-      <v-list-item>
+      <v-list-item v-if="balance">
         <v-list-item-content>
           <v-list-item-subtitle class="overline"
           >Balance</v-list-item-subtitle
