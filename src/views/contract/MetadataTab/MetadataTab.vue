@@ -1,19 +1,17 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-skeleton-loader :loading="loading" type="card-heading, image">
-      <v-card v-if="metadata" tile flat outlined class="pa-0">
-        <v-card-title class="d-flex sidebar px-4 py-3">
-          <h1 class="font-weight-regular text--secondary" style="font-size: 1em;">Contract metadata</h1>
-          <v-spacer></v-spacer>
-          <v-btn @click="showRaw = true" small text class="text--secondary">
-            <v-icon class="mr-1" small>mdi-code-json</v-icon>
-            <span>Raw JSON</span>
-          </v-btn>
-          <v-btn small text @click="downloadFile" class="text--secondary ml-2">
-            <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
-            <span>Download</span>
-          </v-btn>
-        </v-card-title>
+      <div class="d-flex justify-end">
+        <v-btn @click="showRaw = true" small text class="text--secondary">
+          <v-icon class="mr-1" small>mdi-code-json</v-icon>
+          <span>Raw JSON</span>
+        </v-btn>
+        <v-btn small text @click="downloadFile" class="text--secondary ml-2">
+          <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
+          <span>Download</span>
+        </v-btn>
+      </div>
+      <v-card v-if="metadata" tile flat outlined class="pa-0 mt-2">
         <v-card-text class="pa-0 data">
           <ReservedFields
             v-if="availableReservedFields"

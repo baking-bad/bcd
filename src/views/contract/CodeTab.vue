@@ -2,52 +2,52 @@
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-skeleton-loader v-if="loading" type="card-heading, image" />
     <div v-else-if="selectedCode">
-      <v-card tile flat outlined class="pa-0">
-        <v-card-title class="d-flex sidebar px-4 py-2">
-          <v-select
-            v-if="codeVersions.length > 0"
-            v-model="selectedProtocol"
-            @change="getCode(selectedProtocol)"
-            :items="codeVersions"
-            item-text="proto"
-            item-value="protocol"
-            style="max-width: 160px;"
-            rounded
-            dense
-            background-color="data"
-            class="mb-1"
-            hide-details
-          ></v-select>
-          <span
-              v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
-              class="ml-4 text--disabled rendering-percents"
-          >
+      <div class="d-flex justify-space-between">
+        <v-select
+          v-if="codeVersions.length > 0"
+          v-model="selectedProtocol"
+          @change="getCode(selectedProtocol)"
+          :items="codeVersions"
+          item-text="proto"
+          item-value="protocol"
+          style="max-width: 160px;"
+          rounded
+          dense
+          background-color="data"
+          class="mb-1"
+          hide-details
+        ></v-select>
+        <span
+          v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
+          class="ml-4 text--disabled rendering-percents"
+        >
             Rendering: {{Math.floor(loadedPercentage)}}%
           </span>
-          <v-spacer></v-spacer>
-          <v-btn
-            class="mr-1 text--secondary"
-            v-clipboard="getValueToCopy"
-            v-clipboard:success="showSuccessCopy"
-            small
-            text
-          >
-            <v-icon class="mr-1" small>mdi-content-copy</v-icon>
-            <span>Copy</span>
-          </v-btn>
-          <v-btn @click="showRaw = true" small text class="text--secondary">
-            <v-icon class="mr-1" small>mdi-code-json</v-icon>
-            <span>Raw JSON</span>
-          </v-btn>
-          <v-btn small text @click="downloadFile" class="text--secondary ml-2">
-            <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
-            <span>Download</span>
-          </v-btn>
-          <v-btn small text :to="{name: 'interact'}" class="text--secondary ml-2">
-            <v-icon class="mr-1 text--secondary" small>mdi-play-box-outline</v-icon>
-            <span>Interact</span>
-          </v-btn>
-        </v-card-title>
+        <v-spacer></v-spacer>
+        <v-btn
+          class="mr-1 text--secondary"
+          v-clipboard="getValueToCopy"
+          v-clipboard:success="showSuccessCopy"
+          small
+          text
+        >
+          <v-icon class="mr-1" small>mdi-content-copy</v-icon>
+          <span>Copy</span>
+        </v-btn>
+        <v-btn @click="showRaw = true" small text class="text--secondary">
+          <v-icon class="mr-1" small>mdi-code-json</v-icon>
+          <span>Raw JSON</span>
+        </v-btn>
+        <v-btn small text @click="downloadFile" class="text--secondary ml-2">
+          <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
+          <span>Download</span>
+        </v-btn>
+        <v-btn small text :to="{name: 'interact'}" class="text--secondary ml-2">
+          <v-icon class="mr-1 text--secondary" small>mdi-play-box-outline</v-icon>
+          <span>Interact</span>
+        </v-btn>
+      </div>
+      <v-card tile flat outlined class="pa-0 mt-2">
         <v-card-text class="pa-0">
           <Michelson :code="loadedCode"></Michelson>
         </v-card-text>
