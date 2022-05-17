@@ -95,7 +95,7 @@
         >
         </v-skeleton-loader>
         <v-expansion-panel-content color="data">
-          <v-list class="contract-list">
+          <v-list class="contract-list mt-2">
             <template v-for="(contract, i) in same">
               <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
               <SimilarItem
