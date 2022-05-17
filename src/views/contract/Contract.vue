@@ -15,8 +15,11 @@
         <div class="d-flex align-center justify-start pa-2 px-4">
           <v-tooltip bottom v-if="isContract">
             <template v-slot:activator="{ on }">
-              <v-btn v-on="on" icon class="mr-2">
-                <v-icon class="text--secondary">mdi-source-fork</v-icon>
+              <v-btn v-on="on" class="mr-2 pl-2 pr-2 text--secondary" outlined small>
+                <v-icon class="text--secondary" small>mdi-source-fork</v-icon>
+                <span class="ml-1 text--secondary">
+                  Fork
+                </span>
               </v-btn>
             </template>
             Fork contract
@@ -25,16 +28,20 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 v-on="on"
-                icon
-                class="mr-2"
+                class="mr-2 pl-2 pr-2 text--secondary"
+                outlined
+                small
                 @click="
-                () => {
-                  $clipboard(address);
-                  showClipboardOK();
-                }
-            "
+                  () => {
+                    $clipboard(address);
+                    showClipboardOK();
+                  }
+                "
               >
-                <v-icon class="text--secondary">mdi-content-copy</v-icon>
+                <v-icon class="text--secondary" small>mdi-content-copy</v-icon>
+                <span class="ml-1 text--secondary">
+                  Copy address
+                </span>
               </v-btn>
             </template>
             Copy address
@@ -42,6 +49,7 @@
           <ShareLink
             :alias="alias"
             :link="link"
+            text
             bottom
           />
         </div>
