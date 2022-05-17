@@ -76,7 +76,8 @@
       />
     </v-list>
 
-    <v-expansion-panel
+    <v-expansion-panels>
+      <v-expansion-panel
         v-if="isContract && contract.same_count > 0"
         class="ma-0 mt-2"
         @click="requestSame"
@@ -123,8 +124,7 @@
           </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
-
-    <v-expansion-panel class="ma-0 bb-1" v-if="migrations.length > 0">
+      <v-expansion-panel class="ma-0 mt-2 bb-1" v-if="migrations.length > 0">
         <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span
               class="caption font-weight-bold text-uppercase text--secondary"
@@ -145,6 +145,7 @@
           </v-list>
         </v-expansion-panel-content>
       </v-expansion-panel>
+    </v-expansion-panels>
   </v-container>
 </template>
 
