@@ -13,17 +13,6 @@
       </v-col>
       <v-col cols="3" class="d-flex justify-end pr-7">
         <div class="d-flex align-center justify-start pa-2 px-4">
-          <v-tooltip bottom v-if="isContract">
-            <template v-slot:activator="{ on }">
-              <v-btn v-on="on" class="mr-2 pl-2 pr-2 text--secondary" outlined small>
-                <v-icon class="text--secondary" small>mdi-source-fork</v-icon>
-                <span class="ml-1 text--secondary">
-                  Fork
-                </span>
-              </v-btn>
-            </template>
-            Fork contract
-          </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <v-btn
@@ -46,12 +35,26 @@
             </template>
             Copy address
           </v-tooltip>
-          <ShareLink
-            :alias="alias"
-            :link="link"
-            text
-            bottom
-          />
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                class="mr-2 pl-2 pr-2 text--secondary"
+                outlined
+                small
+                @click="
+                  () => {
+                    openInTzkt();
+                  }
+                "
+              >
+                <span class="ml-1 text--secondary">
+                  Open in TZKT
+                </span>
+              </v-btn>
+            </template>
+            Open in TZKT
+          </v-tooltip>
         </div>
       </v-col>
     </v-row>
@@ -87,6 +90,7 @@ import {shortcutOnly} from "../../utils/tz";
 import MenuToolbar from "./MenuToolbar";
 import Tags from "../../components/Tags";
 import ShareLink from "../../components/Buttons/ShareLink";
+import {openTzktContract} from "../../utils/tzkt";
 
 const MIN_SEARCHBOX_WIDTH = 240;
 
@@ -172,6 +176,9 @@ export default {
       hideError: "hideError",
       showClipboardOK: "showClipboardOK",
     }),
+    openInTzkt() {
+      openTzktContract(this.contract);
+    },
     handleSearchBoxFocus() {
       const { width } = this.$refs.searchbox.$el.getBoundingClientRect();
       if (width < MIN_SEARCHBOX_WIDTH) {
