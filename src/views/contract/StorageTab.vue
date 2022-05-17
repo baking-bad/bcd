@@ -3,8 +3,8 @@
     <v-skeleton-loader :loading="loading" type="card-heading, image">
       <v-row>
         <v-col cols="12">
-          <div class="d-flex justify-space-between">
-            <div>
+          <div class="d-flex align-center justify-space-between">
+            <div class="d-flex align-center">
               <v-select
                 v-if="storageVersions.length > 0"
                 v-model="level"
@@ -19,6 +19,10 @@
                 class="mb-1"
                 hide-details
               ></v-select>
+              <v-breadcrumbs
+                divider="/"
+                :items="breadcrumbsItems"
+              />
             </div>
             <div>
               <v-btn @click="showRaw = true" small text class="text--secondary">
@@ -126,6 +130,8 @@ import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
+import {toTitleCase} from "../../utils/string";
+import {shortcutOnly} from "../../utils/tz";
 
 export default {
   name: "StorageTab",
@@ -164,6 +170,14 @@ export default {
         });
       }
       return versions;
+    },
+    breadcrumbsItems() {
+      return [
+        {
+          text: 'Storage',
+          to: `/${this.network}/${this.address}/storage`,
+        },
+      ];
     },
   },
   methods: {
