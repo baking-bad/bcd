@@ -1,59 +1,135 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
-    <v-skeleton-loader v-if="loading" type="card-heading, image" />
-    <div v-else-if="selectedCode">
-      <div class="d-flex justify-space-between">
-        <v-select
-          v-if="codeVersions.length > 0"
-          v-model="selectedProtocol"
-          @change="getCode(selectedProtocol)"
-          :items="codeVersions"
-          item-text="proto"
-          item-value="protocol"
-          style="max-width: 160px;"
-          rounded
-          dense
-          background-color="data"
-          class="mb-1"
-          hide-details
-        ></v-select>
-        <span
-          v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
-          class="ml-4 text--disabled rendering-percents"
-        >
+    <v-row>
+      <v-col cols="9">
+        <v-skeleton-loader v-if="loading" type="card-heading, image" />
+        <div v-else-if="selectedCode">
+          <div class="d-flex justify-space-between">
+            <v-select
+              v-if="codeVersions.length > 0"
+              v-model="selectedProtocol"
+              @change="getCode(selectedProtocol)"
+              :items="codeVersions"
+              item-text="proto"
+              item-value="protocol"
+              style="max-width: 160px;"
+              rounded
+              dense
+              background-color="data"
+              class="mb-1"
+              hide-details
+            ></v-select>
+            <span
+              v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
+              class="ml-4 text--disabled rendering-percents"
+            >
             Rendering: {{Math.floor(loadedPercentage)}}%
           </span>
-        <v-spacer></v-spacer>
-        <v-btn
-          class="mr-1 text--secondary"
-          v-clipboard="getValueToCopy"
-          v-clipboard:success="showSuccessCopy"
-          small
-          text
-        >
-          <v-icon class="mr-1" small>mdi-content-copy</v-icon>
-          <span>Copy</span>
-        </v-btn>
-        <v-btn @click="showRaw = true" small text class="text--secondary">
-          <v-icon class="mr-1" small>mdi-code-json</v-icon>
-          <span>Raw JSON</span>
-        </v-btn>
-        <v-btn small text @click="downloadFile" class="text--secondary ml-2">
-          <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
-          <span>Download</span>
-        </v-btn>
-        <v-btn small text :to="{name: 'interact'}" class="text--secondary ml-2">
-          <v-icon class="mr-1 text--secondary" small>mdi-play-box-outline</v-icon>
-          <span>Interact</span>
-        </v-btn>
-      </div>
-      <v-card tile flat outlined class="pa-0 mt-2">
-        <v-card-text class="pa-0">
-          <Michelson :code="loadedCode"></Michelson>
-        </v-card-text>
-      </v-card>
-    </div>
-    <ErrorState v-else />
+            <v-spacer></v-spacer>
+            <v-btn
+              class="mr-1 text--secondary"
+              v-clipboard="getValueToCopy"
+              v-clipboard:success="showSuccessCopy"
+              small
+              text
+            >
+              <v-icon class="mr-1" small>mdi-content-copy</v-icon>
+              <span>Copy</span>
+            </v-btn>
+            <v-btn @click="showRaw = true" small text class="text--secondary">
+              <v-icon class="mr-1" small>mdi-code-json</v-icon>
+              <span>Raw JSON</span>
+            </v-btn>
+            <v-btn small text @click="downloadFile" class="text--secondary ml-2">
+              <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
+              <span>Download</span>
+            </v-btn>
+            <v-btn small text :to="{name: 'interact'}" class="text--secondary ml-2">
+              <v-icon class="mr-1 text--secondary" small>mdi-play-box-outline</v-icon>
+              <span>Interact</span>
+            </v-btn>
+          </div>
+          <v-card tile flat outlined class="pa-0 mt-2">
+            <v-card-text class="pa-0">
+              <Michelson :code="loadedCode"></Michelson>
+            </v-card-text>
+          </v-card>
+        </div>
+        <ErrorState v-else />
+      </v-col>
+      <v-col cols="3">
+        <v-expansion-panels class="mt-10">
+          <v-expansion-panel
+            v-if="isContract && contract.same_count > 0"
+            class="ma-0 mt-2"
+            @click="requestSame"
+          >
+            <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+              <span
+                class="caption font-weight-bold text-uppercase text--secondary"
+              >Same contracts ({{ contract.same_count }})</span
+              >
+            </v-expansion-panel-header>
+            <v-skeleton-loader
+              v-if="isSameInitialLoading"
+              type="image"
+              :loading="isSameInitialLoading"
+            >
+            </v-skeleton-loader>
+            <v-expansion-panel-content color="data">
+              <v-list class="contract-list mt-2">
+                <template v-for="(contract, i) in same">
+                  <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+                  <SimilarItem
+                    :key="i"
+                    :item="contract"
+                    :address="address"
+                    :network="network"
+                  />
+                </template>
+                <v-divider></v-divider>
+                <v-list-item v-if="same.length < same_count">
+                  <v-list-item-content>
+                    <v-list-item-title class="d-flex align-center justify-center">
+                      <v-btn
+                        v-if="!isSameInitialLoading"
+                        class="text--secondary"
+                        :loading="sameLoading"
+                        text
+                        small
+                        @click="requestMoreSame"
+                      >Load more</v-btn
+                      >
+                    </v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+          <v-expansion-panel class="ma-0 mt-2 bb-1" v-if="migrations.length > 0">
+            <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+            <span
+              class="caption font-weight-bold text-uppercase text--secondary"
+            >Logs ({{ migrations.length }})</span
+            >
+            </v-expansion-panel-header>
+            <v-expansion-panel-content color="data">
+              <v-list class="contract-list">
+                <template v-for="(log, i) in migrations">
+                  <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+                  <LogItem
+                    :key="i"
+                    :log="log"
+                    :network="network"
+                    :address="address"
+                  />
+                </template>
+              </v-list>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
+      </v-col>
+    </v-row>
     <RawJsonViewer
       :show.sync="showRaw"
       type="code"
@@ -69,6 +145,9 @@ import { mapActions } from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
+import LogItem from "@/views/contract/LogItem.vue";
+import {DATA_LOADING_STATUSES} from "../../utils/network";
+import SimilarItem from "./SimilarItem";
 
 export default {
   props: {
@@ -78,9 +157,11 @@ export default {
     network: String,
   },
   components: {
+    SimilarItem,
     ErrorState,
     Michelson,
-    RawJsonViewer
+    RawJsonViewer,
+    LogItem
   },
   data: () => ({
     code: {},
@@ -92,7 +173,13 @@ export default {
     loadedCode: "",
     loading: true,
     selectedProtocol: "",
-    showRaw: false
+    showRaw: false,
+    migrations: [],
+    migrationsLoading: false,
+    same: [],
+    same_count: 0,
+    sameLoading: false,
+    sameInitialLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
   }),
   created() {
     if (this.$route.query.protocol) {
@@ -105,8 +192,17 @@ export default {
         this.getCode();
       });
     }
+    if (this.isContract) {
+      this.getMigrations();
+    }
   },
   computed: {
+    isContract() {
+      return this.address.startsWith("KT");
+    },
+    isSameInitialLoading() {
+      return this.sameInitialLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
     selectedCode() {
       if (!this.loading) {
         return this.code[this.selectedProtocol];
@@ -134,6 +230,55 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK", "showClipboardWarning"]),
+    requestSame() {
+      if (!this.isContract
+        || this.sameInitialLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
+      ) return;
+
+      this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+      this.same = [];
+      this.sameCount = 0;
+      this.api
+        .getSameContracts(this.network, this.address, 0)
+        .then((res) => {
+          if (!res) return;
+          this.same = res.contracts;
+          this.sameCount = res.count;
+          this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
+        })
+        .catch((err) => {
+          this.showError(err);
+          console.log(err);
+          this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+        });
+    },
+    requestMoreSame() {
+      this.sameLoading = true;
+      this.api
+        .getSameContracts(this.network, this.address, this.same.length)
+        .then((res) => {
+          if (!res) return;
+          this.same.push(...res.contracts);
+        })
+        .catch((err) => {
+          this.showError(err);
+          console.log(err);
+        })
+        .finally(() => (this.sameLoading = false));
+    },
+    getMigrations() {
+      this.migrationsLoading = true;
+      this.api
+        .getContractMigrations(this.network, this.address)
+        .then((res) => {
+          if (!res) return;
+          this.migrations = res;
+        })
+        .catch((err) => {
+          this.showError(err);
+        })
+        .finally(() => (this.migrationsLoading = false));
+    },
     showSuccessCopy() {
       if (this.selectedCode.length <= this.freezingAmount) {
         this.showClipboardOK();

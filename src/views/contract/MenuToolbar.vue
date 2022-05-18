@@ -5,9 +5,6 @@
       background-color="transparent"
       slider-color="primary"
     >
-      <v-tab :to="pushTo({ name: 'info', params: { contract } })" replace style="width: 175px">
-        <v-icon left small>mdi-account</v-icon>Information
-      </v-tab>
       <v-tab :to="pushTo({ name: 'operations' })" :title="contract.tx_count" replace style="width: 175px">
         <v-icon left small>mdi-swap-horizontal</v-icon>operations
         <span class="ml-1">({{ contract.tx_count || 0 | numberToCompactSIFormat }})</span>

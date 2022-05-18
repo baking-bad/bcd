@@ -33,7 +33,6 @@ import DAppList from '@/views/dapps/List.vue'
 import DApp from '@/views/dapps/DApp.vue'
 import MainDApp from '@/views/dapps/Main.vue'
 import NotFound from "../views/errors/NotFound";
-import InformationTab from "../views/contract/InformationTab/InformationTab";
 
 Vue.use(VueRouter)
 
@@ -186,12 +185,6 @@ const router = new Router({
           path: '',
           name: 'contract',
           redirect: 'operations'
-        },
-        {
-          path: 'info',
-          name: 'info',
-          component: InformationTab,
-          props: true
         },
         {
           path: 'operations',

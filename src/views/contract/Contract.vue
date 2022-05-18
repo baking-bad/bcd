@@ -74,7 +74,6 @@
         :address="address"
         :network="network"
         :contract="contract"
-        :migrations="migrations"
         :tokensTotal="tokensTotal"
         :tokenBalancesTotal="tokenBalancesTotal"
         :metadata="metadata"
@@ -108,7 +107,6 @@ export default {
     contractLoading: true,
     contract: {},
     balance: 0,
-    migrations: [],
     metadata: null,
     tokenBalancesTotal: 0,
     tokensTotal: 0,
@@ -142,9 +140,6 @@ export default {
         });
       }
       return `${window.location.protocol}//${window.location.host}${routeData.href}`;
-    },
-    loading() {
-      return this.contractLoading || this.migrationsLoading;
     },
     isContract() {
       return this.address.startsWith("KT");
