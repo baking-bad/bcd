@@ -1,14 +1,5 @@
 <template>
   <div class="fill-height bg-canvas-base pr-4 pl-4">
-    <v-row>
-      <v-col cols="6" class="pr-4 pb-4 ml-7">
-        <v-breadcrumbs
-          class="pl-0 pb-0"
-          divider="/"
-          :items="breadcrumbsItems"
-        />
-      </v-col>
-    </v-row>
     <header class="d-flex align-center">
       <h2 class="ml-7 font-weight-medium">
         {{ keyhash ? shortcutOnly(keyhash) : `Big Map ${ptr}` }}
@@ -122,41 +113,6 @@ export default {
     },
     address() {
       return this.bigmap.address;
-    },
-    breadcrumbsItems() {
-      const baseTo = `/${this.network}/${this.address}`;
-      const baseBreadcrumbs = [
-        {
-          text: 'Home',
-          to: '/',
-        },
-        {
-          disabled: true,
-          text: toTitleCase(this.network),
-        },
-        {
-          text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
-          to: `${baseTo}/operations`,
-        },
-        {
-          text: 'Storage',
-          to: `${baseTo}/storage`,
-        },
-      ];
-      if (this.ptr) {
-        baseBreadcrumbs.push({
-          text: `Big Map ${this.ptr}`,
-          disabled: !this.keyhash,
-          to: this.keyhash ? `/${this.network}/big_map/${this.ptr}/#` : '',
-        });
-      }
-      if (this.keyhash) {
-        baseBreadcrumbs.push({
-          text: shortcutOnly(this.keyhash),
-          disabled: true,
-        });
-      }
-      return baseBreadcrumbs;
     },
   },
   data: () => ({

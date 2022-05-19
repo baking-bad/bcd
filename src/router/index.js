@@ -202,7 +202,35 @@ const router = new Router({
           path: 'storage',
           name: 'storage',
           component: StorageTab,
-          props: true
+          props: true,
+          children: [
+            {
+              path: 'big_map/:ptr(\\d+)',
+              components: {
+                default: BigMap
+              },
+              props: { default: true },
+              children: [
+                {
+                  path: '',
+                  name: 'big_map',
+                  redirect: 'keys'
+                },
+                {
+                  path: 'keys',
+                  name: 'big_map_keys',
+                  component: BigMapKeys,
+                  props: true
+                },
+                {
+                  path: ':keyhash',
+                  name: 'big_map_history',
+                  component: BigMapHistory,
+                  props: true
+                }
+              ]
+            },
+          ]
         },
         {
           path: 'code',
@@ -235,32 +263,6 @@ const router = new Router({
           component: TransfersTab,
           props: true
         },
-      ]
-    },
-    {
-      path: '/:network/big_map/:ptr(\\d+)',
-      components: {
-        default: BigMap
-      },
-      props: { default: true },
-      children: [
-        {
-          path: '',
-          name: 'big_map',
-          redirect: 'keys'
-        },
-        {
-          path: 'keys',
-          name: 'big_map_keys',
-          component: BigMapKeys,
-          props: true
-        },
-        {
-          path: ':keyhash',
-          name: 'big_map_history',
-          component: BigMapHistory,
-          props: true
-        }
       ]
     },
     {

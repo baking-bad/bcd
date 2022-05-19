@@ -85,11 +85,12 @@
           </div>
           <v-card v-if="storage || rawStorage" tile flat outlined class="pa-0 mt-2">
             <v-card-text class="pa-0 data">
-              <v-row no-gutters>
+              <v-row v-if="isStorageParentPage" no-gutters>
                 <v-col cols="7">
                   <Michelson v-if="raw" :code="rawStorage"></Michelson>
                   <div v-else class="py-4 data">
                     <MiguelTreeView
+                      :address="address"
                       :miguel="storage"
                       :network="network"
                       openAll
@@ -107,6 +108,10 @@
                   />
                 </v-col>
               </v-row>
+              <router-view
+                v-else
+                :network="network"
+              />
             </v-card-text>
           </v-card>
           <ErrorState v-else />
@@ -159,6 +164,9 @@ export default {
     this.getStorage(true);
   },
   computed: {
+    isStorageParentPage() {
+      return this.$route.name === 'storage';
+    },
     storageVersions() {
       let versions = [{ version: "Latest", level: null }];
       if (this.$route.query.level) {
@@ -170,12 +178,28 @@ export default {
       return versions;
     },
     breadcrumbsItems() {
-      return [
+      const breadcrumbs = [
         {
           text: 'Storage',
-          to: `/${this.network}/${this.address}/storage`,
+          to: `/${this.network}/${this.address}/storage${this.$route.hash !== '#' ? '#' : '##'}`,
         },
       ];
+      const { ptr } = this.$route.params;
+      if (ptr) {
+        breadcrumbs.push({
+          text: `Big Map ${ptr}`,
+          to: `/${this.network}/${this.address}/storage/big_map/${ptr}${this.$route.hash !== '#' ? '#' : '##'}`,
+          disabled: false,
+        });
+      }
+      const { keyhash } = this.$route.params;
+      if (keyhash) {
+        breadcrumbs.push({
+          text: keyhash,
+          to: `/${this.network}/${this.address}/storage/big_map/${ptr}/${keyhash}${this.$route.hash !== '#' ? '#' : '##'}`,
+        });
+      }
+      return breadcrumbs;
     },
   },
   methods: {

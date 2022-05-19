@@ -221,7 +221,6 @@ import ContentItem from "@/views/contract/ContentItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
 import Vue from 'vue';
-import Tags from "../../components/Tags";
 import AccountBox from "../../components/Dialogs/AccountBox";
 
 export default {
@@ -229,12 +228,11 @@ export default {
   props: {
     address: String,
     network: String,
-    balanace: Number,
+    balance: Number,
     contract: Object,
   },
   components: {
     AccountBox,
-    Tags,
     ContentItem,
     EmptyState,
   },
