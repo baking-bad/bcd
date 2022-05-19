@@ -166,9 +166,6 @@
               >
               </v-list-item-subtitle>
             </v-list-item-content>
-            <Tags
-              :contract="contract"
-            />
           </v-list-item>
           <v-list-item>
             <v-list-item-content>
