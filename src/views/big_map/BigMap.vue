@@ -95,7 +95,6 @@
 
 <script>
 import { mapActions } from "vuex";
-import {toTitleCase} from "../../utils/string";
 import {shortcutOnly} from "../../utils/tz";
 
 export default {
