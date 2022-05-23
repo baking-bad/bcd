@@ -148,11 +148,11 @@
                   </template>
                   <span>{{ alias }}</span>
                 </v-tooltip>
-                <span v-else v-html="helpers.shortcut(address)"></span>&nbsp;
+                <span v-else v-html="sanitizeHtml(helpers.shortcut(address))"></span>&nbsp;
                 <v-btn
                   icon
                   target="_blank"
-                  :href="contract.verification_source"
+                  :href="sanitizeHtml(contract.verification_source)"
                   v-if="contract && contract.verified"
                 >
                   <v-icon small color="primary">mdi-shield-check</v-icon>
@@ -222,6 +222,7 @@ import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
 import Vue from 'vue';
 import AccountBox from "../../components/Dialogs/AccountBox";
+import sanitizeHtml from "sanitize-html";
 
 export default {
   name: "OperationsTab",
@@ -312,6 +313,7 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "hideError"]),
+    sanitizeHtml,
     compareOperations(a, b) {
       if (a.timestamp < b.timestamp) {
         return 1;
