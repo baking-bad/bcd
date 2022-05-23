@@ -249,7 +249,8 @@ const router = new Router({
           name: 'fork',
           components: {
             default: ForkTab,
-          }
+          },
+          props: true,
         },
         {
           path: 'tokens',
