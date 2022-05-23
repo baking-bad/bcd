@@ -24,7 +24,7 @@
                 :items="breadcrumbsItems"
               />
             </div>
-            <div>
+            <div v-if="isStorageParentPage">
               <v-btn @click="showRaw = true" small text class="text--secondary">
                 <v-icon class="mr-1" small>mdi-code-json</v-icon>
                 <span>Raw JSON</span>
@@ -83,7 +83,7 @@
               </v-btn>
             </div>
           </div>
-          <v-card v-if="storage || rawStorage" tile flat outlined class="pa-0 mt-2">
+          <v-card v-if="storage || rawStorage" tile flat :outlined="isStorageParentPage" class="pa-0 mt-2">
             <v-card-text class="pa-0 data">
               <v-row v-if="isStorageParentPage" no-gutters>
                 <v-col cols="7">
@@ -135,6 +135,7 @@ import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
+import {shortcutOnly} from "../../utils/tz";
 
 export default {
   name: "StorageTab",
@@ -195,7 +196,7 @@ export default {
       const { keyhash } = this.$route.params;
       if (keyhash) {
         breadcrumbs.push({
-          text: keyhash,
+          text: shortcutOnly(keyhash),
           to: `/${this.network}/${this.address}/storage/big_map/${ptr}/${keyhash}${this.$route.hash !== '#' ? '#' : '##'}`,
         });
       }

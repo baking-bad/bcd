@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-0 ma-0 canvas fill-canvas">
-    <v-row class="pa-8 ma-0" v-if="loading || total > 0">
-      <v-col cols="8">
+    <v-row class="ma-0" v-if="loading || total > 0">
+      <v-col cols="8" class="pl-0">
         <v-skeleton-loader
           :loading="loading"
           type="list-item-two-line, list-item-two-line, list-item-two-line"

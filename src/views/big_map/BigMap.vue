@@ -1,45 +1,43 @@
 <template>
-  <div class="fill-height bg-canvas-base pr-4 pl-4">
-    <header class="d-flex align-center">
-      <h2 class="ml-7 font-weight-medium">
-        {{ keyhash ? shortcutOnly(keyhash) : `Big Map ${ptr}` }}
-      </h2>
-      <v-list class="ml-6 list d-flex">
-        <v-list-item class="pr-0">
-          <v-list-item-content>
-            <v-list-item-subtitle class="overline">Status</v-list-item-subtitle>
-            <v-list-item-title class="caption text-uppercase">
-              <span v-if="removed" class="error--text">Removed</span>
-              <span v-else>Allocated</span>
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item class="pl-0">
-          <v-list-item-content>
-            <v-list-item-subtitle class="overline">Active / total keys</v-list-item-subtitle>
-            <v-list-item-title class="body-2">
-              <span>{{ bigmap.active_keys }} / {{ bigmap.total_keys }}</span>
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-        <v-list-item v-if="!isNaN(totalBytes)">
-          <v-list-item-content>
-            <v-list-item-subtitle class="overline">Total size</v-list-item-subtitle>
-            <v-list-item-title class="body-2">
-              <span>{{ totalBytes }} bytes</span>
-            </v-list-item-title>
-          </v-list-item-content>
-        </v-list-item>
-      </v-list>
-    </header>
+  <div class="fill-height bg-canvas-base pr-4 pl-4 ">
     <v-row>
-      <v-col :cols="keyhash ? '12' : '8'">
-        <h3 v-if="!keyhash" class="mb-3 text--secondary outline font-weight-medium ml-7">Keys</h3>
+      <v-col :cols="keyhash ? '12' : '8'" class="pl-0">
         <router-view class="ml-0" :address="address" :count.sync="count"></router-view>
       </v-col>
       <v-col v-if="!keyhash && actions" cols="4">
-        <h3 class="mb-3 text--secondary outline font-weight-medium">Actions</h3>
         <v-list class="bigmap-sidebar-list">
+          <v-list-item class="pr-0">
+            <h2 class="font-weight-medium">
+              {{ keyhash ? shortcutOnly(keyhash) : `Big Map ${ptr}` }}
+            </h2>
+          </v-list-item>
+          <v-list-item class="pr-0">
+            <v-list-item-content>
+              <v-list-item-subtitle class="overline">Status</v-list-item-subtitle>
+              <v-list-item-title class="caption text-uppercase">
+                <span v-if="removed" class="error--text">Removed</span>
+                <span v-else>Allocated</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-subtitle class="overline">Active / total keys</v-list-item-subtitle>
+              <v-list-item-title class="body-2">
+                <span>{{ bigmap.active_keys }} / {{ bigmap.total_keys }}</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item v-if="!isNaN(totalBytes)">
+            <v-list-item-content>
+              <v-list-item-subtitle class="overline">Total size</v-list-item-subtitle>
+              <v-list-item-title class="body-2">
+                <span>{{ totalBytes }} bytes</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+        <v-list class="bigmap-sidebar-list mt-2">
             <template v-for="(item, idx) in actions">
               <v-divider v-if="idx > 0" :key="'divider' + idx"></v-divider>
               <v-list-item :key="idx">
