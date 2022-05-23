@@ -4,26 +4,6 @@
       <span class="hash">Interact: </span>
       <span class="accent--text">{{ storageName }}</span>
     </div>
-    <div class="d-flex flex-column justify-center">
-      <span class="text--primary text-almost-medium font-weight-light">{{ alias }}</span>
-      <div class="flex align-center">
-        <router-link text :to="`/${network}/${address}`" color="transparent" class="px-0 no-decoration">
-          <span class="secondary--text text-almost-medium">{{ shortcutOnly(address) }}</span>
-        </router-link>
-        <v-btn
-          x-small
-          icon
-          class="ml-2"
-          @click="
-              () => {
-                $clipboard(address);
-                showClipboardOK();
-              }
-            ">
-          <v-icon class="text--secondary">mdi-content-copy</v-icon>
-        </v-btn>
-      </div>
-    </div>
   </h2>
 </template>
 
