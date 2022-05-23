@@ -1,7 +1,7 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-row>
-      <v-col cols="9">
+      <v-col cols="12">
         <v-skeleton-loader v-if="loading" type="card-heading, image" />
         <div v-else-if="selectedCode">
           <div class="d-flex justify-space-between">
@@ -53,31 +53,6 @@
         </div>
         <ErrorState v-else />
       </v-col>
-      <v-col cols="3">
-        <v-expansion-panels class="mt-10">
-          <v-expansion-panel class="ma-0 bb-1" v-if="migrations.length > 0">
-            <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span
-              class="caption font-weight-bold text-uppercase text--secondary"
-            >Logs ({{ migrations.length }})</span
-            >
-            </v-expansion-panel-header>
-            <v-expansion-panel-content color="data">
-              <v-list class="contract-list">
-                <template v-for="(log, i) in migrations">
-                  <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                  <LogItem
-                    :key="i"
-                    :log="log"
-                    :network="network"
-                    :address="address"
-                  />
-                </template>
-              </v-list>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-        </v-expansion-panels>
-      </v-col>
     </v-row>
     <RawJsonViewer
       :show.sync="showRaw"
@@ -94,12 +69,10 @@ import { mapActions } from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
-import LogItem from "@/views/contract/LogItem.vue";
 
 export default {
   props: {
     contract: Object,
-    migrations: Array,
     address: String,
     network: String,
   },
@@ -107,7 +80,6 @@ export default {
     ErrorState,
     Michelson,
     RawJsonViewer,
-    LogItem
   },
   data: () => ({
     code: {},
@@ -120,8 +92,6 @@ export default {
     loading: true,
     selectedProtocol: "",
     showRaw: false,
-    migrations: [],
-    migrationsLoading: false,
   }),
   created() {
     if (this.$route.query.protocol) {
@@ -150,16 +120,6 @@ export default {
     },
     codeVersions() {
       let versions = [];
-      if (this.migrations) {
-        versions = this.migrations
-          .filter(m => m.kind === "update")
-          .map(function(m) {
-            return {
-              proto: m.prev_protocol.slice(0, 8),
-              protocol: m.prev_protocol
-            };
-          });
-      }
       versions.unshift({ proto: "Latest", protocol: "" });
       return versions;
     }
@@ -169,19 +129,6 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK", "showClipboardWarning"]),
-    getMigrations() {
-      this.migrationsLoading = true;
-      this.api
-        .getContractMigrations(this.network, this.address)
-        .then((res) => {
-          if (!res) return;
-          this.migrations = res;
-        })
-        .catch((err) => {
-          this.showError(err);
-        })
-        .finally(() => (this.migrationsLoading = false));
-    },
     showSuccessCopy() {
       if (this.selectedCode.length <= this.freezingAmount) {
         this.showClipboardOK();
@@ -211,16 +158,6 @@ export default {
       }
       this.lastSubstring = this.lastSubstring + this.freezingAmount;
       this.loadedPercentage = this.lastSubstring / code.length * 100;
-    },
-    getFallbackLevel(protocol = "") {
-      if (protocol !== "" && this.migrations) {
-        for (var i = 0; i < this.migrations.length; i++) {
-          if (this.migrations[i].prev_protocol === protocol) {
-            return Math.max(0, this.migrations[i].level - 4096);
-          }
-        }
-      }
-      return 0;
     },
     getCode(protocol = "") {
       this.loading = true;
