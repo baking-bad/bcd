@@ -44,10 +44,6 @@
               <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
               <span>Download</span>
             </v-btn>
-            <v-btn small text :to="{name: 'interact'}" class="text--secondary ml-2">
-              <v-icon class="mr-1 text--secondary" small>mdi-play-box-outline</v-icon>
-              <span>Interact</span>
-            </v-btn>
           </div>
           <v-card tile flat outlined class="pa-0 mt-2">
             <v-card-text class="pa-0">
@@ -59,54 +55,7 @@
       </v-col>
       <v-col cols="3">
         <v-expansion-panels class="mt-10">
-          <v-expansion-panel
-            v-if="isContract && contract.same_count > 0"
-            class="ma-0 mt-2"
-            @click="requestSame"
-          >
-            <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-              <span
-                class="caption font-weight-bold text-uppercase text--secondary"
-              >Same contracts ({{ contract.same_count }})</span
-              >
-            </v-expansion-panel-header>
-            <v-skeleton-loader
-              v-if="isSameInitialLoading"
-              type="image"
-              :loading="isSameInitialLoading"
-            >
-            </v-skeleton-loader>
-            <v-expansion-panel-content color="data">
-              <v-list class="contract-list mt-2">
-                <template v-for="(contract, i) in same">
-                  <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-                  <SimilarItem
-                    :key="i"
-                    :item="contract"
-                    :address="address"
-                    :network="network"
-                  />
-                </template>
-                <v-divider></v-divider>
-                <v-list-item v-if="same.length < same_count">
-                  <v-list-item-content>
-                    <v-list-item-title class="d-flex align-center justify-center">
-                      <v-btn
-                        v-if="!isSameInitialLoading"
-                        class="text--secondary"
-                        :loading="sameLoading"
-                        text
-                        small
-                        @click="requestMoreSame"
-                      >Load more</v-btn
-                      >
-                    </v-list-item-title>
-                  </v-list-item-content>
-                </v-list-item>
-              </v-list>
-            </v-expansion-panel-content>
-          </v-expansion-panel>
-          <v-expansion-panel class="ma-0 mt-2 bb-1" v-if="migrations.length > 0">
+          <v-expansion-panel class="ma-0 bb-1" v-if="migrations.length > 0">
             <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
             <span
               class="caption font-weight-bold text-uppercase text--secondary"
@@ -146,8 +95,6 @@ import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import LogItem from "@/views/contract/LogItem.vue";
-import {DATA_LOADING_STATUSES} from "../../utils/network";
-import SimilarItem from "./SimilarItem";
 
 export default {
   props: {
@@ -157,7 +104,6 @@ export default {
     network: String,
   },
   components: {
-    SimilarItem,
     ErrorState,
     Michelson,
     RawJsonViewer,
@@ -176,10 +122,6 @@ export default {
     showRaw: false,
     migrations: [],
     migrationsLoading: false,
-    same: [],
-    same_count: 0,
-    sameLoading: false,
-    sameInitialLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
   }),
   created() {
     if (this.$route.query.protocol) {
@@ -199,9 +141,6 @@ export default {
   computed: {
     isContract() {
       return this.address.startsWith("KT");
-    },
-    isSameInitialLoading() {
-      return this.sameInitialLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
     selectedCode() {
       if (!this.loading) {
@@ -230,42 +169,6 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK", "showClipboardWarning"]),
-    requestSame() {
-      if (!this.isContract
-        || this.sameInitialLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
-      ) return;
-
-      this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
-      this.same = [];
-      this.sameCount = 0;
-      this.api
-        .getSameContracts(this.network, this.address, 0)
-        .then((res) => {
-          if (!res) return;
-          this.same = res.contracts;
-          this.sameCount = res.count;
-          this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
-        })
-        .catch((err) => {
-          this.showError(err);
-          console.log(err);
-          this.sameInitialLoadingStatus = DATA_LOADING_STATUSES.ERROR;
-        });
-    },
-    requestMoreSame() {
-      this.sameLoading = true;
-      this.api
-        .getSameContracts(this.network, this.address, this.same.length)
-        .then((res) => {
-          if (!res) return;
-          this.same.push(...res.contracts);
-        })
-        .catch((err) => {
-          this.showError(err);
-          console.log(err);
-        })
-        .finally(() => (this.sameLoading = false));
-    },
     getMigrations() {
       this.migrationsLoading = true;
       this.api
