@@ -59,7 +59,7 @@
       type="code"
       :network="network"
       :address="address"
-      :level="getFallbackLevel(selectedProtocol)" />
+      :level="0" />
   </v-container>
 </template>
 
@@ -166,9 +166,8 @@ export default {
         return;
       }
 
-      let level = this.getFallbackLevel(protocol);
       this.api
-        .getContractCode(this.network, this.address, protocol, level)
+        .getContractCode(this.network, this.address, protocol, 0)
         .then(res => {
           if (!res) return;
           Vue.set(this.code, protocol, res);
