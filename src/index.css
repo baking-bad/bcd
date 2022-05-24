@@ -51,3 +51,7 @@
 .v-dialog--fullscreen {
     padding-top: var(--main-header-weight);
 }
+
+.cursor-pointer {
+    cursor: pointer;
+}

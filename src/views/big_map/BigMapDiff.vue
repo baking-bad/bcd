@@ -63,10 +63,12 @@
             <v-icon small class="mr-1">mdi-history</v-icon>
             <span>View history</span>
           </v-btn>
-          <v-btn v-if="diff.data.value" small text @click="showRaw = true">
-            <v-icon small class="mr-1">mdi-code-braces</v-icon>
-            <span>Raw JSON</span>
-          </v-btn>
+          <portal to="storage-actions">
+            <v-btn v-if="diff.data.value" class="mr-4 cursor-pointer" small text @click="showRaw = true">
+              <v-icon small class="mr-1">mdi-code-braces</v-icon>
+              <span>Raw JSON</span>
+            </v-btn>
+          </portal>
         </v-col>
         <v-col cols="12" class="px-2 py-4 my-2 ba-1">
           <span class="overline ml-3">Key</span>

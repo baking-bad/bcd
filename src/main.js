@@ -22,6 +22,7 @@ import { makeVuetify } from '@/plugins/vuetify';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
+import PortalVue from 'portal-vue'
 
 import { fixNavigationCurrentLocationProblem } from '@/setups/router';
 
@@ -42,6 +43,8 @@ Vue.config.productionTip = false;
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
+
+Vue.use(PortalVue)
 
 Vue.use(Clipboard);
 

@@ -82,6 +82,7 @@
                 <span>Switch to Micheline</span>
               </v-btn>
             </div>
+            <portal-target name="storage-actions" />
           </div>
           <v-card v-if="storage || rawStorage" tile flat :outlined="isStorageParentPage" class="pa-0 mt-2">
             <v-card-text class="pa-0 data">

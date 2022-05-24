@@ -28,6 +28,7 @@
     "is-ipfs": "^1.0.3",
     "json-view": "^0.4.0",
     "null": "^2.0.0",
+    "portal-vue": "^2.1.7",
     "redoc": "^2.0.0-rc.65",
     "sanitize-html": "^2.7.0",
     "v-clipboard": "^2.2.2",
