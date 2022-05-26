@@ -82,7 +82,7 @@
                 <span>Switch to Micheline</span>
               </v-btn>
             </div>
-            <portal-target name="storage-actions" />
+            <portal-target v-else-if="isKeyHashPage" name="storage-actions" />
           </div>
           <v-card v-if="storage || rawStorage" tile flat :outlined="isStorageParentPage" class="pa-0 mt-2">
             <v-card-text class="pa-0 data">
@@ -166,6 +166,9 @@ export default {
     this.getStorage(true);
   },
   computed: {
+    isKeyHashPage() {
+      return this.$route.name === 'big_map_history';
+    },
     isStorageParentPage() {
       return this.$route.name === 'storage';
     },

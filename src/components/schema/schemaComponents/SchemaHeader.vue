@@ -1,6 +1,6 @@
 <template>
   <h2 class="d-flex justify-space-between align-center font-weight-regular px-6">
-    <div :class="isForkPage ? 'd-flex flex-column' : ''">
+    <div>
       <span class="hash">{{ isForkPage ? 'Fork: ' : 'Interact: '}}</span>
       <span class="accent--text">{{ isForkPage ? (alias || shortcutOnly(address)) : storageName }}</span>
     </div>
