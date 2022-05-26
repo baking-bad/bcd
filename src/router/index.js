@@ -33,6 +33,7 @@ import DAppList from '@/views/dapps/List.vue'
 import DApp from '@/views/dapps/DApp.vue'
 import MainDApp from '@/views/dapps/Main.vue'
 import NotFound from "../views/errors/NotFound";
+import SameContractsTab from "../views/contract/SameContractsTab/SameContractsTab";
 
 Vue.use(VueRouter)
 
@@ -256,6 +257,12 @@ const router = new Router({
           path: 'tokens',
           name: 'tokens',
           component: ContractTokensTab,
+          props: true
+        },
+        {
+          path: 'samecontracts',
+          name: 'samecontracts',
+          component: SameContractsTab,
           props: true
         },
         {

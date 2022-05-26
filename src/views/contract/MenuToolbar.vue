@@ -44,6 +44,13 @@
       <v-tab :to="pushTo({ name: 'fork' })" replace v-if="isContract">
         <v-icon left small>mdi-source-fork</v-icon>Fork
       </v-tab>
+      <v-tab v-show="isSameContracts" :to="pushTo({name: 'samecontracts'})" replace>
+        <v-icon left small>mdi-call-split</v-icon>Same Contracts
+      </v-tab>
+      <v-tab v-if="isAnythingLoading">
+        <v-skeleton-loader :loading="isAnythingLoading" type="button" transition="fade-transition">
+        </v-skeleton-loader>
+      </v-tab>
     </v-tabs>
   </v-toolbar>
 </template>
@@ -57,11 +64,16 @@ export default {
     tokensTotal: Number,
     tokenBalancesTotal: Number,
     metadata: Object,
+    sameContracts: Array,
+    isAnythingLoading: Boolean,
   },
   computed: {
     isContract() {
       return this.address.startsWith("KT");
     },
+    isSameContracts() {
+      return this.sameContracts.length > 0;
+    }
   },
   methods: {
     pushTo(obj) {
@@ -69,7 +81,7 @@ export default {
         query: this.$route.query,
       }, obj);
     },
-  }
+  },
 }
 </script>
 

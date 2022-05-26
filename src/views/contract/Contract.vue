@@ -67,6 +67,8 @@
       :tokensTotal="tokensTotal"
       :tokenBalancesTotal="tokenBalancesTotal"
       :metadata="metadata"
+      :is-anything-loading="isLoadingDataForTabs"
+      :same-contracts="sameContracts"
     />
 
     <VContainer>
@@ -77,6 +79,8 @@
         :tokensTotal="tokensTotal"
         :tokenBalancesTotal="tokenBalancesTotal"
         :metadata="metadata"
+        :same-contracts="sameContracts"
+        :same-count="sameCount"
       ></router-view>
     </VContainer>
   </div>
@@ -90,6 +94,7 @@ import {shortcutOnly} from "../../utils/tz";
 import MenuToolbar from "./MenuToolbar";
 import Tags from "../../components/Tags";
 import {openTzktContract} from "../../utils/tzkt";
+import {DATA_LOADING_STATUSES} from "../../utils/network";
 
 const MIN_SEARCHBOX_WIDTH = 240;
 
@@ -113,6 +118,9 @@ export default {
     contractTags: null,
     contractLink: '',
     isComboBoxExpanded: false,
+    sameContractsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
+    sameContracts: [],
+    sameCount: 0,
   }),
   computed: {
     alias() {
@@ -141,6 +149,12 @@ export default {
       }
       return `${window.location.protocol}//${window.location.host}${routeData.href}`;
     },
+    isSameContractsLoading() {
+      return this.sameContractsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
+    isLoadingDataForTabs() {
+      return this.isSameContractsLoading;
+    },
     isContract() {
       return this.address.startsWith("KT");
     },
@@ -162,6 +176,9 @@ export default {
       ];
     },
   },
+  created() {
+    this.requestSame();
+  },
   destroyed() {
     this.hideError();
   },
@@ -173,6 +190,26 @@ export default {
     }),
     openInTzkt() {
       openTzktContract(this.contract);
+    },
+    requestSame() {
+      if (!this.isContract
+        || this.sameContractsLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
+      ) return;
+      this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+      this.sameContracts = [];
+      this.sameCount = 0;
+      this.api
+        .getSameContracts(this.network, this.address, 0)
+        .then((res) => {
+          if (!res) return;
+          this.sameContracts = res.contracts;
+          this.sameCount = res.count;
+          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
+        })
+        .catch((err) => {
+          this.showError(err);
+          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+        });
     },
     handleSearchBoxFocus() {
       const { width } = this.$refs.searchbox.$el.getBoundingClientRect();
