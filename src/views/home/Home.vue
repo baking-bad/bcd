@@ -6,7 +6,7 @@
           <v-row>
             <v-col
               cols="12"
-              class="d-flex align-center justify-center primary--text"
+              class="d-flex flex-column align-center justify-center primary--text"
             >
               <span
                 class="script-casual"
@@ -14,49 +14,14 @@
               >
                 Better Call Dev
               </span>
+              <p class="mt-0">
+                Explore Tezos Smart Contracts and Interact with them
+              </p>
             </v-col>
           </v-row>
           <v-row justify="center" no-gutters>
             <v-col cols="12" sm="8" lg="6" xl="4">
               <SearchBox />
-            </v-col>
-            <v-col cols="12" align="center">
-              <v-btn
-                v-if="!config.sandbox_mode"
-                large
-                depressed
-                color="border"
-                class="text--secondary mr-5"
-                to="/dapps"
-                ><v-icon left color="error">mdi-fire</v-icon>Explore
-                DApps</v-btn
-              >
-              <v-btn
-                large
-                depressed
-                color="border"
-                class="text--secondary mr-5"
-                to="/search"
-                >Advanced Search</v-btn
-              >
-              <v-btn
-                v-if="!config.sandbox_mode"
-                large
-                depressed
-                color="border"
-                class="text--secondary pick-random-button"
-                :loading="pickingRandom"
-                @click="pickRandom"
-                >
-                Pick Random
-                <v-select
-                    class="network-select"
-                    :items="stats.map(item => item.network)"
-                    :menu-props="{ top: true, offsetY: true }"
-                    @change="pickRandom"
-                >
-                </v-select>
-              </v-btn>
             </v-col>
           </v-row>
         </v-col>
