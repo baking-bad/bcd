@@ -79,7 +79,7 @@ export default {
       return Math.min(this.sameCount, (this.page + 1) * PAGE_SIZE);
     },
     totalPages() {
-      return Math.floor(this.sameCount / this.page_size);
+      return Math.max(Math.floor(this.sameCount / this.page_size), 1);
     },
     isLoading() {
       return this.sameContractsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
