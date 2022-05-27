@@ -72,7 +72,7 @@
       :migrations="migrations"
     />
 
-    <VContainer>
+    <VContainer fluid>
       <router-view
         :address="address"
         :network="network"
@@ -180,10 +180,6 @@ export default {
       ];
     },
   },
-  created() {
-    this.requestSame();
-    this.getMigrations();
-  },
   destroyed() {
     this.hideError();
   },
@@ -209,14 +205,16 @@ export default {
           if (!res) return;
           this.sameContracts = res.contracts;
           this.sameCount = res.count;
-          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
+          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
         })
         .catch((err) => {
           this.showError(err);
           this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
         });
     },
     getMigrations() {
+      this.migrations = [];
       this.migrationsLoading = true;
       this.api
         .getContractMigrations(this.network, this.address)
@@ -244,8 +242,10 @@ export default {
       this.metadata = null;
       this.contract = {};
       if (this.isContract) {
+        this.requestSame();
         this.getContract();
         this.getTokensTotal();
+        this.getMigrations();
       }
       this.getInfo();
       this.getTokenBalancesTotal();

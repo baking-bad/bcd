@@ -141,12 +141,15 @@ export default {
     page(val) {
       this.requestSame(this.page_size * val);
     },
-  },
-  created() {
-    this.currentlyLoadedSameContracts = this.sameContracts;
-    if (this.sameContracts.length === 0) {
-      this.requestSame(0);
-    }
+    sameContracts: {
+      handler(val) {
+        this.currentlyLoadedSameContracts = val;
+        if (this.sameContracts.length === 0) {
+          this.requestSame(0);
+        }
+      },
+      immediate: true,
+    },
   },
   data() {
     return {
