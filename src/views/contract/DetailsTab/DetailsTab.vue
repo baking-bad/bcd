@@ -54,29 +54,34 @@
         </template>
       </v-data-table>
     </v-skeleton-loader>
-    <v-expansion-panels v-if="migrations.length > 0" class="mt-10">
-      <v-expansion-panel class="ma-0 bb-1">
-        <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span
-              class="caption font-weight-bold text-uppercase text--secondary"
-            >Logs ({{ migrations.length }})</span
-            >
-        </v-expansion-panel-header>
-        <v-expansion-panel-content color="data" class="pa-0">
-          <v-list>
-            <template v-for="(log, i) in migrations">
-              <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
-              <LogItem
-                :key="i"
-                :log="log"
-                :network="network"
-                :address="address"
-              />
-            </template>
-          </v-list>
-        </v-expansion-panel-content>
-      </v-expansion-panel>
-    </v-expansion-panels>
+    <v-data-table :items="migrations" :headers="migrationHeaders" class="ba-1 avg-gas-consumption mt-6" hide-default-footer>
+      <template v-slot:top>
+        <v-toolbar flat color="sidebar">
+          <span class="table-title mx-auto">Migrations</span>
+        </v-toolbar>
+      </template>
+      <template v-slot:item="{item}">
+        <tr>
+          <td class="px-8">
+            <v-icon v-if="item.kind === 'bootstrap'" color="blue">mdi-information-outline</v-icon>
+            <v-icon v-if="item.kind === 'lambda'" color="orange">mdi-alert-outline</v-icon>
+            <v-icon v-else color="purple">mdi-alert-outline</v-icon>
+            <span class="text--secondary">
+              {{
+                item.kind === 'lambda'
+                  ? 'Potential change in logic'
+                  : item.kind === 'update'
+                    ? 'Code was altered'
+                    : 'Vesting contract'
+              }}
+            </span>
+          </td>
+          <td>
+            <span class="text--secondary">{{ item.timestamp | formatDate }}</span>
+          </td>
+        </tr>
+      </template>
+    </v-data-table>
   </v-container>
 </template>
 
@@ -166,6 +171,17 @@ export default {
           sortable: false,
         },
       ],
+      migrationHeaders: [
+        {
+          text: "Action",
+          class: "pl-8",
+          sortable: false,
+        },
+        {
+          text: "Date",
+          sortable: false,
+        }
+      ]
     }
   }
 }
