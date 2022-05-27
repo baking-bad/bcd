@@ -1,7 +1,7 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-skeleton-loader :loading="isLoading" type="table">
-      <v-data-table v-show="currentlyLoadedSameContracts.length > 0" :items="currentlyLoadedSameContracts" :headers="headers" class="ba-1 avg-gas-consumption" hide-default-footer>
+      <v-data-table :items="currentlyLoadedSameContracts" :headers="headers" class="ba-1 avg-gas-consumption" hide-default-footer>
         <template v-slot:top>
           <v-toolbar flat color="sidebar">
             <span class="table-title mx-auto">Same contracts</span>
@@ -43,7 +43,7 @@
             <v-spacer></v-spacer>
             <span
               class="caption grey--text mr-4"
-            >{{ page*page_size }} - {{ endSlice }} of {{ totalPages }}</span>
+            >{{ page*page_size }} - {{ endSlice }} of {{ sameCount }}</span>
             <v-btn icon @click="left" :disabled="page === 0">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
@@ -114,7 +114,7 @@ export default {
       return this.sameContractsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
     isRightDisabled() {
-      return this.endSlice >= this.totalPages;
+      return this.endSlice >= this.sameCount;
     }
   },
   methods: {
