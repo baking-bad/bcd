@@ -47,7 +47,7 @@
             <v-btn icon @click="left" :disabled="page === 0">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
-            <v-btn icon @click="right" :disabled="endSlice === totalPages">
+            <v-btn icon @click="right" :disabled="isRightDisabled">
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
           </v-toolbar>
@@ -113,6 +113,9 @@ export default {
     isLoading() {
       return this.sameContractsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
+    isRightDisabled() {
+      return this.endSlice >= this.totalPages;
+    }
   },
   methods: {
     ...mapActions(['showError']),
