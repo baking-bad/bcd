@@ -54,22 +54,48 @@
         </template>
       </v-data-table>
     </v-skeleton-loader>
+    <v-expansion-panels v-if="migrations.length > 0" class="mt-10">
+      <v-expansion-panel class="ma-0 bb-1">
+        <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
+            <span
+              class="caption font-weight-bold text-uppercase text--secondary"
+            >Logs ({{ migrations.length }})</span
+            >
+        </v-expansion-panel-header>
+        <v-expansion-panel-content color="data" class="pa-0">
+          <v-list>
+            <template v-for="(log, i) in migrations">
+              <v-divider v-if="i > 0" :key="'divider' + i"></v-divider>
+              <LogItem
+                :key="i"
+                :log="log"
+                :network="network"
+                :address="address"
+              />
+            </template>
+          </v-list>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
   </v-container>
 </template>
 
 <script>
 import {DATA_LOADING_STATUSES} from "../../../utils/network";
 import {mapActions} from "vuex";
+import LogItem from "../LogItem";
 
 const PAGE_SIZE = 10;
 
 export default {
-  name: "SameContractsTab",
+  name: "DetailsTab",
+  components: {LogItem},
   props: {
     sameContracts: Array,
     sameCount: Number,
     network: String,
     address: String,
+    migrations: Array,
   },
   computed: {
     page_size() {
@@ -144,3 +170,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+::v-deep .v-expansion-panel-content__wrap {
+  margin-top: 1.25rem;
+}
+</style>

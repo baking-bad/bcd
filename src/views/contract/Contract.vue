@@ -69,6 +69,7 @@
       :metadata="metadata"
       :is-anything-loading="isLoadingDataForTabs"
       :same-contracts="sameContracts"
+      :migrations="migrations"
     />
 
     <VContainer>
@@ -81,6 +82,7 @@
         :metadata="metadata"
         :same-contracts="sameContracts"
         :same-count="sameCount"
+        :migrations="migrations"
       ></router-view>
     </VContainer>
   </div>
@@ -121,6 +123,8 @@ export default {
     sameContractsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
     sameContracts: [],
     sameCount: 0,
+    migrationsLoading: DATA_LOADING_STATUSES.NOTHING,
+    migrations: [],
   }),
   computed: {
     alias() {
@@ -178,6 +182,7 @@ export default {
   },
   created() {
     this.requestSame();
+    this.getMigrations();
   },
   destroyed() {
     this.hideError();
@@ -210,6 +215,19 @@ export default {
           this.showError(err);
           this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
         });
+    },
+    getMigrations() {
+      this.migrationsLoading = true;
+      this.api
+        .getContractMigrations(this.network, this.address)
+        .then((res) => {
+          if (!res) return;
+          this.migrations = res;
+        })
+        .catch((err) => {
+          this.showError(err);
+        })
+        .finally(() => (this.migrationsLoading = false));
     },
     handleSearchBoxFocus() {
       const { width } = this.$refs.searchbox.$el.getBoundingClientRect();

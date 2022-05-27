@@ -33,7 +33,7 @@ import DAppList from '@/views/dapps/List.vue'
 import DApp from '@/views/dapps/DApp.vue'
 import MainDApp from '@/views/dapps/Main.vue'
 import NotFound from "../views/errors/NotFound";
-import SameContractsTab from "../views/contract/SameContractsTab/SameContractsTab";
+import DetailsTab from "../views/contract/DetailsTab/DetailsTab";
 
 Vue.use(VueRouter)
 
@@ -260,9 +260,9 @@ const router = new Router({
           props: true
         },
         {
-          path: 'samecontracts',
-          name: 'samecontracts',
-          component: SameContractsTab,
+          path: 'details',
+          name: 'details',
+          component: DetailsTab,
           props: true
         },
         {

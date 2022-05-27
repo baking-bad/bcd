@@ -44,8 +44,8 @@
       <v-tab :to="pushTo({ name: 'fork' })" replace v-if="isContract">
         <v-icon left small>mdi-source-fork</v-icon>Fork
       </v-tab>
-      <v-tab v-show="isSameContracts" :to="pushTo({name: 'samecontracts'})" replace>
-        <v-icon left small>mdi-call-split</v-icon>Same Contracts
+      <v-tab v-show="isSameContracts || isMigrations" :to="pushTo({name: 'details'})" replace>
+        <v-icon left small>mdi-call-split</v-icon>Details
       </v-tab>
       <v-tab v-if="isAnythingLoading">
         <v-skeleton-loader :loading="isAnythingLoading" type="button" transition="fade-transition">
@@ -66,6 +66,7 @@ export default {
     metadata: Object,
     sameContracts: Array,
     isAnythingLoading: Boolean,
+    migrations: Array,
   },
   computed: {
     isContract() {
@@ -73,6 +74,9 @@ export default {
     },
     isSameContracts() {
       return this.sameContracts.length > 0;
+    },
+    isMigrations() {
+      return this.migrations.length > 0;
     }
   },
   methods: {
