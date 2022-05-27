@@ -12,3 +12,8 @@ export function setQuery(query, value) {
     const newRelativePathQuery = window.location.pathname + '?' + searchParams.toString();
     history.pushState(null, '', newRelativePathQuery);
 }
+
+export function isOldBigMapRoute(route) {
+    const regex = /\/[A-Za-z]*\/big_map\/[0-9]+\/(keys)*\/?[A-Z0-9]*\/?/i;
+    return String(route).match(regex);
+}

@@ -38,7 +38,7 @@
           <template v-if="item.value_type === 'big_map'">
             <template v-if="!diffMode && item.val && item.val >= 0">
               <v-btn
-                :to="{ path: `/${network}/big_map/${item.value}` }"
+                :to="pushToBigMap(item.value)"
                 outlined
                 small
                 color="accent"
@@ -79,6 +79,7 @@ export default {
   },
   props: {
     miguel: [Object, Array],
+    address: String,
     network: String,
     openAll: Boolean,
     diffMode: Boolean,
@@ -106,6 +107,11 @@ export default {
     },
   },
   methods: {
+    pushToBigMap(value) {
+      return {
+        path: `/${this.network}/${this.address}/storage/big_map/${value}`,
+      }
+    },
     getChangedItems(item) {
       let res = item.children.map((x) => this.getChangedItems(x), this).flat();
       if (item.kind || res.length > 0 || this.openAll) {

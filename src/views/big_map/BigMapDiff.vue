@@ -40,7 +40,30 @@
           <v-list-item class="pl-1">
             <v-list-item-content>
               <v-list-item-subtitle class="overline">Key hash</v-list-item-subtitle>
-              <v-list-item-title class="key-hash">{{ diff.data.key_hash }}</v-list-item-title>
+              <v-list-item-title class="d-flex align-center">
+                <span>
+                  {{ shortcutOnly(diff.data.key_hash) }}
+                </span>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      small
+                      v-on="on"
+                      icon
+                      class="mr-2"
+                      @click="
+                        () => {
+                          $clipboard(diff.data.key_hash);
+                          showClipboardOK();
+                        }
+                      "
+                    >
+                      <v-icon small class="text--secondary">mdi-content-copy</v-icon>
+                    </v-btn>
+                  </template>
+                  Copy key hash
+                </v-tooltip>
+              </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
         </v-col>
@@ -63,10 +86,12 @@
             <v-icon small class="mr-1">mdi-history</v-icon>
             <span>View history</span>
           </v-btn>
-          <v-btn v-if="diff.data.value" small text @click="showRaw = true">
-            <v-icon small class="mr-1">mdi-code-braces</v-icon>
-            <span>Raw JSON</span>
-          </v-btn>
+          <portal to="storage-actions">
+            <v-btn v-if="diff.data.value" class="mr-4 cursor-pointer" small text @click="showRaw = true">
+              <v-icon small class="mr-1">mdi-code-braces</v-icon>
+              <span>Raw JSON</span>
+            </v-btn>
+          </portal>
         </v-col>
         <v-col cols="12" class="px-2 py-4 my-2 ba-1">
           <span class="overline ml-3">Key</span>
@@ -94,6 +119,8 @@
 <script>
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue"
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
+import {mapActions} from "vuex";
+import { shortcutOnly } from "../../utils/tz";
 
 export default {
   name: "BigMapDiff",
@@ -110,7 +137,11 @@ export default {
   },
   data: () => ({
     showRaw: false
-  })
+  }),
+  methods: {
+    ...mapActions(["showClipboardOK"]),
+    shortcutOnly,
+  }
 };
 </script>
 

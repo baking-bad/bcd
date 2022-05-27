@@ -1,65 +1,65 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
-    <v-skeleton-loader v-if="loading" type="card-heading, image" />
-    <div v-else-if="selectedCode">
-      <v-card tile flat outlined class="pa-0">
-        <v-card-title class="d-flex sidebar px-4 py-2">
-          <v-select
-            v-if="codeVersions.length > 0"
-            v-model="selectedProtocol"
-            @change="getCode(selectedProtocol)"
-            :items="codeVersions"
-            item-text="proto"
-            item-value="protocol"
-            style="max-width: 160px;"
-            rounded
-            dense
-            background-color="data"
-            class="mb-1"
-            hide-details
-          ></v-select>
-          <span
+    <v-row>
+      <v-col cols="12">
+        <v-skeleton-loader v-if="loading" type="card-heading, image" />
+        <div v-else-if="selectedCode">
+          <div class="d-flex justify-space-between">
+            <v-select
+              v-if="codeVersions.length > 0"
+              v-model="selectedProtocol"
+              @change="getCode(selectedProtocol)"
+              :items="codeVersions"
+              item-text="proto"
+              item-value="protocol"
+              style="max-width: 160px;"
+              rounded
+              dense
+              background-color="data"
+              class="mb-1"
+              hide-details
+            ></v-select>
+            <span
               v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
               class="ml-4 text--disabled rendering-percents"
-          >
+            >
             Rendering: {{Math.floor(loadedPercentage)}}%
           </span>
-          <v-spacer></v-spacer>
-          <v-btn
-            class="mr-1 text--secondary"
-            v-clipboard="getValueToCopy"
-            v-clipboard:success="showSuccessCopy"
-            small
-            text
-          >
-            <v-icon class="mr-1" small>mdi-content-copy</v-icon>
-            <span>Copy</span>
-          </v-btn>
-          <v-btn @click="showRaw = true" small text class="text--secondary">
-            <v-icon class="mr-1" small>mdi-code-json</v-icon>
-            <span>Raw JSON</span>
-          </v-btn>
-          <v-btn small text @click="downloadFile" class="text--secondary ml-2">
-            <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
-            <span>Download</span>
-          </v-btn>
-          <v-btn small text :to="{name: 'interact'}" class="text--secondary ml-2">
-            <v-icon class="mr-1 text--secondary" small>mdi-play-box-outline</v-icon>
-            <span>Interact</span>
-          </v-btn>
-        </v-card-title>
-        <v-card-text class="pa-0">
-          <Michelson :code="loadedCode"></Michelson>
-        </v-card-text>
-      </v-card>
-    </div>
-    <ErrorState v-else />
+            <v-spacer></v-spacer>
+            <v-btn
+              class="mr-1 text--secondary"
+              v-clipboard="getValueToCopy"
+              v-clipboard:success="showSuccessCopy"
+              small
+              text
+            >
+              <v-icon class="mr-1" small>mdi-content-copy</v-icon>
+              <span>Copy</span>
+            </v-btn>
+            <v-btn @click="showRaw = true" small text class="text--secondary">
+              <v-icon class="mr-1" small>mdi-code-json</v-icon>
+              <span>Raw JSON</span>
+            </v-btn>
+            <v-btn small text @click="downloadFile" class="text--secondary ml-2">
+              <v-icon class="mr-1 text--secondary" small>mdi-download-outline</v-icon>
+              <span>Download</span>
+            </v-btn>
+          </div>
+          <v-card tile flat outlined class="pa-0 mt-2">
+            <v-card-text class="pa-0">
+              <Michelson :code="loadedCode"></Michelson>
+            </v-card-text>
+          </v-card>
+        </div>
+        <ErrorState v-else />
+      </v-col>
+    </v-row>
     <RawJsonViewer
       :show.sync="showRaw"
       type="code"
       :network="network"
       :address="address"
-      :level="getFallbackLevel(selectedProtocol)" />
+      :level="0" />
   </v-container>
 </template>
 
@@ -73,14 +73,13 @@ import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 export default {
   props: {
     contract: Object,
-    migrations: Array,
     address: String,
     network: String,
   },
   components: {
     ErrorState,
     Michelson,
-    RawJsonViewer
+    RawJsonViewer,
   },
   data: () => ({
     code: {},
@@ -92,7 +91,7 @@ export default {
     loadedCode: "",
     loading: true,
     selectedProtocol: "",
-    showRaw: false
+    showRaw: false,
   }),
   created() {
     if (this.$route.query.protocol) {
@@ -105,8 +104,14 @@ export default {
         this.getCode();
       });
     }
+    if (this.isContract) {
+      this.getMigrations();
+    }
   },
   computed: {
+    isContract() {
+      return this.address.startsWith("KT");
+    },
     selectedCode() {
       if (!this.loading) {
         return this.code[this.selectedProtocol];
@@ -115,16 +120,6 @@ export default {
     },
     codeVersions() {
       let versions = [];
-      if (this.migrations) {
-        versions = this.migrations
-          .filter(m => m.kind === "update")
-          .map(function(m) {
-            return {
-              proto: m.prev_protocol.slice(0, 8),
-              protocol: m.prev_protocol
-            };
-          });
-      }
       versions.unshift({ proto: "Latest", protocol: "" });
       return versions;
     }
@@ -164,16 +159,6 @@ export default {
       this.lastSubstring = this.lastSubstring + this.freezingAmount;
       this.loadedPercentage = this.lastSubstring / code.length * 100;
     },
-    getFallbackLevel(protocol = "") {
-      if (protocol !== "" && this.migrations) {
-        for (var i = 0; i < this.migrations.length; i++) {
-          if (this.migrations[i].prev_protocol === protocol) {
-            return Math.max(0, this.migrations[i].level - 4096);
-          }
-        }
-      }
-      return 0;
-    },
     getCode(protocol = "") {
       this.loading = true;
       if (this.code[protocol]) {
@@ -181,9 +166,8 @@ export default {
         return;
       }
 
-      let level = this.getFallbackLevel(protocol);
       this.api
-        .getContractCode(this.network, this.address, protocol, level)
+        .getContractCode(this.network, this.address, protocol, 0)
         .then(res => {
           if (!res) return;
           Vue.set(this.code, protocol, res);

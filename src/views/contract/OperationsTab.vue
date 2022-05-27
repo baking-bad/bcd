@@ -1,10 +1,12 @@
 <template>
   <v-container fluid class="px-8 py-4 canvas fill-canvas">
     <v-row>
-      <v-col cols="3">
-        <v-select
-          v-model="status"
-          :items="[
+      <v-col cols="9">
+        <v-row>
+          <v-col cols="3">
+            <v-select
+              v-model="status"
+              :items="[
             'applied',
             'failed',
             'backtracked',
@@ -14,126 +16,200 @@
             'refused',
             'branch_refused',
           ]"
-          chips
-          small-chips
-          filled
-          label="Status"
-          placeholder="Any"
-          multiple
-          background-color="data"
-          hide-details
-        >
-          <template v-slot:selection="{ item, index }">
-            <v-chip x-small v-if="index < 1">
-              <span>{{ item }}</span> </v-chip
-            >&nbsp;
-            <span v-if="index === 1" class="grey--text caption"
-              >+{{ status.length - 1 }} others</span
-            >
-          </template>
-        </v-select>
-      </v-col>
-      <v-col cols="3" v-if="isContract">
-        <v-select
-          v-model="entrypoints"
-          :items="availableEntrypoints"
-          chips
-          small-chips
-          filled
-          background-color="data"
-          label="Entrypoint"
-          placeholder="Any"
-          multiple
-          hide-details
-        >
-          <template v-slot:selection="{ index }">
-            <v-chip x-small v-if="index < 1">
-              <span>{{ shortestEntrypoint }}</span> </v-chip
-            >&nbsp;
-            <span v-if="index === 1" class="grey--text caption"
-              >+{{ entrypoints.length - 1 }} others</span
-            >
-          </template>
-        </v-select>
-      </v-col>
-
-      <v-col cols="3">
-        <v-menu
-          ref="menu"
-          v-model="datesModal"
-          :close-on-content-click="false"
-          :return-value.sync="dates"
-          transition="scale-transition"
-          offset-y
-          min-width="290px"
-        >
-          <template v-slot:activator="{ on }">
-            <v-text-field
-              v-model="dateRangeText"
-              label="Date range"
-              placeholder="All time"
-              readonly
+              chips
+              small-chips
               filled
+              label="Status"
+              placeholder="Any"
+              multiple
               background-color="data"
               hide-details
-              v-on="on"
-            ></v-text-field>
-          </template>
-          <v-date-picker v-model="datesBuf" scrollable range show-current>
-            <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="datesModal = false"
-              >Cancel</v-btn
             >
-            <v-btn text color="primary" @click="$refs.menu.save(datesBuf)"
-              >OK</v-btn
+              <template v-slot:selection="{ item, index }">
+                <v-chip x-small v-if="index < 1">
+                  <span>{{ item }}</span> </v-chip
+                >&nbsp;
+                <span v-if="index === 1" class="grey--text caption"
+                >+{{ status.length - 1 }} others</span
+                >
+              </template>
+            </v-select>
+          </v-col>
+          <v-col cols="3" v-if="isContract">
+            <v-select
+              v-model="entrypoints"
+              :items="availableEntrypoints"
+              chips
+              small-chips
+              filled
+              background-color="data"
+              label="Entrypoint"
+              placeholder="Any"
+              multiple
+              hide-details
             >
-          </v-date-picker>
-        </v-menu>
+              <template v-slot:selection="{ index }">
+                <v-chip x-small v-if="index < 1">
+                  <span>{{ shortestEntrypoint }}</span> </v-chip
+                >&nbsp;
+                <span v-if="index === 1" class="grey--text caption"
+                >+{{ entrypoints.length - 1 }} others</span
+                >
+              </template>
+            </v-select>
+          </v-col>
+
+          <v-col cols="6" class="d-flex justify-space-between align-center">
+            <v-menu
+              ref="menu"
+              v-model="datesModal"
+              :close-on-content-click="false"
+              :return-value.sync="dates"
+              transition="scale-transition"
+              offset-y
+              min-width="290px"
+            >
+              <template v-slot:activator="{ on }">
+                <v-text-field
+                  v-model="dateRangeText"
+                  label="Date range"
+                  placeholder="All time"
+                  readonly
+                  filled
+                  background-color="data"
+                  hide-details
+                  v-on="on"
+                ></v-text-field>
+              </template>
+              <v-date-picker v-model="datesBuf" scrollable range show-current>
+                <v-spacer></v-spacer>
+                <v-btn text color="primary" @click="datesModal = false"
+                >Cancel</v-btn
+                >
+                <v-btn text color="primary" @click="$refs.menu.save(datesBuf)"
+                >OK</v-btn
+                >
+              </v-date-picker>
+            </v-menu>
+            <v-btn small text @click="fetchOperations">
+              <v-icon small class="mr-1 text--secondary">mdi-trash-can</v-icon>
+              <span class="text--secondary">clear filters</span>
+            </v-btn>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col>
+            <v-skeleton-loader
+              :loading="loading"
+              type="list-item-two-line, list-item-two-line, list-item-two-line"
+            >
+              <EmptyState
+                v-if="items.length === 0"
+                icon="mdi-code-brackets"
+                title="Nothing found"
+                text="Empty set is also a result, otherwise try a broader query"
+              />
+              <v-expansion-panels
+                v-show="items.length !== 0"
+                multiple
+                hover
+                flat
+                class="bb-1"
+              >
+                <ContentItem
+                  :data="item"
+                  :address="address"
+                  v-for="(item, key) in items"
+                  :key="item.hash + '_' + item.counter + '_' + key"
+                />
+              </v-expansion-panels>
+              <v-skeleton-loader
+                v-show="operationsLoading || mempoolLoading"
+                :loading="operationsLoading || mempoolLoading"
+                type="list-item-two-line, list-item-two-line, list-item-two-line"
+              >
+              </v-skeleton-loader>
+              <span
+                v-intersect="onDownloadPage"
+                v-if="!loading && !downloaded"
+              ></span>
+            </v-skeleton-loader>
+          </v-col>
+        </v-row>
       </v-col>
-      <v-col class="d-flex align-center justify-end">
-        <v-btn small text @click="fetchOperations">
-          <v-icon small class="mr-1 text--secondary">mdi-trash-can</v-icon>
-          <span class="text--secondary">clear filters</span>
-        </v-btn>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-skeleton-loader
-          :loading="loading"
-          type="list-item-two-line, list-item-two-line, list-item-two-line"
-        >
-          <EmptyState
-            v-if="items.length === 0"
-            icon="mdi-code-brackets"
-            title="Nothing found"
-            text="Empty set is also a result, otherwise try a broader query"
+      <v-col cols="3">
+        <v-list class="contract-list">
+          <v-list-item style="height: 74px">
+            <v-list-item-content two-line>
+              <v-list-item-title class="headline">
+                <v-tooltip bottom v-if="alias" :disabled="alias.length < 15">
+                  <template v-slot:activator="{ on, attrs }">
+                    <span v-bind="attrs" v-on="on">{{ alias }}</span>
+                  </template>
+                  <span>{{ alias }}</span>
+                </v-tooltip>
+                <span v-else v-html="sanitizeHtml(helpers.shortcut(address))"></span>&nbsp;
+                <v-btn
+                  icon
+                  target="_blank"
+                  :href="sanitizeHtml(contract.verification_source)"
+                  v-if="contract && contract.verified"
+                >
+                  <v-icon small color="primary">mdi-shield-check</v-icon>
+                </v-btn>
+              </v-list-item-title>
+              <v-list-item-subtitle>
+              <span
+                class="overline"
+                :class="network === 'mainnet' ? 'secondary--text' : ''"
+              >{{ network }}</span
+              >
+              </v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-subtitle class="overline"
+              >Was active</v-list-item-subtitle
+              >
+              <v-list-item-title class="body-2" v-if="isContract">
+                {{ helpers.formatDatetime(contract.timestamp) }}
+                <span v-if="contract.last_action > contract.timestamp"
+                >—
+                      {{ helpers.formatDatetime(contract.last_action) }}</span
+                >
+              </v-list-item-title>
+              <v-list-item-title class="body-2" v-else>
+                {{ helpers.formatDatetime(contract.last_action) }}
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item v-if="balance">
+            <v-list-item-content>
+              <v-list-item-subtitle class="overline"
+              >Balance</v-list-item-subtitle
+              >
+              <v-list-item-title class="body-2">
+                <span>{{ balance | uxtz }}</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <AccountBox
+            v-if="contract.manager"
+            title="Deployed by"
+            :address="contract.manager"
+            :network="contract.network"
+            gutters
           />
-          <v-expansion-panels
-            v-show="items.length !== 0"
-            multiple
-            hover
-            flat
-            class="bb-1"
-          >
-            <ContentItem
-              :data="item"
-              :address="address"
-              v-for="(item, key) in items"
-              :key="item.hash + '_' + item.counter + '_' + key"
-            />
-          </v-expansion-panels>
-          <v-skeleton-loader
-            v-show="operationsLoading || mempoolLoading"
-            :loading="operationsLoading || mempoolLoading"
-            type="list-item-two-line, list-item-two-line, list-item-two-line"
-          >
-          </v-skeleton-loader>
-          <span
-            v-intersect="onDownloadPage"
-            v-if="!loading && !downloaded"
-          ></span>
-        </v-skeleton-loader>
+          <AccountBox
+            v-if="contract.delegate"
+            title="Delegated to"
+            :address="contract.delegate"
+            :network="contract.network"
+            :alias="contract.delegate_alias"
+            gutters
+          />
+        </v-list>
       </v-col>
     </v-row>
   </v-container>
@@ -145,14 +221,19 @@ import ContentItem from "@/views/contract/ContentItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
 import Vue from 'vue';
+import AccountBox from "../../components/Dialogs/AccountBox";
+import sanitizeHtml from "sanitize-html";
 
 export default {
   name: "OperationsTab",
   props: {
     address: String,
     network: String,
+    balance: Number,
+    contract: Object,
   },
   components: {
+    AccountBox,
     ContentItem,
     EmptyState,
   },
@@ -177,6 +258,16 @@ export default {
   computed: {
     loading() {
       return this.items.length === 0 && (this.operationsLoading || this.mempoolLoading);
+    },
+    alias() {
+      if (this.contract) {
+        if (this.contract.alias) {
+          return this.contract.alias;
+        } else if (this.metadata && this.metadata.name) {
+          return this.metadata.name;
+        }
+      }
+      return null;
     },
     items() {
       let operations = [];
@@ -222,6 +313,7 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "hideError"]),
+    sanitizeHtml,
     compareOperations(a, b) {
       if (a.timestamp < b.timestamp) {
         return 1;

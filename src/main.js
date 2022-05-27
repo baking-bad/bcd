@@ -22,6 +22,7 @@ import { makeVuetify } from '@/plugins/vuetify';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import utc from 'dayjs/plugin/utc';
+import PortalVue from 'portal-vue'
 
 import { fixNavigationCurrentLocationProblem } from '@/setups/router';
 
@@ -33,6 +34,7 @@ import '@baking-bad/vjsf/lib/VJsf.css';
 import draggable from 'vuedraggable';
 import {roundDownSignificantDigits, SIFormatter} from "./utils/number";
 import {isKT1Address, isOperationHash, isTzAddress} from "./utils/tz";
+import {isOldBigMapRoute} from "./utils/url";
 
 Vue.component('draggable', draggable);
 Vue.component('VJsf', VJsf)
@@ -41,6 +43,8 @@ Vue.config.productionTip = false;
 
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
+
+Vue.use(PortalVue)
 
 Vue.use(Clipboard);
 
@@ -142,16 +146,22 @@ api.getConfig().then(response => {
     },
     {
       path: '*',
-      redirect: to => {
+      beforeEnter: async function (to, from, next) {
+        if (isOldBigMapRoute(to.fullPath)) {
+          const splitted = to.fullPath.split('/');
+          return await api.getContractBigMap(splitted[1], splitted[3])
+                                  .then(res => next(`/${res.network}/${res.address}/storage/big_map/${res.ptr}/${splitted[5] || ''}`))
+                                  .catch(() => next(`/not_found`));
+        }
         const text = urlExtractBase58(to.path) || to.path.split('/').join(' ');
         if (isKT1Address(text) || isTzAddress(text)) {
-          return `/mainnet/${text}/operations`;
+          return next(`/mainnet/${text}/operations`);
         }
         if (isOperationHash(text)) {
-          return `/mainnet/opg/${text}/contents`;
+          return next(`/mainnet/opg/${text}/contents`);
         }
-        return { name: 'not_found' };
-      }
+        return next('/not_found');
+      },
     }
   ]);
 

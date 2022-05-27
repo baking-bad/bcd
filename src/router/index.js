@@ -33,6 +33,7 @@ import DAppList from '@/views/dapps/List.vue'
 import DApp from '@/views/dapps/DApp.vue'
 import MainDApp from '@/views/dapps/Main.vue'
 import NotFound from "../views/errors/NotFound";
+import DetailsTab from "../views/contract/DetailsTab/DetailsTab";
 
 Vue.use(VueRouter)
 
@@ -193,6 +194,46 @@ const router = new Router({
           props: true
         },
         {
+          path: 'interact/:entrypoint?',
+          name: 'interact',
+          component: InteractTab,
+          props: true
+        },
+        {
+          path: 'storage',
+          name: 'storage',
+          component: StorageTab,
+          props: true,
+          children: [
+            {
+              path: 'big_map/:ptr(\\d+)',
+              components: {
+                default: BigMap
+              },
+              props: { default: true },
+              children: [
+                {
+                  path: '',
+                  name: 'big_map',
+                  redirect: 'keys'
+                },
+                {
+                  path: 'keys',
+                  name: 'big_map_keys',
+                  component: BigMapKeys,
+                  props: true
+                },
+                {
+                  path: ':keyhash',
+                  name: 'big_map_history',
+                  component: BigMapHistory,
+                  props: true
+                }
+              ]
+            },
+          ]
+        },
+        {
           path: 'code',
           name: 'code',
           component: CodeTab,
@@ -205,17 +246,12 @@ const router = new Router({
           props: true
         },
         {
-          path: 'storage',
-          name: 'storage',
-          component: StorageTab,
-          props: true
-        },
-        {
           path: 'fork',
           name: 'fork',
           components: {
             default: ForkTab,
-          }
+          },
+          props: true,
         },
         {
           path: 'tokens',
@@ -224,43 +260,17 @@ const router = new Router({
           props: true
         },
         {
+          path: 'details',
+          name: 'details',
+          component: DetailsTab,
+          props: true
+        },
+        {
           path: 'transfers',
           name: 'transfers',
           component: TransfersTab,
           props: true
         },
-      ]
-    },
-    {
-      path: '/:network/:address([0-9A-z]{36})/interact/:entrypoint?',
-      name: 'interact',
-      component: InteractTab,
-      props: true
-    },
-    {
-      path: '/:network/big_map/:ptr(\\d+)',
-      components: {
-        default: BigMap
-      },
-      props: { default: true },
-      children: [
-        {
-          path: '',
-          name: 'big_map',
-          redirect: 'keys'
-        },
-        {
-          path: 'keys',
-          name: 'big_map_keys',
-          component: BigMapKeys,
-          props: true
-        },
-        {
-          path: ':keyhash',
-          name: 'big_map_history',
-          component: BigMapHistory,
-          props: true
-        }
       ]
     },
     {

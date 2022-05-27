@@ -14,6 +14,7 @@
             :network="$route.params.network"
             :address="$route.params.address"
             v-model="storage.default_model"
+            :alias="contract.alias"
           />
           <div v-else />
         </v-skeleton-loader>
@@ -47,6 +48,9 @@ export default {
     Schema,
     TypeDef
   },
+  props: {
+    contract: Object,
+  },
   data: () => ({
     storage: null,
     loading: true,
@@ -70,7 +74,6 @@ export default {
           applyStyles(this.storage.schema);
         })
         .catch((err) => {
-          console.log(err);
           this.showError(err);
         })
         .finally(() => (this.loading = false));

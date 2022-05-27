@@ -9021,6 +9021,11 @@
   dependencies:
     "@babel/runtime" "^7.16.7"
 
+"portal-vue@^2.1.7":
+  "integrity" "sha512-+yCno2oB3xA7irTt0EU5Ezw22L2J51uKAacE/6hMPMoO/mx3h4rXFkkBkT4GFsMDv/vEe8TNKC3ujJJ0PTwb6g=="
+  "resolved" "https://registry.npmjs.org/portal-vue/-/portal-vue-2.1.7.tgz"
+  "version" "2.1.7"
+
 "portfinder@^1.0.25", "portfinder@^1.0.26":
   "integrity" "sha512-Se+2isanIcEqf2XMHjyUKskczxbPH7dQnlMjXX6+dybayyHvAf/TCgyMRlzf/B6QDhAEFOGes0pzRo3by4AbMA=="
   "resolved" "https://registry.npmjs.org/portfinder/-/portfinder-1.0.28.tgz"
@@ -11939,7 +11944,7 @@
   "resolved" "https://registry.npmjs.org/vue-virtual-scroll-list/-/vue-virtual-scroll-list-1.4.6.tgz"
   "version" "1.4.6"
 
-"vue@^2.0.0", "vue@^2.6.10", "vue@^2.6.11", "vue@^2.6.4", "vue@>=1.0.0", "vue@2.x || 3.x":
+"vue@^2.0.0", "vue@^2.5.18", "vue@^2.6.10", "vue@^2.6.11", "vue@^2.6.4", "vue@>=1.0.0", "vue@2.x || 3.x":
   "integrity" "sha512-VfPwgcGABbGAue9+sfrD4PuwFar7gPb1yl1UK1MwXoQPAw0BKSqWfoYCT/ThFrdEVWoI51dBuyCoiNU9bZDZxQ=="
   "resolved" "https://registry.npmjs.org/vue/-/vue-2.6.11.tgz"
   "version" "2.6.11"

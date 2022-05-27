@@ -1,102 +1,110 @@
 <template>
-  <div class="fill-height">
-    <v-navigation-drawer
-      floating
-      app
-      permanent
-      width="336"
-      color="canvas"
-      class="main-navigation"
-    >
-      <v-row class="fill-height br-1" no-gutters>
-        <v-col cols="12">
-          <SideBar
-            :loading="loading"
-            :address="address"
-            :network="network"
-            :migrations="migrations"
-            :contract="contract"
-            :metadata="metadata"
-            :balance="balance"
-            ref="sidebar"
-            v-on:fork="onFork"
-          />
-        </v-col>
-      </v-row>
-    </v-navigation-drawer>
+  <div class="fill-height bg-canvas-base">
+    <v-row class="bg-canvas-base">
+      <v-col cols="9" class="pr-4 pb-4 pl-3 d-flex align-center">
+        <v-breadcrumbs
+          class="pl-0 pb-0 pt-0 ml-7"
+          divider="/"
+          :items="breadcrumbsItems"
+        />
+        <Tags
+          :contract="contract"
+        />
+      </v-col>
+      <v-col cols="3" class="d-flex justify-end pr-7">
+        <div class="d-flex align-center justify-start pa-2 px-4">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                class="mr-2 pl-2 pr-2 text--secondary"
+                outlined
+                small
+                @click="
+                  () => {
+                    $clipboard(address);
+                    showClipboardOK();
+                  }
+                "
+              >
+                <v-icon class="text--secondary" small>mdi-content-copy</v-icon>
+                <span class="ml-1 text--secondary">
+                  Copy address
+                </span>
+              </v-btn>
+            </template>
+            Copy address
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                v-on="on"
+                class="mr-2 pl-2 pr-2 text--secondary"
+                outlined
+                small
+                @click="
+                  () => {
+                    openInTzkt();
+                  }
+                "
+              >
+                <v-icon class="text--secondary" small>mdi-logout-variant</v-icon>
+                <span class="ml-1 text--secondary">
+                  Open in TZKT
+                </span>
+              </v-btn>
+            </template>
+            Open in TZKT
+          </v-tooltip>
+        </div>
+      </v-col>
+    </v-row>
 
-    <v-toolbar flat class color="toolbar" height="75">
-      <v-tabs
-        center-active
-        background-color="transparent"
-        slider-color="primary"
-        class="ml-4"
-      >
-        <v-tab :to="pushTo({ name: 'operations' })" :title="contract.tx_count" replace style="width: 175px">
-          <v-icon left small>mdi-swap-horizontal</v-icon>operations
-          <span class="ml-1">({{ contract.tx_count || 0 | numberToCompactSIFormat }})</span>
-        </v-tab>
-        <v-tab :to="pushTo({ name: 'storage' })" replace v-if="isContract">
-          <v-icon left small>mdi-database</v-icon>Storage
-        </v-tab>
-        <v-tab :to="pushTo({ name: 'code' })" replace v-if="isContract">
-          <v-icon left small>mdi-code-braces</v-icon>Code
-        </v-tab>
-        <v-tab :to="pushTo({ name: 'interact' })" replace v-if="isContract">
-          <v-icon left small>mdi-play-box-outline</v-icon>Interact
-        </v-tab>
-        <v-tab
-          :to="pushTo({ name: 'tokens' })"
-          :title="tokensTotal"
-          replace
-          v-if="isContract && tokensTotal > 0"
-        >
-          <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
-          <span class="ml-1">({{ tokensTotal | numberToCompactSIFormat }})</span>
-        </v-tab>
-        <v-tab
-          :to="pushTo({ name: 'transfers' })"
-          replace
-          v-if="tokenBalancesTotal > 0"
-        >
-          <v-icon left small>mdi-transfer</v-icon>Transfers
-        </v-tab>
-        <v-tab
-          :to="pushTo({ name: 'metadata' })"
-          replace
-          v-if="metadata"
-        >
-          <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
-        </v-tab>
-        <v-tab :to="pushTo({ name: 'fork' })" replace v-if="showFork && isContract">
-          <v-icon left small>mdi-source-fork</v-icon>Fork
-        </v-tab>
-      </v-tabs>
-    </v-toolbar>
-
-    <router-view
-      :address="address"
-      :network="network"
+    <MenuToolbar
+      class="pl-7"
       :contract="contract"
-      :migrations="migrations"
+      :address="address"
       :tokensTotal="tokensTotal"
       :tokenBalancesTotal="tokenBalancesTotal"
       :metadata="metadata"
-    ></router-view>
+      :is-anything-loading="isLoadingDataForTabs"
+      :same-contracts="sameContracts"
+      :migrations="migrations"
+    />
+
+    <VContainer fluid>
+      <router-view
+        :address="address"
+        :network="network"
+        :contract="contract"
+        :tokensTotal="tokensTotal"
+        :tokenBalancesTotal="tokenBalancesTotal"
+        :metadata="metadata"
+        :same-contracts="sameContracts"
+        :same-count="sameCount"
+        :migrations="migrations"
+      ></router-view>
+    </VContainer>
   </div>
 </template>
 
 <script>
-import SideBar from "@/views/contract/SideBar.vue";
 import { mapActions } from "vuex";
 import { cancelRequests } from "@/utils/cancellation.js";
+import {toTitleCase} from "../../utils/string";
+import {shortcutOnly} from "../../utils/tz";
+import MenuToolbar from "./MenuToolbar";
+import Tags from "../../components/Tags";
+import {openTzktContract} from "../../utils/tzkt";
+import {DATA_LOADING_STATUSES} from "../../utils/network";
 
 const MIN_SEARCHBOX_WIDTH = 240;
 
 export default {
   name: "Contract",
   components: {
-    SideBar,
+    Tags,
+    MenuToolbar,
   },
   props: {
     network: String,
@@ -104,24 +112,72 @@ export default {
   },
   data: () => ({
     contractLoading: true,
-    migrationsLoading: true,
     contract: {},
     balance: 0,
-    migrations: [],
     metadata: null,
     tokenBalancesTotal: 0,
     tokensTotal: 0,
-    showFork: false,
     contractTags: null,
     contractLink: '',
     isComboBoxExpanded: false,
+    sameContractsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
+    sameContracts: [],
+    sameCount: 0,
+    migrationsLoading: DATA_LOADING_STATUSES.NOTHING,
+    migrations: [],
   }),
   computed: {
-    loading() {
-      return this.contractLoading || this.migrationsLoading;
+    alias() {
+      if (this.contract) {
+        if (this.contract.alias) {
+          return this.contract.alias;
+        } else if (this.metadata && this.metadata.name) {
+          return this.metadata.name;
+        }
+      }
+      return null;
+    },
+
+    link() {
+      let routeData = {};
+      if (this.contract && this.contract.slug) {
+        routeData = {href:`/@${this.contract.slug}`};
+      } else {
+        routeData = this.$router.resolve({
+          name: "contract",
+          params: {
+            address: this.address,
+            network: this.network,
+          },
+        });
+      }
+      return `${window.location.protocol}//${window.location.host}${routeData.href}`;
+    },
+    isSameContractsLoading() {
+      return this.sameContractsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
+    isLoadingDataForTabs() {
+      return this.isSameContractsLoading;
     },
     isContract() {
       return this.address.startsWith("KT");
+    },
+    breadcrumbsItems() {
+      return [
+        {
+          text: 'Home',
+          to: '/',
+        },
+        {
+          disabled: true,
+          text: toTitleCase(this.network),
+        },
+        {
+          text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
+          to: `/${this.network}/${this.address}/operations${this.$route.hash !== '#' ? '#' : '##'}`,
+          disabled: false,
+        },
+      ];
     },
   },
   destroyed() {
@@ -131,11 +187,45 @@ export default {
     ...mapActions({
       showError: "showError",
       hideError: "hideError",
+      showClipboardOK: "showClipboardOK",
     }),
-    pushTo(obj) {
-      return Object.assign({
-        query: this.$route.query,
-      }, obj);
+    openInTzkt() {
+      openTzktContract(this.contract);
+    },
+    requestSame() {
+      if (!this.isContract
+        || this.sameContractsLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
+      ) return;
+      this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+      this.sameContracts = [];
+      this.sameCount = 0;
+      this.api
+        .getSameContracts(this.network, this.address, 0)
+        .then((res) => {
+          if (!res) return;
+          this.sameContracts = res.contracts;
+          this.sameCount = res.count;
+          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
+        })
+        .catch((err) => {
+          this.showError(err);
+          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
+        });
+    },
+    getMigrations() {
+      this.migrations = [];
+      this.migrationsLoading = true;
+      this.api
+        .getContractMigrations(this.network, this.address)
+        .then((res) => {
+          if (!res) return;
+          this.migrations = res;
+        })
+        .catch((err) => {
+          this.showError(err);
+        })
+        .finally(() => (this.migrationsLoading = false));
     },
     handleSearchBoxFocus() {
       const { width } = this.$refs.searchbox.$el.getBoundingClientRect();
@@ -150,15 +240,12 @@ export default {
       this.tokensTotal = 0;
       this.tokenBalancesTotal = 0;
       this.metadata = null;
-      this.migrations = [];
       this.contract = {};
-      this.showFork = this.$route.name === "fork";
       if (this.isContract) {
+        this.requestSame();
         this.getContract();
         this.getTokensTotal();
         this.getMigrations();
-      } else {
-        this.migrationsLoading = false;
       }
       this.getInfo();
       this.getTokenBalancesTotal();
@@ -188,19 +275,6 @@ export default {
           }
         })
         .finally(() => (this.contractLoading = false));
-    },
-    getMigrations() {
-      this.migrationsLoading = true;
-      this.api
-        .getContractMigrations(this.network, this.address)
-        .then((res) => {
-          if (!res) return;
-          this.migrations = res;
-        })
-        .catch((err) => {
-          this.showError(err);
-        })
-        .finally(() => (this.migrationsLoading = false));
     },
     getTokensTotal() {
       this.api
@@ -260,9 +334,6 @@ export default {
           this.showError(err);
         });
     },
-    onFork() {
-      this.showFork = !this.showFork;
-    },
   },
   watch: {
     address: {
@@ -270,14 +341,6 @@ export default {
       handler() {
         cancelRequests();
         this.init();
-      }
-    },
-    showFork: function (newValue) {
-      const currentRouteName = this.$route.name;
-      if (newValue && currentRouteName !== "fork") {
-        this.$router.push({ name: "fork" });
-      } else if (!newValue && currentRouteName !== "operations") {
-        this.$router.push({ name: "operations" });
       }
     },
   },
