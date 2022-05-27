@@ -45,7 +45,7 @@
         <v-icon left small>mdi-source-fork</v-icon>Fork
       </v-tab>
       <v-tab v-show="isSameContracts || isMigrations" :to="pushTo({name: 'details'})" replace>
-        <v-icon left small>mdi-call-split</v-icon>Details
+        <v-icon left small>mdi-alert-circle-outline</v-icon>Details
       </v-tab>
       <v-tab v-if="isAnythingLoading">
         <v-skeleton-loader :loading="isAnythingLoading" type="button" transition="fade-transition">
