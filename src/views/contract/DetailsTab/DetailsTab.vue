@@ -88,13 +88,11 @@
 <script>
 import {DATA_LOADING_STATUSES} from "../../../utils/network";
 import {mapActions} from "vuex";
-import LogItem from "../LogItem";
 
 const PAGE_SIZE = 10;
 
 export default {
   name: "DetailsTab",
-  components: {LogItem},
   props: {
     sameContracts: Array,
     sameCount: Number,
