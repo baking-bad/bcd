@@ -61,7 +61,7 @@
                             item.alias.length > aliasMaxLength
                               ? item.alias.slice(0, aliasMaxLength).trim()
                               : item.alias
-                          }}<i
+                          }}<em
                             v-if="item.alias.length > aliasMaxLength"
                             class="v-icon notranslate mdi mdi-dots-horizontal"
                             style="font-size: 16px;"
