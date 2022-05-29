@@ -116,6 +116,8 @@ api.getConfig().then(response => {
       .map(([k, v]) => [k, v.replace('sandbox', '127.0.0.1')])
   );
 
+  window.config = config;
+
   let rpc = new NodeRPC(config.rpc_endpoints);
   let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress, round }
 

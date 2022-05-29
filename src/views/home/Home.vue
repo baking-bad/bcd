@@ -1,100 +1,96 @@
 <template>
-  <v-container class="fill-height canvas" fluid>
-    <v-container class="fill-height canvas main-rows-wrapper" fluid>
-      <v-row no-gutters class="search-row">
-        <v-col cols="12">
-          <v-row>
-            <v-col
-              cols="12"
-              class="d-flex flex-column align-center justify-center primary--text"
-            >
+  <v-container class="fill-height canvas main-rows-wrapper" fluid>
+    <v-row no-gutters class="search-row">
+      <v-col cols="12">
+        <v-row>
+          <v-col
+            cols="12"
+            class="d-flex flex-column align-center justify-center primary--text"
+          >
               <span
                 class="script-casual"
                 style="font-size: 72px"
               >
                 Better Call Dev
               </span>
-              <p class="mt-0">
-                Explore Tezos Smart Contracts and Interact with them
-              </p>
-            </v-col>
-          </v-row>
-          <v-row justify="center" no-gutters>
-            <v-col cols="12" sm="8" lg="6" xl="4">
-              <SearchBox />
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-      <v-fade-transition>
-        <v-row justify="center" align="center" class="stats-row">
-          <v-col cols="6">
-            <v-row
-              class="caption font-weight-medium text-uppercase text-right text--secondary"
-              v-show="stats.length > 0"
-              no-gutters
-            >
-              <v-col class="pl-12"></v-col>
-              <v-col>Unique contracts</v-col>
-              <v-col>
-                <router-link
-                  v-if="stats.length > 0"
-                  style="text-decoration: none"
-                  :to="`/stats/${stats[0].network}/fa2`"
-                >
-                  <span class="secondary--text">FA tokens</span>
-                </router-link>
-              </v-col>
-              <v-col>Contract calls</v-col>
-              <v-col class="text-left pl-12">Synced</v-col>
-            </v-row>
-            <v-row
-              v-for="(item, idx) in stats"
-              :key="idx"
-              class="text-right my-2"
-              justify="center"
-              align="center"
-              no-gutters
-            >
-              <v-col class="text-left pl-12">
-                <v-btn
-                  small
-                  text
-                  :to="`/stats/${item.network}/general`"
-                  :class="
-                    item.network === 'mainnet'
-                      ? 'secondary--text'
-                      : 'text--primary'
-                  "
-                >
-                  <span>{{ item.network }}</span>
-                </v-btn>
-              </v-col>
-              <v-col>{{ item.unique_contracts }}</v-col>
-              <v-col>{{ item.fa_count }}</v-col>
-              <v-col>{{ item.contract_calls }}</v-col>
-              <v-col class="body-2 text-left pl-12">{{
-                helpers.formatDatetime(item.time)
-              }}</v-col>
-            </v-row>
+            <p class="mt-0">
+              Explore Tezos Smart Contracts and Interact with them
+            </p>
           </v-col>
         </v-row>
-      </v-fade-transition>
-    </v-container>
-
-    <v-footer
-      color="transparent"
-      absolute
-      bottom
-      class="d-flex justify-center align-center text--disabled"
-      style="z-index: 0"
-    >
-      <span class="overline">Created by</span>
-      <a href="https://baking-bad.org/docs" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Baking Bad</a>
-      <span class="ml-1 mr-2">·</span>
-      <span class="overline">Hosted on</span>
-      <a href="https://www.netlify.com" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Netlify</a>
-    </v-footer>
+        <v-row justify="center" no-gutters>
+          <v-col cols="12" sm="8" lg="6" xl="4">
+            <SearchBox />
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="8" class="ml-auto mr-auto">
+        <header class="d-flex justify-space-between">
+          <h3 class="text--secondary text-uppercase font-weight-regular">Recently called contracts</h3>
+          <v-btn-toggle v-model="selectedNetwork" color="primary" dense mandatory>
+            <v-btn
+              small
+              :value="data"
+              v-for="data in networks"
+              :key="data"
+            >{{ data }}</v-btn>
+          </v-btn-toggle>
+        </header>
+        <v-fade-transition>
+          <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4" hide-default-footer>
+            <template v-slot:item="{item}">
+              <tr>
+                <td>
+                  <v-btn
+                    class="text--secondary hash"
+                    :to="`${item.network}/${item.address}/`"
+                    style="text-transform: none;"
+                    target="_blank"
+                    text>
+                <span v-if="item.alias">
+                  {{
+                    item.alias.length > aliasMaxLength
+                      ? item.alias.slice(0, aliasMaxLength).trim()
+                      : item.alias
+                  }}<i
+                  v-if="item.alias.length > aliasMaxLength"
+                  class="v-icon notranslate mdi mdi-dots-horizontal"
+                  style="font-size: 16px;"
+                />
+                </span>
+                    <span v-else v-html="helpers.shortcut(item.address)"></span>
+                  </v-btn>
+                </td>
+                <td>
+                  <span class="text--secondary">{{ item.tx_count }}</span>
+                </td>
+                <td>
+                  <span class="text--secondary">{{ item.last_action | fromNow }}</span>
+                </td>
+              </tr>
+            </template>
+          </v-data-table>
+        </v-fade-transition>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="8" class="ml-auto mr-auto">
+        <v-footer
+          color="transparent"
+          bottom
+          class="d-flex justify-center align-center text--disabled"
+          style="z-index: 0"
+        >
+          <span class="overline">Created by</span>
+          <a href="https://baking-bad.org/docs" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Baking Bad</a>
+          <span class="ml-1 mr-2">·</span>
+          <span class="overline">Hosted on</span>
+          <a href="https://www.netlify.com" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Netlify</a>
+        </v-footer>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -110,16 +106,60 @@ export default {
   data: () => ({
     stats: [],
     pickingRandom: false,
-    loadingHead: true
+    loadingHead: true,
+    recentlyCalledTableHeaders: [
+      {
+        text: "Contract",
+        class: "pl-8",
+        sortable: false,
+      },
+      {
+        text: "Calls",
+        sortable: false,
+      },
+      {
+        text: "Last active",
+        class: "pl-8",
+        sortable: false,
+      },
+    ],
+    recentlyCalledContracts: [],
+    listenerRecentlyCalledContracts: null,
+    selectedNetwork: 'mainnet',
+    networks: window.config.networks,
   }),
+  created() {
+    this.listenRecentlyCalledContracts();
+  },
+  destroyed() {
+    this.stopListeningRecentlyCalledContracts();
+  },
+  watch: {
+    selectedNetwork() {
+      this.stopListeningRecentlyCalledContracts();
+      this.listenRecentlyCalledContracts();
+    }
+  },
   mounted() {
-    if (this.$route.name != this.config.HOME_PAGE) {
+    if (this.$route.name !== this.config.HOME_PAGE) {
       this.$router.push({ path: this.config.HOME_PAGE });
     }
     this.getHead();
   },
   methods: {
     ...mapActions(["showError"]),
+    listenRecentlyCalledContracts() {
+      this.listenerRecentlyCalledContracts = setTimeout(() => {
+        this.api.getRecentlyCalledContracts(this.selectedNetwork, 3)
+          .then((data) => {
+            this.recentlyCalledContracts = data;
+          });
+      });
+    },
+    stopListeningRecentlyCalledContracts() {
+      this.recentlyCalledContracts = [];
+      clearTimeout(this.listenerRecentlyCalledContracts);
+    },
     getHead() {
       this.api
         .getHead()
