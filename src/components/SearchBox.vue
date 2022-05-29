@@ -17,7 +17,6 @@
     hide-selected
     prepend-inner-icon="mdi-magnify"
     filled
-    rounded
     background-color="data"
     :autofocus="!inplace"
     :outlined="!inplace"
@@ -172,6 +171,11 @@
         </v-btn>
       </v-list-item-action>
     </template>
+    <template v-slot:append>
+      <v-btn class="search-btn" @click="onEnter(searchText)">
+        Search
+      </v-btn>
+    </template>
   </v-combobox>
 </template>
 
@@ -213,9 +217,9 @@ export default {
   computed: {
     searchBoxClassName() {
       if (this.isFocused) {
-        return 'focused-searchbar';
+        return 'focused-searchbar searchbar';
       }
-      return 'unfocused-searchbar';
+      return 'unfocused-searchbar searchbar';
     },
   },
   methods: {
@@ -473,6 +477,15 @@ export default {
 .searchbox-custom-progress-circular {
   position: absolute;
   align-self: center;
-  right: 60px;
+  right: 8rem;
+}
+.searchbar {
+  border-radius: 1.25rem !important;
+}
+.search-btn {
+  margin-top: -15px;
+  height: 50px !important;
+  border-radius: 1.25rem;
+  margin-right: -10px;
 }
 </style>

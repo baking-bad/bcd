@@ -50,19 +50,19 @@
                       style="text-transform: none;"
                       target="_blank"
                       text>
-                <span v-if="item.alias">
-                  {{
-                    item.alias.length > aliasMaxLength
-                      ? item.alias.slice(0, aliasMaxLength).trim()
-                      : item.alias
-                  }}<i
-                  v-if="item.alias.length > aliasMaxLength"
-                  class="v-icon notranslate mdi mdi-dots-horizontal"
-                  style="font-size: 16px;"
-                />
-                </span>
-                      <span v-else v-html="helpers.shortcut(item.address)"></span>
-                    </v-btn>
+                        <span v-if="item.alias">
+                          {{
+                            item.alias.length > aliasMaxLength
+                              ? item.alias.slice(0, aliasMaxLength).trim()
+                              : item.alias
+                          }}<i
+                            v-if="item.alias.length > aliasMaxLength"
+                            class="v-icon notranslate mdi mdi-dots-horizontal"
+                            style="font-size: 16px;"
+                          />
+                        </span>
+                        <span v-else v-html="helpers.shortcut(item.address)"></span>
+                      </v-btn>
                   </td>
                   <td>
                     <span class="text--secondary">{{ item.tx_count }}</span>
