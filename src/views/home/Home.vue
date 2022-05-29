@@ -39,16 +39,17 @@
           </v-btn-toggle>
         </header>
         <v-fade-transition>
-          <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4" hide-default-footer>
-            <template v-slot:item="{item}">
-              <tr>
-                <td>
-                  <v-btn
-                    class="text--secondary hash"
-                    :to="`${item.network}/${item.address}/`"
-                    style="text-transform: none;"
-                    target="_blank"
-                    text>
+          <v-skeleton-loader :loading="isRecentlyCalledLoading" type="article" transition="fade-transition">
+            <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4" hide-default-footer items-per-page="3">
+              <template v-slot:item="{item}">
+                <tr>
+                  <td>
+                    <v-btn
+                      class="text--secondary hash"
+                      :to="`${item.network}/${item.address}/`"
+                      style="text-transform: none;"
+                      target="_blank"
+                      text>
                 <span v-if="item.alias">
                   {{
                     item.alias.length > aliasMaxLength
@@ -60,18 +61,19 @@
                   style="font-size: 16px;"
                 />
                 </span>
-                    <span v-else v-html="helpers.shortcut(item.address)"></span>
-                  </v-btn>
-                </td>
-                <td>
-                  <span class="text--secondary">{{ item.tx_count }}</span>
-                </td>
-                <td>
-                  <span class="text--secondary">{{ item.last_action | fromNow }}</span>
-                </td>
-              </tr>
-            </template>
-          </v-data-table>
+                      <span v-else v-html="helpers.shortcut(item.address)"></span>
+                    </v-btn>
+                  </td>
+                  <td>
+                    <span class="text--secondary">{{ item.tx_count }}</span>
+                  </td>
+                  <td>
+                    <span class="text--secondary">{{ item.last_action | fromNow }}</span>
+                  </td>
+                </tr>
+              </template>
+            </v-data-table>
+          </v-skeleton-loader>
         </v-fade-transition>
       </v-col>
     </v-row>
@@ -97,6 +99,7 @@
 <script>
 import { mapActions } from "vuex";
 import SearchBox from "@/components/SearchBox.vue";
+import {DATA_LOADING_STATUSES} from "../../utils/network";
 
 export default {
   name: "Home",
@@ -127,7 +130,13 @@ export default {
     listenerRecentlyCalledContracts: null,
     selectedNetwork: 'mainnet',
     networks: window.config.networks,
+    loadingRecentlyCalledContractsStatus: DATA_LOADING_STATUSES.NOTHING,
   }),
+  computed: {
+    isRecentlyCalledLoading() {
+      return this.loadingRecentlyCalledContractsStatus === DATA_LOADING_STATUSES.PROGRESS;
+    }
+  },
   created() {
     this.listenRecentlyCalledContracts();
   },
@@ -149,16 +158,22 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     listenRecentlyCalledContracts() {
+      this.requestRecentlyCalledContracts();
       this.listenerRecentlyCalledContracts = setTimeout(() => {
-        this.api.getRecentlyCalledContracts(this.selectedNetwork, 3)
-          .then((data) => {
-            this.recentlyCalledContracts = data;
-          });
-      });
+        this.listenRecentlyCalledContracts();
+      }, 30 * 1000);
     },
     stopListeningRecentlyCalledContracts() {
       this.recentlyCalledContracts = [];
       clearTimeout(this.listenerRecentlyCalledContracts);
+    },
+    requestRecentlyCalledContracts() {
+      this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.PROGRESS;
+      this.api.getRecentlyCalledContracts(this.selectedNetwork, 3)
+        .then((data) => {
+          this.recentlyCalledContracts = data;
+          this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.SUCCESS;
+        });
     },
     getHead() {
       this.api
@@ -203,7 +218,7 @@ export default {
 .main-rows-wrapper {
   .search-row {
     align-items: flex-end;
-    height: 50%;
+    margin-top: 4rem;
   }
   .stats-row {
     height: 50%;
