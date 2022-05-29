@@ -35,7 +35,13 @@
               :value="data"
               v-for="data in networks"
               :key="data"
-            >{{ data }}</v-btn>
+            >
+              {{ data }}
+              <div
+                v-if="networksStats.length > 0"
+                :class="getSyncClass(data)"
+              ></div>
+            </v-btn>
           </v-btn-toggle>
         </header>
         <v-fade-transition>
@@ -131,16 +137,23 @@ export default {
     selectedNetwork: 'mainnet',
     networks: window.config.networks,
     loadingRecentlyCalledContractsStatus: DATA_LOADING_STATUSES.NOTHING,
+    networksStats: [],
+    listenerNetworksSync: null,
   }),
   computed: {
     isRecentlyCalledLoading() {
       return this.loadingRecentlyCalledContractsStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
+    isNetworkSyncStatsLoading() {
+      return this.loadingNetworkSync === DATA_LOADING_STATUSES.PROGRESS;
     }
   },
   created() {
+    this.listenNetworksSync();
     this.listenRecentlyCalledContracts();
   },
   destroyed() {
+    this.stopListeningNetworksSync();
     this.stopListeningRecentlyCalledContracts();
   },
   watch: {
@@ -157,6 +170,27 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    getSyncClass(value) {
+      return this.networksStats.find((item) => item.network === value).synced ? 'synced' : 'unsynced';
+    },
+    requestNetworkSync() {
+      this.loadingNetworkSync = DATA_LOADING_STATUSES.PROGRESS;
+      this.api.getHead()
+        .then((data) => {
+          this.networksStats = data;
+          this.loadingNetworkSync = DATA_LOADING_STATUSES.SUCCESS;
+        });
+    },
+    listenNetworksSync() {
+      this.requestNetworkSync();
+      this.listenerNetworksSync = setTimeout(() => {
+        this.listenNetworksSync();
+      }, 30 * 1000);
+    },
+    stopListeningNetworksSync() {
+      this.networksStats = [];
+      clearTimeout(this.listenerNetworksSync);
+    },
     listenRecentlyCalledContracts() {
       this.requestRecentlyCalledContracts();
       this.listenerRecentlyCalledContracts = setTimeout(() => {
@@ -222,6 +256,19 @@ export default {
   }
   .stats-row {
     height: 50%;
+  }
+  .synced,
+  .unsynced {
+    width: 0.25rem;
+    height: 0.25rem;
+    margin-left: 0.25rem;
+    border-radius: 100%;
+  }
+  .synced {
+    background: green;
+  }
+  .unsynced {
+    background: red;
   }
 }
 </style>
