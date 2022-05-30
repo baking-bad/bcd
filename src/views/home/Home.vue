@@ -46,13 +46,13 @@
         </header>
         <v-fade-transition>
           <v-skeleton-loader :loading="isRecentlyCalledLoading" type="article" transition="fade-transition">
-            <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4" hide-default-footer items-per-page="3">
+            <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4 avg-gas-consumption" hide-default-footer items-per-page="3">
               <template v-slot:item="{item}">
                 <tr>
                   <td>
                     <v-btn
                       class="text--secondary hash"
-                      :to="`${item.network}/${item.address}/`"
+                      :to="`${selectedNetwork}/${item.address}/`"
                       style="text-transform: none;"
                       target="_blank"
                       text>
