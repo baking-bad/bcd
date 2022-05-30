@@ -88,6 +88,7 @@
         <v-footer
           color="transparent"
           bottom
+          absolute
           class="d-flex justify-center align-center text--disabled"
           style="z-index: 0"
         >
