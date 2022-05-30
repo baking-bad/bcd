@@ -51,7 +51,6 @@
                       class="text--secondary hash"
                       :to="`${selectedNetwork}/${item.address}/`"
                       style="text-transform: none;"
-                      target="_blank"
                       text>
                         <span v-if="item.alias">
                           {{
