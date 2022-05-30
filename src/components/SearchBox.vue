@@ -9,7 +9,7 @@
     @keyup.enter="onEnter(searchText)"
     @mousedown="handleSearchBoxFocus"
     return-object
-    placeholder="Search on BCD"
+    placeholder="Search Tezos Smart Contracts and Interact with them"
     autocomplete="off"
     no-filter
     append-icon

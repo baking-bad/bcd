@@ -13,9 +13,6 @@
               >
                 Better Call Dev
               </span>
-            <p class="mt-0 text--secondary">
-              Explore Tezos Smart Contracts and Interact with them
-            </p>
           </v-col>
         </v-row>
         <v-row justify="center" no-gutters>
