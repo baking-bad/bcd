@@ -32,6 +32,7 @@
               :value="data"
               v-for="data in networks"
               :key="data"
+              class="text-capitalize"
             >
               {{ data }}
               <div
@@ -45,7 +46,7 @@
           <v-skeleton-loader :loading="isRecentlyCalledLoading" type="article" transition="fade-transition">
             <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4 avg-gas-consumption" hide-default-footer items-per-page="3">
               <template v-slot:item="{item}">
-                <tr>
+                <tr class="table-row">
                   <td>
                     <v-btn
                       class="text--secondary hash"
@@ -266,6 +267,11 @@ export default {
   }
   .unsynced {
     background: red;
+  }
+  .table-row {
+    & > td:first-child {
+      width: 55%;
+    }
   }
 }
 </style>
