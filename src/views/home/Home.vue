@@ -26,9 +26,9 @@
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="8" class="ml-auto mr-auto">
+      <v-col cols="6" class="ml-auto mr-auto">
         <header class="d-flex justify-space-between">
-          <h3 class="text--secondary text-uppercase font-weight-regular">Recently called contracts</h3>
+          <h3 class="text--secondary font-weight-regular">Recently called contracts</h3>
           <v-btn-toggle v-model="selectedNetwork" color="primary" dense mandatory>
             <v-btn
               small
