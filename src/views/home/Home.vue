@@ -25,14 +25,13 @@
     <v-row>
       <v-col cols="6" class="ml-auto mr-auto">
         <header class="d-flex justify-space-between">
-          <h3 class="text--secondary font-weight-regular">Recently called contracts</h3>
+          <h3 class="text--secondary font-weight-regular pl-8">Recently called contracts</h3>
           <v-btn-toggle v-model="selectedNetwork" color="primary" dense mandatory>
             <v-btn
               small
               :value="data"
               v-for="data in networks"
               :key="data"
-              class="text-capitalize"
             >
               {{ data }}
               <div
