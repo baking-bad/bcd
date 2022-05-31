@@ -1,21 +1,22 @@
 <template>
-  <v-row no-gutters>
+  <v-container fluid class="pa-8 canvas fill-canvas">
+    <v-row no-gutters>
       <v-col cols="8" class="pr-4">
         <template v-if="selectedItem">
           <SchemaHeader
-              title="View"
-              :is-storage="true"
-              :storage-html="selectedItem.name"
+            title="View"
+            :is-storage="true"
+            :storage-html="selectedItem.name"
           />
           <SchemaForm
-              header="Parameters"
-              fallback-text="This implementation doesn't have parameters"
-              :schema="selectedItem.schema"
-              :show="true"
-              :is-deploy="true"
-              :is-optional-settings="false"
-              @executeClick="callOffchainView"
-              @modelChange="setModel"
+            header="Parameters"
+            fallback-text="This implementation doesn't have parameters"
+            :schema="selectedItem.schema"
+            :show="true"
+            :is-deploy="true"
+            :is-optional-settings="false"
+            @executeClick="callOffchainView"
+            @modelChange="setModel"
           />
         </template>
         <v-dialog
@@ -51,7 +52,7 @@
               v-model="selected"
             >
               <v-expansion-panel
-                v-for="(item, i) in views"
+                v-for="(item, i) in offChainViews"
                 :key="i"
                 :class="i > 0 ? 'bt-1' : ''"
                 class="entrypoint-panel"
@@ -69,33 +70,93 @@
           </v-navigation-drawer>
         </v-card>
       </v-col>
-    <TreeNodeDetails
+      <TreeNodeDetails
         prim="string"
         :data="fullErrorValue"
         :value="isErrorShown"
         is-error-info
-    />
-  </v-row>
+      />
+    </v-row>
+  </v-container>
 </template>
 
 <script>
-import SchemaHeader from "@/components/schema/schemaComponents/SchemaHeader";
-import SchemaForm from "@/components/schema/schemaForm/SchemaForm";
-import MiguelTreeView from "@/components/MiguelTreeView";
 import TypeDef from "@/views/contract/TypeDef";
-import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails";
+import SchemaHeader from "../../../components/schema/schemaComponents/SchemaHeader";
+import SchemaForm from "../../../components/schema/schemaForm/SchemaForm";
+import TreeNodeDetails from "../../../components/Dialogs/TreeNodeDetails";
+import MiguelTreeView from "../../../components/MiguelTreeView";
 
 export default {
-  name: "OffchainViews",
-  components: {TreeNodeDetails, MiguelTreeView, SchemaForm, SchemaHeader, TypeDef},
+  name: "ViewsTab",
   props: {
-    views: Array,
-    network: String,
     address: String,
+    network: String,
+    offChainViews: Array,
   },
-
-}
+  components: {
+    MiguelTreeView,
+    TreeNodeDetails,
+    SchemaForm,
+    SchemaHeader,
+    TypeDef
+  },
+  computed: {
+    selectedItem() {
+      if (this.selected < 0 || this.offChainViews.length < this.selected) {
+        return null;
+      }
+      if (typeof this.selected === "number") {
+        return this.offChainViews[this.selected];
+      }
+      return null;
+    },
+  },
+  methods: {
+    setModel(val) {
+      this.model = val;
+    },
+    callOffchainView() {
+      this.api
+        .executeMetadataView(this.network, this.address, {
+          name: this.selectedItem.name,
+          implementation: this.selectedItem.implementation,
+          data: this.model
+        })
+        .then((res) => {
+          if (!res) return;
+          this.showSuccess = true;
+          this.successResponse = res;
+        })
+        .catch((err) => {
+          this.isErrorShown = false;
+          this.fullErrorValue = {
+            name: `${err.response.statusText} — ${err.response.status}`,
+            val: err.response.data.message,
+            realPrim: 'string',
+            label: err.response.data.message,
+          };
+          this.$nextTick(() => {
+            this.isErrorShown = true;
+          });
+        })
+    }
+  },
+  data() {
+    return {
+      model: {},
+      selected: -1,
+      isErrorShown: false,
+      successText: '',
+      showSuccess: false,
+      successResponse: null,
+      fullErrorValue: null,
+    }
+  }
+};
 </script>
+
+
 
 <style lang="scss" scoped>
 .entrypoint-panel > .v-expansion-panel-header {
