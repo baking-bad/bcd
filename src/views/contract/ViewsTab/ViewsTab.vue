@@ -1,23 +1,48 @@
 <template>
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-row no-gutters>
-      <v-col cols="8" class="pr-4">
+      <v-col cols="3">
+        <h3 class="mb-3 text--secondary font-weight-medium">Views</h3>
+        <v-list-item-group
+          class="themed-border radius-1"
+          active-class="token-card-selected"
+          :value="selected"
+          mandatory
+        >
+          <template v-for="(item, i) in offChainViews">
+            <v-list-item @click="selected = i" class="token-card" :key="'entrypoint-' + i">
+              <v-list-item-content>
+                <v-list-item-title>
+                  <span v-if="item.name">{{ item.name }}</span>
+                  <span v-else class="text--disabled">NO NAME</span>
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </template>
+        </v-list-item-group>
+      </v-col>
+      <v-col cols="4" class="px-8">
         <template v-if="selectedItem">
-          <SchemaHeader
-            title="View"
-            :is-storage="true"
-            :storage-html="selectedItem.name"
-          />
-          <SchemaForm
-            header="Parameters"
-            fallback-text="This implementation doesn't have parameters"
-            :schema="selectedItem.schema"
-            :show="true"
-            :is-deploy="true"
-            :is-optional-settings="false"
-            @executeClick="callOffchainView"
-            @modelChange="setModel"
-          />
+          <v-card flat outlined>
+            <v-card-text class="pa-0 pt-6 data">
+              <SchemaHeader
+                title="View"
+                :is-storage="true"
+                :storage-html="selectedItem.name"
+                :storage-name="selectedItem.name"
+              />
+              <SchemaForm
+                header="Parameters"
+                fallback-text="This implementation doesn't have parameters"
+                :schema="selectedItem.schema"
+                :show="true"
+                :is-deploy="true"
+                :is-optional-settings="false"
+                @executeClick="callOffchainView"
+                @modelChange="setModel"
+              />
+            </v-card-text>
+          </v-card>
         </template>
         <v-dialog
           v-model="showSuccess"
@@ -40,35 +65,6 @@
             </v-card-text>
           </v-card>
         </v-dialog>
-      </v-col>
-      <v-col cols="4" class="pl-4">
-        <v-card flat outlined style="max-width: 500px;">
-          <v-navigation-drawer floating permanent style="max-height: 80vh; width: 100%;">
-            <v-expansion-panels
-              flat
-              accordion
-              mandatory
-              active-class="entrypoint-selected"
-              v-model="selected"
-            >
-              <v-expansion-panel
-                v-for="(item, i) in offChainViews"
-                :key="i"
-                :class="i > 0 ? 'bt-1' : ''"
-                class="entrypoint-panel"
-              >
-                <v-expansion-panel-header>
-                  <div class="d-flex">
-                    <span class="hash">{{ item.name }}</span>
-                  </div>
-                </v-expansion-panel-header>
-                <v-expansion-panel-content>
-                  <TypeDef :typedef="item.typedef" first="parameter"/>
-                </v-expansion-panel-content>
-              </v-expansion-panel>
-            </v-expansion-panels>
-          </v-navigation-drawer>
-        </v-card>
       </v-col>
       <TreeNodeDetails
         prim="string"
