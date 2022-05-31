@@ -21,7 +21,7 @@
           </template>
         </v-list-item-group>
       </v-col>
-      <v-col cols="4" class="px-8">
+      <v-col cols="6" class="px-8">
         <template v-if="selectedItem">
           <v-card flat outlined>
             <v-card-text class="pa-0 pt-6 data">
@@ -77,7 +77,6 @@
 </template>
 
 <script>
-import TypeDef from "@/views/contract/TypeDef";
 import SchemaHeader from "../../../components/schema/schemaComponents/SchemaHeader";
 import SchemaForm from "../../../components/schema/schemaForm/SchemaForm";
 import TreeNodeDetails from "../../../components/Dialogs/TreeNodeDetails";
@@ -95,7 +94,6 @@ export default {
     TreeNodeDetails,
     SchemaForm,
     SchemaHeader,
-    TypeDef
   },
   computed: {
     selectedItem() {
@@ -141,7 +139,7 @@ export default {
   data() {
     return {
       model: {},
-      selected: -1,
+      selected: 0,
       isErrorShown: false,
       successText: '',
       showSuccess: false,
