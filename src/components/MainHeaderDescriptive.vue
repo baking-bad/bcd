@@ -28,9 +28,6 @@
     </div>
     <div class="searchbox-wrapper">
       <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
-      <v-btn text small @click="openFeedback" class="text--secondary ml-5" outlined rounded active-class="bg-before-transparent">
-        Feedback
-      </v-btn>
       <SocialsList class="socials-list ml-3"/>
       <ThemeSwitcher />
     </div>
@@ -59,17 +56,6 @@ export default {
       return this.$vuetify.theme.dark;
     }
   },
-  methods: {
-    openFeedback() {
-      window.open('https://docs.google.com/forms/d/e/1FAIpQLSdTkewJ9UJHZByjpFndubp6kwEOENRBtvGIg9FisIdUJHB1mA/viewform', '_blank');
-      if (this.$gtag) {
-        this.$gtag.event('Social Click', {
-          'event_category': 'Feedback',
-          'event_label': this.$router.currentRoute.fullPath
-        });
-      }
-    }
-  }
 }
 </script>
 
