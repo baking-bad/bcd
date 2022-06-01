@@ -72,6 +72,25 @@
           </v-card>
         </v-dialog>
       </v-col>
+      <v-col cols="3">
+        <h3 class="mb-3 text--secondary font-weight-medium">Parameters type</h3>
+        <v-card flat outlined style="max-width: 500px;">
+          <v-navigation-drawer floating permanent style="max-height: 80vh; width: 100%;">
+            <div class="pa-3">
+              <TypeDef
+                v-if="selectedItem.typedef"
+                :typedef="selectedItem.typedef"
+                first="storage"
+                class="pt-3 pb-1 px-6"
+                style="opacity: 0.8"
+              />
+              <p v-else class="mb-0">
+                No parameters for this view.
+              </p>
+            </div>
+          </v-navigation-drawer>
+        </v-card>
+      </v-col>
       <TreeNodeDetails
         prim="string"
         :data="fullErrorValue"
@@ -87,6 +106,7 @@ import SchemaHeader from "../../../components/schema/schemaComponents/SchemaHead
 import SchemaForm from "../../../components/schema/schemaForm/SchemaForm";
 import TreeNodeDetails from "../../../components/Dialogs/TreeNodeDetails";
 import MiguelTreeView from "../../../components/MiguelTreeView";
+import TypeDef from "../TypeDef";
 
 export default {
   name: "ViewsTab",
@@ -96,6 +116,7 @@ export default {
     offChainViews: Array,
   },
   components: {
+    TypeDef,
     MiguelTreeView,
     TreeNodeDetails,
     SchemaForm,
