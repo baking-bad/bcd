@@ -18,15 +18,6 @@
             :metadata="reservedMetadata"
             class="pr-8 pl-2"
           />
-          <template v-if="metadata.views && metadata.views.length > 0">
-              <v-divider></v-divider>
-              <OffchainViews
-                :views="views"
-                :network="network"
-                :address="address"
-                class="pr-8 py-8"
-            />
-          </template>
           <template v-if="unknownFields && unknownFields.length > 0">
               <v-divider></v-divider>
               <FieldsWrapper
@@ -48,14 +39,13 @@
 <script>
 import FieldsWrapper from "@/views/contract/MetadataTab/CustomFields/FieldsWrapper";
 import ReservedFields from "@/views/contract/MetadataTab/ReservedFields";
-import OffchainViews from "@/views/contract/MetadataTab/OffchainViews";
 import { mapActions } from "vuex";
 import { applyStyles } from '@/utils/styles.js';
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer";
 
 export default {
   name: "Metadata",
-  components: {OffchainViews, ReservedFields, FieldsWrapper, RawJsonViewer},
+  components: { ReservedFields, FieldsWrapper, RawJsonViewer},
   props: {
     metadata: Object,
     network: String,
