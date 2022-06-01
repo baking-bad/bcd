@@ -80,7 +80,7 @@
               <TypeDef
                 v-if="selectedItem.typedef"
                 :typedef="selectedItem.typedef"
-                first="storage"
+                first="parameter"
                 class="pt-3 pb-1 px-6"
                 style="opacity: 0.8"
               />
