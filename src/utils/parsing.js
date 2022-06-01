@@ -1,4 +1,7 @@
 export function makeTreeview(json, lastid = 0, result = []) {
+    if (typeof json !== 'object' || json === null) {
+        return result;
+    }
     Object.keys(json).forEach(item => {
         const id = lastid++;
         if (typeof json[item] !== "object") {
