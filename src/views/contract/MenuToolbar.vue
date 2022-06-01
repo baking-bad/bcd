@@ -25,7 +25,7 @@
         v-if="isContract && tokensTotal > 0"
       >
         <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
-        <span class="ml-1">({{ tokensTotal | numberToCompactSIFormat }})</span>
+        <span class="ml-1">({{ tokensTotal | numberToCompactSIFormat(1) }})</span>
       </v-tab>
       <v-tab
         :to="pushTo({ name: 'transfers' })"

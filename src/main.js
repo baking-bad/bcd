@@ -48,8 +48,8 @@ Vue.use(PortalVue)
 
 Vue.use(Clipboard);
 
-Vue.filter('numberToCompactSIFormat', function (value) {
-  return SIFormatter.format(roundDownSignificantDigits(Number(value)));
+Vue.filter('numberToCompactSIFormat', function (value, decimals) {
+  return SIFormatter.format(roundDownSignificantDigits(Number(value), decimals));
 });
 
 Vue.filter('formatDate', function (value) {
