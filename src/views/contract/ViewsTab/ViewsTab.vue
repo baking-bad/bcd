@@ -15,6 +15,12 @@
                 <v-list-item-title>
                   <span v-if="item.name">{{ item.name }}</span>
                   <span v-else class="text--disabled">NO NAME</span>
+                  <v-chip
+                    small
+                    class="caption ml-2"
+                    target="_blank"
+                  >{{ item.kind }}</v-chip
+                  >
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -115,7 +121,8 @@ export default {
         .executeMetadataView(this.network, this.address, {
           name: this.selectedItem.name,
           implementation: this.selectedItem.implementation,
-          data: this.model
+          data: this.model,
+          kind: this.selectedItem.kind,
         })
         .then((res) => {
           if (!res) return;
