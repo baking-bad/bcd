@@ -188,9 +188,6 @@ export default {
       ];
     },
   },
-  async created() {
-    await this.loadViewsSchema();
-  },
   destroyed() {
     this.hideError();
   },
@@ -202,6 +199,7 @@ export default {
     }),
     async loadViewsSchema() {
       this.offChainViewsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+      this.offChainViews = [];
       if (this.network && this.address) {
         try {
           let views = await this.api.getMetadataViewsSchema(this.network, this.address);
@@ -270,6 +268,7 @@ export default {
         this.getContract();
         this.getTokensTotal();
         this.getMigrations();
+        this.loadViewsSchema()
       }
       this.getInfo();
       this.getTokenBalancesTotal();
