@@ -12,15 +12,12 @@
           <template v-for="(item, i) in offChainViews">
             <v-list-item @click="selected = i" class="token-card" :key="'entrypoint-' + i">
               <v-list-item-content>
-                <v-list-item-title>
+                <v-list-item-title class="d-flex justify-space-between align-center">
                   <span v-if="item.name">{{ item.name }}</span>
                   <span v-else class="text--disabled">NO NAME</span>
-                  <v-chip
-                    small
-                    class="caption ml-2"
-                    target="_blank"
-                  >{{ item.kind }}</v-chip
-                  >
+                  <span class="text--disabled text-small">
+                    {{ item.kind }}
+                  </span>
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
