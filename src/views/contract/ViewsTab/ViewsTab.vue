@@ -15,7 +15,7 @@
                 <v-list-item-title class="d-flex justify-space-between align-center">
                   <span v-if="item.name">{{ item.name }}</span>
                   <span v-else class="text--disabled">NO NAME</span>
-                  <span class="text--disabled text-small">
+                  <span class="disabled-gray text-small">
                     {{ item.kind }}
                   </span>
                 </v-list-item-title>
