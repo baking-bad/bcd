@@ -13,7 +13,7 @@
     <v-btn
       icon
       class="text--secondary"
-      href="https://discord.gg/aG8XKuwsQd"
+      href="https://discord.gg/CBvhGJ2H"
       target="_blank"
       rel="nofollow noopener"
       @click="sendSocialGtag('Discord')"
