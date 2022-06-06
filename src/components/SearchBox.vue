@@ -9,7 +9,7 @@
     @keyup.enter="onEnter(searchText)"
     @mousedown="handleSearchBoxFocus"
     return-object
-    placeholder="Search on BCD"
+    placeholder="Search Tezos Smart Contracts and Interact with them"
     autocomplete="off"
     no-filter
     append-icon
@@ -213,9 +213,9 @@ export default {
   computed: {
     searchBoxClassName() {
       if (this.isFocused) {
-        return 'focused-searchbar';
+        return 'focused-searchbar searchbar';
       }
-      return 'unfocused-searchbar';
+      return 'unfocused-searchbar searchbar';
     },
   },
   methods: {
@@ -473,6 +473,6 @@ export default {
 .searchbox-custom-progress-circular {
   position: absolute;
   align-self: center;
-  right: 60px;
+  right: 3rem;
 }
 </style>

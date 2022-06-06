@@ -437,6 +437,17 @@ export class BetterCallApi {
       })
   }
 
+  getRecentlyCalledContracts(network, size) {
+    return getCancellable(this.api, `/stats/${network}/recently_called_contracts?size=${size}`, {})
+        .then((res) => {
+          if (!res) { return res; }
+          if (res.status !== 200) {
+            throw new RequestFailedError(res);
+          }
+          return res.data
+        });
+  }
+
   getContractBigMapDiffsCount(network, ptr) {
     return getCancellable(this.api, `/bigmap/${network}/${ptr}/count`, {})
       .then((res) => {

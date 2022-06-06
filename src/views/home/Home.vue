@@ -1,141 +1,112 @@
 <template>
-  <v-container class="fill-height canvas" fluid>
-    <v-container class="fill-height canvas main-rows-wrapper" fluid>
-      <v-row no-gutters class="search-row">
-        <v-col cols="12">
-          <v-row>
-            <v-col
-              cols="12"
-              class="d-flex align-center justify-center primary--text"
-            >
+  <v-container class="fill-height canvas main-rows-wrapper" fluid>
+    <v-row no-gutters class="search-row">
+      <v-col cols="12">
+        <v-row>
+          <v-col
+            cols="12"
+            class="d-flex flex-column align-center justify-center primary--text"
+          >
               <span
                 class="script-casual"
                 style="font-size: 72px"
               >
                 Better Call Dev
               </span>
-            </v-col>
-          </v-row>
-          <v-row justify="center" no-gutters>
-            <v-col cols="12" sm="8" lg="6" xl="4">
-              <SearchBox />
-            </v-col>
-            <v-col cols="12" align="center">
-              <v-btn
-                v-if="!config.sandbox_mode"
-                large
-                depressed
-                color="border"
-                class="text--secondary mr-5"
-                to="/dapps"
-                ><v-icon left color="error">mdi-fire</v-icon>Explore
-                DApps</v-btn
-              >
-              <v-btn
-                large
-                depressed
-                color="border"
-                class="text--secondary mr-5"
-                to="/search"
-                >Advanced Search</v-btn
-              >
-              <v-btn
-                v-if="!config.sandbox_mode"
-                large
-                depressed
-                color="border"
-                class="text--secondary pick-random-button"
-                :loading="pickingRandom"
-                @click="pickRandom"
-                >
-                Pick Random
-                <v-select
-                    class="network-select"
-                    :items="stats.map(item => item.network)"
-                    :menu-props="{ top: true, offsetY: true }"
-                    @change="pickRandom"
-                >
-                </v-select>
-              </v-btn>
-            </v-col>
-          </v-row>
-        </v-col>
-      </v-row>
-      <v-fade-transition>
-        <v-row justify="center" align="center" class="stats-row">
-          <v-col cols="6">
-            <v-row
-              class="caption font-weight-medium text-uppercase text-right text--secondary"
-              v-show="stats.length > 0"
-              no-gutters
-            >
-              <v-col class="pl-12"></v-col>
-              <v-col>Unique contracts</v-col>
-              <v-col>
-                <router-link
-                  v-if="stats.length > 0"
-                  style="text-decoration: none"
-                  :to="`/stats/${stats[0].network}/fa2`"
-                >
-                  <span class="secondary--text">FA tokens</span>
-                </router-link>
-              </v-col>
-              <v-col>Contract calls</v-col>
-              <v-col class="text-left pl-12">Synced</v-col>
-            </v-row>
-            <v-row
-              v-for="(item, idx) in stats"
-              :key="idx"
-              class="text-right my-2"
-              justify="center"
-              align="center"
-              no-gutters
-            >
-              <v-col class="text-left pl-12">
-                <v-btn
-                  small
-                  text
-                  :to="`/stats/${item.network}/general`"
-                  :class="
-                    item.network === 'mainnet'
-                      ? 'secondary--text'
-                      : 'text--primary'
-                  "
-                >
-                  <span>{{ item.network }}</span>
-                </v-btn>
-              </v-col>
-              <v-col>{{ item.unique_contracts }}</v-col>
-              <v-col>{{ item.fa_count }}</v-col>
-              <v-col>{{ item.contract_calls }}</v-col>
-              <v-col class="body-2 text-left pl-12">{{
-                helpers.formatDatetime(item.time)
-              }}</v-col>
-            </v-row>
           </v-col>
         </v-row>
-      </v-fade-transition>
-    </v-container>
-
-    <v-footer
-      color="transparent"
-      absolute
-      bottom
-      class="d-flex justify-center align-center text--disabled"
-      style="z-index: 0"
-    >
-      <span class="overline">Created by</span>
-      <a href="https://baking-bad.org/docs" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Baking Bad</a>
-      <span class="ml-1 mr-2">·</span>
-      <span class="overline">Hosted on</span>
-      <a href="https://www.netlify.com" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Netlify</a>
-    </v-footer>
+        <v-row justify="center" no-gutters>
+          <v-col cols="12" sm="8" lg="6" xl="4">
+            <SearchBox />
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row no-gutters>
+      <v-col cols="12">
+        <v-row justify="center" no-gutters>
+          <v-col cols="12" sm="8" lg="6" xl="4">
+            <header class="d-flex justify-space-between">
+              <h3 class="text--secondary font-weight-regular header-table">Recently called contracts</h3>
+              <v-btn-toggle v-model="selectedNetwork" color="primary" dense mandatory>
+                <v-btn
+                  small
+                  :value="data"
+                  v-for="data in networks"
+                  :key="data"
+                >
+                  {{ data }}
+                  <div
+                    v-if="networksStats.length > 0"
+                    :class="getSyncClass(data)"
+                  ></div>
+                </v-btn>
+              </v-btn-toggle>
+            </header>
+            <v-fade-transition>
+              <v-skeleton-loader :loading="isRecentlyCalledLoading" type="article" transition="fade-transition">
+                <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4 avg-gas-consumption" hide-default-footer :items-per-page="3">
+                  <template v-slot:item="{item}">
+                    <tr class="table-row">
+                      <td>
+                        <v-btn
+                          class="text--secondary hash"
+                          :to="`${selectedNetwork}/${item.address}/`"
+                          style="text-transform: none;"
+                          text>
+                        <span v-if="item.alias">
+                          {{
+                            item.alias.length > aliasMaxLength
+                              ? item.alias.slice(0, aliasMaxLength).trim()
+                              : item.alias
+                          }}<em
+                          v-if="item.alias.length > aliasMaxLength"
+                          class="v-icon notranslate mdi mdi-dots-horizontal"
+                          style="font-size: 16px;"
+                        />
+                        </span>
+                          <span v-else v-html="helpers.shortcut(item.address)"></span>
+                        </v-btn>
+                      </td>
+                      <td>
+                        <span class="text--secondary">{{ item.tx_count }}</span>
+                      </td>
+                      <td>
+                        <span class="text--secondary">{{ item.last_action | fromNow }}</span>
+                      </td>
+                    </tr>
+                  </template>
+                </v-data-table>
+              </v-skeleton-loader>
+            </v-fade-transition>
+          </v-col>
+        </v-row>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="8" class="ml-auto mr-auto">
+        <v-footer
+          color="transparent"
+          bottom
+          absolute
+          class="d-flex justify-center align-center text--disabled"
+          style="z-index: 0"
+        >
+          <span class="overline">Created by</span>
+          <a href="https://baking-bad.org/docs" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Baking Bad</a>
+          <span class="ml-1 mr-2">·</span>
+          <span class="overline">Hosted on</span>
+          <a href="https://www.netlify.com" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Netlify</a>
+        </v-footer>
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
 <script>
 import { mapActions } from "vuex";
 import SearchBox from "@/components/SearchBox.vue";
+import {DATA_LOADING_STATUSES} from "../../utils/network";
 
 export default {
   name: "Home",
@@ -145,16 +116,100 @@ export default {
   data: () => ({
     stats: [],
     pickingRandom: false,
-    loadingHead: true
+    loadingHead: true,
+    recentlyCalledTableHeaders: [
+      {
+        text: "Contract",
+        class: "pl-8",
+        sortable: false,
+      },
+      {
+        text: "Calls",
+        sortable: false,
+      },
+      {
+        text: "Last active",
+        class: "pl-8",
+        sortable: false,
+      },
+    ],
+    recentlyCalledContracts: [],
+    listenerRecentlyCalledContracts: null,
+    selectedNetwork: 'mainnet',
+    networks: window.config.networks,
+    loadingRecentlyCalledContractsStatus: DATA_LOADING_STATUSES.NOTHING,
+    networksStats: [],
+    listenerNetworksSync: null,
   }),
+  computed: {
+    isRecentlyCalledLoading() {
+      return this.loadingRecentlyCalledContractsStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
+    isNetworkSyncStatsLoading() {
+      return this.loadingNetworkSync === DATA_LOADING_STATUSES.PROGRESS;
+    }
+  },
+  created() {
+    this.listenNetworksSync();
+    this.listenRecentlyCalledContracts();
+  },
+  destroyed() {
+    this.stopListeningNetworksSync();
+    this.stopListeningRecentlyCalledContracts();
+  },
+  watch: {
+    selectedNetwork() {
+      this.stopListeningRecentlyCalledContracts();
+      this.listenRecentlyCalledContracts();
+    }
+  },
   mounted() {
-    if (this.$route.name != this.config.HOME_PAGE) {
+    if (this.$route.name !== this.config.HOME_PAGE) {
       this.$router.push({ path: this.config.HOME_PAGE });
     }
     this.getHead();
   },
   methods: {
     ...mapActions(["showError"]),
+    getSyncClass(value) {
+      return this.networksStats.find((item) => item.network === value).synced ? 'synced' : 'unsynced';
+    },
+    requestNetworkSync() {
+      this.loadingNetworkSync = DATA_LOADING_STATUSES.PROGRESS;
+      this.api.getHead()
+        .then((data) => {
+          this.networksStats = data;
+          this.loadingNetworkSync = DATA_LOADING_STATUSES.SUCCESS;
+        });
+    },
+    listenNetworksSync() {
+      this.requestNetworkSync();
+      this.listenerNetworksSync = setTimeout(() => {
+        this.listenNetworksSync();
+      }, 30 * 1000);
+    },
+    stopListeningNetworksSync() {
+      this.networksStats = [];
+      clearTimeout(this.listenerNetworksSync);
+    },
+    listenRecentlyCalledContracts() {
+      this.requestRecentlyCalledContracts();
+      this.listenerRecentlyCalledContracts = setTimeout(() => {
+        this.listenRecentlyCalledContracts();
+      }, 30 * 1000);
+    },
+    stopListeningRecentlyCalledContracts() {
+      this.recentlyCalledContracts = [];
+      clearTimeout(this.listenerRecentlyCalledContracts);
+    },
+    requestRecentlyCalledContracts() {
+      this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.PROGRESS;
+      this.api.getRecentlyCalledContracts(this.selectedNetwork, 3)
+        .then((data) => {
+          this.recentlyCalledContracts = data;
+          this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.SUCCESS;
+        });
+    },
     getHead() {
       this.api
         .getHead()
@@ -198,10 +253,37 @@ export default {
 .main-rows-wrapper {
   .search-row {
     align-items: flex-end;
-    height: 50%;
+    margin-top: 4rem;
   }
   .stats-row {
     height: 50%;
+  }
+  .synced,
+  .unsynced {
+    width: 0.25rem;
+    height: 0.25rem;
+    margin-left: 0.25rem;
+    border-radius: 100%;
+  }
+  .synced {
+    background: green;
+  }
+  .unsynced {
+    background: red;
+  }
+  .table-row {
+    & > td:first-child {
+      width: 55%;
+    }
+  }
+  .header-table {
+    padding-left: 3px;
+  }
+  ::v-deep .v-data-table-header {
+    & > tr > th:last-child,
+    & + tbody > tr > td:last-child {
+      padding-left: 0 !important;
+    }
   }
 }
 </style>
