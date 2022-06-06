@@ -27,7 +27,7 @@
         <v-row justify="center" no-gutters>
           <v-col cols="12" sm="8" lg="6" xl="4">
             <header class="d-flex justify-space-between">
-              <h3 class="text--secondary font-weight-regular">Recently called contracts</h3>
+              <h3 class="text--secondary font-weight-regular header-table">Recently called contracts</h3>
               <v-btn-toggle v-model="selectedNetwork" color="primary" dense mandatory>
                 <v-btn
                   small
@@ -45,7 +45,7 @@
             </header>
             <v-fade-transition>
               <v-skeleton-loader :loading="isRecentlyCalledLoading" type="article" transition="fade-transition">
-                <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4 avg-gas-consumption" hide-default-footer items-per-page="3">
+                <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4 avg-gas-consumption" hide-default-footer :items-per-page="3">
                   <template v-slot:item="{item}">
                     <tr class="table-row">
                       <td>
@@ -274,6 +274,15 @@ export default {
   .table-row {
     & > td:first-child {
       width: 55%;
+    }
+  }
+  .header-table {
+    padding-left: 3px;
+  }
+  ::v-deep .v-data-table-header {
+    & > tr > th:last-child,
+    & + tbody > tr > td:last-child {
+      padding-left: 0 !important;
     }
   }
 }
