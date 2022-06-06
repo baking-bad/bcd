@@ -16,6 +16,7 @@ import Contract from '@/views/contract/Contract.vue'
 import OperationsTab from '@/views/contract/OperationsTab.vue'
 import CodeTab from '@/views/contract/CodeTab.vue'
 import InteractTab from '@/views/contract/InteractTab.vue'
+import ViewsTab from '@/views/contract/ViewsTab/ViewsTab.vue'
 import StorageTab from '@/views/contract/StorageTab.vue'
 import ContractTokensTab from '@/views/contract/TokensTab/TokensTab.vue'
 import TransfersTab from '@/views/contract/TransfersTab/TransfersTab.vue'
@@ -197,6 +198,12 @@ const router = new Router({
           path: 'interact/:entrypoint?',
           name: 'interact',
           component: InteractTab,
+          props: true
+        },
+        {
+          path: 'views/:view?',
+          name: 'views',
+          component: ViewsTab,
           props: true
         },
         {

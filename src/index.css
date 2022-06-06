@@ -55,3 +55,7 @@
 .cursor-pointer {
     cursor: pointer;
 }
+
+.disabled-gray {
+    color: #9E9E9E;
+}

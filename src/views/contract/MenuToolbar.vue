@@ -44,6 +44,9 @@
       <v-tab :to="pushTo({ name: 'fork' })" replace v-if="isContract">
         <v-icon left small>mdi-source-fork</v-icon>Fork
       </v-tab>
+      <v-tab v-show="isOffChainViews" :to="pushTo({name: 'views'})" replace>
+        <v-icon left small>mdi-adjust</v-icon>Views
+      </v-tab>
       <v-tab v-show="isSameContracts || isMigrations" :to="pushTo({name: 'details'})" replace>
         <v-icon left small>mdi-alert-circle-outline</v-icon>Details
       </v-tab>
@@ -67,6 +70,7 @@ export default {
     sameContracts: Array,
     isAnythingLoading: Boolean,
     migrations: Array,
+    offchainViews: Array,
   },
   computed: {
     isContract() {
@@ -77,7 +81,10 @@ export default {
     },
     isMigrations() {
       return this.migrations.length > 0;
-    }
+    },
+    isOffChainViews() {
+      return this.offchainViews.length > 0;
+    },
   },
   methods: {
     pushTo(obj) {

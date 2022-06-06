@@ -70,6 +70,7 @@
       :is-anything-loading="isLoadingDataForTabs"
       :same-contracts="sameContracts"
       :migrations="migrations"
+      :offchain-views="offChainViews"
     />
 
     <VContainer fluid>
@@ -83,6 +84,7 @@
         :same-contracts="sameContracts"
         :same-count="sameCount"
         :migrations="migrations"
+        :off-chain-views="offChainViews"
       ></router-view>
     </VContainer>
   </div>
@@ -97,6 +99,7 @@ import MenuToolbar from "./MenuToolbar";
 import Tags from "../../components/Tags";
 import {openTzktContract} from "../../utils/tzkt";
 import {DATA_LOADING_STATUSES} from "../../utils/network";
+import {applyStyles} from "../../utils/styles";
 
 const MIN_SEARCHBOX_WIDTH = 240;
 
@@ -125,6 +128,8 @@ export default {
     sameCount: 0,
     migrationsLoading: DATA_LOADING_STATUSES.NOTHING,
     migrations: [],
+    offChainViews: [],
+    offChainViewsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
   }),
   computed: {
     alias() {
@@ -157,7 +162,10 @@ export default {
       return this.sameContractsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
     isLoadingDataForTabs() {
-      return this.isSameContractsLoading;
+      return this.isSameContractsLoading || this.isOffChainsLoading;
+    },
+    isOffChainsLoading() {
+      return this.offChainViewsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
     isContract() {
       return this.address.startsWith("KT");
@@ -189,6 +197,20 @@ export default {
       hideError: "hideError",
       showClipboardOK: "showClipboardOK",
     }),
+    async loadViewsSchema() {
+      this.offChainViewsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+      this.offChainViews = [];
+      if (this.network && this.address) {
+        try {
+          let views = await this.api.getMetadataViewsSchema(this.network, this.address);
+          this.offChainViewsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
+          views.forEach(view => applyStyles(view.schema));
+          this.offChainViews = views;
+        } catch (err) {
+          this.showError("Error while fetching off-chain views");
+        }
+      }
+    },
     openInTzkt() {
       openTzktContract(this.contract);
     },
@@ -246,6 +268,7 @@ export default {
         this.getContract();
         this.getTokensTotal();
         this.getMigrations();
+        this.loadViewsSchema()
       }
       this.getInfo();
       this.getTokenBalancesTotal();
