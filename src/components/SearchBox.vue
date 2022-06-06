@@ -17,6 +17,7 @@
     hide-selected
     prepend-inner-icon="mdi-magnify"
     filled
+    rounded
     background-color="data"
     :autofocus="!inplace"
     :outlined="!inplace"
@@ -473,8 +474,5 @@ export default {
   position: absolute;
   align-self: center;
   right: 3rem;
-}
-.searchbar {
-  border-radius: 1.25rem !important;
 }
 </style>

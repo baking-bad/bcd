@@ -22,61 +22,65 @@
         </v-row>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col cols="6" class="ml-auto mr-auto">
-        <header class="d-flex justify-space-between">
-          <h3 class="text--secondary font-weight-regular pl-8">Recently called contracts</h3>
-          <v-btn-toggle v-model="selectedNetwork" color="primary" dense mandatory>
-            <v-btn
-              small
-              :value="data"
-              v-for="data in networks"
-              :key="data"
-            >
-              {{ data }}
-              <div
-                v-if="networksStats.length > 0"
-                :class="getSyncClass(data)"
-              ></div>
-            </v-btn>
-          </v-btn-toggle>
-        </header>
-        <v-fade-transition>
-          <v-skeleton-loader :loading="isRecentlyCalledLoading" type="article" transition="fade-transition">
-            <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4 avg-gas-consumption" hide-default-footer items-per-page="3">
-              <template v-slot:item="{item}">
-                <tr class="table-row">
-                  <td>
-                    <v-btn
-                      class="text--secondary hash"
-                      :to="`${selectedNetwork}/${item.address}/`"
-                      style="text-transform: none;"
-                      text>
+    <v-row no-gutters>
+      <v-col cols="12">
+        <v-row justify="center" no-gutters>
+          <v-col cols="12" sm="8" lg="6" xl="4">
+            <header class="d-flex justify-space-between">
+              <h3 class="text--secondary font-weight-regular">Recently called contracts</h3>
+              <v-btn-toggle v-model="selectedNetwork" color="primary" dense mandatory>
+                <v-btn
+                  small
+                  :value="data"
+                  v-for="data in networks"
+                  :key="data"
+                >
+                  {{ data }}
+                  <div
+                    v-if="networksStats.length > 0"
+                    :class="getSyncClass(data)"
+                  ></div>
+                </v-btn>
+              </v-btn-toggle>
+            </header>
+            <v-fade-transition>
+              <v-skeleton-loader :loading="isRecentlyCalledLoading" type="article" transition="fade-transition">
+                <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4 avg-gas-consumption" hide-default-footer items-per-page="3">
+                  <template v-slot:item="{item}">
+                    <tr class="table-row">
+                      <td>
+                        <v-btn
+                          class="text--secondary hash"
+                          :to="`${selectedNetwork}/${item.address}/`"
+                          style="text-transform: none;"
+                          text>
                         <span v-if="item.alias">
                           {{
                             item.alias.length > aliasMaxLength
                               ? item.alias.slice(0, aliasMaxLength).trim()
                               : item.alias
                           }}<em
-                            v-if="item.alias.length > aliasMaxLength"
-                            class="v-icon notranslate mdi mdi-dots-horizontal"
-                            style="font-size: 16px;"
-                          />
+                          v-if="item.alias.length > aliasMaxLength"
+                          class="v-icon notranslate mdi mdi-dots-horizontal"
+                          style="font-size: 16px;"
+                        />
                         </span>
-                        <span v-else v-html="helpers.shortcut(item.address)"></span>
-                      </v-btn>
-                  </td>
-                  <td>
-                    <span class="text--secondary">{{ item.tx_count }}</span>
-                  </td>
-                  <td>
-                    <span class="text--secondary">{{ item.last_action | fromNow }}</span>
-                  </td>
-                </tr>
-              </template>
-            </v-data-table>
-          </v-skeleton-loader>
-        </v-fade-transition>
+                          <span v-else v-html="helpers.shortcut(item.address)"></span>
+                        </v-btn>
+                      </td>
+                      <td>
+                        <span class="text--secondary">{{ item.tx_count }}</span>
+                      </td>
+                      <td>
+                        <span class="text--secondary">{{ item.last_action | fromNow }}</span>
+                      </td>
+                    </tr>
+                  </template>
+                </v-data-table>
+              </v-skeleton-loader>
+            </v-fade-transition>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
     <v-row>
