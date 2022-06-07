@@ -40,6 +40,10 @@
     background-color: var(--v-canvas-base);
 }
 
+.bg-database {
+    background-color: var(--v-data-base) !important;
+}
+
 .themed-border {
     border: thin solid var(--v-border-base);
 }

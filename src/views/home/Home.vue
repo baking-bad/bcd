@@ -165,6 +165,9 @@ export default {
   .unsynced {
     background: red;
   }
+  .header-table {
+    padding-left: 3px;
+  }
 }
 </style>
 <style lang="scss">

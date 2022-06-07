@@ -162,9 +162,6 @@ export default {
     width: 55%;
   }
 }
-.header-table {
-  padding-left: 3px;
-}
 ::v-deep .v-data-table-header {
   & > tr > th:last-child,
   & + tbody > tr > td:last-child {

@@ -4,7 +4,7 @@
       :loading="loading"
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
     >
-      <v-list class="stats-sidebar-list">
+      <v-list class="stats-sidebar-list ba-1 bg-database">
         <v-list-item-group v-model="item" mandatory>
           <template v-for="(state, idx) in states">
             <v-divider :key="'divider' + idx" v-if="idx > 0"></v-divider>
@@ -23,23 +23,16 @@
         </v-list-item-group>
       </v-list>
     </v-skeleton-loader>
-
-    <BakingBadFooter />
   </div>
 </template>
 
 <script>
-import BakingBadFooter from "@/components/BakingBadFooter.vue";
-
 export default {
   name: "SideBar",
   props: {
     states: Array,
     loading: Boolean,
     network: String,
-  },
-  components: {
-    BakingBadFooter,
   },
   created() {
     this.setItem();
