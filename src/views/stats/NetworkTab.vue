@@ -6,6 +6,7 @@
         <RecentlyCalledContracts class="mt-4" :network="network" :items-per-page="10" />
       </v-col>
       <v-col cols="4">
+        <NetworkInfo :network="network" :state="state" />
       </v-col>
     </v-row>
   </v-container>
@@ -15,13 +16,16 @@
 import Vue from 'vue';
 import { mapActions } from "vuex";
 import RecentlyCalledContracts from "../../components/Tables/RecentlyCalledContracts";
+import NetworkInfo from "./NetworkInfo";
 
 export default {
   name: "NetworkTab",
   props: {
-    network: String
+    network: String,
+    state: Object,
   },
   components: {
+    NetworkInfo,
     RecentlyCalledContracts,
   },
   created() {
