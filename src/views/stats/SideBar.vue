@@ -10,8 +10,8 @@
             <v-divider :key="'divider' + idx" v-if="idx > 0"></v-divider>
             <v-list-item :key="idx" @click="navigate(state)">
               <v-list-item-content>
-                <v-list-item-title class="overline text--primary">{{ state.network }}</v-list-item-title>
-                <v-list-item-subtitle class="body-2">{{ state.protocol.slice(0, 8) }}</v-list-item-subtitle>
+                <v-list-item-title class="sidebar-title text--primary">{{ state.network }}</v-list-item-title>
+                <v-list-item-subtitle class="sidebar-subtitle">{{ state.protocol.slice(0, 8) }}</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
                 <v-list-item-action-text
@@ -84,5 +84,23 @@ export default {
   border-radius: 0;
   padding: 0;
   z-index: 1;
+}
+</style>
+
+<style lang="scss" scoped>
+.sidebar-title {
+  font-weight: 400;
+  letter-spacing: 0.1666666667em !important;
+  line-height: 1rem;
+  text-transform: uppercase;
+  font-family: "Roboto", sans-serif !important;
+  font-size: 0.75rem !important;
+}
+.sidebar-subtitle {
+  font-size: 0.75rem !important;
+  font-weight: 400;
+  letter-spacing: 0.0178571429em !important;
+  line-height: 1.25rem;
+  font-family: "Roboto", sans-serif !important;
 }
 </style>
