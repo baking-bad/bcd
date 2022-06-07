@@ -4,6 +4,7 @@
       <h3 class="text--secondary font-weight-regular header-table">Network Info</h3>
     </header>
     <v-list-item
+      class="pl-0"
       v-for="(field, pos) in networkObjInfo"
       :key="pos"
     >
