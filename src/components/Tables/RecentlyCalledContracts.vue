@@ -1,7 +1,17 @@
 <template>
   <v-fade-transition>
     <v-skeleton-loader :loading="isRecentlyCalledLoading" type="article" transition="fade-transition">
-      <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4 avg-gas-consumption" hide-default-footer :items-per-page="itemsPerPage">
+      <v-data-table
+        :items="recentlyCalledContracts"
+        :headers="recentlyCalledTableHeaders"
+        class="ba-1 mt-4 avg-gas-consumption"
+        :hide-default-footer="!pageable"
+        :page.sync="page"
+        :items-per-page="itemsPerPage"
+        :footer-props="{
+            itemsPerPageOptions: []
+        }"
+      >
         <template v-slot:item="{item}">
           <tr class="table-row">
             <td>
@@ -44,6 +54,14 @@ export default {
   name: "RecentlyCalledContracts",
   props: {
     network: String,
+    updateable: {
+      type: Boolean,
+      default: true,
+    },
+    pageable: {
+      type: Boolean,
+      default: false,
+    },
     itemsPerPage: {
       type: Number,
       default: 3,
@@ -55,10 +73,19 @@ export default {
     },
   },
   created() {
-    this.listenRecentlyCalledContracts();
+    if (this.updateable) {
+      this.listenRecentlyCalledContracts();
+    } else {
+      const request = this.requestRecentlyCalledContracts();
+      if (this.pageable) {
+        request.then(() => this.page = 1);
+      }
+    }
   },
   destroyed() {
-    this.stopListeningRecentlyCalledContracts();
+    if (this.updateable) {
+      this.stopListeningRecentlyCalledContracts();
+    }
   },
   methods: {
     listenRecentlyCalledContracts() {
@@ -71,24 +98,32 @@ export default {
       this.recentlyCalledContracts = [];
       clearTimeout(this.listenerRecentlyCalledContracts);
     },
-    requestRecentlyCalledContracts() {
+    requestRecentlyCalledContracts(offset = 0) {
       this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.PROGRESS;
-      this.api.getRecentlyCalledContracts(this.network, this.itemsPerPage)
+      return this.api.getRecentlyCalledContracts(this.network, this.itemsPerPage, offset)
         .then((data) => {
-          this.recentlyCalledContracts = data;
+          this.recentlyCalledContracts = this.recentlyCalledContracts.concat(data);
           this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.SUCCESS;
         });
     },
   },
   watch: {
     network() {
-      this.stopListeningRecentlyCalledContracts();
-      this.listenRecentlyCalledContracts();
+      if (this.updateable) {
+        this.stopListeningRecentlyCalledContracts();
+        this.listenRecentlyCalledContracts();
+      }
     },
+    page(val) {
+      if (val === this.recentlyCalledContracts.length / this.itemsPerPage) {
+        this.requestRecentlyCalledContracts(this.recentlyCalledContracts.length);
+      }
+    }
   },
   data() {
     return {
       aliasMaxLength: 12,
+      page: 0,
       loadingRecentlyCalledContractsStatus: DATA_LOADING_STATUSES.NOTHING,
       recentlyCalledTableHeaders: [
         {

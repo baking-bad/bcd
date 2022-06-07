@@ -437,8 +437,8 @@ export class BetterCallApi {
       })
   }
 
-  getRecentlyCalledContracts(network, size) {
-    return getCancellable(this.api, `/stats/${network}/recently_called_contracts?size=${size}`, {})
+  getRecentlyCalledContracts(network, size, offset) {
+    return getCancellable(this.api, `/stats/${network}/recently_called_contracts?size=${size}&offset=${offset}`, {})
         .then((res) => {
           if (!res) { return res; }
           if (res.status !== 200) {
