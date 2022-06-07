@@ -166,20 +166,6 @@ export default {
   .unsynced {
     background: red;
   }
-  .table-row {
-    & > td:first-child {
-      width: 55%;
-    }
-  }
-  .header-table {
-    padding-left: 3px;
-  }
-  ::v-deep .v-data-table-header {
-    & > tr > th:last-child,
-    & + tbody > tr > td:last-child {
-      padding-left: 0 !important;
-    }
-  }
 }
 </style>
 <style lang="scss">
