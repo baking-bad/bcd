@@ -31,7 +31,7 @@
                           style="font-size: 16px;"
                         />
                         </span>
-                <span v-else v-html="helpers.shortcut(item.address)"></span>
+                <span v-else v-html="helpers.shortcut(item.address, 8)"></span>
               </v-btn>
             </td>
             <td>
@@ -124,7 +124,7 @@ export default {
   },
   data() {
     return {
-      aliasMaxLength: 12,
+      aliasMaxLength: 24,
       page: 0,
       loadingRecentlyCalledContractsStatus: DATA_LOADING_STATUSES.NOTHING,
       recentlyCalledTableHeaders: [
