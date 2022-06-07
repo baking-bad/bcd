@@ -6,8 +6,10 @@ import Home from '@/views/home/Home.vue'
 
 import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
+import Network from '@/views/network/Network.vue'
+import NetworkTab from '@/views/network/NetworkTab.vue'
 import Stats from '@/views/stats/Stats.vue'
-import NetworkTab from '@/views/stats/NetworkTab.vue'
+import StatsTab from '@/views/stats/StatsTab.vue'
 import Diff from '@/views/diff/Diff.vue'
 import Docs from '@/views/docs/Docs.vue'
 
@@ -16,6 +18,7 @@ import OperationsTab from '@/views/contract/OperationsTab.vue'
 import CodeTab from '@/views/contract/CodeTab.vue'
 import InteractTab from '@/views/contract/InteractTab.vue'
 import ViewsTab from '@/views/contract/ViewsTab/ViewsTab.vue'
+import TokensTab from '@/views/stats/TokensTab.vue'
 import StorageTab from '@/views/contract/StorageTab.vue'
 import ContractTokensTab from '@/views/contract/TokensTab/TokensTab.vue'
 import TransfersTab from '@/views/contract/TransfersTab/TransfersTab.vue'
@@ -95,7 +98,7 @@ const router = new Router({
       ]
     },
     {
-      path: '/:network',
+      path: '/stats/:network',
       components: {
         default: Stats,
       },
@@ -104,6 +107,38 @@ const router = new Router({
         {
           path: '',
           name: 'stats',
+          redirect: 'stats_general'
+        },
+        {
+          name: 'stats_general',
+          path: 'general',
+          component: StatsTab,
+          props: true
+        },
+        {
+          path: 'fa12',
+          name: 'stats_fa12',
+          component: TokensTab,
+          props: true
+        },
+        {
+          path: 'fa2',
+          name: 'stats_fa20',
+          component: TokensTab,
+          props: true
+        }
+      ]
+    },
+    {
+      path: '/:network',
+      components: {
+        default: Network,
+      },
+      props: { default: true },
+      children: [
+        {
+          path: '',
+          name: 'network',
           component: NetworkTab,
           props: true,
         },
