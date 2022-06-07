@@ -113,6 +113,29 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style lang="scss" scoped>
+.avg-gas-consumption {
+  background: var(--v-data-base)!important;
+  tbody tr:hover {
+    background: var(--v-sidebar-base)!important;
+  }
+}
+.table-row {
+  & > td:first-child {
+    width: 55%;
+  }
+}
+.header-table {
+  padding-left: 3px;
+}
+::v-deep .v-data-table-header {
+  & > tr > th:last-child,
+  & + tbody > tr > td:last-child {
+    padding-left: 0 !important;
+  }
+  & > tr > th > span {
+    font-size: 16px;
+    font-weight: 400;
+  }
+}
 </style>
