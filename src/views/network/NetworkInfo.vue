@@ -3,20 +3,22 @@
     <header>
       <h3 class="text--secondary font-weight-regular header-table">Network Info</h3>
     </header>
-    <v-list-item
-      class="pl-0"
-      v-for="(field, pos) in networkObjInfo"
-      :key="pos"
-    >
-      <v-list-item-content>
-        <v-list-item-subtitle class="overline"
-        >{{ field.name }}</v-list-item-subtitle
-        >
-        <v-list-item-title class="body-2">
-          {{ state[field.key] }}
-        </v-list-item-title>
-      </v-list-item-content>
-    </v-list-item>
+    <div class="ba-1 bg-database px-4 py-2 mt-4 radius-1">
+      <v-list-item
+        class="pl-0"
+        v-for="(field, pos) in networkObjInfo"
+        :key="pos"
+      >
+        <v-list-item-content>
+          <v-list-item-subtitle class="overline"
+          >{{ field.name }}</v-list-item-subtitle
+          >
+          <v-list-item-title class="body-2">
+            {{ state[field.key] }}
+          </v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
+    </div>
   </div>
 </template>
 
