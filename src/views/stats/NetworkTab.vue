@@ -1,7 +1,7 @@
 <template>
-  <v-container fluid class="canvas fill-canvas pt-0">
+  <v-container fluid class="pt-0">
     <v-row>
-      <v-col cols="8" class="pt-0">
+      <v-col cols="8" class="pt-0 px-8">
         <h3 class="text--secondary font-weight-regular header-table">Recently called contracts</h3>
         <RecentlyCalledContracts class="mt-4" :network="network" :items-per-page="10" />
       </v-col>

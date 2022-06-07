@@ -1,7 +1,7 @@
 <template>
   <div class="fill-height pa-8">
     <v-breadcrumbs :items="breadcrumbs" divider="/" class="pl-0" />
-    <v-row class="fill-height br-1" no-gutters>
+    <v-row class="fill-height" no-gutters>
       <v-col cols="3">
         <SideBar :loading="loading" :states="states" :network="currentNetwork" />
       </v-col>
