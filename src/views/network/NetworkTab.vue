@@ -11,7 +11,7 @@
           pageable
         />
       </v-col>
-      <v-col cols="4" class="pt-0">
+      <v-col cols="4" class="pt-0 pl-0">
         <NetworkInfo :network="network" :state="state" />
       </v-col>
     </v-row>
