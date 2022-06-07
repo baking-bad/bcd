@@ -8,7 +8,6 @@ import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
 import Stats from '@/views/stats/Stats.vue'
 import NetworkTab from '@/views/stats/NetworkTab.vue'
-import TokensTab from '@/views/stats/TokensTab.vue'
 import Diff from '@/views/diff/Diff.vue'
 import Docs from '@/views/docs/Docs.vue'
 
@@ -96,7 +95,7 @@ const router = new Router({
       ]
     },
     {
-      path: '/stats/:network',
+      path: '/:network',
       components: {
         default: Stats,
       },
@@ -105,26 +104,9 @@ const router = new Router({
         {
           path: '',
           name: 'stats',
-          redirect: 'stats_general'
-        },
-        {
-          name: 'stats_general',
-          path: 'general',
           component: NetworkTab,
-          props: true
+          props: true,
         },
-        {
-          path: 'fa12',
-          name: 'stats_fa12',
-          component: TokensTab,
-          props: true
-        },
-        {
-          path: 'fa2',
-          name: 'stats_fa20',
-          component: TokensTab,
-          props: true
-        }
       ]
     },
     {

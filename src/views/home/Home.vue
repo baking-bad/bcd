@@ -43,42 +43,7 @@
                 </v-btn>
               </v-btn-toggle>
             </header>
-            <v-fade-transition>
-              <v-skeleton-loader :loading="isRecentlyCalledLoading" type="article" transition="fade-transition">
-                <v-data-table :items="recentlyCalledContracts" :headers="recentlyCalledTableHeaders" class="ba-1 mt-4 avg-gas-consumption" hide-default-footer :items-per-page="3">
-                  <template v-slot:item="{item}">
-                    <tr class="table-row">
-                      <td>
-                        <v-btn
-                          class="text--secondary hash"
-                          :to="`${selectedNetwork}/${item.address}/`"
-                          style="text-transform: none;"
-                          text>
-                        <span v-if="item.alias">
-                          {{
-                            item.alias.length > aliasMaxLength
-                              ? item.alias.slice(0, aliasMaxLength).trim()
-                              : item.alias
-                          }}<em
-                          v-if="item.alias.length > aliasMaxLength"
-                          class="v-icon notranslate mdi mdi-dots-horizontal"
-                          style="font-size: 16px;"
-                        />
-                        </span>
-                          <span v-else v-html="helpers.shortcut(item.address)"></span>
-                        </v-btn>
-                      </td>
-                      <td>
-                        <span class="text--secondary">{{ item.tx_count }}</span>
-                      </td>
-                      <td>
-                        <span class="text--secondary">{{ item.last_action | fromNow }}</span>
-                      </td>
-                    </tr>
-                  </template>
-                </v-data-table>
-              </v-skeleton-loader>
-            </v-fade-transition>
+            <RecentlyCalledContracts class="mt-4" :network="selectedNetwork" />
           </v-col>
         </v-row>
       </v-col>
@@ -107,61 +72,32 @@
 import { mapActions } from "vuex";
 import SearchBox from "@/components/SearchBox.vue";
 import {DATA_LOADING_STATUSES} from "../../utils/network";
+import RecentlyCalledContracts from "../../components/Tables/RecentlyCalledContracts";
 
 export default {
   name: "Home",
   components: {
+    RecentlyCalledContracts,
     SearchBox,
   },
   data: () => ({
     stats: [],
-    pickingRandom: false,
     loadingHead: true,
-    recentlyCalledTableHeaders: [
-      {
-        text: "Contract",
-        class: "pl-8",
-        sortable: false,
-      },
-      {
-        text: "Calls",
-        sortable: false,
-      },
-      {
-        text: "Last active",
-        class: "pl-8",
-        sortable: false,
-      },
-    ],
-    recentlyCalledContracts: [],
-    listenerRecentlyCalledContracts: null,
     selectedNetwork: 'mainnet',
     networks: window.config.networks,
-    loadingRecentlyCalledContractsStatus: DATA_LOADING_STATUSES.NOTHING,
     networksStats: [],
     listenerNetworksSync: null,
   }),
   computed: {
-    isRecentlyCalledLoading() {
-      return this.loadingRecentlyCalledContractsStatus === DATA_LOADING_STATUSES.PROGRESS;
-    },
     isNetworkSyncStatsLoading() {
       return this.loadingNetworkSync === DATA_LOADING_STATUSES.PROGRESS;
     }
   },
   created() {
     this.listenNetworksSync();
-    this.listenRecentlyCalledContracts();
   },
   destroyed() {
     this.stopListeningNetworksSync();
-    this.stopListeningRecentlyCalledContracts();
-  },
-  watch: {
-    selectedNetwork() {
-      this.stopListeningRecentlyCalledContracts();
-      this.listenRecentlyCalledContracts();
-    }
   },
   mounted() {
     if (this.$route.name !== this.config.HOME_PAGE) {
@@ -192,24 +128,6 @@ export default {
       this.networksStats = [];
       clearTimeout(this.listenerNetworksSync);
     },
-    listenRecentlyCalledContracts() {
-      this.requestRecentlyCalledContracts();
-      this.listenerRecentlyCalledContracts = setTimeout(() => {
-        this.listenRecentlyCalledContracts();
-      }, 30 * 1000);
-    },
-    stopListeningRecentlyCalledContracts() {
-      this.recentlyCalledContracts = [];
-      clearTimeout(this.listenerRecentlyCalledContracts);
-    },
-    requestRecentlyCalledContracts() {
-      this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.PROGRESS;
-      this.api.getRecentlyCalledContracts(this.selectedNetwork, 3)
-        .then((data) => {
-          this.recentlyCalledContracts = data;
-          this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.SUCCESS;
-        });
-    },
     getHead() {
       this.api
         .getHead()
@@ -219,30 +137,6 @@ export default {
         .catch((err) => {
             console.log(err);
             this.showError(err);
-        })
-        .finally(() => {
-          this.pickingRandom = false;
-        });
-    },
-    pickRandom(val) {
-      const isSelectPressed = val.target && val.target.closest('.network-select');
-      if (isSelectPressed || this.pickingRandom) return;
-      this.pickingRandom = true;
-      this.api
-        .getRandomContract(val.target ? '' : val)
-        .then((res) => {
-          this.$router.push({ path: `/${res.network}/${res.address}` });
-        })
-        .catch((err) => {
-          if (err.response.status === 404) {
-            this.showError("The network does not have enough contracts");
-          } else if (err.code !== 204) {
-            console.log(err);
-            this.showError(err);
-          }
-        })
-        .finally(() => {
-          this.pickingRandom = false;
         });
     },
   },

@@ -1,60 +1,11 @@
 <template>
-  <v-container fluid class="pa-8 canvas fill-canvas">
+  <v-container fluid class="canvas fill-canvas pt-0">
     <v-row>
-      <v-col cols="6">
-        <v-skeleton-loader :loading="!series.contract" type="image">
-          <v-card flat outlined>
-            <v-card-text class="data pa-0" v-if="series.contract">
-              <ColumnChart
-                :data="series.contract"
-                :title="`New deployments (total ${details.contracts_count})<br/>
-                <div class='text--secondary caption text-center'>Excluding manager.tz</div>`"
-                name="New deployments"
-              ></ColumnChart>
-            </v-card-text>
-          </v-card>
-        </v-skeleton-loader>
+      <v-col cols="8" class="pt-0">
+        <h3 class="text--secondary font-weight-regular header-table">Recently called contracts</h3>
+        <RecentlyCalledContracts class="mt-4" :network="network" :items-per-page="10" />
       </v-col>
-      <v-col cols="6">
-        <v-skeleton-loader :loading="!series.operation" type="image">
-          <v-card flat outlined>
-            <v-card-text class="data pa-0" v-if="series.operation">
-              <ColumnChart
-                :data="series.operation"
-                :title="`Contract calls (total ${details.contract_calls})`"
-                name="Contract calls"
-              ></ColumnChart>
-            </v-card-text>
-          </v-card>
-        </v-skeleton-loader>
-      </v-col>
-      <v-col cols="6">
-        <v-skeleton-loader :loading="!series.paidStorageSizeDiff" type="image">
-          <v-card flat outlined>
-            <v-card-text class="data pa-0" v-if="series.paidStorageSizeDiff">
-              <ColumnChart
-                :data="series.paidStorageSizeDiff"
-                formatter="kilobyte"
-                title="Paid storage size diff, KB"
-                name="Paid storage size diff"
-              ></ColumnChart>
-            </v-card-text>
-          </v-card>
-        </v-skeleton-loader>
-      </v-col>
-      <v-col cols="6">
-        <v-skeleton-loader :loading="!series.consumedGas" type="image">
-          <v-card flat outlined>
-            <v-card-text class="data pa-0" v-if="series.consumedGas">
-              <ColumnChart
-                :data="series.consumedGas"
-                :title="`Consumed gas × 10\u2076`"
-                formatter="gas"
-                name="Consumed gas"
-              ></ColumnChart>
-            </v-card-text>
-          </v-card>
-        </v-skeleton-loader>
+      <v-col cols="4">
       </v-col>
     </v-row>
   </v-container>
@@ -63,7 +14,7 @@
 <script>
 import Vue from 'vue';
 import { mapActions } from "vuex";
-import ColumnChart from "@/components/Charts/ColumnChart.vue";
+import RecentlyCalledContracts from "../../components/Tables/RecentlyCalledContracts";
 
 export default {
   name: "NetworkTab",
@@ -71,7 +22,7 @@ export default {
     network: String
   },
   components: {
-    ColumnChart,
+    RecentlyCalledContracts,
   },
   created() {
     if (this.network) {
