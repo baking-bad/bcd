@@ -2,10 +2,10 @@
   <div class="fill-height pa-8">
     <v-breadcrumbs :items="breadcrumbs" divider="/" class="pl-0" />
     <v-row class="fill-height" no-gutters>
-      <v-col cols="3">
+      <v-col cols="2">
         <SideBar :loading="loading" :states="states" :network="currentNetwork" />
       </v-col>
-      <v-col cols="9">
+      <v-col cols="10">
         <router-view :network="currentNetwork" :state="currentState"></router-view>
       </v-col>
     </v-row>
