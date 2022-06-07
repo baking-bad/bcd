@@ -7539,6 +7539,11 @@
   dependencies:
     "p-locate" "^4.1.0"
 
+"lodash.capitalize@^4.2.1":
+  "integrity" "sha512-kZzYOKspf8XVX5AvmQF94gQW0lejFVgb80G85bU4ZWzoJ6C03PQg3coYAUpSTpQWelrZELd3XWgHzw4Ck5kaIw=="
+  "resolved" "https://registry.npmjs.org/lodash.capitalize/-/lodash.capitalize-4.2.1.tgz"
+  "version" "4.2.1"
+
 "lodash.clonedeep@^4.5.0":
   "integrity" "sha1-4j8/nE+Pvd6HJSnBBxhXoIblzO8="
   "resolved" "https://registry.npmjs.org/lodash.clonedeep/-/lodash.clonedeep-4.5.0.tgz"

@@ -1,11 +1,12 @@
 <template>
-  <div class="fill-height">
-    <v-row class="fill-height br-1 pa-8" no-gutters>
+  <div class="fill-height pa-8">
+    <v-breadcrumbs :items="breadcrumbs" divider="/" class="pl-0" />
+    <v-row class="fill-height br-1" no-gutters>
       <v-col cols="3">
         <SideBar :loading="loading" :states="states" :network="currentNetwork" />
       </v-col>
       <v-col cols="9">
-        <router-view :network="currentNetwork"></router-view>
+        <router-view :network="currentNetwork" :state="currentState"></router-view>
       </v-col>
     </v-row>
   </div>
@@ -14,6 +15,7 @@
 <script>
 import { mapActions } from "vuex";
 import SideBar from "@/views/stats/SideBar.vue";
+import capitalize from 'lodash.capitalize';
 
 export default {
   name: "Stats",
@@ -25,6 +27,20 @@ export default {
     states: [],
     currentNetwork: null,
   }),
+  computed: {
+    currentState() {
+      return this.currentNetwork ? this.states.find((item) => item.network === this.currentNetwork) : {};
+    },
+    breadcrumbs() {
+      return [{
+        text: 'Home',
+        to: '/',
+      }, {
+        text: capitalize(this.currentNetwork),
+        to: `/${this.currentNetwork}${this.$route.hash !== '#' ? '#' : '##'}`
+      }]
+    }
+  },
   created() {
     this.getStats();
   },

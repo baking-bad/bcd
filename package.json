@@ -28,6 +28,7 @@
     "highcharts-vue": "^1.4.0",
     "is-ipfs": "^1.0.3",
     "json-view": "^0.4.0",
+    "lodash.capitalize": "^4.2.1",
     "null": "^2.0.0",
     "portal-vue": "^2.1.7",
     "redoc": "^2.0.0-rc.65",
