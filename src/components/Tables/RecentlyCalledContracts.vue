@@ -73,14 +73,7 @@ export default {
     },
   },
   created() {
-    if (this.updateable) {
-      this.listenRecentlyCalledContracts();
-    } else {
-      const request = this.requestRecentlyCalledContracts();
-      if (this.pageable) {
-        request.then(() => this.page = 1);
-      }
-    }
+    this.init();
   },
   destroyed() {
     if (this.updateable) {
@@ -88,6 +81,16 @@ export default {
     }
   },
   methods: {
+    init() {
+      if (this.updateable) {
+        this.listenRecentlyCalledContracts();
+      } else {
+        const request = this.requestRecentlyCalledContracts();
+        if (this.pageable) {
+          request.then(() => this.page = 1);
+        }
+      }
+    },
     listenRecentlyCalledContracts() {
       this.requestRecentlyCalledContracts();
       this.listenerRecentlyCalledContracts = setTimeout(() => {
@@ -109,10 +112,9 @@ export default {
   },
   watch: {
     network() {
-      if (this.updateable) {
-        this.stopListeningRecentlyCalledContracts();
-        this.listenRecentlyCalledContracts();
-      }
+      this.recentlyCalledContracts = [];
+      this.page = -1;
+      this.init();
     },
     page(val) {
       if (val === this.recentlyCalledContracts.length / this.itemsPerPage) {
