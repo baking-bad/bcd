@@ -1,47 +1,27 @@
 <template>
-  <div class="fill-height canvas top-margin-from-main-header">
-    <v-list-item style="height: 74px;">
-      <v-list-item-content two-line>
-        <v-list-item-title class="headline">Statistics</v-list-item-title>
-        <v-list-item-subtitle>
-          <span class="overline">{{ network }}</span>
-        </v-list-item-subtitle>
-      </v-list-item-content>
-    </v-list-item>
-    <v-divider></v-divider>
-
+  <div class="fill-height canvas">
     <v-skeleton-loader
       :loading="loading"
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"
     >
-      <v-expansion-panels flat tile mandatory multiple active-class="opened-panel">
-        <v-expansion-panel class="ma-0 bb-1">
-          <v-expansion-panel-header color="sidebar" class="pl-4 py-0">
-            <span class="caption font-weight-bold text-uppercase text--secondary">Networks</span>
-          </v-expansion-panel-header>
-          <v-expansion-panel-content color="data">
-            <v-list class="stats-sidebar-list">
-              <v-list-item-group v-model="item" mandatory>
-                <template v-for="(state, idx) in states">
-                  <v-divider :key="'divider' + idx" v-if="idx > 0"></v-divider>
-                  <v-list-item :key="idx" @click="navigate(state)">
-                    <v-list-item-content>
-                      <v-list-item-title class="overline text--primary">{{ state.network }}</v-list-item-title>
-                      <v-list-item-subtitle class="body-2">{{ state.protocol.slice(0, 8) }}</v-list-item-subtitle>
-                    </v-list-item-content>
-                    <v-list-item-action>
-                      <v-list-item-action-text
-                        class="overline text--primary"
-                      >{{ helpers.formatDatetime(state.timestamp) }}</v-list-item-action-text>
-                      <v-list-item-action-text class="body-2">level {{ state.level }}</v-list-item-action-text>
-                    </v-list-item-action>
-                  </v-list-item>
-                </template>
-              </v-list-item-group>
-            </v-list>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
+      <v-list class="stats-sidebar-list">
+        <v-list-item-group v-model="item" mandatory>
+          <template v-for="(state, idx) in states">
+            <v-divider :key="'divider' + idx" v-if="idx > 0"></v-divider>
+            <v-list-item :key="idx" @click="navigate(state)">
+              <v-list-item-content>
+                <v-list-item-title class="overline text--primary">{{ state.network }}</v-list-item-title>
+                <v-list-item-subtitle class="body-2">{{ state.protocol.slice(0, 8) }}</v-list-item-subtitle>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-list-item-action-text
+                  class="overline text--primary"
+                >{{ helpers.formatDatetime(state.timestamp) }}</v-list-item-action-text>
+              </v-list-item-action>
+            </v-list-item>
+          </template>
+        </v-list-item-group>
+      </v-list>
     </v-skeleton-loader>
 
     <BakingBadFooter />

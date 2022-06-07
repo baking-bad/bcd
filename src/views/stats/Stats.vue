@@ -1,28 +1,13 @@
 <template>
   <div class="fill-height">
-    <v-navigation-drawer floating app permanent width="336" color="canvas" class="main-navigation">
-      <v-row class="fill-height br-1" no-gutters>
-        <v-col cols="12">
-          <SideBar :loading="loading" :states="states" :network="currentNetwork" />
-        </v-col>
-      </v-row>
-    </v-navigation-drawer>
-
-    <v-toolbar flat class color="toolbar" height="75">
-      <v-tabs center-active background-color="transparent" slider-color="primary" class="ml-4">
-        <v-tab :to="{name: 'stats_general'}" replace>
-          <v-icon left small>mdi-align-vertical-bottom</v-icon>&nbsp;General
-        </v-tab>
-        <v-tab :to="{name: 'stats_fa12'}" replace>
-          <v-icon left small>mdi-bank-outline</v-icon>&nbsp;FA1.2
-        </v-tab>
-        <v-tab :to="{name: 'stats_fa20'}" replace>
-          <v-icon left small>mdi-bank</v-icon>&nbsp;FA2.0
-        </v-tab>
-      </v-tabs>
-    </v-toolbar>
-
-    <router-view :network="currentNetwork"></router-view>
+    <v-row class="fill-height br-1 pa-8" no-gutters>
+      <v-col cols="3">
+        <SideBar :loading="loading" :states="states" :network="currentNetwork" />
+      </v-col>
+      <v-col cols="9">
+        <router-view :network="currentNetwork"></router-view>
+      </v-col>
+    </v-row>
   </div>
 </template>
 
