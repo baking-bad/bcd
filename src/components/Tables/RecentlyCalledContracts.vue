@@ -105,7 +105,7 @@ export default {
       this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.PROGRESS;
       return this.api.getRecentlyCalledContracts(this.network, this.itemsPerPage, offset)
         .then((data) => {
-          this.recentlyCalledContracts = this.recentlyCalledContracts.concat(data);
+          this.recentlyCalledContracts = this.pageable ? this.recentlyCalledContracts.concat(data) : data;
           this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.SUCCESS;
         });
     },
