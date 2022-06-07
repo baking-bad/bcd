@@ -180,9 +180,8 @@ export default {
           to: '/',
         },
         {
-          to: `/${this.network}/`,
+          to: `/${this.network}/#`,
           text: toTitleCase(this.network),
-          disabled: false,
         },
         {
           text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
