@@ -58,6 +58,48 @@
         </template>
       </v-text-field>
     </div>
+    <div class="d-flex">
+      <v-text-field
+          id="sender"
+          name="sender"
+          v-model="sender"
+          outlined
+          dense
+          label="sender"
+          placeholder="address"
+          hint="Press 'fill' to paste your wallet address"
+      >
+        <template v-slot:append-outer>
+          <v-menu offset-y>
+            <template v-slot:activator="{ on, attrs }">
+              <v-btn
+                  text
+                  small
+                  :loading="importing"
+                  class="text--secondary"
+                  v-bind="attrs"
+                  v-on="on"
+              >
+                <v-icon small left>mdi-format-horizontal-align-left</v-icon>
+                <span>fill</span>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item
+                  v-for="(item, index) in importActions"
+                  :key="index"
+                  @click="setSender(item)"
+              >
+                <v-list-item-title>{{ item.text }}</v-list-item-title>
+                <v-list-item-avatar>
+                  <v-icon>{{ item.icon }}</v-icon>
+                </v-list-item-avatar>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </template>
+      </v-text-field>
+    </div>
     <v-text-field
         id="amount"
         name="amount"
@@ -90,6 +132,9 @@ export default {
     source(val) {
       this.$emit('settingsChange', {key: 'source', val});
     },
+    sender(val) {
+      this.$emit('settingsChange', {key: 'sender', val});
+    },
     amount(val) {
       this.$emit('settingsChange', {key: 'amount', val});
     },
@@ -105,11 +150,15 @@ export default {
     async setSource(item) {
       this.source = await item.callback();
     },
+    async setSender(item) {
+      this.sender = await item.callback();
+    },
   },
   data() {
     return {
       selectedNetwork: null,
       source: null,
+      sender: null,
       amount: null,
     }
   }

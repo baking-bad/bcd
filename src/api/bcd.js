@@ -319,13 +319,16 @@ export class BetterCallApi {
       })
   }
 
-  getContractEntrypointTrace(network, address, name, data, source = null, amount = null) {
+  getContractEntrypointTrace(network, address, name, data, source = null, sender = null, amount = null) {
     var body = {
       name: name,
       data: data
     }
     if (source) {
       body.source = source;
+    }
+    if (sender) {
+      body.sender = sender;
     }
     if (amount) {
       body.amount = parseInt(amount);
