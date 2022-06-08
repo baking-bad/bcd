@@ -19,6 +19,8 @@
 <script>
 import InfoCard from "@/components/Cards/InfoCard.vue";
 
+var sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
+
 export default {
   name: "TransfersTab",
     components: {
@@ -31,7 +33,7 @@ export default {
   },
   computed: {
     tzkt_link() {
-      return `https://${this.network}.tzkt.io/${this.address}/balances`
+      return sanitizeUrl(`https://${this.network}.tzkt.io/${this.address}/balances`);
     }
   }
 };
