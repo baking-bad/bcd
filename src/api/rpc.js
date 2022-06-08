@@ -40,13 +40,7 @@ export class NodeRPC {
 
   getBigMapValue(network, level, ptr, key_hash) {
     return this.getApi(network).get(`/chains/main/blocks/${level}/context/big_maps/${ptr}/${key_hash}`)
-      .then((res) => {
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        let url = `${res.config.baseURL}${res.config.url}`
-        return { data: res.data, url};
-      })
+      .then(this.getObject)
   }
 
   getContractCode(network, level, address) {
@@ -95,12 +89,14 @@ export class NodeRPC {
 
   getNetworkConstants(network, level) {
     return this.getApi(network).get(`/chains/main/blocks/${level}/context/constants`)
-      .then((res) => {
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        let url = `${res.config.baseURL}${res.config.url}`
-        return { data: res.data, url };
-      })
+      .then(this.getObject)
+  }
+
+  getObject(response) {
+    if (response.status != 200) {
+      throw new RequestFailedError(response);
+    }
+    let url = `${response.config.baseURL}${response.config.url}`
+    return { data: response.data, url };
   }
 }
