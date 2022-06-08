@@ -125,8 +125,7 @@ export default {
     isCopiableOptions: {
       type: Boolean,
       default: true
-    },
-    small: Boolean
+    }
   },
   components: {
     VueJsonPretty,
