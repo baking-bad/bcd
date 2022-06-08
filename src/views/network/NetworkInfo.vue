@@ -1,7 +1,11 @@
 <template>
   <div>
-    <header>
+    <header class="d-flex">
       <h3 class="text--secondary font-weight-regular header-table">Network Info</h3>
+      <v-btn @click="showRaw = true" small text class="text--secondary ml-auto">
+        <v-icon class="mr-1" small>mdi-code-json</v-icon>
+        <span>Constants</span>
+      </v-btn>
     </header>
     <div class="ba-1 bg-database px-4 py-2 mt-4 radius-1">
       <v-list-item
@@ -19,17 +23,29 @@
         </v-list-item-content>
       </v-list-item>
     </div>
+    <RawJsonViewer
+      :show.sync="showRaw"
+      type="constants"
+      :network="network"
+    />
   </div>
 </template>
 
 <script>
+import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
+
 export default {
   name: "NetworkInfo",
+  components: {
+    RawJsonViewer,
+  },
   props: {
     state: Object,
+    network: String
   },
   data() {
     return {
+      showRaw: false,
       networkObjInfo: [
         {
           name: 'Chain ID',
