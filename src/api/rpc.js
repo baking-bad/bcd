@@ -92,4 +92,15 @@ export class NodeRPC {
         return { data: parseInt(res.data, 10), url };
       })
   }
+
+  getNetworkConstants(network, level) {
+    return this.getApi(network).get(`/chains/main/blocks/${level}/context/constants`)
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        let url = `${res.config.baseURL}${res.config.url}`
+        return { data: res.data, url };
+      })
+  }
 }

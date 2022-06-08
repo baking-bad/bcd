@@ -240,6 +240,8 @@ export default {
         res = this.rpc.getContractCode(this.network, level, this.address);
       } else if (this.type === "storage") {
         res = this.rpc.getContractStorage(this.network, level, this.address);
+      } else if (this.type === "constants") {
+        res = this.rpc.getNetworkConstants(this.network, level);
       } else {
         this.showError(`Unsupported type ${this.type}`);
       }
