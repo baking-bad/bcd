@@ -1,50 +1,38 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-row no-gutters>
-      <v-col cols="8" class="pa-2">
-        <TransferList
-          v-if="selectedToken"
-          :address="address"
-          :network="network"
-          :token="selectedToken"
-          :contract="selectedToken.contract"
-        />
-      </v-col>
-      <v-col cols="4" class="pa-2">
-        <TransfersCard
-          :address="address"
-          :network="network"
-          :tokenBalancesTotal="tokenBalancesTotal"
-          @selectedToken="updateSelectedToken"
-        />
+      <v-col cols="12" class="pa-2">
+        <InfoCard>
+          <span
+            >The information you are looking for is no longer available on BCD,
+            please use
+          </span>
+          <a v-if="network !== 'jakartanet'" :href="tzkt_link" target="_blank">TzKT.io</a>
+          <span v-else></span>
+          <span> for this particular case</span>
+        </InfoCard>
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
-import TransferList from "@/views/contract/TransfersTab/TransferList.vue";
-import TransfersCard from "@/views/contract/TransfersTab/TransfersCard.vue";
+import InfoCard from "@/components/Cards/InfoCard.vue";
 
 export default {
   name: "TransfersTab",
+    components: {
+    InfoCard,
+  },
   props: {
-    balances: Array,
-    network: String,
+    contract: Object,
     address: String,
-    tokenBalancesTotal: Number
+    network: String,
   },
-  components: {
-    TransfersCard,
-    TransferList,
-  },
-  methods: {
-    updateSelectedToken(newVal) {
-      this.selectedToken = newVal
-    },
-  },
-  data: () => ({
-    selectedToken: null,
-  }),
+  computed: {
+    tzkt_link() {
+      return `https://${this.network}.tzkt.io/${this.address}/balances`
+    }
+  }
 };
 </script>

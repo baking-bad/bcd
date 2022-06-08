@@ -140,6 +140,7 @@ export default {
     loadingRecentlyCalledContractsStatus: DATA_LOADING_STATUSES.NOTHING,
     networksStats: [],
     listenerNetworksSync: null,
+    aliasMaxLength: 20,
   }),
   computed: {
     isRecentlyCalledLoading() {
@@ -172,7 +173,7 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     getSyncClass(value) {
-      return this.networksStats.find((item) => item.network === value).synced ? 'synced' : 'unsynced';
+      return this.networksStats !== null && this.networksStats.find((item) => item.network === value).synced ? 'synced' : 'unsynced';
     },
     requestNetworkSync() {
       this.loadingNetworkSync = DATA_LOADING_STATUSES.PROGRESS;
