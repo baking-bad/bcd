@@ -9,8 +9,12 @@
   >
     <v-card>
       <v-card-title class="sidebar py-2" primary-title>
-        <span class="body-1 font-weight-medium text-uppercase text--secondary">
+        <span class="body-1 font-weight-medium text-uppercase text--secondary" v-if="type !== 'constants'">
           Raw JSON:
+          <span class="text--primary">{{ type }}</span>
+        </span>
+         <span class="body-1 font-weight-medium text-uppercase text--secondary" v-else>
+          {{ network }}:
           <span class="text--primary">{{ type }}</span>
         </span>
         <span
@@ -121,7 +125,8 @@ export default {
     isCopiableOptions: {
       type: Boolean,
       default: true
-    }
+    },
+    small: Boolean
   },
   components: {
     VueJsonPretty,
