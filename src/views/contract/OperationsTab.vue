@@ -81,7 +81,7 @@
                   v-on="on"
                 ></v-text-field>
               </template>
-              <v-date-picker v-model="datesBuf" scrollable range show-current>
+              <v-date-picker v-model="datesBuf" min="2018-06-30" scrollable range show-current>
                 <v-spacer></v-spacer>
                 <v-btn text color="primary" @click="datesModal = false"
                 >Cancel</v-btn
