@@ -281,10 +281,10 @@ export default {
     },
     consumedGas() {
       if (this.data && this.data.consumed_gas) {
-        let s = `${this.data.consumed_gas}`;
+        let s = this.$options.filters.milligas(this.data.consumed_gas);
         if (this.gasLimit > 0) {
           s += ` (${(
-            (this.data.consumed_gas * 100) /
+            (this.data.consumed_gas * 100 / 1000) /
             this.gasLimit
           ).toFixed(0)}%)`;
         }

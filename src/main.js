@@ -82,6 +82,12 @@ Vue.filter('uxtz', function (value) {
   return `${xtz} \uA729`;
 })
 
+
+Vue.filter('milligas', function (value) {
+  let gas = (value / 1000).toLocaleString(undefined, { maximumFractionDigits: 0 });
+  return `${gas}`;
+})
+
 Vue.filter('mutez', function (value) {
   let xtz = (value / 1000000).toLocaleString(undefined, { maximumFractionDigits: 6 });
   return `${xtz}`;
