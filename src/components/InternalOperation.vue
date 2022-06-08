@@ -2,7 +2,7 @@
   <div class="pb-2 data">
     <v-row v-if="!data.internal && !noheader" no-gutters class="px-4 py-1 sidebar">
       <v-col cols="2">
-        <InfoItem title="Counter" :subtitle="String(data.counter)" />
+        <InfoItem title="Counter"  v-if="data.counter" :subtitle="String(data.counter)" />
       </v-col>
       <v-col cols="2">
         <InfoItem title="Burned" :subtitle="(burned || 0) | uxtz" />
