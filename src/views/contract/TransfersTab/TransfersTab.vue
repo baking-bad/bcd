@@ -19,7 +19,7 @@
 <script>
 import InfoCard from "@/components/Cards/InfoCard.vue";
 
-var sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
+let sanitizeUrl = require("@braintree/sanitize-url").sanitizeUrl;
 
 export default {
   name: "TransfersTab",
