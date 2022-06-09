@@ -9,7 +9,7 @@ export function openTzktContract(contract) {
 
 
 export function openTzktOPG(network, hash) {
-  window.open(`https://${network === 'mainnet' ? '' : `${network}.`}tzkt.io/${hash}`, '_blank');
+  window.open(`https://${network}.tzkt.io/${hash}`, '_blank');
 }
 
 
