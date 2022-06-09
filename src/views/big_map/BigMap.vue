@@ -143,7 +143,6 @@ export default {
       this.api
         .getContractBigMapActions(this.network, this.ptr)
         .then((res) => {
-          console.log('res: ', res);
           if (!res) return;
           if (!res.items) return;
           this.actions = res.items;
