@@ -15,7 +15,7 @@
               <v-btn
                 v-on="on"
                 class="mr-2 pl-2 pr-2 text--secondary"
-                outlined
+                text
                 small
                 @click="
                   () => {
@@ -34,7 +34,7 @@
             <template v-slot:activator="{ on }">
               <v-btn
                 v-on="on"
-                outlined
+                text
                 small
                 class="mr-2 pl-2 pr-2 text--secondary"
                 @click="showRaw = true"
@@ -50,7 +50,7 @@
               <v-btn
                 v-on="on"
                 class="pl-2 text--secondary"
-                outlined
+                text
                 small
                 @click="
                   () => {
