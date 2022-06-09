@@ -353,6 +353,7 @@ export default {
     },
     fetchSearchDebounced(text, seqno) {
       if (!text || text.length < 3) return;
+      if (text.length > 255) text = text.substring(0, 255)
 
       this.isSearchCalled = true;
       clearTimeout(this._timerId);
