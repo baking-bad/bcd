@@ -72,6 +72,9 @@ export default {
     searchText() {
       const searchText = this.search ? this.search.trim() : "";
       if (searchText.length > 2) {
+        if (searchText.length > 255) {
+          return searchText.substring(0, 255);
+        }
         return searchText;
       }
       return "";

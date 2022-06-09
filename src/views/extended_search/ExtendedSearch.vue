@@ -310,6 +310,7 @@ export default {
         return;
       }
       if (val.length < 3 || this._locked || this.initializing) return;
+      if (val.length > 255) val = val.substring(0, 255);
       this._locked = true;
       this.searchText = val ? val.trim() : "";
       if (this.searchText) {
