@@ -18,22 +18,17 @@ export default {
   },
   computed: {
     head() {
-      if (!this.str) return "";
+      if (!this.str) return 0;
 
-      let head = 0;
       if (this.str.startsWith("tz") || this.str.startsWith("KT")) {
-        head = 3;
+        return 3;
       } else if (this.str.startsWith("o")) {
-        head = 1;
+        return 1;
       } else if (this.str.startsWith("expr")) {
-        head = 4;
+        return 4;
       }
-      return head;
+      return 0;
     },
   },
 };
 </script>
-
-<style scoped>
-
-</style>
