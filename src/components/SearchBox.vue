@@ -49,16 +49,13 @@
             <span class="text--secondary hash">{{ item.body.IsContract ? 'contract' : 'account' }}</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="getAccountName(item.body) != ''">{{ getAccountName(item.body) }}</span>
-            <span v-else v-html="sanitizeHtml(helpers.shortcut(item.body.Address))"></span>
+            <Shortcut v-else :str="item.body.Address"/>
           </template>
           <template v-else-if="item.type === 'operation'">
             <span class="text--secondary hash">operation</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <template v-if="item.body.Destination.startsWith('KT')">
-              <span
-                v-html="sanitizeHtml(helpers.shortcut(item.body.Destination))"
-                class="text--secondary"
-              ></span>
+              <Shortcut class="text--secondary" :str="item.body.Hash"/>
               <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             </template>
             <span v-if="item.body.Entrypoint" class="hash"
@@ -67,7 +64,7 @@
             <span v-else-if="item.body.Type === 'origination'"
               >origination</span
             >
-            <span v-else v-html="sanitizeHtml(helpers.shortcut(item.Hash))"></span>
+            <Shortcut v-else :str="item.body.Hash"/>
           </template>
           <template v-else-if="item.type === 'bigmapkey'">
             <span class="text--secondary hash">big map {{ item.body.BigMapID }}</span>
@@ -78,16 +75,13 @@
             <span class="text--secondary hash">token</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.Name">{{ item.body.Name }}</span>
-            <span v-else v-html="sanitizeHtml(helpers.shortcut(item.body.TokenID))"></span>
+            <Shortcut v-else :str="item.body.TokenID"/>
           </template>         
           <template v-if="item.type === 'recent'">
             <span class="text--secondary hash">{{ item.body.type }}</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
-            <span
-              v-else-if="item.body.shortcut"
-              v-html="helpers.shortcut(item.body.shortcut)"
-            ></span>
+            <Shortcut v-else-if="item.body.shortcut" :str="item.body.shortcut"/>
             <span v-else>{{ item.value }}</span>
           </template>
         </v-list-item-title>
@@ -162,8 +156,12 @@ import {
 import {SEARCH_TABS} from "../constants/searchTabs";
 import waitUntil from "async-wait-until";
 import sanitizeHtml from 'sanitize-html';
+import Shortcut from '@/components/Shortcut.vue';
 
 export default {
+  components: {
+    Shortcut
+  },
   props: {
     inplace: Boolean,
   },
@@ -254,7 +252,7 @@ export default {
         if (historyItem.type === 'account') {
           historyItem.alias = this.getAccountName(model.body);
           historyItem.second = model.body.Address;
-        } if (historyItem.type === 'bigmapkey') {
+        } else if (historyItem.type === 'bigmapkey') {
           historyItem.second = `In big map ${model.body.BigMapID}`;
         } else if (model.body.Name) {
           historyItem.alias = model.body.Name;
@@ -384,6 +382,8 @@ export default {
       let value = val;
       if (typeof val === 'object' && val.body !== undefined) {
         value = val.body.value;
+      } else {
+        value = value.trim();
       }
 
       try {
@@ -391,8 +391,7 @@ export default {
         this.menuProps = {};
         this.onSearch();
         this._locked = true;
-        this.searchText = this.model ? this.model.name : value ? value.trim() : '';
-        console.log(this.searchText)
+        this.searchText = this.model ? this.model.name : value;
         if (this.searchText) {
           this.fetchSearchDebounced(this.searchText, ++this.seqno);
         } else {
