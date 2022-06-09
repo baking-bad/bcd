@@ -7,6 +7,12 @@ export function openTzktContract(network, contract) {
   window.open(`https://${network === 'mainnet' ? '' : `${network}.`}tzkt.io/${contract.address}`, '_blank');
 }
 
+
+export function openTzktOPG(network, hash) {
+  window.open(`https://${network === 'mainnet' ? '' : `${network}.`}tzkt.io/${hash}`, '_blank');
+}
+
+
 export default class TZKTBlockExplorer extends BlockExplorer {
   constructor() {
     const rpcUrls = {
