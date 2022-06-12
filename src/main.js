@@ -16,6 +16,7 @@ import { BrowserTracing } from "@sentry/tracing";
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { BetterCallApi } from "@/api/bcd.js";
 import { NodeRPC } from "@/api/rpc.js";
+import { Bookmarks } from "@/utils/bookmarks.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
 
@@ -110,6 +111,7 @@ let config = {
 }
 
 let api = new BetterCallApi(config.API_URI);
+let bookmarks = new Bookmarks();
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
 if (isDark) {
@@ -133,7 +135,7 @@ api.getConfig().then(response => {
 
   Vue.mixin({
     data() {
-      return { config, api, rpc, helpers }
+      return { config, api, rpc, helpers, bookmarks }
     }
   });
 
