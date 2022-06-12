@@ -149,14 +149,7 @@
                   <span>{{ alias }}</span>
                 </v-tooltip>
                 <span v-else v-html="sanitizeHtml(helpers.shortcut(address))"></span>&nbsp;
-                <v-btn
-                  icon
-                  target="_blank"
-                  :href="sanitizeHtml(contract.verification_source)"
-                  v-if="contract && contract.verified"
-                >
-                  <v-icon small color="primary">mdi-shield-check</v-icon>
-                </v-btn>
+                
               </v-list-item-title>
               <v-list-item-subtitle>
               <span
@@ -166,6 +159,12 @@
               >
               </v-list-item-subtitle>
             </v-list-item-content>
+            <v-list-item-action>
+                <v-btn icon @click="bookmarkState">
+                  <v-icon color="primary" v-if="isBookmark">mdi-star</v-icon>
+                  <v-icon color="primary" v-else>mdi-star-outline</v-icon>
+                </v-btn>
+            </v-list-item-action>
           </v-list-item>
           <v-list-item>
             <v-list-item-content>
@@ -251,9 +250,10 @@ export default {
     entrypoints: [],
     availableEntrypoints: [],
     operationsChannelName: null,
+    isBookmark: false
   }),
   created() {
-    this.fetchOperations();
+    this.init();
   },
   computed: {
     loading() {
@@ -467,6 +467,7 @@ export default {
       }
     },
     async fetchOperations() {
+
       await this.getOperations(true, true);
       if (this.config.mempool_enabled) {
         this.getMempool();
@@ -476,9 +477,42 @@ export default {
     async updateOperations() {
       await this.getOperations(true, false);
     },
+    init() {
+      this.bookmarks.registerObserver(this.onBookmarkStateChanged);
+      this.detectBookmark();
+      this.fetchOperations();
+    },
+    bookmarkState() {
+      let key = `${this.network}_${this.address}`;
+      if (this.isBookmark) {
+        this.bookmarks.remove(key);
+      } else {
+        this.bookmarks.add(key, {
+          network: this.network,
+          address: this.address,
+          alias: this.contract.alias,          
+        })
+      }
+    },
+    detectBookmark() {
+      let key = `${this.network}_${this.address}`;
+      let bookmarks = this.bookmarks.getAll();
+      this.isBookmark = bookmarks[key] !== undefined;
+    },
+    onBookmarkStateChanged(event, key) {
+      let currentKey = `${this.network}_${this.address}`;
+      if (currentKey !== key) {
+        return;
+      }
+      if (event === 'remove') {
+        this.isBookmark = false;
+      } else {
+        this.isBookmark = true;
+      }
+    }
   },
   watch: {
-    address: "fetchOperations",
+    address: "init",
     status: "updateOperations",
     entrypoints: "updateOperations",
     dates: "updateOperations",

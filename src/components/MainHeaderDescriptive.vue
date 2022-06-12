@@ -29,6 +29,7 @@
     <div class="searchbox-wrapper">
       <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
       <SocialsList class="socials-list ml-3"/>
+      <Bookmarks />
       <ThemeSwitcher />
     </div>
   </header>
@@ -38,10 +39,11 @@
 import SocialsList from "./SocialsList";
 import SearchBox from "./SearchBox";
 import ThemeSwitcher from "./ThemeSwitcher";
+import Bookmarks from "./Bookmarks";
 
 export default {
   name: "MainHeaderDescriptive",
-  components: { ThemeSwitcher, SearchBox, SocialsList},
+  components: { ThemeSwitcher, SearchBox, SocialsList, Bookmarks},
   props: {
     noSearch: Boolean,
   },
