@@ -1,9 +1,9 @@
 <template>
-    <v-menu offset-y>
+    <v-menu offset-y max-height="500">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn class="btn-class" icon v-bind="attrs" v-on="on">
-            <v-icon v-if="keysCount > 0" color="text--secondary">mdi-star</v-icon>
-            <v-icon v-else color="text--secondary">mdi-star-outline</v-icon>
+        <v-btn class="btn-class text--secondary" icon v-bind="attrs" v-on="on">
+            <v-icon v-if="keysCount > 0">mdi-star</v-icon>
+            <v-icon v-else>mdi-star-outline</v-icon>
         </v-btn>
       </template>
       <v-list v-if="keysCount > 0" >
@@ -59,3 +59,10 @@ export default {
   }
 }
 </script>
+
+
+<style scoped>
+.btn-class {
+  width: 2.25rem;
+}
+</style>
