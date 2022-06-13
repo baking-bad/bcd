@@ -212,7 +212,7 @@ export default {
       }
     },
     openInTzkt() {
-      openTzktContract(this.contract);
+      openTzktContract(this.network, this.contract);
     },
     requestSame() {
       if (!this.isContract
