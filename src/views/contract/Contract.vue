@@ -13,49 +13,46 @@
       </v-col>
       <v-col cols="3" class="d-flex justify-end pr-7">
         <div class="d-flex align-center justify-start pa-2 px-4">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                class="mr-2 pl-2 pr-2 text--secondary"
-                outlined
-                small
-                @click="
-                  () => {
-                    $clipboard(address);
-                    showClipboardOK();
-                  }
-                "
-              >
-                <v-icon class="text--secondary" small>mdi-content-copy</v-icon>
-                <span class="ml-1 text--secondary">
-                  Copy address
-                </span>
-              </v-btn>
-            </template>
-            Copy address
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                class="mr-2 pl-2 pr-2 text--secondary"
-                outlined
-                small
-                @click="
-                  () => {
-                    openInTzkt();
-                  }
-                "
-              >
-                <v-icon class="text--secondary" small>mdi-logout-variant</v-icon>
-                <span class="ml-1 text--secondary">
-                  Open in TZKT
-                </span>
-              </v-btn>
-            </template>
-            Open in TZKT
-          </v-tooltip>
+          <v-btn
+            class="mr-2 pl-2 pr-2 text--secondary"
+            outlined
+            small
+            @click="bookmarkState"
+          >
+            <v-icon class="text--secondary" small>{{ isBookmark ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
+            <span class="ml-1 text--secondary">{{ isBookmark ? 'Remove bookmark' : 'Add bookmark' }}</span>
+          </v-btn>
+          <v-btn
+            class="mr-2 pl-2 pr-2 text--secondary"
+            outlined
+            small
+            @click="
+              () => {
+                $clipboard(address);
+                showClipboardOK();
+              }
+            "
+          >
+            <v-icon class="text--secondary" small>mdi-content-copy</v-icon>
+            <span class="ml-1 text--secondary">
+              Copy address
+            </span>
+          </v-btn>
+          <v-btn
+            class="mr-2 pl-2 pr-2 text--secondary"
+            outlined
+            small
+            @click="
+              () => {
+                openInTzkt();
+              }
+            "
+          >
+            <v-icon class="text--secondary" small>mdi-logout-variant</v-icon>
+            <span class="ml-1 text--secondary">
+              Open in TZKT
+            </span>
+          </v-btn>
         </div>
       </v-col>
     </v-row>
@@ -86,6 +83,8 @@
         :migrations="migrations"
         :off-chain-views="offChainViews"
       ></router-view>
+
+      <BookmarkDialog :show="openBookMarkDialog" :alias="contract.alias || ``" @added="onBookmarkAdded"/>
     </VContainer>
   </div>
 </template>
@@ -97,6 +96,7 @@ import {toTitleCase} from "../../utils/string";
 import {shortcutOnly} from "../../utils/tz";
 import MenuToolbar from "./MenuToolbar";
 import Tags from "../../components/Tags";
+import BookmarkDialog from "@/components/BookmarkDialog.vue";
 import {openTzktContract} from "../../utils/tzkt";
 import {DATA_LOADING_STATUSES} from "../../utils/network";
 import {applyStyles} from "../../utils/styles";
@@ -108,6 +108,7 @@ export default {
   components: {
     Tags,
     MenuToolbar,
+    BookmarkDialog
   },
   props: {
     network: String,
@@ -130,6 +131,8 @@ export default {
     migrations: [],
     offChainViews: [],
     offChainViewsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
+    isBookmark: false,
+    openBookMarkDialog: false
   }),
   computed: {
     alias() {
@@ -214,41 +217,6 @@ export default {
     openInTzkt() {
       openTzktContract(this.network, this.contract);
     },
-    requestSame() {
-      if (!this.isContract
-        || this.sameContractsLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
-      ) return;
-      this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
-      this.sameContracts = [];
-      this.sameCount = 0;
-      this.api
-        .getSameContracts(this.network, this.address, 0)
-        .then((res) => {
-          if (!res) return;
-          this.sameContracts = res.contracts;
-          this.sameCount = res.count;
-          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
-        })
-        .catch((err) => {
-          this.showError(err);
-          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
-          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
-        });
-    },
-    getMigrations() {
-      this.migrations = [];
-      this.migrationsLoading = true;
-      this.api
-        .getContractMigrations(this.network, this.address)
-        .then((res) => {
-          if (!res) return;
-          this.migrations = res;
-        })
-        .catch((err) => {
-          this.showError(err);
-        })
-        .finally(() => (this.migrationsLoading = false));
-    },
     handleSearchBoxFocus() {
       const { width } = this.$refs.searchbox.$el.getBoundingClientRect();
       if (width < MIN_SEARCHBOX_WIDTH) {
@@ -264,10 +232,10 @@ export default {
       this.metadata = null;
       this.contract = {};
       if (this.isContract) {
-        this.requestSame();
+        this.bookmarks.registerObserver(this.onBookmarkStateChanged);
+        this.detectBookmark();
         this.getContract();
         this.getTokensTotal();
-        this.getMigrations();
         this.loadViewsSchema()
       }
       this.getInfo();
@@ -357,6 +325,41 @@ export default {
           this.showError(err);
         });
     },
+    bookmarkState() {
+      let key = `${this.network}_${this.address}`;
+      if (this.isBookmark) {
+        this.bookmarks.remove(key);
+      } else {
+        this.openBookMarkDialog = !this.openBookMarkDialog;
+        this.name = this.contract.alias || "";
+        
+      }
+    },
+    detectBookmark() {
+      let key = `${this.network}_${this.address}`;
+      let bookmarks = this.bookmarks.getAll();
+      this.isBookmark = bookmarks[key] !== undefined;
+    },
+    onBookmarkStateChanged(event, key) {
+      let currentKey = `${this.network}_${this.address}`;
+      if (currentKey !== key) {
+        return;
+      }
+      if (event === 'remove') {
+        this.isBookmark = false;
+      } else {
+        this.isBookmark = true;
+      }
+    },
+    onBookmarkAdded(value) {
+      let key = `${this.network}_${this.address}`;
+      this.bookmarks.add(key, {
+        network: this.network,
+        address: this.address,
+        alias: value || this.contract.alias,          
+      })
+      this.openBookMarkDialog = false;
+    }
   },
   watch: {
     address: {

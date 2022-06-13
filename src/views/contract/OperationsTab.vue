@@ -159,12 +159,6 @@
               >
               </v-list-item-subtitle>
             </v-list-item-content>
-            <v-list-item-action>
-                <v-btn icon @click="bookmarkState">
-                  <v-icon color="primary" v-if="isBookmark">mdi-star</v-icon>
-                  <v-icon color="primary" v-else>mdi-star-outline</v-icon>
-                </v-btn>
-            </v-list-item-action>
           </v-list-item>
           <v-list-item>
             <v-list-item-content>
@@ -249,8 +243,7 @@ export default {
     datesModal: false,
     entrypoints: [],
     availableEntrypoints: [],
-    operationsChannelName: null,
-    isBookmark: false
+    operationsChannelName: null
   }),
   created() {
     this.init();
@@ -478,38 +471,8 @@ export default {
       await this.getOperations(true, false);
     },
     init() {
-      this.bookmarks.registerObserver(this.onBookmarkStateChanged);
-      this.detectBookmark();
       this.fetchOperations();
     },
-    bookmarkState() {
-      let key = `${this.network}_${this.address}`;
-      if (this.isBookmark) {
-        this.bookmarks.remove(key);
-      } else {
-        this.bookmarks.add(key, {
-          network: this.network,
-          address: this.address,
-          alias: this.contract.alias,          
-        })
-      }
-    },
-    detectBookmark() {
-      let key = `${this.network}_${this.address}`;
-      let bookmarks = this.bookmarks.getAll();
-      this.isBookmark = bookmarks[key] !== undefined;
-    },
-    onBookmarkStateChanged(event, key) {
-      let currentKey = `${this.network}_${this.address}`;
-      if (currentKey !== key) {
-        return;
-      }
-      if (event === 'remove') {
-        this.isBookmark = false;
-      } else {
-        this.isBookmark = true;
-      }
-    }
   },
   watch: {
     address: "init",
