@@ -84,7 +84,7 @@
         :off-chain-views="offChainViews"
       ></router-view>
 
-      <BookmarkDialog :show="openBookMarkDialog" :alias="contract.alias || ``" @added="onBookmarkAdded"/>
+      <BookmarkDialog v-model="openBookMarkDialog" :alias="contract.alias || ``" @added="onBookmarkAdded"/>
     </VContainer>
   </div>
 </template>

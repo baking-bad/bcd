@@ -1,12 +1,12 @@
 <template>
-    <v-menu offset-y max-height="500">
+    <v-menu offset-y max-height="500" max-width="400">
       <template v-slot:activator="{ on, attrs }">
         <v-btn class="btn-class text--secondary" icon v-bind="attrs" v-on="on">
             <v-icon v-if="keysCount > 0">mdi-star</v-icon>
             <v-icon v-else>mdi-star-outline</v-icon>
         </v-btn>
       </template>
-      <v-list v-if="keysCount > 0" >
+      <v-list v-if="keysCount > 0" class="pa-0 avg-gas-consumption">
         <v-list-item v-for="(item, index) in items" :key="index" :to="`/${item.network}/${item.address}/operations`">
             <v-list-item-content>
                 <v-list-item-title>{{ item.alias || item.address }}</v-list-item-title>
