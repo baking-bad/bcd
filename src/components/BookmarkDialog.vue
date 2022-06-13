@@ -18,7 +18,7 @@
         </v-text-field>
       </v-card-text>
       <v-card-actions class="justify-end px-5">
-        <v-btn color="primary" text @click="add">Add to bookmark</v-btn>
+        <v-btn color="primary" text @click="add">Add bookmark</v-btn>
       </v-card-actions>
     </v-card>
     </v-dialog>
