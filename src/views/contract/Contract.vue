@@ -217,6 +217,41 @@ export default {
     openInTzkt() {
       openTzktContract(this.network, this.contract);
     },
+    requestSame() {
+      if (!this.isContract
+        || this.sameContractsLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
+      ) return;
+      this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+      this.sameContracts = [];
+      this.sameCount = 0;
+      this.api
+        .getSameContracts(this.network, this.address, 0)
+        .then((res) => {
+          if (!res) return;
+          this.sameContracts = res.contracts;
+          this.sameCount = res.count;
+          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
+        })
+        .catch((err) => {
+          this.showError(err);
+          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
+        });
+    },
+    getMigrations() {
+      this.migrations = [];
+      this.migrationsLoading = true;
+      this.api
+        .getContractMigrations(this.network, this.address)
+        .then((res) => {
+          if (!res) return;
+          this.migrations = res;
+        })
+        .catch((err) => {
+          this.showError(err);
+        })
+        .finally(() => (this.migrationsLoading = false));
+    },
     handleSearchBoxFocus() {
       const { width } = this.$refs.searchbox.$el.getBoundingClientRect();
       if (width < MIN_SEARCHBOX_WIDTH) {
@@ -234,9 +269,11 @@ export default {
       if (this.isContract) {
         this.bookmarks.registerObserver(this.onBookmarkStateChanged);
         this.detectBookmark();
+        this.getMigrations();
+        this.requestSame();
         this.getContract();
         this.getTokensTotal();
-        this.loadViewsSchema()
+        this.loadViewsSchema();
       }
       this.getInfo();
       this.getTokenBalancesTotal();
