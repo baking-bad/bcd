@@ -75,7 +75,6 @@
         :address="address"
         :network="network"
         :contract="contract"
-        :tokensTotal="tokensTotal"
         :tokenBalancesTotal="tokenBalancesTotal"
         :metadata="metadata"
         :same-contracts="sameContracts"

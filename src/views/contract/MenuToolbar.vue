@@ -20,12 +20,10 @@
       </v-tab>
       <v-tab
         :to="pushTo({ name: 'tokens' })"
-        :title="tokensTotal"
         replace
-        v-if="isContract && tokensTotal > 0"
+        v-if="isContract"
       >
         <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
-        <span class="ml-1">({{ tokensTotal | numberToCompactSIFormat(1) }})</span>
       </v-tab>
       <v-tab
         :to="pushTo({ name: 'transfers' })"

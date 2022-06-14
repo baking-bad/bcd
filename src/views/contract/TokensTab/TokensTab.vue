@@ -23,7 +23,7 @@
           </template>
         </v-expansion-panel-header>
         <v-expansion-panel-content class="token-content py-4">
-          <v-list-item class="pl-0">
+          <v-list-item class="pl-0" v-if="token.link">
             <v-list-item-content>
               <v-list-item-subtitle class="overline">Token metadata link</v-list-item-subtitle>
               <v-list-item-title class="d-flex align-center">
@@ -81,13 +81,13 @@
 import { mapActions } from "vuex";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import VueJsonPretty from "vue-json-pretty";
+import { DipDupTokenMetadataApi } from "@/api/token_metadata.js";
 
 export default {
   name: "ContractTokensTab",
   props: {
     network: String,
-    address: String,
-    tokensTotal: Number
+    address: String
   },
   components: {
     EmptyState,
@@ -96,8 +96,14 @@ export default {
   data: () => ({
     tokens: [],
     loading: false,
-    downloaded: false
+    downloaded: false,
+    ubisoft: {},
+    domains: {}
   }),
+  created() {
+    this.ubisoft = new DipDupTokenMetadataApi('https://quartz.dipdup.net');
+    this.domains = new DipDupTokenMetadataApi('https://domains.dipdup.net/');
+  },
   methods: {
     ...mapActions(["showError", "hideError"]),
     title(token) {
@@ -114,8 +120,15 @@ export default {
     async getTokens() {
       if (this.loading || this.downloaded) return;
       this.loading = true;
+
+      let api = this.tokenMetadata;
+      if (this.address === 'KT1TnVQhjxeNvLutGvzwZvYtC7vKRpwPWhc6') {
+        api = this.ubisoft;
+      } else if (this.address === 'KT1GBZmSxmnKJXGMdMLbugPfLyUPmuLSMwKS') {
+        api = this.domains;
+      }
       
-      await this.tokenMetadata.get( this.network, this.address, 20, this.tokens.length)
+      await api.get( this.network, this.address, 20, this.tokens.length)
         .then(res => {
           if (!res) {
               this.downloaded = true; // prevent endless polling
