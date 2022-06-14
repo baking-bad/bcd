@@ -106,7 +106,7 @@ export default {
       }
       return `${token.token_id}`;
     },
-    async onDownloadPage(entries, observer, isIntersecting) {
+    async onDownloadPage(_entries, _observer, isIntersecting) {
       if (isIntersecting) {
         await this.getTokens();
       }
