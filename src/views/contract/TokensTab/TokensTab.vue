@@ -1,36 +1,86 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
-    <v-row no-gutters>
-      <v-col cols="8" class="pa-2">
-        <div
-          v-if="selectedToken"
-        >
-          <TokenMetadata :token="selectedToken"/>
-          <TokenHolders class="mt-3" :token="selectedToken" />
-        </div>
-        <v-skeleton-loader
-          v-else
-          :loading="typeof selectedToken !== 'number'"
-          type="image"
-        >
-        </v-skeleton-loader>
-      </v-col>
-      <v-col cols="4" class="pa-2">
-        <TokensList
-          :network="network"
-          :address="address"
-          :tokensTotal="tokensTotal"
-          @selectedToken="updateSelectedToken"
-        />
-      </v-col>
-    </v-row>
+    <EmptyState
+      v-if="tokens.length === 0 && !loading"
+      icon="mdi-code-brackets"
+      title="Nothing found"
+    />
+    <v-expansion-panels v-show="tokens.length > 0" multiple hover flat class="bb-1">
+      <v-expansion-panel v-for="(token) in tokens"
+                  :key="token.token_id"
+                  class="bl-1 br-1 bt-1 token-panel" 
+                  active-class="token-active-panel">
+        <v-expansion-panel-header class="py-0 px-4" :class="token.metadata === null && token.error !== null ? 'item-header-failed' : 'item-header-applied' " ripple :title="title(token)">
+          <template>
+             <v-list-item class="fill-height pa-0">
+                <v-list-item-content>
+                  <v-list-item-title>{{ title(token) }}</v-list-item-title>
+                  <v-list-item-subtitle class="font-weight-light hash text--secondary">
+                    Token ID: {{ token.token_id }}
+                  </v-list-item-subtitle>
+                </v-list-item-content>
+             </v-list-item>
+          </template>
+        </v-expansion-panel-header>
+        <v-expansion-panel-content class="token-content py-4">
+          <v-list-item class="pl-0">
+            <v-list-item-content>
+              <v-list-item-subtitle class="overline">Token metadata link</v-list-item-subtitle>
+              <v-list-item-title class="d-flex align-center">
+                <span>{{ token.link }}</span>
+                <v-tooltip bottom>
+                  <template v-slot:activator="{ on }">
+                    <v-btn
+                      small
+                      v-on="on"
+                      icon
+                      class="mr-2"
+                      @click="
+                        () => {
+                          $clipboard(token.link);
+                          showClipboardOK();
+                        }
+                      "
+                    >
+                      <v-icon small class="text--secondary">mdi-content-copy</v-icon>
+                    </v-btn>
+                  </template>
+                  Copy token link
+                </v-tooltip>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-alert v-if="token.error && token.metadata === null" type="error" prominent text class="ma-0 align-center">
+            <div class="overline">Resolving token metadata error</div>
+            <div class="text--primary"> {{ token.error }}</div>
+          </v-alert>
+          <vue-json-pretty
+            v-if="token.metadata"
+            class="raw-json-viewer py-3"
+            :data="token.metadata"
+            :highlightMouseoverNode="true"
+            :customValueFormatter="formatValue"
+        ></vue-json-pretty>
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+    <v-skeleton-loader
+        v-show="loading"
+        :loading="loading"
+        type="list-item-two-line, list-item-two-line, list-item-two-line"
+      >
+      </v-skeleton-loader>
+      <span
+        v-intersect="onDownloadPage"
+        v-if="!loading && !downloaded"
+      ></span>
   </v-container>
 </template>
 
 <script>
-import TokenMetadata from "@/views/contract/TokensTab/TokenMetadata";
-import TokenHolders from "@/views/contract/TokensTab/TokenHolders";
-import TokensList from "@/views/contract/TokensTab/TokensList";
+import { mapActions } from "vuex";
+import EmptyState from "@/components/Cards/EmptyState.vue";
+import VueJsonPretty from "vue-json-pretty";
 
 export default {
   name: "ContractTokensTab",
@@ -40,18 +90,83 @@ export default {
     tokensTotal: Number
   },
   components: {
-    TokensList,
-    TokenMetadata,
-    TokenHolders
+    EmptyState,
+    VueJsonPretty
   },
   data: () => ({
-    holders: {},
-    selectedToken: null
+    tokens: [],
+    loading: false,
+    downloaded: false
   }),
   methods: {
-    async updateSelectedToken(newVal) {
-      this.selectedToken = newVal;
+    ...mapActions(["showError", "hideError"]),
+    title(token) {
+      if (token.metadata !== null) {
+        return token.metadata.name;
+      }
+      return `${token.token_id}`;
     },
-  }
+    async onDownloadPage(entries, observer, isIntersecting) {
+      if (isIntersecting) {
+        await this.getTokens();
+      }
+    },
+    async getTokens() {
+      if (this.loading || this.downloaded) return;
+      this.loading = true;
+      
+      await this.tokenMetadata.get( this.network, this.address, 20, this.tokens.length)
+        .then(res => {
+          if (!res) {
+              this.downloaded = true; // prevent endless polling
+            } else {
+              this.downloaded = res.length === 0;
+              this.tokens.push(...res);
+            }
+        })
+        .catch((err) => {
+          this.showError(err);
+          this.downloaded = true;
+        })
+        .finally(() => {
+          this.loading = false;
+        });
+    },
+    formatValue(_data, _key, _path, defaultFormatResult) {
+      return defaultFormatResult
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    },
+  },
+  watch: {
+    address: "getTokens",
+  },
 };
 </script>
+
+<style scoped>
+.token-content > .v-expansion-panel-content__wrap {
+  padding: 0;
+}
+
+.token-panel {
+  background-color: var(--v-data-base) !important;
+}
+
+.token-active-panel > .v-expansion-panel-header {
+  opacity: 0.8;
+  background-color: var(--v-border-base) !important;
+}
+
+.token-active-panel,
+.token-panel.v-expansion-panel--next-active {
+  border-bottom: 1px solid var(--v-border-base);
+}
+</style>
+
+<style lang="scss">
+@import '../../../styles/vue-json-pretty.css';
+</style>
