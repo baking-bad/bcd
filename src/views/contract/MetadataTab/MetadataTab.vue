@@ -73,7 +73,7 @@ export default {
       element.click();
       document.body.removeChild(element);
     },
-    formatValue(data, key, path, defaultFormatResult) {
+    formatValue(_data, _key, _path, defaultFormatResult) {
       return defaultFormatResult
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
