@@ -109,7 +109,8 @@ Vue.filter('snakeToCamel', (str) => {
 let config = {
   API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
   HOME_PAGE: 'home',
-  TOKEN_METADATA_API:  process.env.TOKEN_METADATA_API || "https://metadata.dipdup.net"
+  TOKEN_METADATA_API:  process.env.TOKEN_METADATA_API || "https://metadata.dipdup.net",
+  IPFS_NODE: process.env.IPFS_NODE || "https://ipfs.io",
 }
 
 let api = new BetterCallApi(config.API_URI);

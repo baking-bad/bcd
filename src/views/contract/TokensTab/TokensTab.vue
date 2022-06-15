@@ -54,13 +54,36 @@
             <div class="overline">Resolving token metadata error</div>
             <div class="text--primary"> {{ token.error }}</div>
           </v-alert>
-          <vue-json-pretty
-            v-if="token.metadata"
-            class="raw-json-viewer py-3"
-            :data="token.metadata"
-            :highlightMouseoverNode="true"
-            :customValueFormatter="formatValue"
-        ></vue-json-pretty>
+          <v-row v-if="token.metadata">
+            <v-col :cols="token.metadata.thumbnailUri ? 10 : 12">
+              <vue-json-pretty
+                
+                class="raw-json-viewer py-3"
+                :data="token.metadata"
+                :highlightMouseoverNode="true"
+                :customValueFormatter="formatValue"
+            ></vue-json-pretty>
+            </v-col>
+            <v-col cols="2" v-if="token.metadata.thumbnailUri" class="d-flex flex-column align-center justify-start">
+              <v-img :src="getIPFS(token.metadata.thumbnailUri)" sizes="200" alt="Thumbnal" contain max-height="200">
+                <template v-slot:placeholder>
+                  <v-row
+                    class="fill-height ma-0"
+                    align="center"
+                    justify="center"
+                  >
+                    <v-progress-circular
+                      indeterminate
+                      color="text--secondary"
+                    ></v-progress-circular>
+                  </v-row>
+                </template>
+              </v-img>
+              <div class="mt-4">
+                <p class="overline">Image from thumbnail URL</p>
+              </div>
+            </v-col>
+          </v-row>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -111,6 +134,13 @@ export default {
         return token.metadata.name;
       }
       return `${token.token_id}`;
+    },
+    getIPFS(url) {
+      if (!url) {
+        return '';
+      }
+
+      return `${this.config.IPFS_NODE}/ipfs/${url.replace('ipfs://', '')}`
     },
     async onDownloadPage(_entries, _observer, isIntersecting) {
       if (isIntersecting) {
