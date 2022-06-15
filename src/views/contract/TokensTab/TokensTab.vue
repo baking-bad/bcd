@@ -65,22 +65,13 @@
             ></vue-json-pretty>
             </v-col>
             <v-col cols="2" v-if="token.metadata.thumbnailUri" class="d-flex flex-column align-center justify-start">
-              <v-img :src="getIPFS(token.metadata.thumbnailUri)" sizes="200" alt="Thumbnal" contain max-height="200">
-                <template v-slot:placeholder>
-                  <v-row
-                    class="fill-height ma-0"
-                    align="center"
-                    justify="center"
-                  >
-                    <v-progress-circular
-                      indeterminate
-                      color="text--secondary"
-                    ></v-progress-circular>
-                  </v-row>
-                </template>
-              </v-img>
-              <div class="mt-4">
-                <p class="overline">Image from thumbnail URL</p>
+              <span class="overline mt-10" v-if="!token.loaded">Loading thumbnail...</span>
+              <div class="d-flex flex-column align-center justify-start">
+                <v-img @load="loadedImage(token)" :src="getIPFS(token.metadata.thumbnailUri)" sizes="200" alt="Thumbnail" contain eager max-height="200">
+                </v-img>
+                <div class="mt-4" v-if="token.loaded">
+                  <p class="overline">Image from thumbnail URL</p>
+                </div>
               </div>
             </v-col>
           </v-row>
@@ -121,7 +112,7 @@ export default {
     loading: false,
     downloaded: false,
     ubisoft: {},
-    domains: {}
+    domains: {},
   }),
   created() {
     this.ubisoft = new DipDupTokenMetadataApi('https://quartz.dipdup.net');
@@ -141,6 +132,9 @@ export default {
       }
 
       return `${this.config.IPFS_NODE}/ipfs/${url.replace('ipfs://', '')}`
+    },
+    loadedImage(token) {
+      token.loaded = true;
     },
     async onDownloadPage(_entries, _observer, isIntersecting) {
       if (isIntersecting) {
@@ -164,6 +158,7 @@ export default {
               this.downloaded = true; // prevent endless polling
             } else {
               this.downloaded = res.length === 0;
+              res.forEach(x => x.loaded = false);
               this.tokens.push(...res);
             }
         })
