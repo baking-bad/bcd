@@ -109,12 +109,12 @@ export default {
   },
   created() {
     const entrypoint = this.$route.params.entrypoint || this.$route.query.entrypoint;
-    this.getEntrypoints(entrypoint);
     this.api
       .getContract(this.network, this.address)
       .then((contract) => {
         this.contract = contract;
       });
+    this.getEntrypoints(entrypoint);
   },
   destroyed() {
     this.$router.push({path: this.$route.path, query: { ...this.$route.query, entrypoint: undefined }})
