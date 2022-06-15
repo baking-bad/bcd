@@ -333,7 +333,10 @@ export class BetterCallApi {
     if (amount) {
       body.amount = parseInt(amount);
     }
-    let method = source ? "run_operation" : "trace";
+    let method = "trace";
+    if (source && sender === '') {
+      method = 'run_operation';
+    }
 
     return postCancellable(this.api, `/contract/${network}/${address}/entrypoints/${method}`, body)
       .then((res) => {
