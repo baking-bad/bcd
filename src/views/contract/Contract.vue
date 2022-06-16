@@ -185,7 +185,7 @@ export default {
         },
         {
           text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
-          to: `/${this.network}/${this.address}/operations${this.$route.hash !== '#' ? '#' : '##'}`,
+          to: `/${this.network}/${this.address}`,
           disabled: false,
         },
       ];

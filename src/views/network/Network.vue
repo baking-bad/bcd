@@ -37,7 +37,7 @@ export default {
         to: '/',
       }, {
         text: capitalize(this.currentNetwork),
-        to: `/${this.currentNetwork}${this.$route.hash !== '#' ? '#' : '##'}`
+        to: `/${this.currentNetwork}`
       }]
     }
   },
