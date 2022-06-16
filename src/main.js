@@ -13,7 +13,7 @@ import VueMeta from 'vue-meta'
 import * as Sentry from "@sentry/vue";
 import { BrowserTracing } from "@sentry/tracing";
 
-import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
+import { shortcut, shortcutOnly, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { BetterCallApi } from "@/api/bcd.js";
 import { NodeRPC } from "@/api/rpc.js";
 import { Bookmarks } from "@/utils/bookmarks.js";
@@ -133,7 +133,7 @@ api.getConfig().then(response => {
   window.config = config;
 
   let rpc = new NodeRPC(config.rpc_endpoints);
-  let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress, round }
+  let helpers = { shortcut, shortcutOnly, formatDatetime, formatDate, plural, checkAddress, round }
 
   Vue.mixin({
     data() {

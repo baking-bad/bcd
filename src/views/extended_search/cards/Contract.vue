@@ -5,7 +5,7 @@
             <v-list>
                 <v-list-item two-line class="pl-3">
                     <v-list-item-avatar size="50">
-                         <v-icon size="50">mdi-wallet-outline</v-icon>
+                         <v-icon size="50">mdi-code-json</v-icon>
                     </v-list-item-avatar>
                     <v-list-item-content>
                         <v-list-item-title>
@@ -15,6 +15,10 @@
                             <span class="secondary--text overline">{{ item.body.Network }}</span>
                         </v-list-item-subtitle>
                     </v-list-item-content>
+                </v-list-item>
+
+                <v-list-item v-if="info.tags && info.tags.length > 0">
+                    <Tags :tags="info.tags"/>
                 </v-list-item>
 
                 <v-list-item two-line v-if="alias">
@@ -28,13 +32,13 @@
                     </v-list-item-content>
                 </v-list-item>
 
-                <v-list-item two-line>
+                <v-list-item two-line v-if="info.manager">
                     <v-list-item-content>
                         <v-list-item-title>
-                            <span class="overline">Balance</span>
+                            <span class="overline">Deployed by</span>
                         </v-list-item-title>
                         <v-list-item-subtitle>
-                            <span class="hash">{{ info.balance | uxtz }}</span>
+                            <span class="hash">{{ info.manager }}</span>
                         </v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
@@ -42,10 +46,10 @@
                 <v-list-item two-line>
                     <v-list-item-content>
                         <v-list-item-title>
-                            <span class="overline">Operations count</span>
+                            <span class="overline">Deployed</span>
                         </v-list-item-title>
                         <v-list-item-subtitle>
-                            <span class="hash">{{ info.tx_count }}</span>
+                            <span class="hash">{{ info.timestamp | fromNow }}</span>
                         </v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>
@@ -64,17 +68,22 @@
         </v-card-text>
         <v-card-actions class="pl-8 mb-4">
             <v-btn color="primary" outlined small :to="`/${item.body.Network}/${info.address}`">
-                Account page
+                Contract page
             </v-btn>
         </v-card-actions>
     </v-card>
 </template>
 
 <script>
+import Tags from "@/components/Tags";
+
 export default {
-    name: "AccountCard",
+    name: "ContractCard",
     props: {
         item: Object
+    },
+    components: {
+        Tags
     },
     data: () => ({
         loading: false,
@@ -90,20 +99,31 @@ export default {
         }
     },
     created() {
-        this.getAccountInfo();
+        this.getContract();
     },
     methods: {
-        getAccountInfo() {
+        getContract() {
             if (this.loading) return;
             this.loading = true;
 
-            this.api.getAccountInfo(this.item.body.Network, this.item.body.Address)
-            .then(account => {
-                this.info = account;
-            })
-            .catch(err => console.log(err))
-            .finally(() => this.loading = false);
+            this.api.getContract(this.item.body.Network, this.item.body.Address)
+                .then(contract => {
+                    this.info = contract;
+                })
+                .catch(err => console.log(err))
+                .finally(() => this.loading = false);
         },
+    },
+    watch: {
+        item: {
+            deep: true,
+            immediate: true,
+            async handler(newVal) {
+                if (newVal) {
+                    await this.getContract();
+                }
+            }
+        }
     }
 }
 </script>

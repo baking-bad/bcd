@@ -16,8 +16,9 @@
                 <span v-else class="hash">{{ item.body.Address }}</span>
             </router-link>
             </v-list-item-title>
-            <v-list-item-subtitle v-if="alias">
-                <span class="hash">{{item.body.Address}}</span>
+            <v-list-item-subtitle>
+                <span class="hash" :class="item.body.Network === 'mainnet' ? 'secondary--text' : ''">{{ item.body.Network }}</span>
+                <span class="hash" v-if="alias"> | {{item.body.Address}}</span>
             </v-list-item-subtitle>
         </v-list-item-content>
       </v-list-item>

@@ -7,9 +7,7 @@
           divider="/"
           :items="breadcrumbsItems"
         />
-        <Tags
-          :contract="contract"
-        />
+        <Tags :tags="contract.tags"/>
       </v-col>
       <v-col cols="3" class="d-flex justify-end pr-7">
         <div class="d-flex align-center justify-start pa-2 px-4">

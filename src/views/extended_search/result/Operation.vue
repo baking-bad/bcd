@@ -8,7 +8,7 @@
                         <span class="text--secondary" style="font-size: 20px;"> → </span>
                         <template v-if="item.body.Destination.startsWith('KT')">
                             <router-link class="serp-link" target="_blank" :to="`/${item.body.Network}/${item.body.Destination}`">
-                            <span v-html="helpers.shortcut(item.body.Destination)" class="text--secondary"></span>
+                                <span v-html="helpers.shortcut(item.body.Destination)" class="text--secondary"></span>
                             </router-link>
                             <span class="text--secondary" style="font-size: 20px;"> → </span>
                         </template>

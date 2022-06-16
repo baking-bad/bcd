@@ -10,7 +10,7 @@
                         </router-link>
                         <span class="text--secondary" style="font-size: 20px;"> → </span>
                         <router-link class="serp-link" target="_blank"
-                            :to="`/${item.body.network}/big_map/${item.body.BigMapID}/${item.body.KeyHash}`">
+                            :to="`/${item.body.Network}/big_map/${item.body.BigMapID}/${item.body.KeyHash}`">
                             <span class="hash" v-html="highlight(item.body.KeyHash)"></span>
                         </router-link>
                     </v-list-item-title>

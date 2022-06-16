@@ -33,7 +33,7 @@
         </v-row>
       </div>
       <template v-slot:extension>
-        <v-tabs v-model="tab" style="margin-left: 228px;">
+        <v-tabs v-model="tab" class="ml-10">
           <v-tab>
             <v-icon left small>mdi-auto-fix</v-icon>Everywhere
           </v-tab>
@@ -53,32 +53,41 @@
       </template>
     </v-app-bar>
 
-    <v-container fluid class="canvas fill-canvas pa-8">
-      <div style="width: 800px; margin-left: 228px">
-        <template v-if="total > 0">
-          <v-overlay :value="loading" color="data" style="z-index:4" absolute></v-overlay>
-          <span
-            class="text--secondary caption ml-4"
-          >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
-          <template v-for="(item, idx) in suggests">
-            <Account   :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'account'"/>
-            <BigMapKey :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'bigmapkey'"/>
-            <Operation :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'operation'"/>
-            <Token     :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'token'"/>
+    <v-container fluid class="canvas fill-canvas px-10 pt-8">
+      <v-row>
+        <v-col cols="8" class="pl-8">
+          <template v-if="total > 0">
+            <v-overlay :value="loading" color="data" style="z-index:4" absolute></v-overlay>
+            <span
+              class="text--secondary caption ml-4"
+            >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
+            <template v-for="(item, idx) in suggests">
+              <Account   :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'account'"/>
+              <BigMapKey :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'bigmapkey'"/>
+              <Operation :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'operation'"/>
+              <Token     :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'token'"/>
+            </template>
+            <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
           </template>
-          <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
-        </template>
-        <template v-else-if="!cold">
-          <EmptyState
-            icon="mdi-code-brackets"
-            title="Nothing found"
-            text="Empty set is also a result, otherwise try a broader query"
-          />
-        </template>
-        <v-overlay v-else-if="loading" :value="cold" color="data" absolute>
-          <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
-        </v-overlay>
-      </div>
+          <template v-else-if="!cold">
+            <EmptyState
+              icon="mdi-code-brackets"
+              title="Nothing found"
+              text="Empty set is also a result, otherwise try a broader query"
+            />
+          </template>        
+          <v-overlay v-else-if="loading" :value="cold" color="data" absolute>
+            <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
+          </v-overlay>
+        </v-col>
+        <v-col cols="4" v-if="first" class="pt-10 mt-2 pr-8">
+          <AccountCard   :item="first" v-if="first.type === 'account' && !first.body.IsContract"/>
+          <ContractCard  :item="first" v-if="first.type === 'account' && first.body.IsContract"/>
+          <BigMapKeyCard :item="first" v-if="first.type === 'bigmapkey'"/>
+          <OperationCard :item="first" v-if="first.type === 'operation'"/>
+          <TokenCard     :item="first" v-if="first.type === 'token'"/>
+        </v-col>
+      </v-row>
     </v-container>
   </div>
 </template>
@@ -91,14 +100,24 @@ import Account from "./result/Account.vue";
 import BigMapKey from "./result/BigMapKey.vue";
 import Operation from "./result/Operation.vue";
 import Token from "./result/Token.vue";
+import AccountCard from "./cards/Account.vue";
+import ContractCard from "./cards/Contract.vue";
+import BigMapKeyCard from "./cards/BigMapKey.vue";
+import OperationCard from "./cards/Operation.vue";
+import TokenCard from "./cards/Token.vue";
 
 export default {
   name: "ExtendedSearch",
   components: {
     Account,
+    AccountCard,
+    ContractCard,
     BigMapKey,
+    BigMapKeyCard,
     Operation,
+    OperationCard,
     Token,
+    TokenCard,
     EmptyState,
   },
   data: () => ({
@@ -129,6 +148,12 @@ export default {
       }
       return ["accounts", "operations", "big-maps", "tokens"];
     },
+    first() {
+      if (this.suggests.length > 0) {
+        return this.suggests[0];
+      }
+      return undefined;
+    }
   },
   mounted() {
     this.networks = [...this.config.networks.keys()];
