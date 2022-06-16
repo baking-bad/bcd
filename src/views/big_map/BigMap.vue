@@ -20,14 +20,6 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-subtitle class="overline">Active / total keys</v-list-item-subtitle>
-              <v-list-item-title class="body-2">
-                <span>{{ bigmap.active_keys }} / {{ bigmap.total_keys }}</span>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
           <v-list-item v-if="!isNaN(totalBytes)">
             <v-list-item-content>
               <v-list-item-subtitle class="overline">Total size</v-list-item-subtitle>
@@ -36,55 +28,32 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item>
+            <v-list-item-content>
+              <v-list-item-subtitle class="overline">Active / total keys</v-list-item-subtitle>
+              <v-list-item-title class="body-2">
+                <span>{{ bigmap.active_keys }} / {{ bigmap.total_keys }}</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item v-if="bigmap.typedef">
+            <v-list-item-content>
+              <v-list-item-subtitle class="overline">Type</v-list-item-subtitle>
+              <v-list-item-title>
+                <TypeDef
+                  :typedef="bigmap.typedef"
+                  :first="bigMapName"
+                  style="opacity: 1"
+                />
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
-        <v-list class="bigmap-sidebar-list mt-2">
-            <template v-for="(item, idx) in actions">
-              <v-divider v-if="idx > 0" :key="'divider' + idx"></v-divider>
-              <v-list-item :key="idx">
-                <v-list-item-content>
-                  <v-list-item-title class="hash">
-                    <span class="mr-2">{{ item.action }}</span>
-                    <template v-if="item.action == 'copy'">
-                        <span
-                          class="text--secondary font-weight-light"
-                          v-if="item.destination_ptr"
-                        >to</span>
-                      <span
-                        class="text--secondary font-weight-light"
-                        v-else-if="item.source_ptr"
-                      >from</span>
-                    </template>
-                  </v-list-item-title>
-                  <v-list-item-subtitle>
-                    <span class="overline">{{ helpers.formatDatetime(item.timestamp) }}</span>
-                  </v-list-item-subtitle>
-                </v-list-item-content>
-                <v-list-item-action>
-                  <v-list-item-action-text v-if="item.action == 'copy'">
-                    <v-btn
-                      :to="`/${network}/big_map/${item.destination_ptr}`"
-                      class="text--primary"
-                      text
-                      small
-                      v-if="item.destination_ptr"
-                    >
-                      <v-icon small class="mr-1 text--secondary">mdi-link-variant</v-icon>
-                      Big Map {{ item.destination_ptr }}
-                    </v-btn>
-                    <v-btn
-                      :to="`/${network}/big_map/${item.source_ptr}`"
-                      class="text--primary"
-                      text
-                      small
-                      v-else-if="item.source_ptr"
-                    >
-                      <v-icon small class="mr-1 text--secondary">mdi-link-variant</v-icon>
-                      Big Map {{ item.source_ptr }}
-                    </v-btn>
-                  </v-list-item-action-text>
-                </v-list-item-action>
-              </v-list-item>
-            </template>
+        <v-list class="bigmap-sidebar-list mt-2" v-if="actions.length > 0">
+          <div v-for="(item, idx) in actions" :key="idx">
+            <v-divider v-if="idx > 0"></v-divider>
+            <BigMapAction :item="item"/>
+          </div>
           </v-list>
       </v-col>
     </v-row>
@@ -94,12 +63,18 @@
 <script>
 import { mapActions } from "vuex";
 import {shortcutOnly} from "../../utils/tz";
+import BigMapAction from '@/views/big_map/BigMapAction.vue';
+import TypeDef from "@/views/contract/TypeDef.vue";
 
 export default {
   name: "BigMap",
   props: {
     network: String,
     ptr: String,
+  },
+  components: {
+    BigMapAction,
+    TypeDef
   },
   computed: {
     keyhash() {
@@ -111,6 +86,12 @@ export default {
     address() {
       return this.bigmap.address;
     },
+    bigMapName() {
+      if (this.bigmap.typedef && this.bigmap.typedef[0]) {
+        return this.bigmap.typedef[0].name || 'bigmap'
+      }
+      return 'bigmap';
+    }
   },
   data: () => ({
     bigmap: {},
@@ -143,7 +124,6 @@ export default {
       this.api
         .getContractBigMapActions(this.network, this.ptr)
         .then((res) => {
-          console.log('res: ', res);
           if (!res) return;
           if (!res.items) return;
           this.actions = res.items;

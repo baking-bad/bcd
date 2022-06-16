@@ -17,6 +17,7 @@ import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAd
 import { BetterCallApi } from "@/api/bcd.js";
 import { NodeRPC } from "@/api/rpc.js";
 import { Bookmarks } from "@/utils/bookmarks.js";
+import { SearchService } from "@/api/search.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
 
@@ -107,11 +108,13 @@ Vue.filter('snakeToCamel', (str) => {
 
 let config = {
   API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
-  HOME_PAGE: 'home'
+  HOME_PAGE: 'home',
+  SEARCH_SERVICE_URI: process.env.SEARCH_SERVICE_URI || 'https://search.dipdup.net'
 }
 
 let api = new BetterCallApi(config.API_URI);
 let bookmarks = new Bookmarks();
+let searchService = new SearchService(config.SEARCH_SERVICE_URI);
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
 if (isDark) {
@@ -135,7 +138,7 @@ api.getConfig().then(response => {
 
   Vue.mixin({
     data() {
-      return { config, api, rpc, helpers, bookmarks }
+      return { config, api, rpc, helpers, bookmarks, searchService }
     }
   });
 
