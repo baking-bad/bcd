@@ -17,6 +17,7 @@ import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAd
 import { BetterCallApi } from "@/api/bcd.js";
 import { NodeRPC } from "@/api/rpc.js";
 import { Bookmarks } from "@/utils/bookmarks.js";
+import { SearchService } from "@/api/search.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
 
@@ -112,6 +113,7 @@ let config = {
 
 let api = new BetterCallApi(config.API_URI);
 let bookmarks = new Bookmarks();
+let searchService = new SearchService(process.env.SEARCH_SERVICE_URI || 'https://search.dipdup.net')
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
 if (isDark) {
@@ -135,7 +137,7 @@ api.getConfig().then(response => {
 
   Vue.mixin({
     data() {
-      return { config, api, rpc, helpers, bookmarks }
+      return { config, api, rpc, helpers, bookmarks, searchService }
     }
   });
 

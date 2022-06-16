@@ -2,21 +2,35 @@
   <div class="fill-height canvas">
     <v-app-bar extended fixed app flat class="search-bar px-4" style="margin-top: var(--main-header-weight);" height="75">
       <div style="width: 100%;" class="mt-4 ml-8">
-        <v-combobox
-          rounded
-          :search-input.sync="searchText"
-          prepend-inner-icon="mdi-magnify"
-          placeholder="Search anything"
-          autocomplete="off"
-          background-color="data"
-          no-filter
-          append-icon
-          clearable
-          hide-selected
-          hide-details
-          outlined
-          full-width
-        ></v-combobox>
+        <v-row>
+          <v-col cols="9">
+            <v-combobox
+              rounded
+              :search-input.sync="searchText"
+              prepend-inner-icon="mdi-magnify"
+              placeholder="Search anything"
+              autocomplete="off"
+              background-color="data"
+              no-filter
+              append-icon
+              clearable
+              hide-selected
+              hide-details
+              outlined
+            ></v-combobox>
+          </v-col>
+          <v-col cols="3" class="d-flex justify-end pt-4">
+            <v-chip-group
+              v-model="networks"
+              column
+              multiple
+              mandatory
+              active-class="secondary--text"
+            >
+              <v-chip filter outlined v-for="(net) in config.networks" :key="net">{{ net }}</v-chip>
+            </v-chip-group>
+          </v-col>
+        </v-row>
       </div>
       <template v-slot:extension>
         <v-tabs v-model="tab" style="margin-left: 228px;">
@@ -24,7 +38,7 @@
             <v-icon left small>mdi-auto-fix</v-icon>Everywhere
           </v-tab>
           <v-tab>
-            <v-icon left small>mdi-code-braces</v-icon>Contracts
+            <v-icon left small>mdi-wallet-outline</v-icon>Accounts
           </v-tab>
           <v-tab>
             <v-icon left small>mdi-swap-horizontal</v-icon>Operations
@@ -35,20 +49,6 @@
           <v-tab>
             <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
           </v-tab>
-          <v-tab>
-            <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
-          </v-tab>
-          <div class="d-flex ml-8" style="margin-top: 6px;">
-            <v-btn
-              v-model="showFilters"
-              :depressed="showFilters"
-              @click="showFilters = !showFilters"
-              text
-              class="text--secondary"
-            >
-              <v-icon small class="mr-1">mdi-filter-outline</v-icon>Filters
-            </v-btn>
-          </div>
         </v-tabs>
       </template>
     </v-app-bar>
@@ -61,31 +61,12 @@
             class="text--secondary caption ml-4"
           >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
           <template v-for="(item, idx) in suggests">
-            <ResultItem
-              :key="idx"
-              :item="item"
-              :words="getSearchWords()"
-              :tab="tab"
-            />
+            <Account   :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'account'"/>
+            <BigMapKey :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'bigmapkey'"/>
+            <Operation :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'operation'"/>
+            <Token     :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'token'"/>
           </template>
           <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
-        </template>
-        <template v-else-if="searchText == null || searchText.length < 3">
-          <v-card flat outlined class="mt-8 pa-8 data">
-            <div class="d-flex flex-row justify-start align-center">
-              <v-icon size="50">mdi-sort-ascending</v-icon>
-              <span class="display-1 ml-5">Ranking Factors</span>
-            </div>
-            <div class="d-flex flex-row mt-5">
-              <div class="d-flex flex-column mr-5" v-for="(values, key) in help" :key="key">
-                <span class="title text-capitalize">{{ key }}</span>
-                <span v-for="(value, i) in values" :key="'help' + key + i" class="mt-1">
-                  <span class="overline">{{ value[0] }}</span>
-                  <span class="body-2 ml-1">{{ value[1] }}</span>
-                </span>
-              </div>
-            </div>
-          </v-card>
         </template>
         <template v-else-if="!cold">
           <EmptyState
@@ -98,23 +79,26 @@
           <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
         </v-overlay>
       </div>
-      <SearchFilters :show="showFilters" :filters="filters" />
     </v-container>
   </div>
 </template>
 
 <script>
 import { mapActions } from "vuex";
-import SearchFilters from "@/views/extended_search/SearchFilters.vue";
-import ResultItem from "@/views/extended_search/ResultItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import {SEARCH_TABS} from "../../constants/searchTabs";
+import Account from "./result/Account.vue";
+import BigMapKey from "./result/BigMapKey.vue";
+import Operation from "./result/Operation.vue";
+import Token from "./result/Token.vue";
 
 export default {
   name: "ExtendedSearch",
   components: {
-    SearchFilters,
-    ResultItem,
+    Account,
+    BigMapKey,
+    Operation,
+    Token,
     EmptyState,
   },
   data: () => ({
@@ -127,98 +111,27 @@ export default {
     initializing: true,
     completed: false,
     tab: 0,
-    showFilters: false,
-    timeItems: [
-      {
-        name: "Any time",
-        value: 0,
-      },
-      {
-        name: "Last hour",
-        value: 1,
-      },
-      {
-        name: "Last 24 hours",
-        value: 2,
-      },
-      {
-        name: "Last week",
-        value: 3,
-      },
-      {
-        name: "Last month",
-        value: 4,
-      },
-      {
-        name: "Last year",
-        value: 5,
-      },
-    ],
-    filters: {
-      startTime: 0,
-      networks: [],
-    },
     _timerId: null,
     _locked: false,
+    networks: [],
     seqno: 0,
-    help: {
-      contracts: [
-        ["alias", "known contract name"],
-        ["tags", "derived from the code"],
-        ["entrypoints", ""],
-        ["fail_strings", "custom error messages"],
-        ["annotations", ""],
-        ["delegate", "address"],
-        ["hardcoded", "strings inside the code section"],
-        ["manager", "[deployer] address"],
-        ["address"],
-      ],
-      operations: [
-        ["entrypoint", ""],
-        ["parameter_strings", ""],
-        ["storage_strings", ""],
-        ["error.with", "error message [if failed]"],
-        ["error.id", "if failed"],
-        ["hash", "of the operation group"],
-        ["source", ""],
-        ["source_alias", ""],
-      ],
-      "big maps": [
-        ["key_strings", ""],
-        ["value_strings", ""],
-        ["key_hash", ""],
-        ["address", "of the owner contract"],
-      ],
-      tokens: [
-        ["name", ""],
-        ["symbol", ""],
-        ["contract", "contract which created token"],
-      ],
-      metadata: [
-        ["name", ""],
-        ["authors", ""],
-        ["description", ""],
-        ["homepage", ""],
-      ],
-    },
   }),
   computed: {
     indices() {
       if (this.tab == 1) {
-        return ["contract"];
+        return ["accounts"];
       } else if (this.tab == 2) {
-        return ["operation"];
+        return ["operations"];
       } else if (this.tab == 3) {
-        return ["bigmapdiff"];
+        return ["big-maps"];
       } else if (this.tab == 4) {
-        return ["token_metadata"];
-      } else if (this.tab == 5) {
-        return ["tzip"];
+        return ["tokens"];
       }
-      return [];
+      return ["accounts", "operations", "big-maps", "tokens"];
     },
   },
   mounted() {
+    this.networks = [...this.config.networks.keys()];
     this.$nextTick(() => {
       this.initializing = false;
       this.searchText = this.$route.query.text;
@@ -242,14 +155,19 @@ export default {
       // cancel pending call
       clearTimeout(this._timerId);
 
-      const indices = this.indices;
-      const networks = this.filters.networks;
-      const time = { s: this.filters.startTime };
       const offset = push ? this.suggests.length : 0;
+      let networks = [];
+      this.networks.forEach(x => {
+        networks.push(this.config.networks[x]);
+      });
+      let filters = {
+        network: networks,
+        index: this.indices
+      } 
 
       this._timerId = setTimeout(() => {
-        this.api
-          .search(text, indices, offset, networks, time, 1)
+        this.searchService
+          .search(text, filters, 10, offset)
           .then((res) => {
             if (seqno !== this.seqno || !res) return;
 
@@ -261,13 +179,13 @@ export default {
               }
             }
 
-            this.total = res.count;
+            this.total = res.total;
             this.completed =
               res.items.length == 0 ||
               (this.total == 1 &&
                 this.suggests.length == 1 &&
                 this.suggests[0].body.mempool);
-            this.elasticTime = res.time;
+            this.elasticTime = res.took;
 
             if (text !== this.$route.query.text) {
               const query = { ...this.$route.query, text };
@@ -323,7 +241,7 @@ export default {
       if (this.initializing) return;
       this.fetchSearchDebounced(this.searchText, ++this.seqno);
     },
-    filters: {
+    networks: {
       deep: true,
       handler: function () {
         if (this.initializing) return;
