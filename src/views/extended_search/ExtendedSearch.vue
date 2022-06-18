@@ -206,7 +206,7 @@ export default {
 
             this.total = res.total;
             this.completed =
-              res.items.length == 0 ||
+              res.items.length != 10 ||
               (this.total == 1 &&
                 this.suggests.length == 1 &&
                 this.suggests[0].body.mempool);
