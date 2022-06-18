@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="showResultOPG" width="1200" persistent scrollable @keydown.esc="showResult = false">
+  <v-dialog v-model="show" width="1200" scrollable :close-delay="1000" ref="opgDialog">
     <v-card flat outlined>
       <v-card-title class="sidebar d-flex justify-center pa-4">
         <span class="body-1 font-weight-medium text-uppercase text--secondary">Simulation result</span>
@@ -18,7 +18,7 @@
           <span class="hash" style="font-size: 14px; line-height: 14px;">{{ storageLimit }}</span>
         </div>
         <v-spacer></v-spacer>
-        <v-btn icon small @click="showResultOPG = false">
+        <v-btn icon small @click="show = false">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -35,29 +35,32 @@
 
 <script>
 import InternalOperation from "@/components/InternalOperation";
+
 export default {
 name: "SchemaResultOPG",
   components: {
     InternalOperation
   },
   props: {
-    showResult: Boolean,
+    value: Boolean,
     simulatedOperation: Object,
     settings: Object,
     gasLimit: Number,
     storageLimit: Number,
   },
-  watch: {
-    showResult(val) {
-      this.showResultOPG = val;
-    },
-    showResultOPG(val) {
-      this.$emit('resultOPGchange', val)
-    },
+  computed: {
+    show: {
+      get() {
+        return this.value;
+      },
+      set(value) {
+        this.$emit('input', value);
+      }
+    }
   },
-  data() {
-    return {
-      showResultOPG: false,
+  updated() {
+    if (this.value) {
+      this.$refs.opgDialog.show();
     }
   }
 }

@@ -9,7 +9,6 @@
             color="accent"
             v-bind="attrs"
             v-on="on"
-            @click="$emit('executeClick')"
         >
           <span>Execute</span>
           <v-icon small class="ml-1">mdi-creation</v-icon>

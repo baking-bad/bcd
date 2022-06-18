@@ -46,12 +46,11 @@
       </v-card-text>
     </v-card>
     <SchemaResultOPG
-      :showResult="showResultOPG"
+      v-model="showResultOPG"
       :simulated-operation="simulatedOperation"
       :settings="settings"
       :gas-limit="gasLimit"
       :storage-limit="storageLimit"
-      @resultOPGchange="setResultOPG"
     />
     <SchemaCmdLine
       :showCmd="showCmdline"
@@ -216,9 +215,6 @@ export default {
     },
     setSettings({key, val}) {
       Vue.set(this.settings, key, val);
-    },
-    setResultOPG(val) {
-      this.showResultOPG = val;
     },
     setCmdline(val) {
       this.showCmdline = val;
@@ -451,7 +447,7 @@ export default {
             if (res.length > 1) {
               this.simulatedOperation.internal_operations = res.slice(1);
             }
-            this.setResultOPG(true);
+            this.showResultOPG = true;
           }
         })
         .catch((err) => {
