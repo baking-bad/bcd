@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" width="800" scrollable ref="cmdLineDialog">
+  <v-dialog v-model="show" width="800" scrollable ref="cmdLineDialog" :retain-focus="false">
     <v-card flat outlined>
       <v-card-title class="sidebar d-flex justify-center py-2">
         <span class="body-1 font-weight-medium text-uppercase text--secondary">Tezos-client</span>
