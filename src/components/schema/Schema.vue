@@ -671,6 +671,11 @@ export default {
             this.show = true;
           });
       } else {
+            if (newValue !== "latest") {
+              this.show = true;
+              this.model = {};
+              return;
+            }
         this.api
           .getContractEntrypointSchema(
             this.network,
@@ -684,12 +689,11 @@ export default {
             this.show = true;
           })
           .catch((err) => {
-            if (newValue === "latest") {
+              if (err) {
+                console.log(err);
+              }
               this.showError('This contract most likely has not been called yet.');
-              this.show = false;
-            } else {
-              this.showError(err);
-            }
+              this.show = true;
           });
       }
     },
