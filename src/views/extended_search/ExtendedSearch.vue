@@ -3,7 +3,7 @@
     <v-app-bar extended fixed app flat class="search-bar px-4" style="margin-top: var(--main-header-weight);" height="75">
       <div style="width: 100%;" class="mt-4 ml-8">
         <v-row>
-          <v-col cols="9">
+          <v-col cols="8">
             <v-combobox
               rounded
               :search-input.sync="searchText"
@@ -19,7 +19,7 @@
               outlined
             ></v-combobox>
           </v-col>
-          <v-col cols="3" class="d-flex justify-end pt-4">
+          <v-col cols="4" class="d-flex justify-end pt-4">
             <v-chip-group
               v-model="networks"
               column
@@ -54,7 +54,7 @@
     </v-app-bar>
 
     <v-container fluid class="canvas fill-canvas px-10 pt-8">
-      <v-row>
+      <v-row v-if="completed || loading">
         <v-col cols="8" class="pl-8">
           <template v-if="total > 0">
             <v-overlay :value="loading" color="data" style="z-index:4" absolute></v-overlay>
@@ -88,6 +88,7 @@
           <TokenCard     :item="first" v-if="first.type === 'token'"/>
         </v-col>
       </v-row>
+      <StartSearchState v-else/>
     </v-container>
   </div>
 </template>
@@ -95,6 +96,7 @@
 <script>
 import { mapActions } from "vuex";
 import EmptyState from "@/components/Cards/EmptyState.vue";
+import StartSearchState from "./StartSearchState.vue";
 import {SEARCH_TABS} from "../../constants/searchTabs";
 import Account from "./result/Account.vue";
 import BigMapKey from "./result/BigMapKey.vue";
@@ -119,6 +121,7 @@ export default {
     Token,
     TokenCard,
     EmptyState,
+    StartSearchState
   },
   data: () => ({
     suggests: [],
