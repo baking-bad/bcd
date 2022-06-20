@@ -54,10 +54,9 @@
       @resultOPGchange="setResultOPG"
     />
     <SchemaCmdLine
-      :showCmd="showCmdline"
+      v-model="showCmdline"
       :tezos-client-cmdline="tezosClientCmdline"
       :show-clipboard-ok="showClipboardOK"
-      @cmdLineChange="setCmdline"
     />
     <RawJsonViewer
       :show.sync="showRawJSON"
@@ -219,9 +218,6 @@ export default {
     },
     setResultOPG(val) {
       this.showResultOPG = val;
-    },
-    setCmdline(val) {
-      this.showCmdline = val;
     },
     fireEvent(action, category) {
       if (this.$gtag) {
@@ -422,7 +418,7 @@ export default {
             const src = this.settings.source || "%YOUR_ADDRESS%";
             const entrypoint = this.name;
             this.tezosClientCmdline = `transfer ${amount} from ${src} to ${this.address} --entrypoint "${entrypoint}" --arg "${arg}"`;
-            this.setCmdline(show);
+            this.showCmdline = show;
           }
           return resJSON;
         })
