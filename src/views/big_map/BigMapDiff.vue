@@ -6,7 +6,7 @@
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title class="hash">
-                <span>{{ key_hash }}</span>
+                <span>{{ name || key_hash }}</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
@@ -32,7 +32,7 @@
                 <v-list-item-subtitle class="overline">Key hash</v-list-item-subtitle>
                 <v-list-item-title class="d-flex align-center">
                   <span>
-                    {{ shortcutOnly(key_hash) }}
+                    {{ key_hash }}
                   </span>
                   <v-tooltip bottom>
                     <template v-slot:activator="{ on }">
@@ -120,6 +120,7 @@ export default {
   props: {
     ptr: String,
     key_hash: String,
+    name: String,
     network: String,
     address: String,
     is_active: Boolean,

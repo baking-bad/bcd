@@ -44,6 +44,7 @@
             :address="address" 
             :ptr="ptr" 
             :key_hash="diff.body.KeyHash" 
+            :name="diff.body.Name"
             :is_active="diff.body.IsActive"
             :timestamp="diff.body['@timestamp']"
             v-for="(diff, idx) in bigmap" 
