@@ -24,7 +24,7 @@
           <v-col cols="12"><v-divider/></v-col>
           <v-col>
             <span class="overline">Optional settings</span>
-            <v-text-field v-model="burnCap" label="Burn cap" class="mt-4" type="numeric" hide-details dense outlined/>
+            <v-text-field v-model="burnCap" label="Burn cap" class="mt-4" type="numeric" :rules="rules" @keypress="isNumber($event)" dense outlined/>
             <v-checkbox v-model="dryRun" color="primary" label="Dry run"></v-checkbox>
           </v-col>
         </v-row>
@@ -59,7 +59,7 @@ export default {
         data += '--dry-run '
       }
       if (this.burnCap > 0) {
-        data += `--burn-cap ${this.burnCap}`
+        data += `--burn-cap ${this.burnCap.replace(/^0+(?!\.|$)/, '')}`
       }
       return data;
     }
@@ -73,9 +73,23 @@ export default {
   data() {
     return {
       dryRun: false,
-      burnCap: 0,
-      once: false
+      burnCap: '0',
+      once: false,
+      rules: [
+        v => /^\d+(\.\d+)?$/.test(v) || "The value must be a float number"
+      ]
     }
   },
+  methods: {
+    isNumber(evt) {
+      evt = (evt) ? evt : window.event;
+      var charCode = (evt.which) ? evt.which : evt.keyCode;
+      if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {
+        evt.preventDefault();
+      } else {
+        return true;
+      }
+    }
+  }
 }
 </script>
