@@ -6,7 +6,7 @@ export class SearchService {
     constructor(baseURL) {
         this.api = axios.create({
             baseURL: baseURL,
-            timeout: 10000,
+            timeout: 30000,
             responseType: 'json'
         });
     }
