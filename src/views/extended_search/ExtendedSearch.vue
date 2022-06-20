@@ -54,7 +54,7 @@
     </v-app-bar>
 
     <v-container fluid class="canvas fill-canvas px-10 pt-8">
-      <v-row v-if="completed || loading">
+      <v-row v-if="(completed || loading) || total > 0">
         <v-col cols="8" class="pl-8">
           <template v-if="total > 0">
             <v-overlay :value="loading" color="data" style="z-index:4" absolute></v-overlay>
