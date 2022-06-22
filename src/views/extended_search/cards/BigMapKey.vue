@@ -1,6 +1,5 @@
 <template>
     <v-card class="mx-auto" outlined :loading="loading">
-        <v-card-title class="sidebar py-2" primary-title>Top result</v-card-title>
         <v-card-text>
             <v-list>
                 <v-list-item two-line class="pl-3">
