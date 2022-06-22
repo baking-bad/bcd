@@ -10,62 +10,47 @@
       </v-col>
       <v-col cols="3" class="d-flex flex-row-reverse">
         <div>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                class="mr-2 pl-2 pr-2 text--secondary"
-                text
-                small
-                @click="
-                  () => {
-                    $clipboard(hash);
-                    showClipboardOK();
-                  }
-                "
+            <v-btn
+              v-on="on"
+              class="mr-2 pl-2 pr-2 text--secondary"
+              text
+              small
+              @click="
+                () => {
+                  $clipboard(hash);
+                  showClipboardOK();
+                }
+              "
+            >
+              <v-icon class="text--secondary" small>mdi-content-copy</v-icon>
+              <span class="ml-1 text--secondary"> Copy hash </span>
+            </v-btn>
+            <v-btn
+              v-on="on"
+              text
+              small
+              class="mr-2 pl-2 pr-2 text--secondary"
+              @click="showRaw = true"
+            >
+              <v-icon class="text--secondary">mdi-code-json</v-icon>
+              <span class="ml-1 text--secondary"> Raw JSON </span>
+            </v-btn>
+            <v-btn
+              v-on="on"
+              class="pl-2 text--secondary"
+              text
+              small
+              @click="
+                () => {
+                  openInTzkt();
+                }
+              "
+            >
+              <v-icon class="text--secondary" small
+                >mdi-logout-variant</v-icon
               >
-                <v-icon class="text--secondary" small>mdi-content-copy</v-icon>
-                <span class="ml-1 text--secondary"> Copy hash </span>
-              </v-btn>
-            </template>
-            Copy hash
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                text
-                small
-                class="mr-2 pl-2 pr-2 text--secondary"
-                @click="showRaw = true"
-              >
-                <v-icon class="text--secondary">mdi-code-json</v-icon>
-                <span class="ml-1 text--secondary"> Raw JSON </span>
-              </v-btn>
-            </template>
-            Raw JSON
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                class="pl-2 text--secondary"
-                text
-                small
-                @click="
-                  () => {
-                    openInTzkt();
-                  }
-                "
-              >
-                <v-icon class="text--secondary" small
-                  >mdi-logout-variant</v-icon
-                >
-                <span class="ml-1 text--secondary"> Open in TZKT </span>
-              </v-btn>
-            </template>
-            Open in TZKT
-          </v-tooltip>
+              <span class="ml-1 text--secondary"> Open in TZKT </span>
+            </v-btn>
         </div>
       </v-col>
     </v-row>
