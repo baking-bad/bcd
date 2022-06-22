@@ -1,9 +1,10 @@
 <template>
   <v-container fluid class="pa-0 ma-0 canvas fill-canvas">
-    <v-row class="" no-gutters>
-      <v-col cols="11">
+    <v-row no-gutters>
+      <v-col cols="12">
         <v-text-field
           v-model="search"
+          color="primary"
           label="Filter by"
           placeholder="Start typing a key or paste a key hash"
           clearable
@@ -11,17 +12,20 @@
           background-color="data"
           single-line
           hide-details
-        ></v-text-field>
-      </v-col>
-      <v-col cols="1" class="d-flex align-center justify-center" x-large ripple>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <v-btn icon :color="onlyActive ? 'primary' : 'rgba(255, 255, 255, 0.7)'" @click="onlyActive = !onlyActive" v-bind="attrs" v-on="on">
-              <v-icon>mdi-key</v-icon>
-            </v-btn>
+        
+        >
+          <template v-slot:append-outer>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn ripple icon :color="onlyActive ? 'primary' : ''" :class="onlyActive ? '': 'text--secondary'" @click="onlyActive = !onlyActive" v-bind="attrs" v-on="on" style="top: -6px;">
+                  <v-icon>mdi-key</v-icon>
+                </v-btn>
+              </template>
+              <span v-if="!onlyActive">Show only active keys</span>
+              <span v-else>Show all keys</span>
+            </v-tooltip>
           </template>
-          <span>Show only active keys</span>
-        </v-tooltip>
+        </v-text-field>
       </v-col>
     </v-row>
 
