@@ -203,9 +203,7 @@ export default {
         },
         {
           text: this.hash,
-          to: `/${this.network}/opg/${this.hash}${
-            this.$route.hash !== "#" ? "#" : "##"
-          }`,
+          to: `/${this.network}/opg/${this.hash}`,
           disabled: false,
         },
       ];
