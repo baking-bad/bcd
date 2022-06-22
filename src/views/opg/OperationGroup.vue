@@ -1,14 +1,14 @@
 <template>
-  <v-container fluid class="canvas fill-canvas px-8">
+  <v-container fluid class="canvas fill-canvas">
     <v-row>
-      <v-col cols="9">
+      <v-col cols="9" class="pl-0">
         <v-breadcrumbs
-          class="pl-0 pb-0 pt-0 ml-7"
+          class="pl-0 pb-0 pt-0 ml-10"
           divider="/"
           :items="breadcrumbsItems"
         />
       </v-col>
-      <v-col cols="3" class="d-flex flex-row-reverse">
+      <v-col cols="3" class="d-flex flex-row-reverse pr-8">
         <div>
             <v-btn
               v-on="on"
@@ -54,8 +54,8 @@
         </div>
       </v-col>
     </v-row>
-    <v-row class="mt-5">
-      <v-col cols="9" class="px-7">
+    <v-row class="px-7">
+      <v-col cols="9" class="pr-7">
         <OpgContents :loading="loading" :operations="operations"></OpgContents>
       </v-col>
       <v-col cols="3" class="pl-0">

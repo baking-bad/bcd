@@ -1,7 +1,11 @@
 <template>
-  <div class="fill-height pa-8">
-    <v-breadcrumbs :items="breadcrumbs" divider="/" class="pl-0" />
-    <v-row class="fill-height" no-gutters>
+  <div class="fill-height">
+    <v-row>
+       <v-col cols="12">
+          <v-breadcrumbs :items="breadcrumbs" divider="/" class="ml-10 pl-0 pt-0 mt-3" />
+       </v-col>
+    </v-row>
+    <v-row class="fill-height px-8 mt-1" no-gutters>
       <v-col cols="2">
         <SideBar :loading="loading" :states="states" :network="currentNetwork" />
       </v-col>
