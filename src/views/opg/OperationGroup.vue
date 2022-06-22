@@ -198,8 +198,8 @@ export default {
           to: "/",
         },
         {
-          disabled: true,
           text: toTitleCase(this.network),
+          to: `/${this.network}/#`,
         },
         {
           text: this.hash,
