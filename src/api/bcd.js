@@ -669,4 +669,14 @@ export class BetterCallApi {
     return this.api.get(`/contract/${network}/${address}/tokens/holders?token_id=${token_id}`)
         .then(this.returnResponseData);
   }
+
+  getCodeFromMichelson(data) {
+    return this.api.post(`/michelson`, data)
+          .then((res) => {
+              if (res.status !== 200) {
+                  throw new RequestFailedError(res);
+              }
+              return res.data;
+          });
+  }
 }
