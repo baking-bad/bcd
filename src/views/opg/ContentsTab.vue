@@ -24,7 +24,7 @@
       v-else
       icon="mdi-code-brackets"
       title="Nothing found"
-      text="Empty set is also a result, otherwise try a broader query"
+      text="Can't find operation group by hash. Maybe the operation you are looking for is not yet in the mempool"
     />
   </div>
 </template>
