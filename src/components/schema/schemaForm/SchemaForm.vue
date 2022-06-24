@@ -80,6 +80,7 @@
       :execution="execution"
       :execute-actions="executeActions"
       @executeAction="$emit('executeAction')"
+      @executeClick="$emit('executeClick')"
     />
   </v-form>
 </template>
