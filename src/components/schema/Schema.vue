@@ -155,7 +155,7 @@ export default {
     ],
     model: {},
   }),
-  async created() {
+  created() {
     this.setExecuteActions();
     this.setFillTypes();
 
@@ -335,6 +335,7 @@ export default {
           callback: this.beaconClientActionCallback(false)
         },
       ];
+      console.log(this.executeActions)
       this.importActions.push(
           {
             text: "Wallet",

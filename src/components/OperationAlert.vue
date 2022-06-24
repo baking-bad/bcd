@@ -74,7 +74,7 @@ import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails.vue";
 export default {
   name: "OperationAlert",
   props: {
-    operationId: String,
+    operationId: Number,
     errors: Array,
     network: String,
   },

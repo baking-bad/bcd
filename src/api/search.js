@@ -48,6 +48,21 @@ export class SearchService {
                     big_maps: filters,
                 }
             }
+
+        ).then(this.parseResponse)
+    }
+
+    operations(text, filters, size = 0, offset = 0) {
+        return this.api.post(
+            `/v1/search`,  {
+                query: text,
+                size: size ? size : 10,
+                offset: offset,
+                filters: {
+                    operations: filters,
+                }
+            }
+
         ).then(this.parseResponse)
     }
 

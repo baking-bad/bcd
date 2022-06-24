@@ -95,7 +95,7 @@
                 <v-list-item-title>
                   <span v-html="helpers.shortcut(value.hash)"></span>
                 </v-list-item-title>
-                <v-list-item-subtitle
+                <v-list-item-subtitle v-if="value.content_index !== undefined"
                   class="font-weight-light hash text--secondary"
                   >content #{{ value.content_index }}</v-list-item-subtitle
                 >
@@ -118,13 +118,14 @@
     <v-expansion-panel-content class="opg-content">
       <InternalOperation :data="value" :address="address" />
       <template v-for="(item, idx) in value.internal_operations">
-        <v-divider :key="'divider' + idx"></v-divider>
-        <InternalOperation
-          :data="item"
-          :mainOperation="value"
-          :address="address"
-          :key="idx"
-        />
+        <div :key="idx">
+          <v-divider :key="'divider' + idx"></v-divider>
+          <InternalOperation
+            :data="item"
+            :mainOperation="value"
+            :address="address"          
+          />
+        </div>
       </template>
     </v-expansion-panel-content>
   </v-expansion-panel>
@@ -191,7 +192,7 @@ export default {
           }
         }
       }
-      return null;
+      return this.value.kind;
     },
     statusHeaderClass() {
       return getContentItemHeaderClass(this.value.status);
