@@ -1,7 +1,7 @@
 const axios = require('axios').default;
 const maxSize = 10;
 
-import { getCancellable, postCancellable, cancelRequests } from '@/utils/cancellation.js';
+import { getCancellable, postCancellable } from '@/utils/cancellation.js';
 
 export class RequestFailedError extends Error {
   constructor(response) {
