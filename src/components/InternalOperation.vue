@@ -253,9 +253,7 @@ export default {
   }),
   created() {
     this.showParams =
-      this.data.errors !== undefined ||
-      this.data.destination === this.address ||
-      this.address === undefined;
+      this.data.errors !== undefined;
   },
   computed: {
     source() {
@@ -388,9 +386,10 @@ export default {
   methods: {
     ...mapActions(["showClipboardOK", "showError"]),
     getDiff() {
+      if (this.data.status !== "applied") return;
       if (this.diffs !== null) return;
-
       this.loadingDiffs = true;
+
       this.api.getOperationDiff(this.data.network, this.data.id).
         then((res) => {
           this.diffs = res;

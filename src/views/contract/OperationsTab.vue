@@ -18,10 +18,12 @@
             >
               <template v-slot:append-outer>
                 <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-btn icon @click="openFilters = !openFilters" v-bind="attrs" v-on="on" style="top: -6px;">
-                      <v-icon>mdi-filter-variant</v-icon>
-                    </v-btn>
+                  <template v-slot:activator="{ on, attrs }">                    
+                      <v-btn icon @click="openFilters = !openFilters" v-bind="attrs" v-on="on" style="top: -6px;">
+                        <v-badge dot overlap bordered :value="isEmptyFilters ? '' : 'F'">
+                          <v-icon>mdi-filter-variant</v-icon>
+                        </v-badge>
+                      </v-btn>
                   </template>
                   <span>Filters</span>
                 </v-tooltip>
@@ -50,6 +52,7 @@
                 <ContentItem
                   :data="item"
                   :address="address"
+                  :network="network"
                   v-for="(item, key) in items"
                   :key="item.hash + '_' + item.counter + '_' + key"
                 />
@@ -96,8 +99,7 @@
               >
               <v-list-item-title class="body-2" v-if="isContract">
                 {{ helpers.formatDatetime(contract.timestamp) }}
-                <span v-if="contract.last_action > contract.timestamp"
-                >—
+                <span v-if="contract.last_action > contract.timestamp">—
                       {{ helpers.formatDatetime(contract.last_action) }}</span
                 >
               </v-list-item-title>
@@ -161,7 +163,6 @@ import OperationFilters from "@/views/contract/OperationFilters.vue";
 import ContentItem from "@/views/contract/ContentItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
-import Vue from 'vue';
 import AccountBox from "../../components/Dialogs/AccountBox";
 
 export default {
@@ -320,23 +321,21 @@ export default {
       }
 
       await this.api
-        .getContractOperations(
+        .getAccountOperationGroups(
           this.network,
           this.address,
           this.last_id,
-          0,
-          0,
-          [],
-          [],
-          false // no diffs at this point, load them if expanded only
+          10,
         )
         .then((res) => {
           if (!res) {
             this.downloaded = true; // prevent endless polling
           } else {
-            this.downloaded = res.operations.length === 0;
-            this.last_id = res.last_id;
-            this.pushOperationsFromBackend(res.operations);
+            this.downloaded = res.length === 0;
+            if (res.length > 0){
+              this.last_id = res[res.length - 1].last_id;
+              this.operations.push(...res);
+            }
           }
         })
         .catch((err) => {
@@ -396,35 +395,17 @@ export default {
 
       return mempoolOperations;
     },
-    pushOperationsFromBackend(data) {
-      data.forEach((element) => {
-        if (element.internal) {
-          const lastEl = this.operations[this.operations.length - 1];
-          lastEl.internal_operations.push(
-              element
-          );
-          Vue.set(this.operations, this.operations.length - 1, lastEl);
-        } else {
-          element.internal_operations = [];
-          this.operations.push(element);
-        }
-      });
-    },
     pushOperationsFromSearch(data) {
       data.forEach((element) => {
         this.operations.push({
           timestamp: element.body['@timestamp'],
           hash: element.body.Hash,
           counter: element.body.Counter,
-          destination: element.body.Destination,
           level: element.body.Level,
           kind: element.body.Type,
-          source: element.body.Sender,
           status: element.body.Status,
           entrypoint: element.body.Entrypoint,
           network: element.body.Network,
-          amount: element.body.Amount ? parseInt(element.body.Amount) : 0,
-          internal_operations: []
         });
       });
     },
@@ -452,7 +433,7 @@ export default {
       }
 
       let filters = {
-          entrypoints: this.filters.entrypoints,
+          entrypoint: this.filters.entrypoints,
           status: status,
           network: this.network,
           contract: this.address,

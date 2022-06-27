@@ -98,7 +98,7 @@ export default {
     getErrorLocation() {
       this.errorLocationLoading = true;
       this.api
-        .getErrorLocation(this.operationId)
+        .getErrorLocation(this.network, this.operationId)
         .then((res) => {
           this.errorLocation = res;
           this.showErrorLocation = true;
