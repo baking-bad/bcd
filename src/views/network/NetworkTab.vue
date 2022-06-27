@@ -5,8 +5,9 @@
         <h3 class="text--secondary font-weight-regular header-table">Recently called contracts</h3>
         <RecentlyCalledContracts
           class="mt-4"
+          hide-pagination-count
           :network="network"
-          :items-per-page="10"
+          :items-per-page="7"
           :updateable="false"
           pageable
         />
