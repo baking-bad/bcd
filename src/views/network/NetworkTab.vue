@@ -11,6 +11,15 @@
           :updateable="false"
           pageable
         />
+        <h3 class="text--secondary font-weight-regular header-table mt-8">Global constants</h3>
+        <GlobalConstantsRegistry
+            class="mt-4"
+            hide-pagination-count
+            :network="network"
+            :items-per-page="7"
+            :updateable="false"
+            pageable
+        />
       </v-col>
       <v-col cols="4" class="pt-0 pl-0">
         <NetworkInfo :network="network" :state="state" />
@@ -24,6 +33,7 @@ import Vue from 'vue';
 import { mapActions } from "vuex";
 import RecentlyCalledContracts from "../../components/Tables/RecentlyCalledContracts";
 import NetworkInfo from "./NetworkInfo";
+import GlobalConstantsRegistry from "@/components/Tables/GlobalConstantsRegistry";
 
 export default {
   name: "NetworkTab",
@@ -32,6 +42,7 @@ export default {
     state: Object,
   },
   components: {
+    GlobalConstantsRegistry,
     NetworkInfo,
     RecentlyCalledContracts,
   },
