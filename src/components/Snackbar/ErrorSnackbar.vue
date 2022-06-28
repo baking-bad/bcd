@@ -1,5 +1,5 @@
 <template>
-  <v-snackbar top right color="error" :value="show" :timeout="7000" @input="reset">
+  <v-snackbar top right color="error" :value="show" :timeout="5000" @input="reset">
     <v-icon class="mr-3">mdi-alert-circle-outline</v-icon>
     {{ $store.state.error.text }}
     <v-btn icon @click="hideError">
