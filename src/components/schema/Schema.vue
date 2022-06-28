@@ -58,6 +58,10 @@
       :show-clipboard-ok="showClipboardOK"
       @cmdLineChange="setCmdline"
     />
+    <SchemaMichelson
+      v-model="showMichelson"
+      :code="michelsonCode"
+    />
     <RawJsonViewer
       :show.sync="showRawJSON"
       :raw="parametersJSON"
@@ -73,6 +77,7 @@ import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import SchemaForm from "./schemaForm/SchemaForm";
 import SchemaResultOPG from "./schemaDialog/SchemaResultOPG";
 import SchemaCmdLine from "./schemaDialog/SchemaCmdLine";
+import SchemaMichelson from "./schemaDialog/SchemaMichelson";
 import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
 import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
@@ -99,6 +104,7 @@ export default {
     SchemaAlertOpHashSuccess,
     SchemaCmdLine,
     SchemaResultOPG,
+    SchemaMichelson,
     SchemaForm,
     RawJsonViewer,
   },
@@ -129,12 +135,14 @@ export default {
     showRawJSON: false,
     showCmdline: false,
     showResultOPG: false,
+    showMichelson: false,
     showSimulationSettings: false,
     tezosClientCmdline: null,
     parametersJSON: null,
     isGettingWalletProgress: false,
     isPermissionGiven: false,
     successText: '',
+    michelsonCode: '',
     settings: {
       source: null,
       sender: null,
@@ -253,6 +261,12 @@ export default {
         this.prepareContractToFork(true);
       }
     },
+    michelsonActionCallback() {
+      return () => {
+        this.fireEvent("Michelson", "interact");
+        this.michelsonParameters();
+      }
+    },
     tezosClientActionCallback() {
       return this.isParameter
           ? () => {
@@ -302,6 +316,11 @@ export default {
           text: "Raw JSON",
           icon: "mdi-code-json",
           callback: this.rawJsonActionCallback()
+        },
+        {
+          text: "Michelson",
+          icon: "mdi-code-braces",
+          callback: this.michelsonActionCallback()
         },
         {
           text: "Tezos-client",
@@ -393,6 +412,30 @@ export default {
         value: this.isStorage ? "current" : "latest",
         text: this.isStorage ? "Current" : "Latest call",
       });
+    },
+    michelsonParameters() {
+      if (this.execution) return;
+
+      this.execution = true;
+      this.showMichelson = false;
+      this.michelsonCode = '';
+
+      return this.api
+        .getContractEntrypointData(
+          this.network,
+          this.address,
+          this.name,
+          this.model,
+          "michelson"
+        )
+        .then((res) => {
+          this.michelsonCode = res;
+          this.showMichelson = true;
+        })
+        .catch((err) => {
+          this.showError(err.response ? err.response.data.message : err);
+        })
+        .finally(() => (this.execution = false));
     },
     generateParameters(rawJSON = false, show = false) {
       if (this.execution) return;
