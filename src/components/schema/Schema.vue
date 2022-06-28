@@ -429,7 +429,7 @@ export default {
           "michelson"
         )
         .then((res) => {
-          this.michelsonCode = res;
+          this.michelsonCode = JSON.parse(res);
           this.showMichelson = true;
         })
         .catch((err) => {
