@@ -361,37 +361,10 @@ export default {
     getDisplayedMempool() {
       if (this.search) return [];
       if (!this.mempool || this.mempool.length === 0) return [];
-      let mempoolOperations = this.mempool;
-
-      // Apply operation filters
-      if (this.filters.status.length > 0) {
-        mempoolOperations = mempoolOperations.filter((o) =>
-          this.filters.status.includes(o.status)
-        );
+      if (!this.isEmptyFilters) {
+        return [];
       }
-      if (this.filters.entrypoints.length > 0) {
-        mempoolOperations = mempoolOperations.filter((o) =>
-          this.filters.entrypoints.includes(o.entrypoint)
-        );
-      }
-      if (this.filters.dates.length > 0) {
-        mempoolOperations = mempoolOperations.filter(function (op) {
-          const ts = dayjs(op.timestamp).unix() * 1000;
-          return ts >= this.timestampFilter.gt && ts < this.timestampFilter.lte;
-        });
-      }
-
-      // Ensure no duplicates (tune the number if needed) and proper cut
-      if (this.operations.length > 0) {
-        const lastTimestamp = this.operations[this.operations.length - 1]
-          .timestamp;
-        const lastHashes = this.operations.slice(0, 15).map((o) => o.hash);
-        mempoolOperations = mempoolOperations.filter(
-          (o) => o.timestamp >= lastTimestamp && !lastHashes.includes(o.hash)
-        );
-      }
-
-      return mempoolOperations;
+      return this.mempool;
     },
     pushOperationsFromSearch(data) {
       data.forEach((element) => {

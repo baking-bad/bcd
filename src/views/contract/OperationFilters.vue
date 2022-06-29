@@ -122,7 +122,7 @@ export default {
         filters: Object
     },
     created() {
-        this.internalFilters = this.filters;
+        this.internalFilters = Object.assign({}, this.filters);
     },
     data: () => ({
         datesBuf: [],
