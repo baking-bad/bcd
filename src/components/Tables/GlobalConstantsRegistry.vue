@@ -19,7 +19,7 @@
                   class="text--secondary hash"
                   style="text-transform: none;"
                   text>
-                <span v-html="helpers.shortcut(item.address, 8)"></span>
+                <span v-past-html="helpers.shortcut(item.address, 8)"></span>
               </v-btn>
             </td>
             <td>
@@ -66,6 +66,13 @@ export default {
     itemsPerPage: {
       type: Number,
       default: 3,
+    }
+  },
+  directives: {
+    pastHtml: {
+      inserted(el, binding) {
+        el.insertAdjacentHTML('afterbegin', binding.value);
+      }
     }
   },
   methods: {
