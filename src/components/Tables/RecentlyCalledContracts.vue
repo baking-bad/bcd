@@ -1,6 +1,6 @@
 <template>
   <v-fade-transition>
-    <v-skeleton-loader :loading="isRecentlyCalledLoading" type="article" transition="fade-transition">
+    <v-skeleton-loader :loading="isRecentlyCalledLoading" class="recently-loader" type="article" transition="fade-transition">
       <v-data-table
         :items="recentlyCalledContracts"
         :headers="recentlyCalledTableHeaders"
@@ -177,4 +177,13 @@ export default {
   }
 }
 
+.recently-loader {
+  min-height: 420px;
+
+  ::v-deep {
+    .v-skeleton-loader__article {
+      min-height: 420px;
+    }
+  }
+}
 </style>

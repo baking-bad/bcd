@@ -1,6 +1,6 @@
 <template>
   <v-fade-transition>
-    <v-skeleton-loader :loading="isGlobalConstantsLoading" type="article" transition="fade-transition">
+    <v-skeleton-loader :loading="isGlobalConstantsLoading" type="article" class="global-constant-loader" transition="fade-transition">
       <v-data-table
           :items="globalConstantsItems"
           :headers="globalConstantsTableHeaders"
@@ -173,6 +173,16 @@ export default {
   button {
     width: 43px;
     margin-left: 7px;
+  }
+}
+
+.global-constant-loader {
+  min-height: 420px;
+
+  ::v-deep {
+    .v-skeleton-loader__article {
+      min-height: 420px;
+    }
   }
 }
 </style>
