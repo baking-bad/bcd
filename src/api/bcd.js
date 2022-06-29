@@ -136,15 +136,17 @@ export class BetterCallApi {
       })
   }
 
-  getAccountOperationGroups(network, address, last_id = '', size = 10) {
+  getAccountOperationGroups(network, address, last_id = 0, size = 10) {
     let params = {}
-    if (last_id != "") {
-      params.last_id = last_id
+    if (last_id > 0) {
+      params['last_id'] = last_id
     }
     if (size !== 0) {
-      params.size = size
+      params['size'] = size
     }
-    return getCancellable(this.api, `/contract/${network}/${address}/opg`, params)
+    return getCancellable(this.api, `/contract/${network}/${address}/opg`, {
+      params: params,
+    })
       .then((res) => {
         if (!res) {
           return null;

@@ -186,7 +186,7 @@ export default {
     downloaded: false,
     operationsLoading: false,
     mempoolLoading: false,
-    last_id: null,
+    last_id: 0,
     filters: {
       entrypoints: [],
       status: [],
@@ -310,17 +310,15 @@ export default {
     clearData() {
         this.operations = [];
         this.downloaded = false;
-        this.last_id = null;
+        this.last_id = 0;
     },
-    async getOperations(clearData = false) {
+    getOperations(clearData = false) {
       if (this.operationsLoading || (this.downloaded && !clearData)) return;
 
       this.operationsLoading = true;
-      if (clearData) {
-        this.clearData();
-      }
+      if (clearData) this.clearData();
 
-      await this.api
+      this.api
         .getAccountOperationGroups(
           this.network,
           this.address,
@@ -409,9 +407,9 @@ export default {
         });
       });
     },
-    async onDownloadPage(_e, _i, isIntersecting) {
+    onDownloadPage(_e, _i, isIntersecting) {
       if (isIntersecting) {
-        this.applyFilter();
+        this.applyFilter(false);
       }
     },
     async fetchOperations() {
