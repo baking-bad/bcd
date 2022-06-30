@@ -130,21 +130,6 @@ const router = new Router({
       ]
     },
     {
-      path: '/:network',
-      components: {
-        default: Network,
-      },
-      props: { default: true },
-      children: [
-        {
-          path: '',
-          name: 'network',
-          component: NetworkTab,
-          props: true,
-        },
-      ]
-    },
-    {
       path: '/diff',
       components: {
         default: Diff,
@@ -159,6 +144,21 @@ const router = new Router({
       },
       name: 'docs',
       props: { default: true },
+    },
+    {
+      path: '/:network',
+      components: {
+        default: Network,
+      },
+      props: { default: true },
+      children: [
+        {
+          path: '',
+          name: 'network',
+          component: NetworkTab,
+          props: true,
+        },
+      ]
     },
     { // backward compatibility
       path: '/:network(main|babylon|zero|carthage)/:address(KT[0-9A-z]{34})',

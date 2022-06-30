@@ -1,76 +1,61 @@
 <template>
-  <v-container fluid class="canvas fill-canvas px-8">
+  <v-container fluid class="canvas fill-canvas">
     <v-row>
-      <v-col cols="9">
+      <v-col cols="9" class="pl-0">
         <v-breadcrumbs
-          class="pl-0 pb-0 pt-0 ml-7"
+          class="pl-0 pb-0 pt-0 ml-10"
           divider="/"
           :items="breadcrumbsItems"
         />
       </v-col>
-      <v-col cols="3" class="d-flex flex-row-reverse">
+      <v-col cols="3" class="d-flex flex-row-reverse pr-8">
         <div>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                class="mr-2 pl-2 pr-2 text--secondary"
-                text
-                small
-                @click="
-                  () => {
-                    $clipboard(hash);
-                    showClipboardOK();
-                  }
-                "
+            <v-btn
+              v-on="on"
+              class="mr-2 pl-2 pr-2 text--secondary"
+              text
+              small
+              @click="
+                () => {
+                  $clipboard(hash);
+                  showClipboardOK();
+                }
+              "
+            >
+              <v-icon class="text--secondary" small>mdi-content-copy</v-icon>
+              <span class="ml-1 text--secondary"> Copy hash </span>
+            </v-btn>
+            <v-btn
+              v-on="on"
+              text
+              small
+              class="mr-2 pl-2 pr-2 text--secondary"
+              @click="showRaw = true"
+            >
+              <v-icon class="text--secondary">mdi-code-json</v-icon>
+              <span class="ml-1 text--secondary"> Raw JSON </span>
+            </v-btn>
+            <v-btn
+              v-on="on"
+              class="pl-2 text--secondary"
+              text
+              small
+              @click="
+                () => {
+                  openInTzkt();
+                }
+              "
+            >
+              <v-icon class="text--secondary" small
+                >mdi-logout-variant</v-icon
               >
-                <v-icon class="text--secondary" small>mdi-content-copy</v-icon>
-                <span class="ml-1 text--secondary"> Copy hash </span>
-              </v-btn>
-            </template>
-            Copy hash
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                text
-                small
-                class="mr-2 pl-2 pr-2 text--secondary"
-                @click="showRaw = true"
-              >
-                <v-icon class="text--secondary">mdi-code-json</v-icon>
-                <span class="ml-1 text--secondary"> Raw JSON </span>
-              </v-btn>
-            </template>
-            Raw JSON
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-btn
-                v-on="on"
-                class="pl-2 text--secondary"
-                text
-                small
-                @click="
-                  () => {
-                    openInTzkt();
-                  }
-                "
-              >
-                <v-icon class="text--secondary" small
-                  >mdi-logout-variant</v-icon
-                >
-                <span class="ml-1 text--secondary"> Open in TZKT </span>
-              </v-btn>
-            </template>
-            Open in TZKT
-          </v-tooltip>
+              <span class="ml-1 text--secondary"> Open in TZKT </span>
+            </v-btn>
         </div>
       </v-col>
     </v-row>
-    <v-row class="mt-5">
-      <v-col cols="9" class="px-7">
+    <v-row class="px-7">
+      <v-col cols="9" class="pr-7">
         <OpgContents :loading="loading" :operations="operations"></OpgContents>
       </v-col>
       <v-col cols="3" class="pl-0">
@@ -213,14 +198,12 @@ export default {
           to: "/",
         },
         {
-          disabled: true,
           text: toTitleCase(this.network),
+          to: `/${this.network}/#`,
         },
         {
           text: this.hash,
-          to: `/${this.network}/opg/${this.hash}${
-            this.$route.hash !== "#" ? "#" : "##"
-          }`,
+          to: `/${this.network}/opg/${this.hash}`,
           disabled: false,
         },
       ];
