@@ -31,7 +31,7 @@
                     style="font-size: 16px;"
                 />
                         </span>
-                    <span v-else v-html="helpers.shortcut(item.address, 8)"></span>
+                    <span v-else v-past-html="helpers.shortcut(item.address, 8)"></span>
                   </v-btn>
                 </v-list-item-title>
               </v-list-item-content>

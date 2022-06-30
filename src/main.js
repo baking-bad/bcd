@@ -107,6 +107,13 @@ Vue.filter('snakeToCamel', (str) => {
                           .replace(/([-_])([a-z])/g, (_match, _p1, p2) => p2.toUpperCase());
 });
 
+
+Vue.directive('pastHtml', {
+    inserted(el, binding) {
+      el.insertAdjacentHTML('afterbegin', binding.value);
+    }
+})
+
 let config = {
   API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
   HOME_PAGE: 'home',

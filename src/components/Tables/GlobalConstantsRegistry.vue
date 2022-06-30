@@ -69,13 +69,6 @@ export default {
       default: 3,
     }
   },
-  directives: {
-    pastHtml: {
-      inserted(el, binding) {
-        el.insertAdjacentHTML('afterbegin', binding.value);
-      }
-    }
-  },
   methods: {
     init() {
       this.page = 0
