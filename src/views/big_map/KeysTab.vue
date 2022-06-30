@@ -25,7 +25,6 @@
         />
         <EmptyState
           v-if="!loading && bigmap.length === 0"
-          icon="mdi-code-brackets"
           title="Nothing found"
           text="Empty set is also a result, otherwise try a broader query"
         />

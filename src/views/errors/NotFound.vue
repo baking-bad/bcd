@@ -1,7 +1,6 @@
 <template>
   <div>
     <EmptyState
-      icon="mdi-code-brackets"
       title="Error 404. Page not found."
     >
       <template #description>
