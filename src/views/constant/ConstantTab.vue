@@ -9,7 +9,7 @@
           <v-spacer></v-spacer>
           <v-btn
               class="mr-1 text--secondary"
-              v-clipboard="constantInfo.value"
+              v-clipboard="getValueToCopy"
               v-clipboard:success="showSuccessCopy"
               small
               text
@@ -90,13 +90,16 @@ export default {
       this.constantInfo = await this.api.getConstant(this.$route.params.network, this.$route.params.address);
       this.loading = false;
     },
+    getValueToCopy() {
+      return this.constantInfo.code;
+    },
     showSuccessCopy() {
-      if (this.constantInfo.value.length) {
+      if (this.constantInfo.code.length) {
         this.showClipboardOK();
       }
     },
     downloadFile() {
-      downloadFileFormContent(this.constantInfo.value, this.$route.params.address)
+      downloadFileFormContent(this.constantInfo.code, this.$route.params.address)
     },
   },
   watch: {
