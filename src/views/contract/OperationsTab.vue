@@ -142,14 +142,12 @@
           <v-list-item style="height: 74px">
             <v-list-item-content two-line>
               <v-list-item-title class="headline">
-                <v-tooltip bottom v-if="alias" :disabled="alias.length < 15">
+                <v-tooltip bottom :disabled="alias && alias.length < 25">
                   <template v-slot:activator="{ on, attrs }">
-                    <span v-bind="attrs" v-on="on">{{ alias }}</span>
+                    <span v-bind="attrs" v-on="on" style="cursor: inherit;">{{ alias ? alias : address }}</span>
                   </template>
-                  <span>{{ alias }}</span>
-                </v-tooltip>
-                <span v-else v-html="sanitizeHtml(helpers.shortcut(address))"></span>&nbsp;
-                
+                  <span>{{ alias ? alias : address }}</span>
+                </v-tooltip>                
               </v-list-item-title>
               <v-list-item-subtitle>
               <span
@@ -215,7 +213,6 @@ import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
 import Vue from 'vue';
 import AccountBox from "../../components/Dialogs/AccountBox";
-import sanitizeHtml from "sanitize-html";
 
 export default {
   name: "OperationsTab",
@@ -306,7 +303,6 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "hideError"]),
-    sanitizeHtml,
     compareOperations(a, b) {
       if (a.timestamp < b.timestamp) {
         return 1;
