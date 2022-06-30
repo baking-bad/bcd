@@ -69,6 +69,7 @@ import { mapActions } from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
+import {downloadFileFormContent} from "@/utils/download";
 
 export default {
   props: {
@@ -183,17 +184,7 @@ export default {
         });
     },
     downloadFile() {
-      var element = document.createElement("a");
-      element.setAttribute(
-        "href",
-        "data:text/plain;charset=utf-8," + encodeURIComponent(this.selectedCode)
-      );
-      element.setAttribute("download", this.address + ".tz");
-      element.style.display = "none";
-      document.body.appendChild(element);
-
-      element.click();
-      document.body.removeChild(element);
+      downloadFileFormContent(this.selectedCode, this.address)
     },
   },
   watch: {

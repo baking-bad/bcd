@@ -37,6 +37,8 @@ import DApp from '@/views/dapps/DApp.vue'
 import MainDApp from '@/views/dapps/Main.vue'
 import NotFound from "../views/errors/NotFound";
 import DetailsTab from "../views/contract/DetailsTab/DetailsTab";
+import ConstantTab from "@/views/constant/ConstantTab";
+import Constant from "@/views/constant/Constant";
 
 Vue.use(VueRouter)
 
@@ -144,6 +146,21 @@ const router = new Router({
       },
       name: 'docs',
       props: { default: true },
+    },
+    {
+      path: '/constant/:network/:address',
+      components: {
+        default: Constant,
+      },
+      props: { default: true },
+      children: [
+        {
+          path: '',
+          name: 'network',
+          component: ConstantTab,
+          props: true,
+        },
+      ]
     },
     {
       path: '/:network',

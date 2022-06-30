@@ -731,4 +731,15 @@ export class BetterCallApi {
         return this.api.get(`/global_constants/${network}/`, {params})
             .then(this.returnResponseData);
     }
+
+
+    getConstantsByAddress(network, address) {
+        return this.api.get(`/global_constants/${network}/${address}/contracts`)
+            .then(this.returnResponseData);
+    }
+
+    getConstant(network, address) {
+        return this.api.get(`/global_constants/${network}/${address}`)
+            .then(this.returnResponseData);
+    }
 }

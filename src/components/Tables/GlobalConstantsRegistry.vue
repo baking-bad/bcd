@@ -16,6 +16,7 @@
           <tr class="table-row">
             <td>
               <v-btn
+                  :to="`/constant/${network}/${item.address}/`"
                   class="text--secondary hash"
                   style="text-transform: none;"
                   text>
