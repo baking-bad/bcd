@@ -2,13 +2,17 @@ const axios = require('axios').default;
 
 export class RequestFailedError extends Error { }
 
+function createAxios(baseURL, timeout = 10000) {
+  return axios.create({
+    baseURL: baseURL,
+    timeout: timeout,
+    responseType: 'json'
+  })
+}
+
 export class TokenMetadataApi {
     constructor(baseURL) {
-      this.api = axios.create({
-        baseURL: baseURL,
-        timeout: 10000,
-        responseType: 'json'
-      });
+      this.api = createAxios(baseURL);
     }
 
     get(network, address, limit=10, offset=0) {
@@ -51,11 +55,7 @@ export class TokenMetadataApi {
 
 export class DipDupTokenMetadataApi {
     constructor(baseURL) {
-      this.api = axios.create({
-        baseURL: baseURL,
-        timeout: 10000,
-        responseType: 'json'
-      });
+      this.api = createAxios(baseURL);
     }
 
     get(network, address, limit=10, offset=0) {
