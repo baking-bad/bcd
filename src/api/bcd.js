@@ -558,26 +558,28 @@ export class BetterCallApi {
             })
     }
 
-  getOperationDiff(network, id) {
-    return getCancellable(this.api, `/operation/${network}/${id}/diff`, {})
-      .then((res) => {
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
+    getOperationDiff(network, id) {
+        return getCancellable(this.api, `/operation/${network}/${id}/diff`, {})
+            .then((res) => {
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
 
-  getStats() {
-    return getCancellable(this.api, `/stats`, {})
-      .then((res) => {
-        if (!res) { return res; }
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
+    getStats() {
+        return getCancellable(this.api, `/stats`, {})
+            .then((res) => {
+                if (!res) {
+                    return res;
+                }
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
 
     getNetworkStats(network) {
         return getCancellable(this.api, `/stats/${network}`, {})
