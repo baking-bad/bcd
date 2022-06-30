@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="show" width="1200" scrollable :close-delay="1000" ref="opgDialog">
+  <v-dialog v-model="show" width="1200" scrollable ref="opgDialog">
     <v-card flat outlined>
       <v-card-title class="sidebar d-flex justify-center pa-4">
         <span class="body-1 font-weight-medium text-uppercase text--secondary">Simulation result</span>
