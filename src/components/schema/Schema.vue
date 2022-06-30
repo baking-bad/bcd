@@ -410,10 +410,20 @@ export default {
     },
     setFillTypes() {
       if (this.isDeploy) return;
-      this.fillTypes.push({
-        value: this.isStorage ? "current" : "latest",
-        text: this.isStorage ? "Current" : "Latest call",
-      });
+      if (this.isStorage) {
+          this.fillTypes.push({
+            value: "current",
+            text: "Current",
+          }, {
+            value: "initial",
+            text: "Initial",
+          });
+      } else {
+        this.fillTypes.push({
+            value: "latest",
+            text: "Latest call",
+          });
+      }
     },
     michelsonParameters() {
       if (this.execution) return;
