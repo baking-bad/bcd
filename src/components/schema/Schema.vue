@@ -46,12 +46,11 @@
       </v-card-text>
     </v-card>
     <SchemaResultOPG
-      :showResult="showResultOPG"
+      v-model="showResultOPG"
       :simulated-operation="simulatedOperation"
       :settings="settings"
       :gas-limit="gasLimit"
       :storage-limit="storageLimit"
-      @resultOPGchange="setResultOPG"
     />
     <SchemaCmdLine
       v-model="showCmdline"
@@ -218,6 +217,9 @@ export default {
     },
     setResultOPG(val) {
       this.showResultOPG = val;
+    },
+    setCmdline(val) {
+      this.showCmdline = val;
     },
     fireEvent(action, category) {
       if (this.$gtag) {
@@ -447,7 +449,7 @@ export default {
             if (res.length > 1) {
               this.simulatedOperation.internal_operations = res.slice(1);
             }
-            this.setResultOPG(true);
+            this.showResultOPG = true;
           }
         })
         .catch((err) => {
@@ -667,6 +669,11 @@ export default {
             this.show = true;
           });
       } else {
+            if (newValue !== "latest") {
+              this.show = true;
+              this.model = {};
+              return;
+            }
         this.api
           .getContractEntrypointSchema(
             this.network,
@@ -680,12 +687,11 @@ export default {
             this.show = true;
           })
           .catch((err) => {
-            if (newValue === "latest") {
+              if (err) {
+                console.log(err);
+              }
               this.showError('This contract most likely has not been called yet.');
-              this.show = false;
-            } else {
-              this.showError(err);
-            }
+              this.show = true;
           });
       }
     },

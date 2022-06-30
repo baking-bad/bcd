@@ -58,7 +58,7 @@
         </template>
       </v-text-field>
     </div>
-    <div class="d-flex">
+    <div class="d-flex" v-if="!isStorage">
       <v-text-field
           id="sender"
           name="sender"
