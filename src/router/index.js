@@ -46,6 +46,9 @@ const router = new Router({
   linkActiveClass: '',
   linkExactActiveClass: '',
   mode: 'history',
+  scrollBehavior () {
+    window.scrollTo(0,0)
+  },
   routes: [
     {
       path: '/',

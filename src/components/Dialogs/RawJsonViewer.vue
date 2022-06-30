@@ -114,7 +114,7 @@ export default {
   name: "RawJsonViewer",
   props: {
     show: Boolean,
-    raw: Object,
+    raw: [Object, Array],
     type: String,
     network: String,
     level: Number,

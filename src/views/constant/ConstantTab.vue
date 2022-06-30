@@ -37,7 +37,7 @@
       </v-col>
     </v-row>
     <RawJsonViewer
-        :raw="constantInfo.code"
+        :raw="constantInfo.value"
         :show.sync="showRaw"
         type="code"
         :network="network"

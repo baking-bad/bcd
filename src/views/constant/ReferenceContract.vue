@@ -8,18 +8,14 @@
         <v-list-item-group
             v-if="contracts.length || loading"
             class="themed-border radius-1"
-            mandatory
+            active-class="''"
         >
           <template v-for="(item, i) in contracts">
-            <v-list-item inactive class="token-card" :key="'entrypoint-' + i">
+            <v-divider :key="'divider' + i" v-if="i > 0"></v-divider>
+            <v-list-item append class="cursor-pointer" :key="'entrypoint-' + i"
+                         @click="navigate(`/${item.network}/${item.address}/`)">
               <v-list-item-content>
                 <v-list-item-title>
-                  <v-btn
-                      class="text--secondary hash"
-                      :to="`/${item.network}/${item.address}/`"
-                      style="text-transform: none;"
-                      target="_blank"
-                      text>
                 <span v-if="item.alias">
                           {{
                     item.alias.length > aliasMaxLength
@@ -31,8 +27,7 @@
                     style="font-size: 16px;"
                 />
                         </span>
-                    <span v-else v-past-html="helpers.shortcut(item.address, 8)"></span>
-                  </v-btn>
+                  <span v-else v-past-html="helpers.shortcut(item.address, 8)"></span>
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
@@ -65,6 +60,11 @@ export default {
     this.contracts = await this.api.getConstantsByAddress(this.$route.params.network, this.$route.params.address);
 
     this.loading = false;
+  },
+  methods: {
+    navigate(path) {
+      this.$router.push(path);
+    }
   }
 }
 </script>
