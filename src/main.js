@@ -15,6 +15,7 @@ import { BrowserTracing } from "@sentry/tracing";
 
 import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { BetterCallApi } from "@/api/bcd.js";
+import { TokenMetadataApi } from "@/api/token_metadata.js";
 import { NodeRPC } from "@/api/rpc.js";
 import { Bookmarks } from "@/utils/bookmarks.js";
 import { MetadataAPI } from "@/api/metadata.js";
@@ -109,11 +110,14 @@ Vue.filter('snakeToCamel', (str) => {
 let config = {
   API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
   HOME_PAGE: 'home',
+  TOKEN_METADATA_API:  process.env.TOKEN_METADATA_API || "https://metadata.dipdup.net",
+  IPFS_NODE: process.env.IPFS_NODE || "https://ipfs.io",
   METADATA_API_URI: process.env.METADATA_API_URI || "https://metadata.dipdup.net"
 }
 
 let api = new BetterCallApi(config.API_URI);
 let bookmarks = new Bookmarks();
+let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
@@ -138,7 +142,7 @@ api.getConfig().then(response => {
 
   Vue.mixin({
     data() {
-      return { config, api, rpc, helpers, bookmarks, metadataAPI }
+      return { config, api, rpc, helpers, bookmarks, metadataAPI, tokenMetadata }
     }
   });
 
