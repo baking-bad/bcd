@@ -53,10 +53,9 @@
       :storage-limit="storageLimit"
     />
     <SchemaCmdLine
-      :showCmd="showCmdline"
+      v-model="showCmdline"
       :tezos-client-cmdline="tezosClientCmdline"
       :show-clipboard-ok="showClipboardOK"
-      @cmdLineChange="setCmdline"
     />
     <SchemaMichelson
       v-model="showMichelson"
@@ -223,6 +222,9 @@ export default {
     },
     setSettings({key, val}) {
       Vue.set(this.settings, key, val);
+    },
+    setResultOPG(val) {
+      this.showResultOPG = val;
     },
     setCmdline(val) {
       this.showCmdline = val;
@@ -461,7 +463,7 @@ export default {
             const src = this.settings.source || "%YOUR_ADDRESS%";
             const entrypoint = this.name;
             this.tezosClientCmdline = `transfer ${amount} from ${src} to ${this.address} --entrypoint "${entrypoint}" --arg "${arg}"`;
-            this.setCmdline(show);
+            this.showCmdline = show;
           }
           return resJSON;
         })

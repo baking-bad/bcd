@@ -30,6 +30,7 @@
           </template>
           <template slot="custom-nat" slot-scope="props">
             <v-text-field
+              :key="props.fullKey"
               :ref="props.fullKey"
               :label="props.label"
               v-on="props.on"
@@ -41,6 +42,7 @@
           </template>
           <template slot="custom-contract" slot-scope="props">
             <v-text-field
+                :key="props.fullKey"
                 :ref="props.fullKey"
                 :label="props.label"
                 v-on="props.on"
