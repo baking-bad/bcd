@@ -11,8 +11,8 @@
                 <v-stepper-content step="1">
                     <v-card class="mb-0 transparent" elevation="0">
                         <v-card-text>
-                            <span class="caption">You can deploy contract by uploading file with michelson code. The file size should not exceed 1 MB.</span>
-                            <p class="caption font-italic">Tip: You can download the file from the code page of any contract.</p>
+                            <span class="caption">You can deploy a contract by downloading a michelson code file. The file size should not exceed 1 MB.</span>
+                            <p class="caption font-italic">Tip: You can download the file from the code tab of any contract.</p>
                             <v-file-input 
                                 v-model="file" 
                                 @change="fileUploadErrorText = ''" 
