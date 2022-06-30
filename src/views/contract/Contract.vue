@@ -352,8 +352,8 @@ export default {
         .finally(() => (this.contractLoading = false));
     },
     getMetadata() {
-      this.api
-        .getAccountMetadata(this.network, this.address)
+      this.metadataAPI
+        .get(this.network, this.address)
         .then((res) => {
           if (!res) return;
           this.metadata = res;
