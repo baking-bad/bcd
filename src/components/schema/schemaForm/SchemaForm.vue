@@ -48,6 +48,7 @@
               v-on="props.on"
               dense
               outlined
+              numeric
               :value="props.value"
               :rules="rules.nat"
               :placeholder="props.label">
@@ -174,7 +175,7 @@ name: "SchemaForm",
         ],
         nat: [
           v => /^\d+$/.test(v) || 'Only digits are allowed',
-          v => v.length > 2 && v[0] !== '0' || "Nat can't starts from zero"
+          v => this.validateNat(v)
         ],
         bytes: [
           v => v.length % 2 == 0 || "The length of the byte string must be even",
@@ -187,5 +188,21 @@ name: "SchemaForm",
       }
     };
   },
+  methods: {
+    validateNat(value) {
+      if (value.length == 0) {
+        return 'Nat field is required';
+      }
+      console.log(value);
+      let nat = parseInt(value);
+      if (nat < 0) {
+        return 'Nat must be positive';
+      }
+      if (value.length > 1 && value[0] === '0') {
+        return "Nat can't starts from zero";
+      }
+      return true;
+    }
+  }
 }
 </script>
