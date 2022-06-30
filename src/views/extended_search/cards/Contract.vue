@@ -101,11 +101,11 @@ export default {
         this.getContract();
     },
     methods: {
-        getContract() {
+        getContract(item) {
             if (this.loading) return;
             this.loading = true;
 
-            this.api.getContract(this.item.body.Network, this.item.body.Address)
+            this.api.getContract(item.body.Network, item.body.Address)
                 .then(contract => {
                     this.info = contract;
                 })
@@ -119,7 +119,7 @@ export default {
             immediate: true,
             async handler(newVal) {
                 if (newVal) {
-                    await this.getContract();
+                    await this.getContract(newVal);
                 }
             }
         }

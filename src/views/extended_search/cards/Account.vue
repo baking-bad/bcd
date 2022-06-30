@@ -88,21 +88,28 @@ export default {
             return this.info.alias;
         }
     },
-    created() {
-        this.getAccountInfo();
-    },
     methods: {
-        getAccountInfo() {
+        getAccountInfo(item) {
             if (this.loading) return;
             this.loading = true;
 
-            this.api.getAccountInfo(this.item.body.Network, this.item.body.Address)
+            this.api.getAccountInfo(item.body.Network, item.body.Address)
             .then(account => {
                 this.info = account;
             })
             .catch(err => console.log(err))
             .finally(() => this.loading = false);
         },
+    },
+    watch: {
+        item: {
+            deep: true,
+            immediate: true,
+            async handler(value) {
+                if (value)
+                    await this.getAccountInfo(value);
+            }
+        }
     }
 }
 </script>

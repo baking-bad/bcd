@@ -58,9 +58,6 @@ export default {
         loading: false,
         info: null
     }),
-    created() {
-        this.getOPG();
-    },
     computed: {
         status() {
             if (this.info.status === 'applied') {
@@ -73,11 +70,11 @@ export default {
         }
     },
     methods: {
-        getOPG() {
+        getOPG(item) {
             if (this.loading) return;
             this.loading = true;
 
-            this.api.getOPG(this.item.body.Hash)
+            this.api.getOPG(item.body.Hash)
                 .then(opg => {
                     if (opg.length > 0){
                         this.info = opg[0];
@@ -86,6 +83,16 @@ export default {
                 .catch(err => console.log(err))
                 .finally(() => this.loading = false);
         },
+    },
+    watch: {
+        item: {
+            deep: true,
+            immediate: true,
+            async handler(value) {
+                if (value)
+                    await this.getOPG(value);
+            }
+        }
     }
 }
 </script>
