@@ -164,7 +164,7 @@ export default {
     },
     methods: {
         filter() {
-            this.$emit('filterChanged', this.internalFilters)
+            this.$emit('filterChanged', Object.assign({}, this.internalFilters));
         },
         reset() {
             this.internalFilters = {
