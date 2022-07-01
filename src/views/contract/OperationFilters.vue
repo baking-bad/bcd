@@ -89,12 +89,14 @@
                             readonly
                             dense
                             outlined
+                            clearable
                             background-color="data"
                             hide-details
                             v-on="on"
+                            @click:clear="resetDates"
                         ></v-text-field>
                     </template>
-                    <v-date-picker v-model="datesBuf" min="2018-06-30" scrollable range show-current>
+                    <v-date-picker v-model="datesBuf" min="2018-06-30" :max="maxDate" scrollable range show-current>
                         <v-spacer></v-spacer>
                         <v-btn text color="primary" @click="datesModal = false">Cancel</v-btn>
                         <v-btn text color="primary" @click="$refs.menu.save(datesBuf)">OK</v-btn>
@@ -162,10 +164,17 @@ export default {
         }
         return s;
       },
+      maxDate() {
+        return dayjs().format("YYYY-MM-DD");
+      }
     },
     methods: {
         filter() {
             this.$emit('filterChanged', Object.assign({}, this.internalFilters));
+        },
+        resetDates() {
+          this.internalFilters.dates = [];
+          this.datesBuf = [];
         },
         reset() {
             this.internalFilters = {
