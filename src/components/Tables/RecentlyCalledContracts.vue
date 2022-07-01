@@ -38,7 +38,7 @@
               <span class="text--secondary">{{ item.tx_count }}</span>
             </td>
             <td>
-              <span class="text--secondary">{{ item.last_action | fromNow }}</span>
+              <span class="text--secondary">{{ helpers.formatDatetime(item.last_action)  }}</span>
             </td>
           </tr>
         </template>

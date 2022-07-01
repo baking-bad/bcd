@@ -163,20 +163,6 @@ export default {
   }
 }
 
-
-.footer-pagination {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  border-top: thin solid rgba(255, 255, 255, 0.12);
-  padding: 0 8px;
-
-  button {
-    width: 43px;
-    margin-left: 7px;
-  }
-}
-
 .global-constant-loader {
   min-height: 420px;
 
