@@ -113,7 +113,7 @@
 <script>
 
 import dayjs from "dayjs";
-import isKT1Address from '@/utils/tz.js';
+import {isKT1Address} from '@/utils/tz.js';
 
 export default {
     name: "OperationFilters",
