@@ -113,6 +113,7 @@
 <script>
 
 import dayjs from "dayjs";
+import isKT1Address from '@/utils/tz.js';
 
 export default {
     name: "OperationFilters",
@@ -139,7 +140,7 @@ export default {
         }
       },
       isContract() {
-        if (this.contract.address) return this.contract.address.startsWith("KT");
+        if (this.contract.address) return isKT1Address(this.contract.address);
         return false;
       },
       dateRangeText() {
