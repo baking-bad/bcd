@@ -39,7 +39,7 @@
     <RawJsonViewer
         :raw="constantInfo.value"
         :show.sync="showRaw"
-        type="code"
+        type="constants"
         :network="network"
         :address="address"
         :level="0"/>
@@ -77,10 +77,12 @@ export default {
     constantInfoItems() {
       const items = ['address', 'timestamp', 'level'];
 
-      return items.map((item) => ({
-        value: this.constantInfo[item],
-        label: toTitleCase(item)
-      }))
+      return items.map((item) => {
+        return {
+          value: item === 'timestamp' ? this.helpers.formatDatetime(this.constantInfo[item]) : this.constantInfo[item],
+          label: toTitleCase(item)
+        }
+      })
     }
   },
   methods: {
