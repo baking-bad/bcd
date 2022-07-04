@@ -544,8 +544,30 @@ export class BetterCallApi {
       })
   }
 
-  getOPG(hash, with_mempool=true) {
-    return getCancellable(this.api, `/opg/${hash}?with_mempool=${with_mempool}`, {})
+  getOPG(hash, with_mempool=true, with_storage_diff=false, network=undefined) {
+    let params = {}
+    if (with_mempool) {
+      params.with_mempool = with_mempool;
+    }
+    if (with_storage_diff) {
+      params.with_storage_diff = with_storage_diff;
+    }
+    if (network) {
+      params.network = network
+    }
+    return getCancellable(this.api, `/opg/${hash}`, {
+      params: params,
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getImplicitOperation(network, counter) {
+    return getCancellable(this.api, `/implicit/${network}/${counter}`, {})
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);

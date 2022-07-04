@@ -213,7 +213,7 @@ export default {
     }),
     getOPG() {
       this.api
-        .getOPG(this.hash)
+        .getOPG(this.hash, true, false, this.network)
         .then((res) => {
           if (!res) return;
           this.operations = res;

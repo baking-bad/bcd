@@ -42,7 +42,7 @@
           </template>
           <span>Repeat operation group</span>
         </v-tooltip>
-        <v-tooltip top>
+        <v-tooltip top v-if="data.hash">
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon class="mr-2 text--secondary" @click="showRaw = true">
               <v-icon>mdi-code-json</v-icon>
@@ -50,7 +50,7 @@
           </template>
           <span>View raw JSON</span>
         </v-tooltip>
-        <v-tooltip top>
+        <v-tooltip top v-if="data.hash">
           <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
@@ -66,7 +66,7 @@
           </template>
           <span>Copy operation hash</span>
         </v-tooltip>
-        <v-tooltip top>
+        <v-tooltip top v-if="data.hash">
           <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
@@ -92,7 +92,7 @@
       <v-col
         cols="1"
         class="py-0 d-flex justify-end align-center"
-        v-if="loadingDiffs || hasParameters || hasStorageDiff"
+        v-if="showDetails"
       >
         <v-btn
           text
@@ -351,6 +351,12 @@ export default {
         this.diffs != null &&
         this.diffs !== undefined
       );
+    },
+    showDetails() {
+      return this.data.hash === undefined || 
+        this.data.kind === 'origination' || 
+        this.hasParameters || 
+        this.hasStorageDiff;
     },
     statusColor() {
       if (this.data.status === "applied") return "success";

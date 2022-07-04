@@ -84,7 +84,7 @@
             <v-list-item class="fill-height pl-3">
               <v-list-item-content>
                 <v-list-item-title>
-                  <Shortcut :str="value.hash"/>
+                  <Shortcut :str="value.hash" v-if="value.hash"/>
                 </v-list-item-title>
                 <v-list-item-subtitle v-if="value.content_index !== undefined"
                   class="font-weight-light hash text--secondary"
@@ -158,20 +158,33 @@ export default {
 
       this.loading = true;
 
-      this.api.
-        getOperationsByHashAndCounter(this.value.hash, this.value.counter, this.network)
-        .then(res => {
-          this.value.internal_operations = res;
-        })
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        })
-        .finally(() => {
-          this.loading = false;
-        })
-          
-
+      if (this.value.hash){
+        this.api.
+          getOperationsByHashAndCounter(this.value.hash, this.value.counter, this.network)
+          .then(res => {
+            this.value.internal_operations = res;
+          })
+          .catch(err => {
+            console.log(err);
+            this.showError(err);
+          })
+          .finally(() => {
+            this.loading = false;
+          })
+      } else {
+        this.api.
+          getImplicitOperation(this.network, this.value.counter)
+          .then(res => {
+            this.value.internal_operations = res;
+          })
+          .catch(err => {
+            console.log(err);
+            this.showError(err);
+          })
+          .finally(() => {
+            this.loading = false;
+          })
+      }
     }
   },
 };
