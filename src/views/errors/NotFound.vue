@@ -10,7 +10,7 @@
         </span>
       </template>
     </EmptyState>
-    <div class="d-flex justify-center">
+    <div class="d-flex justify-center mt-6">
       <v-btn
         class="text--secondary"
         large depressed

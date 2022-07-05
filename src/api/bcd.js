@@ -593,68 +593,6 @@ export class BetterCallApi {
       })
   }
 
-  getDApps() {
-    return getCancellable(this.api, `/dapps`, {})
-      .then((res) => {
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
-
-  getDApp(slug) {
-    return getCancellable(this.api, `/dapps/${slug}`, {})
-      .then((res) => {
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
-
-  getDexDappTokens(slug) {
-    return getCancellable(this.api, `/dapps/${slug}/dex/tokens`, {})
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data;
-      });
-  }
-
-  getTezosDayVolume(slug) {
-    return getCancellable(this.api, `/dapps/${slug}/dex/tezos_volume`, {})
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data;
-      });
-  }
-
-  getTokenVolumeSeries(network, period, contract, token_id, slug = '') {
-    let params = [];
-    params.push(`contract=${contract}`)
-
-    params.push(`period=${period}`)
-
-    params.push(`token_id=${token_id}`)
-
-    if (slug !== '') {
-      params.push(`slug=${slug}`)
-    }
-
-    return getCancellable(this.api, `/tokens/${network}/series?${params.join('&')}`, {})
-      .then((res) => {
-        if (!res) { return res; }
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
-
   getMetadataViewsSchema(network, address) {
       return this.api.get(`/contract/${network}/${address}/views/schema`)
           .then((res) => {

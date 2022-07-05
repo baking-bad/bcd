@@ -13,9 +13,6 @@
       <v-btn text small :to="{ path: `/stats/${config.networks[0]}/general` }" class="text--secondary" active-class="bg-before-transparent">
         Stats
       </v-btn>
-      <v-btn text small :to="{ name: 'dapps' }" class="text--secondary" active-class="bg-before-transparent">
-        Dapps
-      </v-btn>
       <v-btn
         text
         active-class="bg-before-transparent"
