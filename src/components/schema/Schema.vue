@@ -687,8 +687,11 @@ export default {
     },
   },
   watch: {
-    value: function(newValue) {
-      this.model = newValue;
+    value: {
+      deep: true,
+      handler: function(newValue) {
+        this.model = newValue;
+      }
     },
     execution: function (newValue) {
       if (newValue) {

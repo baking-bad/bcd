@@ -38,7 +38,7 @@
             :name="selectedItem.name"
             :network="network"
             :address="address"
-            :alias="contract.alias"
+            :alias="contract && contract.alias ? contract.alias : ''"
           />
           <div v-else></div>
         </v-skeleton-loader>
@@ -132,7 +132,10 @@ export default {
           this.$route.query.hash, 
           this.$route.query.counter)
         .then(res=> {
-          this.model = res.default_model[entrypoint];
+          let withoutName = res.default_model[entrypoint];
+          if (typeof withoutName === 'object' && !Array.isArray(withoutName))
+            this.model = withoutName;
+          else this.model = res.default_model;
         })
         .catch(err => {
           console.log(err)
