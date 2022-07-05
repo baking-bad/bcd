@@ -26,6 +26,10 @@
             Rendering: {{Math.floor(loadedPercentage)}}%
           </span>
             <v-spacer></v-spacer>
+            <v-btn v-if="constants.length" class="mr-1 text--secondary" small text @click="openConstantsDialog = true">
+              <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
+              <span>USING CONSTANTS</span>
+            </v-btn>
             <v-btn
               class="mr-1 text--secondary"
               v-clipboard="getValueToCopy"
@@ -60,6 +64,7 @@
       :network="network"
       :address="address"
       :level="0" />
+    <UsingConstantsDialog :network="network" :constants="constants" v-model="openConstantsDialog"/>
   </v-container>
 </template>
 
@@ -70,6 +75,7 @@ import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import {downloadFileFormContent} from "@/utils/download";
+import UsingConstantsDialog from "@/components/UsingConstantsDialog";
 
 export default {
   props: {
@@ -78,16 +84,19 @@ export default {
     network: String,
   },
   components: {
+    UsingConstantsDialog,
     ErrorState,
     Michelson,
     RawJsonViewer,
   },
   data: () => ({
     code: {},
+    openConstantsDialog: false,
     renderingInterval: null,
     lastSubstring: 0,
     freezingAmount: 35000,
     loadedPercentage: 0,
+    constants: [],
     isCodeRendered: false,
     loadedCode: "",
     loading: true,
@@ -106,7 +115,7 @@ export default {
       });
     }
     if (this.isContract) {
-      this.getMigrations();
+      this.getConstants();
     }
   },
   computed: {
@@ -186,13 +195,19 @@ export default {
     downloadFile() {
       downloadFileFormContent(this.selectedCode, this.address)
     },
+    async getConstants() {
+      this.constants = await this.api.getConstantsByContract(this.network, this.address)
+    }
   },
   watch: {
-    address: function() {
+    address() {
       this.selectedProtocol = "";
       this.getCode();
+      if (this.isContract) {
+        this.getConstants();
+      }
     },
-    selectedProtocol: function(newValue) {
+    selectedProtocol(newValue) {
       if (newValue !== "") {
         this.$router.replace({ query: { protocol: newValue } });
       } else {

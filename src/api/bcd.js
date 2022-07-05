@@ -760,4 +760,9 @@ export class BetterCallApi {
         return this.api.get(`/global_constants/${network}/${address}`)
             .then(this.returnResponseData);
     }
+
+    getConstantsByContract(network, address) {
+        return this.api.get(`/contract/${network}/${address}/global_constants`)
+            .then(this.returnResponseData);
+    }
 }
