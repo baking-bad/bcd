@@ -19,7 +19,7 @@
               <tr class="table-row">
                 <td>
                   <v-btn
-                      :href="`/constant/${network}/${item.address}/`"
+                      @click="navigate(item.address)"
                       target="_blank"
                       class="text--secondary hash"
                       style="text-transform: none;"
@@ -56,6 +56,10 @@ export default {
         }
       }
     },
-
+    methods: {
+      navigate(address) {
+        window.open(`/constant/${this.network}/${address}/`, '_blank')
+      }
+    }
 }
 </script>
