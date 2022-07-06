@@ -2,40 +2,38 @@
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-row>
       <v-col cols="12">
-        <v-skeleton-loader v-if="loading" type="card-heading, image" />
+        <v-skeleton-loader v-if="loading" type="card-heading, image"/>
         <div v-else-if="selectedCode">
           <div class="d-flex justify-space-between">
             <v-select
-              v-if="codeVersions.length > 0"
-              v-model="selectedProtocol"
-              @change="getCode(selectedProtocol)"
-              :items="codeVersions"
-              item-text="proto"
-              item-value="protocol"
-              style="max-width: 160px;"
-              rounded
-              dense
-              background-color="data"
-              class="mb-1"
-              hide-details
+                v-if="codeVersions.length > 0"
+                v-model="selectedProtocol"
+                @change="getCode(selectedProtocol)"
+                :items="codeVersions"
+                item-text="proto"
+                item-value="protocol"
+                style="max-width: 160px;"
+                rounded
+                dense
+                background-color="data"
+                class="mb-1"
+                hide-details
             ></v-select>
             <span
-              v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
-              class="ml-4 text--disabled rendering-percents"
+                v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
+                class="ml-4 text--disabled rendering-percents"
             >
-            Rendering: {{Math.floor(loadedPercentage)}}%
+            Rendering: {{ Math.floor(loadedPercentage) }}%
           </span>
             <v-spacer></v-spacer>
-            <v-btn v-if="constants.length" class="mr-1 text--secondary" small text @click="openConstantsDialog = true">
-              <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
-              <span>USING CONSTANTS</span>
-            </v-btn>
+            <UsingConstantsDialog :network="network" :address="address"/>
+
             <v-btn
-              class="mr-1 text--secondary"
-              v-clipboard="getValueToCopy"
-              v-clipboard:success="showSuccessCopy"
-              small
-              text
+                class="mr-1 text--secondary"
+                v-clipboard="getValueToCopy"
+                v-clipboard:success="showSuccessCopy"
+                small
+                text
             >
               <v-icon class="mr-1" small>mdi-content-copy</v-icon>
               <span>Copy</span>
@@ -55,22 +53,21 @@
             </v-card-text>
           </v-card>
         </div>
-        <ErrorState v-else />
+        <ErrorState v-else/>
       </v-col>
     </v-row>
     <RawJsonViewer
-      :show.sync="showRaw"
-      type="code"
-      :network="network"
-      :address="address"
-      :level="0" />
-    <UsingConstantsDialog :network="network" :constants="constants" v-model="openConstantsDialog"/>
+        :show.sync="showRaw"
+        type="code"
+        :network="network"
+        :address="address"
+        :level="0"/>
   </v-container>
 </template>
 
 <script>
 import Vue from 'vue';
-import { mapActions } from "vuex";
+import {mapActions} from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
@@ -91,12 +88,10 @@ export default {
   },
   data: () => ({
     code: {},
-    openConstantsDialog: false,
     renderingInterval: null,
     lastSubstring: 0,
     freezingAmount: 35000,
     loadedPercentage: 0,
-    constants: [],
     isCodeRendered: false,
     loadedCode: "",
     loading: true,
@@ -114,9 +109,6 @@ export default {
         this.getCode();
       });
     }
-    if (this.isContract) {
-      this.getConstants();
-    }
   },
   computed: {
     isContract() {
@@ -130,7 +122,7 @@ export default {
     },
     codeVersions() {
       let versions = [];
-      versions.unshift({ proto: "Latest", protocol: "" });
+      versions.unshift({proto: "Latest", protocol: ""});
       return versions;
     }
   },
@@ -177,41 +169,35 @@ export default {
       }
 
       this.api
-        .getContractCode(this.network, this.address, protocol, 0)
-        .then(res => {
-          if (!res) return;
-          Vue.set(this.code, protocol, res);
-          this.$nextTick(() => {
-            this.setCodeByParts();
+          .getContractCode(this.network, this.address, protocol, 0)
+          .then(res => {
+            if (!res) return;
+            Vue.set(this.code, protocol, res);
+            this.$nextTick(() => {
+              this.setCodeByParts();
+            });
+          })
+          .catch(err => {
+            this.showError(err);
+          })
+          .finally(() => {
+            this.loading = false;
           });
-        })
-        .catch(err => {
-          this.showError(err);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
     },
     downloadFile() {
       downloadFileFormContent(this.selectedCode, this.address)
     },
-    async getConstants() {
-      this.constants = await this.api.getConstantsByContract(this.network, this.address)
-    }
   },
   watch: {
     address() {
       this.selectedProtocol = "";
       this.getCode();
-      if (this.isContract) {
-        this.getConstants();
-      }
     },
     selectedProtocol(newValue) {
       if (newValue !== "") {
-        this.$router.replace({ query: { protocol: newValue } });
+        this.$router.replace({query: {protocol: newValue}});
       } else {
-        this.$router.replace({ query: null });
+        this.$router.replace({query: null});
       }
     }
   }
