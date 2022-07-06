@@ -110,7 +110,10 @@ Vue.filter('snakeToCamel', (str) => {
 
 Vue.directive('pastHtml', {
     inserted(el, binding) {
-      el.insertAdjacentHTML('afterbegin', binding.value);
+      el.innerHTML = binding.value;
+    },
+    update(el, binding,) {
+      el.innerHTML = binding.value;
     }
 })
 
@@ -157,7 +160,7 @@ api.getConfig().then(response => {
     store.dispatch('hideError');
     next();
   });
-  
+
   router.addRoutes([
     {
       path: '/@:slug([a-zA-Z0-9_.:-]*)',
