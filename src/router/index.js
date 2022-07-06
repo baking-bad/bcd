@@ -40,6 +40,7 @@ import NotFound from "../views/errors/NotFound";
 import DetailsTab from "../views/contract/DetailsTab/DetailsTab";
 import ConstantTab from "@/views/constant/ConstantTab";
 import Constant from "@/views/constant/Constant";
+import ContractStatsTab from "@/views/contract/StatsTab.vue";
 
 Vue.use(VueRouter)
 
@@ -310,6 +311,12 @@ const router = new Router({
           path: 'tokens',
           name: 'tokens',
           component: ContractTokensTab,
+          props: true
+        },
+        {
+          path: 'stats',
+          name: 'contract_stats',
+          component: ContractStatsTab,
           props: true
         },
         {

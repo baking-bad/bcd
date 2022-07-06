@@ -21,6 +21,7 @@ import { Bookmarks } from "@/utils/bookmarks.js";
 import { Aliases } from '@/utils/aliases.js';
 import { SearchService } from "@/api/search.js";
 import { MetadataAPI } from "@/api/metadata.js";
+import { StatsAPI } from "@/api/stats.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
 
@@ -131,7 +132,8 @@ let config = {
   SEARCH_SERVICE_URI: process.env.SEARCH_SERVICE_URI || 'https://search.dipdup.net',
   TOKEN_METADATA_API:  process.env.TOKEN_METADATA_API || "https://metadata.dipdup.net",
   IPFS_NODE: process.env.IPFS_NODE || "https://ipfs.io",
-  METADATA_API_URI: process.env.METADATA_API_URI || "https://metadata.dipdup.net"
+  METADATA_API_URI: process.env.METADATA_API_URI || "https://metadata.dipdup.net",
+  STATS_API_URI: process.env.STATS_API_URI || "https://stats.dipdup.net/"
 }
 
 let api = new BetterCallApi(config.API_URI);
@@ -140,6 +142,7 @@ let aliases = new Aliases(1000);
 let searchService = new SearchService(config.SEARCH_SERVICE_URI);
 let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
+let stats = new StatsAPI(config.STATS_API_URI);
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
 if (isDark) {
@@ -163,7 +166,7 @@ api.getConfig().then(response => {
 
   Vue.mixin({
     data() {
-      return { config, api, rpc, helpers, bookmarks, metadataAPI, tokenMetadata, searchService, aliases }
+      return { config, api, rpc, helpers, bookmarks, metadataAPI, tokenMetadata, searchService, aliases, stats }
     },
     methods: {
       getAlias(network, address) {

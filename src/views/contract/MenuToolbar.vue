@@ -45,6 +45,9 @@
       <v-tab v-show="isOffChainViews" :to="pushTo({name: 'views'})" replace>
         <v-icon left small>mdi-adjust</v-icon>Views
       </v-tab>
+      <v-tab v-show="contract.tx_count > 1" :to="pushTo({name: 'contract_stats'})" replace>
+        <v-icon left small>mdi-align-vertical-bottom</v-icon>Statistics
+      </v-tab>
       <v-tab v-show="isSameContracts || isMigrations" :to="pushTo({name: 'details'})" replace>
         <v-icon left small>mdi-alert-circle-outline</v-icon>Details
       </v-tab>
