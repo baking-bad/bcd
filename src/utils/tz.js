@@ -70,7 +70,7 @@ export function formatDatetime(timestamp, minDate = {val: 1, unit: "day"}) {
     let d = dayjs(timestamp);
     if (timestamp) {
         if (d.year() < dayjs().year()) return d.format("D MMM'YY HH:mm");
-        if (d.add(minDate.val, minDate.unit).isBefore(dayjs())) return d.format("D MMM HH:mm");
+        if (d.add(minDate.val, minDate.unit).isBefore(dayjs())) return d.format("D MMM'YY HH:mm");
         return d.fromNow();
     }
 }

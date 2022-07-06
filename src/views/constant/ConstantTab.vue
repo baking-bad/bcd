@@ -79,7 +79,8 @@ export default {
 
       return items.map((item) => {
         return {
-          value: item === 'timestamp' ? this.helpers.formatDatetime(this.constantInfo[item]) : this.constantInfo[item],
+          value: this.constantInfo[item],
+          type: item,
           label: toTitleCase(item)
         }
       })

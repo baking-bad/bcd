@@ -7,6 +7,7 @@
       <v-skeleton-loader :loading="loading" type="article" transition="fade-transition">
         <v-data-table
             :items="contracts"
+            v-if="contracts.length"
             hide-default-header
             :class="['ba-1 mt-4 avg-gas-consumption', 'hide-pagination-count']"
             hide-default-footer
@@ -53,7 +54,9 @@
             </div>
           </template>
         </v-data-table>
-
+        <span v-else class="not-found-text">
+          There are no references to this constant
+        </span>
       </v-skeleton-loader>
     </v-fade-transition>
   </div>
@@ -99,3 +102,8 @@ export default {
   }
 }
 </script>
+<style scoped>
+.not-found-text {
+  color: rgba(255, 255, 255, 0.5);
+}
+</style>

@@ -17,7 +17,7 @@
               </v-list-item-subtitle
               >
               <v-list-item-title class="body-2">
-                {{ field.value }}
+                {{ field.type === 'timestamp' ? helpers.formatDatetime(field.value) : field.value }}
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
