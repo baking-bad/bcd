@@ -13,7 +13,7 @@
           <v-img :src="imageName" max-height="300" contain></v-img>    
           <div class="information font-weight-regular mt-2">
             <span>
-              The API may change without warning and without the ability to rollback to a previous version. We stop improving the API and leave only minimal support. Use the
+              The BCD API is about to become non-public. This means that the API schema may change without notice and without maintaining backward compatibility. Please use the
             <a href="https://api.tzkt.io">TzKT API</a> instead of BCD API.</span><br/><br/>
             ✌🏻 Read:
             <a
