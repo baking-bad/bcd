@@ -1,10 +1,10 @@
 <template>
   <div>
-    <v-btn v-if="constants.length" class="mr-1 text--secondary" small text @click="openConstantsDialog = true">
+    <v-btn v-if="constants.length" class="mr-1 text--secondary" small text @click="openDialog">
       <v-icon class="mr-1" small>mdi-code-parentheses</v-icon>
       <span>USING CONSTANTS</span>
     </v-btn>
-    <v-dialog v-model="openConstantsDialog" max-width="482" @keydown.esc="hide" persistent>
+    <v-dialog v-model="openConstantsDialog" max-width="482" @keydown.esc="hide" persistent no-click-animation ref="constantDialog">
       <v-fade-transition>
         <v-skeleton-loader :loading="isLoading" type="article" class="global-constant-loader"
                            transition="fade-transition">
@@ -73,6 +73,7 @@ export default {
   }),
   mounted() {
     this.init();
+    document.addEventListener('keyup', this.handleKeyUp);
   },
   watch: {
     address() {
@@ -84,7 +85,15 @@ export default {
       return this.loadingConstantsStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
   },
+  destroyed() {
+    document.addEventListener('keyup', this.handleKeyUp);
+  },
   methods: {
+    handleKeyUp(e) {
+      if (e.key === "Escape"){
+        this.hide();
+      }
+    },
     async init() {
       await this.getConstants();
       this.hideFooter = this.isLastPage;
@@ -98,6 +107,9 @@ export default {
     },
     hide() {
       this.openConstantsDialog = false
+    },
+    openDialog() {
+      this.openConstantsDialog = true;
     },
     async getConstants() {
       this.loadingConstantsStatus = DATA_LOADING_STATUSES.PROGRESS;
