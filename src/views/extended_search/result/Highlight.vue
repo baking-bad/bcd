@@ -24,8 +24,8 @@ export default {
     methods: {
         highlight(s) {
             if (this.words === undefined) return s;
-            for (var i = 0; i < this.words.length; i++) {
-                let re = new RegExp(`(${this.words[i]})`, "gmi");
+            for (let word of this.words) {
+                let re = new RegExp(`(${word})`, "gmi");
                 s = sanitizeHtml(s.replace(re, "<span class='highlight'>$1</span>"));
             }
             return s;

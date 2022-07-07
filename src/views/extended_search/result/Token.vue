@@ -7,7 +7,7 @@
                         <span class="hash">Token</span>
                         <span class="text--secondary" style="font-size: 20px;"> → </span>
                         <router-link class="serp-link" target="_blank" :to="`/${item.body.Network}/${item.body.Address}/tokens?token_id=${item.body.TokenID}`">
-                            <span v-if="item.body.Name" v-html="highlight(item.body.Name)" class="alias"></span>
+                            <span v-if="item.body.Name" class="alias">{{ item.body.Name }}</span>
                         </router-link>
                     </v-list-item-title>
                     <v-list-item-subtitle>
@@ -25,7 +25,6 @@
 
 <script>
 import Highlight from './Highlight.vue'
-import sanitizeHtml from 'sanitize-html';
 
 export default {
     name: "Token",
@@ -36,16 +35,6 @@ export default {
     components: {
         Highlight
     },
-    methods: {
-        highlight(s) {
-            if (this.words === undefined) return s;
-            for (var i = 0; i < this.words.length; i++) {
-                let re = new RegExp(`(${this.words[i]})`, "gmi");
-                s = sanitizeHtml(s.replace(re, "<span class='highlight'>$1</span>"));
-            }
-            return s;
-        },
-    }
 }
 </script>
 

@@ -7,7 +7,7 @@
 </template>
 
 <script>
-var images = require.context('@/assets/', false, /\.png$/)
+let images = require.context('@/assets/', false, /\.png$/)
 
 export default {
   name: "StartSearchState",

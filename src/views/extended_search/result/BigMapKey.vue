@@ -11,7 +11,7 @@
                         <span class="text--secondary" style="font-size: 20px;"> → </span>
                         <router-link class="serp-link" target="_blank"
                             :to="`/${item.body.Network}/big_map/${item.body.BigMapID}/${item.body.KeyHash}`">
-                            <span class="hash" v-html="highlight(item.body.KeyHash)"></span>
+                            <span class="hash">{{ item.body.KeyHash }}</span>
                         </router-link>
                     </v-list-item-title>
                     <v-list-item-subtitle>
@@ -28,7 +28,6 @@
 
 <script>
 import Highlight from './Highlight.vue';
-import sanitizeHtml from 'sanitize-html';
 
 export default {
     name: "BigMapKey",
@@ -39,16 +38,6 @@ export default {
     components: {
         Highlight
     },
-    methods: {
-        highlight(s) {
-            if (this.words === undefined) return s;
-            for (var i = 0; i < this.words.length; i++) {
-                let re = new RegExp(`(${this.words[i]})`, "gmi");
-                s = sanitizeHtml(s.replace(re, "<span class='highlight'>$1</span>"));
-            }
-            return s;
-        },
-    }
 }
 </script>
 

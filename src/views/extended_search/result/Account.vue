@@ -12,7 +12,7 @@
                 target="_blank"
                 :to="`/${item.body.Network}/${item.body.Address}`"
             >
-                <span v-if="alias" v-html="highlight(alias)" class="alias"></span>
+                <span v-if="alias" class="alias">{{ alias }}</span>
                 <span v-else class="hash">{{ item.body.Address }}</span>
             </router-link>
             </v-list-item-title>
@@ -30,7 +30,6 @@
 
 <script>
 import Highlight from "./Highlight.vue";
-import sanitizeHtml from "sanitize-html";
 
 export default {
   name: "Account",
@@ -49,16 +48,6 @@ export default {
         if (this.item.body.TZIP) return this.item.body.TZIP.Name;
         return undefined;
     }
-  },
-  methods: {
-    highlight(s) {
-      if (this.words === undefined) return s;
-      for (var i = 0; i < this.words.length; i++) {
-        let re = new RegExp(`(${this.words[i]})`, "gmi");
-        s = sanitizeHtml(s.replace(re, "<span class='highlight'>$1</span>"));
-      }
-      return s;
-    },
   },
 };
 </script>
