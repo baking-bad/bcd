@@ -264,7 +264,7 @@ export default {
       }
     },
     michelsonActionCallback() {
-      return () => {
+      return this.isDeploy ? null : () => {
         this.fireEvent("Michelson", "interact");
         this.michelsonParameters();
       }
@@ -335,7 +335,6 @@ export default {
           callback: this.beaconClientActionCallback(false)
         },
       ];
-      console.log(this.executeActions)
       this.importActions.push(
           {
             text: "Wallet",
