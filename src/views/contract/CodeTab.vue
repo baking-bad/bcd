@@ -2,36 +2,38 @@
   <v-container fluid class="pa-8 canvas fill-canvas">
     <v-row>
       <v-col cols="12">
-        <v-skeleton-loader v-if="loading" type="card-heading, image" />
+        <v-skeleton-loader v-if="loading" type="card-heading, image"/>
         <div v-else-if="selectedCode">
           <div class="d-flex justify-space-between">
             <v-select
-              v-if="codeVersions.length > 0"
-              v-model="selectedProtocol"
-              @change="getCode(selectedProtocol)"
-              :items="codeVersions"
-              item-text="proto"
-              item-value="protocol"
-              style="max-width: 160px;"
-              rounded
-              dense
-              background-color="data"
-              class="mb-1"
-              hide-details
+                v-if="codeVersions.length > 0"
+                v-model="selectedProtocol"
+                @change="getCode(selectedProtocol)"
+                :items="codeVersions"
+                item-text="proto"
+                item-value="protocol"
+                style="max-width: 160px;"
+                rounded
+                dense
+                background-color="data"
+                class="mb-1"
+                hide-details
             ></v-select>
             <span
-              v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
-              class="ml-4 text--disabled rendering-percents"
+                v-if="!isCodeRendered && selectedCode && selectedCode.length > freezingAmount"
+                class="ml-4 text--disabled rendering-percents"
             >
-            Rendering: {{Math.floor(loadedPercentage)}}%
+            Rendering: {{ Math.floor(loadedPercentage) }}%
           </span>
             <v-spacer></v-spacer>
+            <UsingConstantsDialog :network="network" :address="address"/>
+
             <v-btn
-              class="mr-1 text--secondary"
-              v-clipboard="getValueToCopy"
-              v-clipboard:success="showSuccessCopy"
-              small
-              text
+                class="mr-1 text--secondary"
+                v-clipboard="getValueToCopy"
+                v-clipboard:success="showSuccessCopy"
+                small
+                text
             >
               <v-icon class="mr-1" small>mdi-content-copy</v-icon>
               <span>Copy</span>
@@ -51,24 +53,26 @@
             </v-card-text>
           </v-card>
         </div>
-        <ErrorState v-else />
+        <ErrorState v-else/>
       </v-col>
     </v-row>
     <RawJsonViewer
-      :show.sync="showRaw"
-      type="code"
-      :network="network"
-      :address="address"
-      :level="0" />
+        :show.sync="showRaw"
+        type="code"
+        :network="network"
+        :address="address"
+        :level="0"/>
   </v-container>
 </template>
 
 <script>
 import Vue from 'vue';
-import { mapActions } from "vuex";
+import {mapActions} from "vuex";
 import Michelson from "@/components/Michelson.vue";
 import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
+import {downloadFileFormContent} from "@/utils/download";
+import UsingConstantsDialog from "@/components/UsingConstantsDialog";
 
 export default {
   props: {
@@ -77,6 +81,7 @@ export default {
     network: String,
   },
   components: {
+    UsingConstantsDialog,
     ErrorState,
     Michelson,
     RawJsonViewer,
@@ -104,9 +109,6 @@ export default {
         this.getCode();
       });
     }
-    if (this.isContract) {
-      this.getMigrations();
-    }
   },
   computed: {
     isContract() {
@@ -120,7 +122,7 @@ export default {
     },
     codeVersions() {
       let versions = [];
-      versions.unshift({ proto: "Latest", protocol: "" });
+      versions.unshift({proto: "Latest", protocol: ""});
       return versions;
     }
   },
@@ -167,45 +169,35 @@ export default {
       }
 
       this.api
-        .getContractCode(this.network, this.address, protocol, 0)
-        .then(res => {
-          if (!res) return;
-          Vue.set(this.code, protocol, res);
-          this.$nextTick(() => {
-            this.setCodeByParts();
+          .getContractCode(this.network, this.address, protocol, 0)
+          .then(res => {
+            if (!res) return;
+            Vue.set(this.code, protocol, res);
+            this.$nextTick(() => {
+              this.setCodeByParts();
+            });
+          })
+          .catch(err => {
+            this.showError(err);
+          })
+          .finally(() => {
+            this.loading = false;
           });
-        })
-        .catch(err => {
-          this.showError(err);
-        })
-        .finally(() => {
-          this.loading = false;
-        });
     },
     downloadFile() {
-      var element = document.createElement("a");
-      element.setAttribute(
-        "href",
-        "data:text/plain;charset=utf-8," + encodeURIComponent(this.selectedCode)
-      );
-      element.setAttribute("download", this.address + ".tz");
-      element.style.display = "none";
-      document.body.appendChild(element);
-
-      element.click();
-      document.body.removeChild(element);
+      downloadFileFormContent(this.selectedCode, this.address)
     },
   },
   watch: {
-    address: function() {
+    address() {
       this.selectedProtocol = "";
       this.getCode();
     },
-    selectedProtocol: function(newValue) {
+    selectedProtocol(newValue) {
       if (newValue !== "") {
-        this.$router.replace({ query: { protocol: newValue } });
+        this.$router.replace({query: {protocol: newValue}});
       } else {
-        this.$router.replace({ query: null });
+        this.$router.replace({query: null});
       }
     }
   }

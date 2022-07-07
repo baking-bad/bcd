@@ -1,6 +1,6 @@
 <template>
   <v-fade-transition>
-    <v-skeleton-loader :loading="isRecentlyCalledLoading" type="article" transition="fade-transition">
+    <v-skeleton-loader :loading="isRecentlyCalledLoading" class="recently-loader" type="article" transition="fade-transition">
       <v-data-table
         :items="recentlyCalledContracts"
         :headers="recentlyCalledTableHeaders"
@@ -38,7 +38,7 @@
               <span class="text--secondary">{{ item.tx_count }}</span>
             </td>
             <td>
-              <span class="text--secondary">{{ item.last_action | fromNow }}</span>
+              <span class="text--secondary">{{ helpers.formatDatetime(item.last_action)  }}</span>
             </td>
           </tr>
         </template>
@@ -174,6 +174,16 @@ export default {
   & > tr > th > span {
     font-size: 16px;
     font-weight: 400;
+  }
+}
+
+.recently-loader {
+  min-height: 420px;
+
+  ::v-deep {
+    .v-skeleton-loader__article {
+      min-height: 420px;
+    }
   }
 }
 

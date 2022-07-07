@@ -47,10 +47,7 @@ export default {
   }),
   methods: {
     navigate(state) {
-      this.$router.push({
-        name: this.$router.name,
-        params: { network: state.network },
-      });
+      this.$router.push(`/${state.network}`);
     },
     setItem() {
       this.states.forEach((x, idx) => {
