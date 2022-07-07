@@ -687,6 +687,12 @@ export default {
     },
   },
   watch: {
+    value: {
+      deep: true,
+      handler: function(newValue) {
+        this.model = newValue;
+      }
+    },
     execution: function (newValue) {
       if (newValue) {
         this.injectedOpHash = null;

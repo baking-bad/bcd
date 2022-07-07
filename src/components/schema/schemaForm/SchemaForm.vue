@@ -193,7 +193,6 @@ name: "SchemaForm",
       if (value.length == 0) {
         return 'Nat field is required';
       }
-      console.log(value);
       let nat = parseInt(value);
       if (nat < 0) {
         return 'Nat must be positive';

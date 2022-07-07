@@ -17,6 +17,31 @@
         <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
       </v-col>
       <v-col cols="2" v-if="address" class="py-0 d-flex justify-end align-center">
+        <v-tooltip top v-if="isReplayable">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              v-on="on"
+              icon
+              target="_blank"
+              class="mr-2 text--secondary"
+              :to="{
+                name: 'interact',  
+                params: {
+                  network: data.network, 
+                  address: data.destination, 
+                  entrypoint: data.entrypoint,
+                },
+                query: {
+                  hash: data.hash,
+                  counter: data.counter
+                }
+              }"
+            >
+              <v-icon>mdi-repeat</v-icon>
+            </v-btn>
+          </template>
+          <span>Repeat operation group</span>
+        </v-tooltip>
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon class="mr-2 text--secondary" @click="showRaw = true">
@@ -352,6 +377,13 @@ export default {
       }
       return val;
     },
+    isReplayable() {
+      return !this.data.mempool && 
+        this.data.hash && 
+        this.data.destination && 
+        this.data.entrypoint && 
+        this.data.status === 'applied';
+    }
   },
   methods: {
     ...mapActions(["showClipboardOK", "showError"]),
