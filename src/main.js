@@ -114,6 +114,16 @@ Vue.directive('pastHtml', {
     }
 })
 
+
+Vue.directive('pastHtml', {
+    inserted(el, binding) {
+      el.innerHTML = binding.value;
+    },
+    update(el, binding,) {
+      el.innerHTML = binding.value;
+    }
+})
+
 let config = {
   API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
   HOME_PAGE: 'home',
@@ -159,7 +169,7 @@ api.getConfig().then(response => {
     store.dispatch('hideError');
     next();
   });
-  
+
   router.addRoutes([
     {
       path: '/@:slug([a-zA-Z0-9_.:-]*)',

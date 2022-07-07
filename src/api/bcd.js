@@ -132,17 +132,19 @@ export class BetterCallApi {
         }
         params.with_storage_diff = with_storage_diff
 
-    return getCancellable(this.api, `/contract/${network}/${address}/operations`, {
-      params: params,
-    })
-      .then((res) => {
-        if (!res) { return res; }
-        if (res.status !== 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
+        return getCancellable(this.api, `/contract/${network}/${address}/operations`, {
+            params: params,
+        })
+            .then((res) => {
+                if (!res) {
+                    return res;
+                }
+                if (res.status !== 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
 
   getAccountOperationGroups(network, address, last_id = 0, size = 10) {
     let params = {}
@@ -589,6 +591,15 @@ export class BetterCallApi {
         return res.data
       })
   }
+    getProjects() {
+        return getCancellable(this.api, `/projects`, {})
+            .then((res) => {
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
 
   getImplicitOperation(network, counter) {
     return getCancellable(this.api, `/implicit/${network}/${counter}`, {})
@@ -624,16 +635,18 @@ export class BetterCallApi {
       })
   }
 
-  getStats() {
-    return getCancellable(this.api, `/stats`, {})
-      .then((res) => {
-        if (!res) { return res; }
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
+    getStats() {
+        return getCancellable(this.api, `/stats`, {})
+            .then((res) => {
+                if (!res) {
+                    return res;
+                }
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
 
     getNetworkStats(network) {
         return getCancellable(this.api, `/stats/${network}`, {})
@@ -672,16 +685,16 @@ export class BetterCallApi {
             })
     }
 
-  getErrorLocation(network, operationId) {
-    return getCancellable(this.api, `/operation/${network}/${operationId}/error_location`, {})
-      .then((res) => {
-        if (!res) { return res; }
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
+    getErrorLocation(network, operationId) {
+        return getCancellable(this.api, `/operation/${network}/${operationId}/error_location`, {})
+            .then((res) => {
+                if (!res) { return res; }
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
 
     getContractBySlug(slug) {
         return getCancellable(this.api, `/slug/${slug}`, {})
