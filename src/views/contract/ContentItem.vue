@@ -99,11 +99,11 @@
     </v-expansion-panel-header>
     <v-expansion-panel-content class="opg-content">
       <v-progress-linear v-if="loading" indeterminate color="primary"/>
-      <div v-else v-for="(item, idx) in value.internal_operations" :key="idx">
+      <div v-else v-for="(item, idx) in internal" :key="idx">
         <v-divider></v-divider>
         <InternalOperation
           :data="item"
-          :mainOperation="value.internal_operations[0]"
+          :mainOperation="internal[0]"
           :address="address"          
         />
       </div>      
@@ -149,12 +149,15 @@ export default {
   },
   data: () => ({
     value: null,
+    internal: [],
     loading: false
   }),
   methods: {
     ...mapActions(["showError"]),
     onPanelStateChange() {
-      if (!this.value || this.value.internal_operations) return;
+      if (!this.value) return;
+      if (this.value.mempool) this.internal = [Object.assign({}, this.value)];
+      if (this.internal.length > 0) return;
       if (this.loading) return;
 
       this.loading = true;
@@ -163,7 +166,7 @@ export default {
         this.api.
           getOperationsByHashAndCounter(this.value.hash, this.value.counter, this.network)
           .then(res => {
-            this.value.internal_operations = res;
+            this.internal = res;
           })
           .catch(err => {
             console.log(err);
@@ -176,7 +179,7 @@ export default {
         this.api.
           getImplicitOperation(this.network, this.value.counter)
           .then(res => {
-            this.value.internal_operations = res;
+            this.internal = res;
           })
           .catch(err => {
             console.log(err);

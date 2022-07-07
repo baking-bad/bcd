@@ -192,7 +192,9 @@ export default {
       status: [],
       dates: []
     },
-    search: ''
+    search: '',
+    usedBytes: null,
+    paidUsed: null
   }),
   created() {
     this.fetchOperations();
