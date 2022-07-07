@@ -190,4 +190,8 @@ input:-webkit-autofill:active  {
 .v-content-class {
   margin-top: var(--main-header-weight);
 }
+
+.hide-pagination-count .v-data-footer__pagination{
+  display: none;
+}
 </style>

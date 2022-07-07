@@ -17,6 +17,31 @@
         <InfoItem title="Storage limit" :subtitle="(data.storage_limit) || 0 | bytes" />
       </v-col>
       <v-col cols="2" v-if="address" class="py-0 d-flex justify-end align-center">
+        <v-tooltip top v-if="isReplayable">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              v-on="on"
+              icon
+              target="_blank"
+              class="mr-2 text--secondary"
+              :to="{
+                name: 'interact',  
+                params: {
+                  network: data.network, 
+                  address: data.destination, 
+                  entrypoint: data.entrypoint,
+                },
+                query: {
+                  hash: data.hash,
+                  counter: data.counter
+                }
+              }"
+            >
+              <v-icon>mdi-repeat</v-icon>
+            </v-btn>
+          </template>
+          <span>Repeat operation group</span>
+        </v-tooltip>
         <v-tooltip top>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon class="mr-2 text--secondary" @click="showRaw = true">
@@ -67,21 +92,16 @@
       <v-col
         cols="1"
         class="py-0 d-flex justify-end align-center"
-        v-if="hasParameters || hasStorageDiff"
+        v-if="loadingDiffs || hasParameters || hasStorageDiff"
       >
         <v-btn
-          v-if="showParams"
           text
           small
           @click="showParams = !showParams"
-          class="text--secondary"
+          :class="showParams ? 'text--secondary' : ''"
         >
           <v-icon small class="mr-1">mdi-file-tree</v-icon>
-          <span>Hide details</span>
-        </v-btn>
-        <v-btn v-else text small @click="showParams = !showParams">
-          <v-icon small class="mr-1">mdi-file-tree</v-icon>
-          <span>Show details</span>
+          <span>{{ showParams ? 'Hide' : 'Show' }} details</span>
         </v-btn>
       </v-col>
       <v-col cols="2">
@@ -141,7 +161,7 @@
         </v-row>
         <v-row
           class="my-1 parameters px-2 py-3 canvas"
-          v-if="hasParameters || hasStorageDiff"
+          v-if="loadingDiffs || hasParameters || hasStorageDiff"
           no-gutters
         >
           <v-col :cols="expanded ? 12 : 6">
@@ -161,7 +181,10 @@
             </template>
           </v-col>
           <v-col :cols="expanded ? 12 : 6" :class="expanded ? 'mt-4' : ''">
-            <template v-if="hasStorageDiff">
+            <template v-if="loadingDiffs">
+              <p class="overline" >Loading storage diff...</p>
+            </template>
+            <template v-else-if="hasStorageDiff">
               <span class="overline ml-3">Storage</span>
               <v-tooltip top>
                 <template v-slot:activator="{ on }">
@@ -182,7 +205,7 @@
                 class="text--secondary caption"
                 v-if="data"
               >{{ data.storage_size | bytes}}</span>
-              <MiguelTreeView :miguel="data.storage_diff" :network="data.network" diffMode />
+              <MiguelTreeView :miguel="diffs" :network="data.network" diffMode />
             </template>
           </v-col>
         </v-row>
@@ -225,6 +248,8 @@ export default {
     showRaw: false,
     showParams: false,
     expanded: false,
+    loadingDiffs: false,
+    diffs: null
   }),
   created() {
     this.showParams =
@@ -325,8 +350,8 @@ export default {
       return (
         this.data != null &&
         this.data !== undefined &&
-        this.data.storage_diff != null &&
-        this.data.storage_diff !== undefined
+        this.diffs != null &&
+        this.diffs !== undefined
       );
     },
     statusColor() {
@@ -352,9 +377,39 @@ export default {
       }
       return val;
     },
+    isReplayable() {
+      return !this.data.mempool && 
+        this.data.hash && 
+        this.data.destination && 
+        this.data.entrypoint && 
+        this.data.status === 'applied';
+    }
   },
   methods: {
-    ...mapActions(["showClipboardOK"]),
+    ...mapActions(["showClipboardOK", "showError"]),
+    getDiff() {
+      if (this.diffs !== null) return;
+
+      this.loadingDiffs = true;
+      this.api.getOperationDiff(this.data.network, this.data.id).
+        then((res) => {
+          this.diffs = res;
+        }).
+        catch(err => {
+          console.log(err);
+          this.showError(err);
+        }).
+        finally(() => {
+          this.loadingDiffs = false;
+        })
+    }
   },
+  watch: {
+    showParams(newValue) {
+      if (newValue && this.diffs === null) {
+        this.getDiff();
+      }
+    }
+  }
 };
 </script>

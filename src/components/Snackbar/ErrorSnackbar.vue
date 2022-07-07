@@ -1,5 +1,5 @@
 <template>
-  <v-snackbar top right color="error" :value="!!$store.state.error.text" :timeout="3600000">
+  <v-snackbar top right color="error" :value="show" :timeout="5000" @input="reset">
     <v-icon class="mr-3">mdi-alert-circle-outline</v-icon>
     {{ $store.state.error.text }}
     <v-btn icon @click="hideError">
@@ -12,9 +12,19 @@
 import { mapActions } from "vuex";
 
 export default {
+  computed: {
+    show() {
+      return !!this.$store.state.error.text;
+    },
+  },
   methods: {
-    ...mapActions(["hideError"])
-  }
+    ...mapActions(["hideError"]),
+    reset(value) {
+      if (!value) {
+        this.hideError();
+      }
+    }
+  },
 };
 </script>
 

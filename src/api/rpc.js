@@ -92,6 +92,26 @@ export class NodeRPC {
       .then(this.getObject)
   }
 
+  getStoragePaidUsedByContract(network, contract, level = 'head') {
+    return this.getApi(network).get(`chains/main/blocks/${level}/context/raw/json/contracts/index/${contract}/paid_bytes`)
+    .then((res) => {
+      if (res.status != 200) {
+        throw new RequestFailedError(res);
+      }
+      return res.data;
+    })
+  }
+
+  getStorageUsedBytesByContract(network, contract, level = 'head') {
+    return this.getApi(network).get(`chains/main/blocks/${level}/context/raw/json/contracts/index/${contract}/used_bytes`)
+    .then((res) => {
+      if (res.status != 200) {
+        throw new RequestFailedError(res);
+      }
+      return res.data;
+    })
+  }
+
   getObject(response) {
     if (response.status != 200) {
       throw new RequestFailedError(response);

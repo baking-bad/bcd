@@ -19,7 +19,6 @@ export class SearchService {
         };
         return this.api.post(
             `/v1/search`, request
-
         ).then(this.parseResponse)
     }
 
@@ -36,7 +35,6 @@ export class SearchService {
         }
         return this.api.post(
             `/v1/search`, request
-
         ).then(this.parseResponse)
     }
 
@@ -50,7 +48,6 @@ export class SearchService {
                     big_maps: filters,
                 }
             }
-
         ).then(this.parseResponse)
     }
 
@@ -60,6 +57,4 @@ export class SearchService {
         }
         return response.data;
     }
-
-
 }

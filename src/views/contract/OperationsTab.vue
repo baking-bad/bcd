@@ -105,7 +105,6 @@
             >
               <EmptyState
                 v-if="items.length === 0"
-                icon="mdi-code-brackets"
                 title="Nothing found"
                 text="Empty set is also a result, otherwise try a broader query"
               />
@@ -142,14 +141,12 @@
           <v-list-item style="height: 74px">
             <v-list-item-content two-line>
               <v-list-item-title class="headline">
-                <v-tooltip bottom v-if="alias" :disabled="alias.length < 15">
+                <v-tooltip bottom :disabled="alias && alias.length < 25">
                   <template v-slot:activator="{ on, attrs }">
-                    <span v-bind="attrs" v-on="on">{{ alias }}</span>
+                    <span v-bind="attrs" v-on="on" style="cursor: inherit;">{{ alias ? alias : address }}</span>
                   </template>
-                  <span>{{ alias }}</span>
-                </v-tooltip>
-                <span v-else v-html="sanitizeHtml(helpers.shortcut(address))"></span>&nbsp;
-                
+                  <span>{{ alias ? alias : address }}</span>
+                </v-tooltip>                
               </v-list-item-title>
               <v-list-item-subtitle>
               <span
@@ -202,6 +199,24 @@
             :alias="contract.delegate_alias"
             gutters
           />
+          <v-list-item v-if="usedBytes">
+            <v-list-item-content>
+              <v-list-item-subtitle class="overline">Storage used</v-list-item-subtitle>
+              <v-list-item-title class="body-2">
+                <span>{{ parseInt(usedBytes).toLocaleString('en-US') }} bytes</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+           <v-list-item v-if="paidUsed">
+            <v-list-item-content>
+              <v-list-item-subtitle class="overline"
+              >Storage paid</v-list-item-subtitle
+              >
+              <v-list-item-title class="body-2">
+                <span>{{ parseInt(paidUsed).toLocaleString('en-US') }} bytes</span>
+              </v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
         </v-list>
       </v-col>
     </v-row>
@@ -215,7 +230,6 @@ import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
 import Vue from 'vue';
 import AccountBox from "../../components/Dialogs/AccountBox";
-import sanitizeHtml from "sanitize-html";
 
 export default {
   name: "OperationsTab",
@@ -243,10 +257,15 @@ export default {
     datesModal: false,
     entrypoints: [],
     availableEntrypoints: [],
-    operationsChannelName: null
+    operationsChannelName: null,
+    usedBytes: null,
+    paidUsed: null
   }),
   created() {
     this.init();
+
+    this.getUsedBytes();
+    this.getPaidUsed();
   },
   computed: {
     loading() {
@@ -306,7 +325,6 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "hideError"]),
-    sanitizeHtml,
     compareOperations(a, b) {
       if (a.timestamp < b.timestamp) {
         return 1;
@@ -316,6 +334,22 @@ export default {
       }
       return 0;
     },
+
+    async getUsedBytes() {
+      this.usedBytes = await this.rpc.getStorageUsedBytesByContract(this.network, this.address)
+        .catch(err => {
+          console.log(err);
+          return null;
+        })
+    },
+    async getPaidUsed() {
+      this.paidUsed = await this.rpc.getStoragePaidUsedByContract(this.network, this.address)
+        .catch(err => {
+          console.log(err);
+          return null;
+        })
+    },
+
     getTimestamps() {
       let timestamps = this.dates.map((d) => dayjs(d).unix() * 1000).sort();
       if (timestamps.length === 2) {

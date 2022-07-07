@@ -24,7 +24,7 @@
             <v-list-item-content>
               <v-list-item-subtitle class="overline">Total size</v-list-item-subtitle>
               <v-list-item-title class="body-2">
-                <span>{{ totalBytes }} bytes</span>
+                <span>{{ parseInt(totalBytes).toLocaleString('en-US') }} bytes</span>
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>

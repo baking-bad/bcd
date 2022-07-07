@@ -1,15 +1,13 @@
 <template>
   <div class="fill-height bg-canvas-base">
     <v-row class="bg-canvas-base">
-      <v-col cols="9" class="pr-4 pb-4 pl-3 d-flex align-center">
+      <v-col cols="9" class="pr-4 pb-4 d-flex align-center" style="padding-top: 10px;">
         <v-breadcrumbs
-          class="pl-0 pb-0 pt-0 ml-7"
+          class="pl-0 pb-0 pt-0 ml-10"
           divider="/"
           :items="breadcrumbsItems"
         />
-        <Tags
-          :contract="contract"
-        />
+        <Tags :tags="contract.tags"/>
       </v-col>
       <v-col cols="3" class="d-flex justify-end pr-7">
         <div class="d-flex align-center justify-start pa-2 px-4">
@@ -75,7 +73,6 @@
         :address="address"
         :network="network"
         :contract="contract"
-        :tokensTotal="tokensTotal"
         :tokenBalancesTotal="tokenBalancesTotal"
         :metadata="metadata"
         :same-contracts="sameContracts"
@@ -185,7 +182,7 @@ export default {
         },
         {
           text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
-          to: `/${this.network}/${this.address}/operations${this.$route.hash !== '#' ? '#' : '##'}`,
+          to: `/${this.network}/${this.address}`,
           disabled: false,
         },
       ];
@@ -352,8 +349,8 @@ export default {
         .finally(() => (this.contractLoading = false));
     },
     getMetadata() {
-      this.api
-        .getAccountMetadata(this.network, this.address)
+      this.metadataAPI
+        .get(this.network, this.address)
         .then((res) => {
           if (!res) return;
           this.metadata = res;

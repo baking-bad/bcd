@@ -299,8 +299,23 @@ export class BetterCallApi {
       })
   }
 
-  getContractEntrypointSchema(network, address, entrypoint, fill_type = 'empty') {
-    return this.api.get(`/contract/${network}/${address}/entrypoints/schema?fill_type=${fill_type}&entrypoint=${entrypoint}`)
+  getContractEntrypointSchema(network, address, entrypoint, fill_type = 'empty', hash = undefined, counter = undefined) {
+    let params = {}
+    if (fill_type) {
+      params['fill_type'] = fill_type;
+    }
+    if (entrypoint) {
+      params['entrypoint'] = entrypoint;
+    }
+    if (hash) {
+      params['hash'] = hash;
+    }
+    if (counter) {
+      params['counter'] = counter;
+    }
+    return this.api.get(`/contract/${network}/${address}/entrypoints/schema`, {
+      params: params,
+    })
       .then((res) => {
         if (res.status !== 200) {
           throw new RequestFailedError(res);
@@ -529,6 +544,16 @@ export class BetterCallApi {
       })
   }
 
+  getOperationDiff(network, id) {
+    return getCancellable(this.api, `/operation/${network}/${id}/diff`, {})
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
   getStats() {
     return getCancellable(this.api, `/stats`, {})
       .then((res) => {
@@ -679,5 +704,15 @@ export class BetterCallApi {
   getTokenHoldersList(network, address, token_id) {
     return this.api.get(`/contract/${network}/${address}/tokens/holders?token_id=${token_id}`)
         .then(this.returnResponseData);
+  }
+
+  getCodeFromMichelson(data) {
+    return this.api.post(`/michelson`, data)
+          .then((res) => {
+              if (res.status !== 200) {
+                  throw new RequestFailedError(res);
+              }
+              return res.data;
+          });
   }
 }

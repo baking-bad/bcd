@@ -19,6 +19,12 @@ export function applyStyles(node) {
         if (node.prim === "nat" || node.prim === "mutez") {
             node["x-display"] = "custom-nat"
         }
+        if (node.prim === "bytes") {
+            node["x-display"] = "custom-bytes";
+        }
+        if (node.prim === "address") {
+            node["x-display"] = "custom-address";
+        }
     }
     if (node.properties) {
         for (var prop in node.properties) {

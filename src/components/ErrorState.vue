@@ -1,37 +1,33 @@
 <template>
-    <v-row no-gutters>
-      <v-col cols="6" class="d-flex align-center justify-center">
-        <div class="ml-8 pl-8 flex-column d-flex align-center justify-center">
-          <span class="display-2">This wasn't planned 😓</span>
-          <div class="headline font-weight-light mt-3 d-flex flex-column align-center justify-center">
-            <span>If this error continues to appear, please contact us:</span>
-            <div class="mt-3">
-              <v-btn 
-                v-for="(link, i) in links" 
-                :key="i"
-                icon
-                x-large
-                color="primary"
-                :href="link.href"
-                target="_blank"
-                rel="nofollow noopener">
-                <v-icon x-large>{{ link.icon }}</v-icon>
-              </v-btn>
-            </div>
-          </div>
-        </div>
-      </v-col>
-      <v-col cols="6">
-        <v-img
-          src="@/assets/error-ops.png"
-          contain
-          max-height="70vh"
-        ></v-img>
-      </v-col>
-    </v-row>
+  <div class="ml-8 pl-8 flex-column d-flex align-center justify-center">
+      <v-img
+        :src="imageName"
+        contain
+        max-height="300px"
+      ></v-img>
+    <span class="display-1 font-weight-light text--disabled">This wasn't planned</span>
+    <div class="body-1 font-weight-light text--secondary mt-1">
+      <span>If this error continues to appear, please contact us:</span>
+      <div class="mt-3 d-flex align-center justify-center">
+        <v-btn 
+          v-for="(link, i) in links" 
+          :key="i"
+          icon
+          x-large
+          color="primary"
+          :href="link.href"
+          target="_blank"
+          rel="nofollow noopener">
+          <v-icon x-large>{{ link.icon }}</v-icon>
+        </v-btn>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
+var images = require.context('@/assets/', false, /\.png$/)
+
 export default {
   name: "ErrorState",
   props: {
@@ -62,19 +58,10 @@ export default {
     ]
   }),
   computed: {
-    address() {
-      return this.$route.params.address;
-    },
-    network() {
-      return this.$route.params.network;
+    imageName() {
+      if (this.$vuetify.theme.isDark) return images('./error_state_dark.png');
+      return images('./error_state_light.png');
     }
   },
 };
 </script>
-
-<style scoped>
-.img-catava {
-  max-width: 50px;
-  max-height: 50px;
-}
-</style>
