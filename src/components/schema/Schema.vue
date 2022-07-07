@@ -646,7 +646,7 @@ export default {
         });
         await this.deploy(isLast, data.code, data.storage);
       } catch (err) {
-        this.showError(err.description);
+        this.showError(err.description || err);
       } finally {
         this.execution = false;
       }
