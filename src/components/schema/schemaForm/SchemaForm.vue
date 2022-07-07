@@ -28,19 +28,48 @@
               <Michelson v-on="on" :code="value" mutable></Michelson>
             </div>
           </template>
-          <template slot="custom-nat" slot-scope="props">
+          <template slot="custom-bytes" slot-scope="props">
             <v-text-field
+              :key="props.fullKey"
               :ref="props.fullKey"
               :label="props.label"
               v-on="props.on"
               dense
               outlined
               :value="props.value"
+              :rules="rules.bytes"
               :placeholder="props.label">
+            </v-text-field>
+          </template>
+           <template slot="custom-nat" slot-scope="props">
+            <v-text-field
+              :ref="props.fullKey"
+              :label="props.label"
+              v-on="props.on"
+              dense
+              outlined
+              numeric
+              :value="props.value"
+              :rules="rules.nat"
+              :placeholder="props.label">
+            </v-text-field>
+          </template>
+          <template slot="custom-address" slot-scope="props">
+            <v-text-field
+                :ref="props.fullKey"
+                :label="props.label"
+                v-on="props.on"
+                dense
+                outlined
+                :value="props.value"
+                :placeholder="props.label"
+                :rules="rules.address"
+            >
             </v-text-field>
           </template>
           <template slot="custom-contract" slot-scope="props">
             <v-text-field
+                :key="props.fullKey"
                 :ref="props.fullKey"
                 :label="props.label"
                 v-on="props.on"
@@ -50,6 +79,7 @@
                 :placeholder="props.label"
                 :hint="schema.properties[props.modelKey] && schema.properties[props.modelKey].tag ? `\'Fill\' button finds the newest contract with this contract type. If contract's absent nothing is set.` : ``"
                 persistent-hint
+                :rules="rules.contract"
             >
               <template v-slot:append-outer v-if="schema.properties[props.modelKey] && schema.properties[props.modelKey].tag">
                 <v-btn text small @click="$emit('getRandomContract', props)" class="text--secondary">
@@ -89,7 +119,8 @@
 import SchemaOptionalSettings from "./SchemaOptionalSettings";
 import SchemaFormExecutionActions from "./SchemaFormExecutionActions";
 import Michelson from "@/components/Michelson";
-
+import { isKT1Address, isTzAddress } from "@/utils/tz.js";
+ 
 export default {
 name: "SchemaForm",
   components: {
@@ -137,7 +168,41 @@ name: "SchemaForm",
     return {
       selectedFillType: 'empty',
       model: {},
+      rules: {
+        contract:[
+          v => v.length == 36 || 'The length of the contract address is 36 characters',
+          v => isKT1Address(v) || 'In this field you should write the address of the contract. It begins with KT.'
+        ],
+        nat: [
+          v => /^\d+$/.test(v) || 'Only digits are allowed',
+          v => this.validateNat(v)
+        ],
+        bytes: [
+          v => v.length % 2 == 0 || "The length of the byte string must be even",
+          v => /^[0-9a-fA-F]*$/.test(v) || 'Only 0-9 and a-f are allowed',
+        ],
+        address: [
+          v => v.length == 36 || 'The length of the address is 36 characters',
+          v => isTzAddress(v) || isKT1Address(v) || 'In this field you should write the address'
+        ]
+      }
     };
   },
+  methods: {
+    validateNat(value) {
+      if (value.length == 0) {
+        return 'Nat field is required';
+      }
+      console.log(value);
+      let nat = parseInt(value);
+      if (nat < 0) {
+        return 'Nat must be positive';
+      }
+      if (value.length > 1 && value[0] === '0') {
+        return "Nat can't starts from zero";
+      }
+      return true;
+    }
+  }
 }
 </script>

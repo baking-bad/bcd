@@ -292,6 +292,7 @@ export default {
 }
 .raw-json-viewer {
   background-color: transparent !important;
+  padding: 20px;
 }
 .raw-json-dialog__warning {
   font-size: 0.6em;

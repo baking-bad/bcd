@@ -186,24 +186,29 @@ export default {
       const breadcrumbs = [
         {
           text: 'Storage',
-          to: `/${this.network}/${this.address}/storage${this.$route.hash !== '#' ? '#' : '##'}`,
+          to: `/${this.network}/${this.address}/storage`,
+          exact: true,
         },
       ];
+
       const { ptr } = this.$route.params;
       if (ptr) {
         breadcrumbs.push({
           text: `Big Map ${ptr}`,
-          to: `/${this.network}/${this.address}/storage/big_map/${ptr}${this.$route.hash !== '#' ? '#' : '##'}`,
-          disabled: false,
+          to: `/${this.network}/${this.address}/storage/big_map/${ptr}/keys`,
+          exact: true,
         });
+
+        const { keyhash } = this.$route.params;
+        if (keyhash) {
+          breadcrumbs.push({
+            text: shortcutOnly(keyhash),
+            to: `/${this.network}/${this.address}/storage/big_map/${ptr}/${keyhash}`,
+            exact: true,
+          });
+        }      
       }
-      const { keyhash } = this.$route.params;
-      if (keyhash) {
-        breadcrumbs.push({
-          text: shortcutOnly(keyhash),
-          to: `/${this.network}/${this.address}/storage/big_map/${ptr}/${keyhash}${this.$route.hash !== '#' ? '#' : '##'}`,
-        });
-      }
+      
       return breadcrumbs;
     },
   },

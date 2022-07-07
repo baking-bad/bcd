@@ -46,18 +46,20 @@
       </v-card-text>
     </v-card>
     <SchemaResultOPG
-      :showResult="showResultOPG"
+      v-model="showResultOPG"
       :simulated-operation="simulatedOperation"
       :settings="settings"
       :gas-limit="gasLimit"
       :storage-limit="storageLimit"
-      @resultOPGchange="setResultOPG"
     />
     <SchemaCmdLine
-      :showCmd="showCmdline"
+      v-model="showCmdline"
       :tezos-client-cmdline="tezosClientCmdline"
       :show-clipboard-ok="showClipboardOK"
-      @cmdLineChange="setCmdline"
+    />
+    <SchemaMichelson
+      v-model="showMichelson"
+      :code="michelsonCode"
     />
     <RawJsonViewer
       :show.sync="showRawJSON"
@@ -74,6 +76,7 @@ import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import SchemaForm from "./schemaForm/SchemaForm";
 import SchemaResultOPG from "./schemaDialog/SchemaResultOPG";
 import SchemaCmdLine from "./schemaDialog/SchemaCmdLine";
+import SchemaMichelson from "./schemaDialog/SchemaMichelson";
 import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
 import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
@@ -100,6 +103,7 @@ export default {
     SchemaAlertOpHashSuccess,
     SchemaCmdLine,
     SchemaResultOPG,
+    SchemaMichelson,
     SchemaForm,
     RawJsonViewer,
   },
@@ -130,12 +134,14 @@ export default {
     showRawJSON: false,
     showCmdline: false,
     showResultOPG: false,
+    showMichelson: false,
     showSimulationSettings: false,
     tezosClientCmdline: null,
     parametersJSON: null,
     isGettingWalletProgress: false,
     isPermissionGiven: false,
     successText: '',
+    michelsonCode: '',
     settings: {
       source: null,
       sender: null,
@@ -257,6 +263,12 @@ export default {
         this.prepareContractToFork(true);
       }
     },
+    michelsonActionCallback() {
+      return () => {
+        this.fireEvent("Michelson", "interact");
+        this.michelsonParameters();
+      }
+    },
     tezosClientActionCallback() {
       return this.isParameter
           ? () => {
@@ -306,6 +318,11 @@ export default {
           text: "Raw JSON",
           icon: "mdi-code-json",
           callback: this.rawJsonActionCallback()
+        },
+        {
+          text: "Michelson",
+          icon: "mdi-code-braces",
+          callback: this.michelsonActionCallback()
         },
         {
           text: "Tezos-client",
@@ -393,10 +410,44 @@ export default {
     },
     setFillTypes() {
       if (this.isDeploy) return;
-      this.fillTypes.push({
-        value: this.isStorage ? "current" : "latest",
-        text: this.isStorage ? "Current" : "Latest call",
-      });
+      if (this.isStorage) {
+          this.fillTypes.push({
+            value: "current",
+            text: "Current",
+          }, {
+            value: "initial",
+            text: "Initial",
+          });
+      } else {
+        this.fillTypes.push({
+            value: "latest",
+            text: "Latest call",
+          });
+      }
+    },
+    michelsonParameters() {
+      if (this.execution) return;
+
+      this.execution = true;
+      this.showMichelson = false;
+      this.michelsonCode = '';
+
+      return this.api
+        .getContractEntrypointData(
+          this.network,
+          this.address,
+          this.name,
+          this.model,
+          "michelson"
+        )
+        .then((res) => {
+          this.michelsonCode = JSON.parse(res);
+          this.showMichelson = true;
+        })
+        .catch((err) => {
+          this.showError(err.response ? err.response.data.message : err);
+        })
+        .finally(() => (this.execution = false));
     },
     generateParameters(rawJSON = false, show = false) {
       if (this.execution) return;
@@ -422,7 +473,7 @@ export default {
             const src = this.settings.source || "%YOUR_ADDRESS%";
             const entrypoint = this.name;
             this.tezosClientCmdline = `transfer ${amount} from ${src} to ${this.address} --entrypoint "${entrypoint}" --arg "${arg}"`;
-            this.setCmdline(show);
+            this.showCmdline = show;
           }
           return resJSON;
         })
@@ -451,7 +502,7 @@ export default {
             if (res.length > 1) {
               this.simulatedOperation.internal_operations = res.slice(1);
             }
-            this.setResultOPG(true);
+            this.showResultOPG = true;
           }
         })
         .catch((err) => {
@@ -671,6 +722,11 @@ export default {
             this.show = true;
           });
       } else {
+            if (newValue !== "latest") {
+              this.show = true;
+              this.model = {};
+              return;
+            }
         this.api
           .getContractEntrypointSchema(
             this.network,
@@ -684,12 +740,11 @@ export default {
             this.show = true;
           })
           .catch((err) => {
-            if (newValue === "latest") {
+              if (err) {
+                console.log(err);
+              }
               this.showError('This contract most likely has not been called yet.');
-              this.show = false;
-            } else {
-              this.showError(err);
-            }
+              this.show = true;
           });
       }
     },
