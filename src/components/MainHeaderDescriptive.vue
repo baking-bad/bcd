@@ -19,6 +19,9 @@
       <v-btn text small :to="{ name: 'dapps' }" class="text--secondary" active-class="bg-before-transparent">
         Dapps
       </v-btn>
+       <v-btn text small :to="{ name: 'deploy' }" class="text--secondary" active-class="bg-before-transparent">
+        Deploy
+      </v-btn>
       <v-btn
         text
         active-class="bg-before-transparent"

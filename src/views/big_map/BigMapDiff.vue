@@ -1,24 +1,13 @@
 <template>
-  <v-expansion-panel class="bl-1 br-1 bt-1 bmd-panel" active-class="bmd-active-panel">
-    <v-expansion-panel-header v-if="!single" class="pa-0">
+  <v-expansion-panel class="bl-1 br-1 bt-1 bmd-panel" active-class="bmd-active-panel" @change="onPanelStateChanged">
+    <v-expansion-panel-header v-if="!single" class="pa-0 pr-4" :class="is_active ? 'item-header-applied' : 'item-header-failed'">
       <v-row no-gutters class="big-map-row">
-        <v-col cols="8" class="d-flex align-center justify-start text-truncate">
+        <v-col cols="10" class="d-flex align-center justify-start text-truncate">
           <v-list-item>
             <v-list-item-content>
               <v-list-item-title class="hash">
-                <span v-if="diff.data.key_string">{{ diff.data.key_string }}</span>
-                <span v-else class="accent--text">@empty</span>
+                <span>{{ name || key_hash }}</span>
               </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-col>
-        <v-col cols="2" class="d-flex align-center text-truncate">
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-title
-                class="hash font-weight-light"
-              >{{ helpers.plural(diff.count, 'update') }}</v-list-item-title>
-              <v-list-item-subtitle class="hash error--text" v-if="!diff.data.value">removed</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
@@ -27,91 +16,91 @@
             <v-list-item-content>
               <v-list-item-title
                 class="hash font-weight-light"
-              >{{ diff.data.timestamp | formatDate }}</v-list-item-title>
-              <v-list-item-subtitle class="hash font-weight-light">level {{ diff.data.level }}</v-list-item-subtitle>
+              >{{ timestamp | formatDate }}</v-list-item-title>
+              <v-list-item-subtitle class="hash font-weight-light">{{ is_active ? 'active' : 'removed' }}</v-list-item-subtitle>
             </v-list-item-content>
           </v-list-item>
         </v-col>
       </v-row>
     </v-expansion-panel-header>
-    <v-expansion-panel-content class="py-2 pr-7 pl-1">
-      <v-row no-gutters>
-        <v-col cols="8">
-          <v-list-item class="pl-1">
-            <v-list-item-content>
-              <v-list-item-subtitle class="overline">Key hash</v-list-item-subtitle>
-              <v-list-item-title class="d-flex align-center">
-                <span>
-                  {{ shortcutOnly(diff.data.key_hash) }}
-                </span>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
-                    <v-btn
-                      small
-                      v-on="on"
-                      icon
-                      class="mr-2"
-                      @click="
-                        () => {
-                          $clipboard(diff.data.key_hash);
-                          showClipboardOK();
-                        }
-                      "
-                    >
-                      <v-icon small class="text--secondary">mdi-content-copy</v-icon>
-                    </v-btn>
-                  </template>
-                  Copy key hash
-                </v-tooltip>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-col>
-        <v-col cols="4" class="d-flex align-center justify-end">
-          <v-btn
-            v-if="!single"
-            class="mr-4"
-            small
-            text
-            :to="{
-              name: 'big_map_history',
-              params: {
-                network: network,
-                address: address,
-                ptr: ptr,
-                keyhash: diff.data.key_hash
-              }
-            }"
-          >
-            <v-icon small class="mr-1">mdi-history</v-icon>
-            <span>View history</span>
-          </v-btn>
-          <portal to="storage-actions">
-            <v-btn v-if="diff.data.value" class="mr-4 cursor-pointer" small text @click="showRaw = true">
-              <v-icon small class="mr-1">mdi-code-braces</v-icon>
-              <span>Raw JSON</span>
+    <v-expansion-panel-content>
+      <v-skeleton-loader v-if="loading" :loading="loading" type="article" transition="fade-transition"/>
+        <v-row no-gutters class="py-2 pr-7 pl-1" v-else>
+          <v-col cols="8">
+            <v-list-item class="pl-1">
+              <v-list-item-content>
+                <v-list-item-subtitle class="overline">Key hash</v-list-item-subtitle>
+                <v-list-item-title class="d-flex align-center">
+                  <span>
+                    {{ key_hash }}
+                  </span>
+                  <v-tooltip bottom>
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        small
+                        v-on="on"
+                        icon
+                        class="mr-2"
+                        @click="
+                          () => {
+                            $clipboard(key_hash);
+                            showClipboardOK();
+                          }
+                        "
+                      >
+                        <v-icon small class="text--secondary">mdi-content-copy</v-icon>
+                      </v-btn>
+                    </template>
+                    Copy key hash
+                  </v-tooltip>
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-col>
+          <v-col cols="4" class="d-flex align-center justify-end">
+            <v-btn
+              v-if="!single"
+              small
+              text
+              :to="{
+                name: 'big_map_history',
+                params: {
+                  network: network,
+                  address: address,
+                  ptr: ptr,
+                  keyhash: key_hash
+                }
+              }"
+            >
+              <v-icon small class="mr-1">mdi-history</v-icon>
+              <span>View history</span>
             </v-btn>
-          </portal>
-        </v-col>
-        <v-col cols="12" class="px-2 py-4 my-2 ba-1">
-          <span class="overline ml-3">Key</span>
-          <MiguelTreeView :miguel="diff.data.key" :network="network" openAll />
-        </v-col>
-        <v-col cols="12" class="px-2 py-4 my-2 ba-1" v-if="diff.data.value">
-          <span class="overline ml-3">Value</span>
-          <MiguelTreeView :miguel="diff.data.value" :network="network" openAll />
-        </v-col>
-      </v-row>
+            <portal to="storage-actions">
+              <v-btn v-if="diff.value" class="mr-4 cursor-pointer" small text @click="showRaw = true">
+                <v-icon small class="mr-1">mdi-code-braces</v-icon>
+                <span>Raw JSON</span>
+              </v-btn>
+            </portal>
+          </v-col>
+          <v-col cols="12" class="px-2 py-4 my-2 ba-1">
+            <span class="overline ml-3">Key</span>
+            <MiguelTreeView :miguel="diff.key" :network="network" openAll />
+          </v-col>
+          <v-col cols="12" class="px-2 py-4 my-2 ba-1" v-if="diff.value">
+            <span class="overline ml-3">Value</span>
+            <MiguelTreeView :miguel="diff.value" :network="network" openAll />
+          </v-col>
+        </v-row>
     </v-expansion-panel-content>
     <RawJsonViewer
       v-if="diff"
       :show.sync="showRaw"
       type="big_map"
       :network="network"
-      :level="diff.data.level"
+      :level="diff.last_update_level"
       :address="address"
       :ptr="ptr"
-      :keyhash="diff.data.key_hash"
+      :keyhash="key_hash"
     />
   </v-expansion-panel>
 </template>
@@ -130,17 +119,53 @@ export default {
   },
   props: {
     ptr: String,
-    diff: Object,
+    key_hash: String,
+    name: String,
     network: String,
     address: String,
-    single: Boolean
+    is_active: Boolean,
+    timestamp: String,
+    single: Boolean,
+    value: Object
   },
   data: () => ({
-    showRaw: false
+    showRaw: false,
+    diff: null,
+    loading: true
   }),
+  created() {
+    if (this.value) {
+      this.diff = this.value;
+      this.loading = false;
+    }
+  },
   methods: {
-    ...mapActions(["showClipboardOK"]),
+    ...mapActions(["showError", "showClipboardOK"]),
     shortcutOnly,
+
+    onPanelStateChanged() {
+      if (this.diff === null) {
+        this.loadDiff();
+      }
+    },
+
+    loadDiff() {
+      this.api.getBigMapKeyState(this.network, this.ptr, this.key_hash)
+        .then(state => this.diff = state)
+        .catch(err => {
+          console.log(err);
+          this.showError(err);
+        })
+        .finally(()=> this.loading = false)
+    }
+  },
+  watch: {
+    value(newValue) {
+      if (newValue) {
+        this.diff = newValue;
+        this.loading = false;
+      }
+    }
   }
 };
 </script>
@@ -171,5 +196,9 @@ export default {
 
 .big-map-row {
   max-width: calc(100% -  3em - 10px);
+}
+
+.v-expansion-panel-content__wrap {
+  padding: 0px !important;
 }
 </style>

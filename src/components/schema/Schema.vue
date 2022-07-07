@@ -155,7 +155,7 @@ export default {
     ],
     model: {},
   }),
-  async created() {
+  created() {
     this.setExecuteActions();
     this.setFillTypes();
 
@@ -335,6 +335,7 @@ export default {
           callback: this.beaconClientActionCallback(false)
         },
       ];
+      console.log(this.executeActions)
       this.importActions.push(
           {
             text: "Wallet",
@@ -646,7 +647,7 @@ export default {
         });
         await this.deploy(isLast, data.code, data.storage);
       } catch (err) {
-        this.showError(err.description);
+        this.showError(err.description || err);
       } finally {
         this.execution = false;
       }
@@ -687,6 +688,12 @@ export default {
     },
   },
   watch: {
+    value: {
+      deep: true,
+      handler: function(newValue) {
+        this.model = newValue;
+      }
+    },
     execution: function (newValue) {
       if (newValue) {
         this.injectedOpHash = null;

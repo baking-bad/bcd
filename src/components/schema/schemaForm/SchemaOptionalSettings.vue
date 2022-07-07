@@ -26,6 +26,7 @@
           label="source"
           placeholder="address"
           hint="Press 'fill' to paste your wallet address"
+          v-if="!isStorage && !isDeploy"
       >
         <template v-slot:append-outer>
           <v-menu offset-y>
@@ -58,7 +59,7 @@
         </template>
       </v-text-field>
     </div>
-    <div class="d-flex" v-if="!isStorage">
+    <div class="d-flex" v-if="!isStorage && !isDeploy">
       <v-text-field
           id="sender"
           name="sender"

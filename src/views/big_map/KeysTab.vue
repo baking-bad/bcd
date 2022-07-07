@@ -1,18 +1,31 @@
 <template>
   <v-container fluid class="pa-0 ma-0 canvas fill-canvas">
-    <v-row class="" no-gutters>
-      <v-col cols="7">
+    <v-row no-gutters>
+      <v-col cols="12">
         <v-text-field
           v-model="search"
+          color="primary"
           label="Filter by"
           placeholder="Start typing a key or paste a key hash"
-          prepend-inner-icon="mdi-filter-outline"
           clearable
-          filled
+          outlined
           background-color="data"
           single-line
           hide-details
-        ></v-text-field>
+        
+        >
+          <template v-slot:append-outer>
+            <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn ripple icon :color="onlyActive ? 'primary' : ''" :class="onlyActive ? '': 'text--secondary'" @click="onlyActive = !onlyActive" v-bind="attrs" v-on="on" style="top: -6px;">
+                  <v-icon>mdi-key</v-icon>
+                </v-btn>
+              </template>
+              <span v-if="!onlyActive">Show only active keys</span>
+              <span v-else>Show all keys</span>
+            </v-tooltip>
+          </template>
+        </v-text-field>
       </v-col>
     </v-row>
 
@@ -29,9 +42,16 @@
           text="Empty set is also a result, otherwise try a broader query"
         />
         <v-expansion-panels v-if="bigmap.length > 0" multiple hover flat class="bb-1">
-          <template v-for="(diff, idx) in bigmap">
-            <BigMapDiff :diff="diff" :network="network" :address="address" :ptr="ptr" :key="idx" />
-          </template>
+          <BigMapDiff 
+            :network="network" 
+            :address="address" 
+            :ptr="ptr" 
+            :key_hash="diff.body.KeyHash" 
+            :name="diff.body.Name"
+            :is_active="diff.body.IsActive"
+            :timestamp="diff.body['@timestamp']"
+            v-for="(diff, idx) in bigmap" 
+            :key="idx" />
         </v-expansion-panels>
         <span v-intersect="onDownloadPage" v-if="!loading && !downloaded"></span>
       </v-col>
@@ -58,6 +78,7 @@ export default {
   data: () => ({
     loading: true,
     downloaded: false,
+    onlyActive: false,
     orderBy: [],
     search: "",
     bigmap: [],
@@ -86,19 +107,20 @@ export default {
       clearTimeout(this._timerId);
 
       this._timerId = setTimeout(() => {
-        this.api
-          .getContractBigMapKeys(
-            this.network,
-            this.ptr,
-            text,
-            this.bigmap.length
+        this.searchService
+          .bigMapKeys(
+            text, {
+              network: this.network,
+              big_map_id: parseInt(this.ptr, 10),
+              is_active: this.onlyActive
+            }, 10, this.bigmap.length
           )
           .then(res => {
             if (!res) {
               this.downloaded = true;
             } else {
-              this.bigmap.push(...res);
-              this.downloaded = res.length == 0;
+              this.bigmap.push(...res.items);
+              this.downloaded = res.items.length < 10;
             }
           })
           .catch(err => {
@@ -134,6 +156,9 @@ export default {
     },
     ptr() {
       this.search = "";
+      this.onFiltersChange(this.search);
+    },
+    onlyActive() {
       this.onFiltersChange(this.search);
     }
   }
