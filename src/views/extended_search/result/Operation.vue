@@ -8,7 +8,7 @@
                         <span class="text--secondary" style="font-size: 20px;"> → </span>
                         <template v-if="item.body.Destination.startsWith('KT')">
                             <router-link class="serp-link" target="_blank" :to="`/${item.body.Network}/${item.body.Destination}`">
-                                <span v-html="helpers.shortcut(item.body.Destination)" class="text--secondary"></span>
+                                <Shortcut :str="item.body.Destination"/>
                             </router-link>
                             <span class="text--secondary" style="font-size: 20px;"> → </span>
                         </template>
@@ -18,7 +18,7 @@
                             class="hash"
                             >{{ item.body.Entrypoint + '()' }}</span>
                             <span v-else-if="item.body.Type === 'origination'">origination</span>
-                            <span v-else-if="item.body.Destination.startsWith('KT')" v-html="helpers.shortcut(item.body.Hash)"></span>
+                            <Shortcut v-else-if="item.body.Destination.startsWith('KT')" :str="item.body.Hash"/>
                             <span v-else class="hash">{{ item.body.Hash }}</span>
                         </router-link>
                     </v-list-item-title>
@@ -36,6 +36,7 @@
 
 <script>
 import Highlight from './Highlight.vue';
+import Shortcut from '@/components/Shortcut.vue';
 
 export default {
     name: "Operation",
@@ -44,7 +45,8 @@ export default {
         words: Array,
     },
     components: {
-        Highlight
+        Highlight,
+        Shortcut
     },
 }
 </script>
