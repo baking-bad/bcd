@@ -37,103 +37,73 @@
     </template>
     <template v-slot:item="{ item }">
       <v-list-item-avatar>
-        <v-icon v-if="item.type === 'contract'">mdi-code-json</v-icon>
-        <v-icon v-else-if="item.type === 'operation'"
-          >mdi-swap-horizontal</v-icon
-        >
-        <v-icon v-else-if="item.type === 'bigmapdiff'">mdi-database-edit</v-icon>
-        <v-icon v-else-if="item.type === 'token_metadata'"
-          >mdi-circle-multiple-outline</v-icon
-        >
-        <v-icon v-else-if="item.type === 'contract_metadata'"
-          >mdi-puzzle-outline</v-icon
-        >
+        <v-icon v-if="item.type === 'account'">{{ item.body.IsContract ? 'mdi-code-json' : 'mdi-wallet-outline' }}</v-icon>
+        <v-icon v-else-if="item.type === 'operation'">mdi-swap-horizontal</v-icon>
+        <v-icon v-else-if="item.type === 'bigmapkey'">mdi-database-edit</v-icon>
+        <v-icon v-else-if="item.type === 'token'" >mdi-circle-multiple-outline</v-icon>
         <v-icon v-else-if="item.type === 'recent'">mdi-history</v-icon>
       </v-list-item-avatar>
       <v-list-item-content>
         <v-list-item-title>
-          <template v-if="item.type === 'contract'">
-            <span class="text--secondary hash">Contracts</span>
+          <template v-if="item.type === 'account'">
+            <span class="text--secondary hash">{{ item.body.IsContract ? 'contract' : 'account' }}</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
-            <span v-if="item.body.alias">{{ item.body.alias }}</span>
-            <span v-else v-html="sanitizeHtml(helpers.shortcut(item.value))"></span>
+            <span v-if="getAccountName(item.body) != ''">{{ getAccountName(item.body) }}</span>
+            <Shortcut v-else :str="item.body.Address"/>
           </template>
           <template v-else-if="item.type === 'operation'">
-            <span class="text--secondary hash">Operations</span>
+            <span class="text--secondary hash">operation</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
-            <template v-if="item.body.destination.startsWith('KT')">
-              <span
-                v-if="item.body.destination_alias"
-                class="text--secondary"
-                >{{ item.body.destination_alias }}</span
-              >
-              <span
-                v-else
-                v-html="sanitizeHtml(helpers.shortcut(item.body.destination))"
-                class="text--secondary"
-              ></span>
+            <template v-if="item.body.Destination.startsWith('KT')">
+              <Shortcut class="text--secondary" :str="item.body.Hash"/>
               <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             </template>
-            <span v-if="item.body.entrypoint" class="hash"
-              >{{ item.body.entrypoint }}()</span
+            <span v-if="item.body.Entrypoint" class="hash"
+              >{{ item.body.Entrypoint }}()</span
             >
-            <span v-else-if="item.body.kind === 'origination'"
+            <span v-else-if="item.body.Type === 'origination'"
               >origination</span
             >
-            <span v-else v-html="sanitizeHtml(helpers.shortcut(item.value))"></span>
+            <Shortcut v-else :str="item.body.Hash"/>
           </template>
-          <template v-else-if="item.type === 'bigmapdiff'">
-            <span class="text--secondary hash">Big_map {{ item.body.ptr }}</span>
+          <template v-else-if="item.type === 'bigmapkey'">
+            <span class="text--secondary hash">big map {{ item.body.BigMapID }}</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
-            <span>{{ item.body.key }}</span>
+            <span>{{ item.body.KeyHash }}</span>
           </template>
-          <template v-else-if="item.type === 'contract_metadata'">
-            <span class="text--secondary hash">Metadata</span>
+          <template v-else-if="item.type === 'token'">
+            <span class="text--secondary hash">token</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
-            <span>{{ item.body.name }}</span>
-          </template>
-          <template v-else-if="item.type === 'token_metadata'">
-            <span class="text--secondary hash">Tokens</span>
-            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
-            <span v-if="item.body.name">{{ item.body.name }}</span>
-            <span v-else v-html="sanitizeHtml(helpers.shortcut(item.value))"></span>
+            <span v-if="item.body.Name">{{ item.body.Name }}</span>
+            <Shortcut v-else :str="item.body.TokenID"/>
           </template>         
           <template v-if="item.type === 'recent'">
+            <span class="text--secondary hash">{{ item.body.type }}</span>
+            <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
-            <span
-              v-else-if="item.body.shortcut"
-              v-html="helpers.shortcut(item.body.shortcut)"
-            ></span>
+            <Shortcut v-else-if="item.body.shortcut" :str="item.body.shortcut"/>
             <span v-else>{{ item.value }}</span>
           </template>
         </v-list-item-title>
 
-        <v-list-item-subtitle class="overline" v-if="item.body">
+        <v-list-item-subtitle class="caption" v-if="item.body">
           <span
-            v-if="item.body.network"
-            :class="item.body.network === 'mainnet' ? 'secondary--text' : ''"
-            >{{ item.body.network }}</span
-          >
-          <span v-if="item.type === 'contract'">&nbsp;|&nbsp;{{
-            helpers.plural(item.body.tx_count - 1, "tx")
+            v-if="item.body.Network"
+            :class="item.body.Network === 'mainnet' ? 'secondary--text overline' : 'overline'">
+            {{ item.body.Network }}
+          </span>
+          <span v-if="item.type === 'account'">&nbsp;|&nbsp;{{ item.body.Address }}
+          </span>
+          <span v-else-if="item.type === 'operation'" class="overline">&nbsp;|&nbsp;{{
+            item.body.Status
           }}</span>
-          <span v-else-if="item.type === 'operation'">&nbsp;|&nbsp;{{
-            item.body.status
+          <span v-else-if="item.type === 'bigmapkey'" class="overline">&nbsp;|&nbsp;{{
+            item.body.IsActive ? 'active' : 'removed'
           }}</span>
-          <span v-else-if="item.type === 'bigmapdiff' && item.group">&nbsp;|&nbsp;{{
-            helpers.plural(item.group.count, "update")
-          }}</span>
-          <span v-else-if="item.type === 'token_metadata' && item.group">&nbsp;|&nbsp;{{
-            helpers.plural(item.group.count, "token")
-          }}</span>
-          <span v-else-if="item.type === 'recent' && item.body.second">&nbsp;|&nbsp;{{
-            item.body.second
-          }}</span>
-          <span class="overline text--primary" v-if="item.body.timestamp">
-            &nbsp;|&nbsp;{{ helpers.formatDate(item.body.timestamp) }}
-            <span v-if="item.body.last_action"
-              >— {{ helpers.formatDate(item.body.last_action) }}</span
-            >
+          <span v-else-if="item.type === 'token'" class="overline">&nbsp;|&nbsp;ID {{ item.body.TokenID }}</span>
+          <span v-else-if="item.type === 'recent' && item.body.second">&nbsp;|&nbsp;{{ item.body.second }}</span>
+          <span class="overline text--primary" v-if="item.body['@timestamp']">
+            &nbsp;|&nbsp;{{ helpers.formatDate(item.body['@timestamp']) }}
           </span>
         </v-list-item-subtitle>
       </v-list-item-content>
@@ -177,18 +147,21 @@
 
 <script>
 import { mapActions } from "vuex";
-import { checkAddress, checkOperation, checkKeyHash } from "@/utils/tz.js";
+import { isKT1Address, isOperationHash } from "@/utils/tz.js";
 import {
   getHistory,
   addHistoryItem,
   removeHistoryItem,
 } from "@/utils/history.js";
 import {SEARCH_TABS} from "../constants/searchTabs";
-import { isKT1Address, isOperationHash } from "../utils/tz";
 import waitUntil from "async-wait-until";
 import sanitizeHtml from 'sanitize-html';
+import Shortcut from '@/components/Shortcut.vue';
 
 export default {
+  components: {
+    Shortcut
+  },
   props: {
     inplace: Boolean,
   },
@@ -205,7 +178,7 @@ export default {
     menuProps: {},
   }),
   created() {
-    this.suggests = this.getHistoryItems("");
+    this.suggests = this.getHistoryItems(null);
   },
   destroyed() {
     clearTimeout(this._timerId);
@@ -240,62 +213,56 @@ export default {
       });
     },
     isModelsArrayInclude(value) {
-      return [this.model.type, this.model.body.recent_type].includes(value);
-    },
-    isShouldSentToValue(value) {
-      return (
-        (
-            this.isModelsArrayInclude("contract")
-        ) &&
-        checkAddress(value)
-      );
+      return [this.model.type, this.model.body.type].includes(value);
     },
     onSearch() {
       if (!this.model || !this.model.body) return;
-      const isToken = this.isModelsArrayInclude("token_metadata");
-      const isBigMap = this.isModelsArrayInclude("bigmapdiff");
-      const value = isToken || isBigMap
-        ? this.model.body[isToken ? 'contract' : 'key_hash']
-        : this.model.value;
-      const network = this.model.body.network;
+      const network = this.model.body.Network;
 
-      addHistoryItem(this.buildHistoryItem(this.model, value || this.searchText));
-      if (this.isModelsArrayInclude("operation") && checkOperation(value)) {
-        this.pushTo(`/${network}/opg/${value}`);
-      } else if (this.isShouldSentToValue(value)) {
-        this.pushTo(`/${network}/${value}`);
-      } else if (isBigMap && checkKeyHash(value)) {
-        const ptr = this.model.body.ptr;
-        this.pushTo(`/${network}/big_map/${ptr}/${value}`);
-      } else if (isToken && checkAddress(value)) {
-        this.pushTo(`/${network}/${value}/tokens?token_id=${this.model.body.token_id}`);
-      } else if (this.isModelsArrayInclude("tzip") && checkAddress(value)) {
-        this.pushTo(`/${network}/${value}/tokens`);
-      } else if (this.isModelsArrayInclude("contract_metadata") && checkAddress(value)) {
-        this.pushTo(`/${network}/${value}/metadata`);
+      const isToken = this.isModelsArrayInclude("token");
+      const isBigMap = this.isModelsArrayInclude("bigmapkey");
+      const isAccount = this.isModelsArrayInclude("account");
+      const isOperation = this.isModelsArrayInclude("operation");
+
+      if (isToken) {
+        addHistoryItem(this.buildHistoryItem(this.model, this.model.body.Address));
+        this.pushTo(`/${network}/${this.model.body.Address}/tokens?token_id=${this.model.body.TokenID}`);
+      } else if (isBigMap) {   
+        addHistoryItem(this.buildHistoryItem(this.model, this.model.body.KeyHash));     
+        this.pushTo(`/${network}/big_map/${this.model.body.BigMapID}/${this.model.body.KeyHash}`);
+      } else if (isAccount){
+        addHistoryItem(this.buildHistoryItem(this.model, this.model.body.Address));    
+        this.pushTo(`/${network}/${this.model.body.Address}`);
+      } else if (isOperation) {
+        addHistoryItem(this.buildHistoryItem(this.model, this.model.body.Hash));
+        this.pushTo(`/${network}/opg/${this.model.body.Hash}`);
       } else if (this.model.type === "recent") {
-        this.$router.push({ name: "search", query: { text: value } });
+        addHistoryItem(this.buildHistoryItem(this.model, this.model.value));
+        this.$router.push({ name: "search", query: { text: this.searchText } });
       }
 
       this.$emit('search');
     },
     buildHistoryItem(model, value) {
-      const network = model.body.network;
-      if (typeof value === "object") return value;
+      let historyItem = model.body;
+      historyItem.value = value;
+      historyItem.type =  model.body.type || model.type;
 
-      let historyItem = {
-        value: value,
-        network: network,
-        recent_type: model.body.recent_type || model.type,
-      };
       if (model && model.body) {
-        if (model.body.alias) historyItem.alias = model.body.alias;
+        if (historyItem.type === 'account') {
+          historyItem.alias = this.getAccountName(model.body);
+          historyItem.second = model.body.Address;
+        } else if (historyItem.type === 'bigmapkey') {
+          historyItem.second = `In big map ${model.body.BigMapID}`;
+        } else if (model.body.Name) {
+          historyItem.alias = model.body.Name;
+        }
         else {
           historyItem.shortcut = value;
         }
 
-        if (model.type === "operation" && model.body.entrypoint) {
-          historyItem.second = `Called ${model.body.entrypoint}`;
+        if (model.type === "operation" && model.body.Entrypoint) {
+          historyItem.second = `Called ${model.body.Entrypoint}`;
         }
       }
       return historyItem;
@@ -305,10 +272,10 @@ export default {
 
       await waitUntil(() => this.isSearchCalled === false);
       if (isKT1Address(searchText)) {
-        const firstContractSuggest = this.suggests.find((suggest) => suggest.type === 'contract');
+        const firstContractSuggest = this.suggests.find((suggest) => suggest.type === 'account');
         if (firstContractSuggest) {
           const { body } = firstContractSuggest;
-          await this.$router.push({path: `/${body.network}/${body.address}`});
+          await this.$router.push({path: `/${body.Network}/${body.Address}`});
           return;
         }
       }
@@ -316,7 +283,7 @@ export default {
         const firstOperationSuggest = this.suggests.find((suggest) => suggest.type === 'operation');
         if (firstOperationSuggest) {
           const { body } = firstOperationSuggest;
-          await this.$router.push({path: `/${body.network}/opg/${body.hash}`});
+          await this.$router.push({path: `/${body.Network}/opg/${body.Hash}`});
           return;
         }
       }
@@ -332,7 +299,7 @@ export default {
       let history = getHistory();
       if (history.length == 0) return result;
 
-      if (searchText !== "") {
+      if (searchText !== null && searchText !== "") {
         history = history.filter((item) => {
           if (item.alias) {
             return item.alias
@@ -360,8 +327,8 @@ export default {
 
       this._timerId = setTimeout(() => {
         this.isSuggestionsLoading = true;
-        this.api
-          .search(text, [], 0, [], {}, 0)
+        this.searchService
+          .suggest(text)
           .then((res) => {
             if (seqno === this.seqno) {
               this.suggests = this.getHistoryItems(text);
@@ -388,27 +355,56 @@ export default {
     },
     onRemoveClick(text) {
       removeHistoryItem(text);
-      this.suggests = this.getHistoryItems("");
+      this.suggests = this.getHistoryItems(null);
     },
+    getAccountName(body) {
+      if (body.TzKT !== undefined) {
+        return body.TzKT.Name;
+      }
+      if (body.TZIP !== undefined) {
+        return body.TZIP.Name;
+      }
+      if (body.Profiles !== undefined) {
+        return body.Profiles.Name;
+      }
+      if (body.Domains !== undefined) {
+        return body.Domains.Name;
+      }
+      return '';
+    }
   },
   watch: {
     searchText(val, oldVal) {
       if (val !== oldVal) {
         this.suggests = [];
       }
-      if (this._locked) return;
-      this.menuProps = {};
-      this.onSearch();
-      this._locked = true;
-      this.searchText = this.model ? this.model.name : val ? val.trim() : '';
-      if (this.searchText) {
-        this.fetchSearchDebounced(this.searchText, ++this.seqno);
+
+      let value = val;
+      if (typeof val === 'object' && val.body !== undefined) {
+        value = val.body.value;
       } else {
-        this.suggests = [];
-        this.model = null;
+        value = value.trim();
       }
 
-      this._locked = false;
+      try {
+        if (this._locked) return;
+        this.menuProps = {};
+        this.onSearch();
+        this._locked = true;
+        this.searchText = this.model ? this.model.name : value;
+        if (this.searchText) {
+          this.fetchSearchDebounced(this.searchText, ++this.seqno);
+        } else {
+          this.suggests = [];
+          this.model = null;
+        }
+      }
+      catch (e) {
+        console.log(e)
+      }
+      finally {
+        this._locked = false;
+      }
     },
     model() {
       if (this._locked) return;

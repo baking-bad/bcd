@@ -19,6 +19,7 @@ export default {
   computed: {
     head() {
       if (!this.str) return 0;
+
       if (this.str.startsWith("tz") || this.str.startsWith("KT")) {
         return 3;
       } else if (this.str.startsWith("o")) {

@@ -20,6 +20,7 @@ import { NodeRPC } from "@/api/rpc.js";
 import { Bookmarks } from "@/utils/bookmarks.js";
 import { SearchService } from "@/api/search.js";
 import { MetadataAPI } from "@/api/metadata.js";
+import { SearchService } from "@/api/search.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
 
@@ -104,8 +105,7 @@ Vue.filter('bytes', function (value) {
 Vue.filter('snakeToCamel', (str) => {
   if (!(/[_-]/).test(str)) return str;
 
-  return str.toLowerCase()
-                          .replace(/([-_])([a-z])/g, (_match, _p1, p2) => p2.toUpperCase());
+  return str.toLowerCase().replace(/([-_])([a-z])/g, (_match, _p1, p2) => p2.toUpperCase());
 });
 
 let config = {
@@ -122,6 +122,7 @@ let bookmarks = new Bookmarks();
 let searchService = new SearchService(config.SEARCH_SERVICE_URI);
 let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
+let searchService = new SearchService(process.env.SEARCH_SERVICE_URI);
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
 if (isDark) {
