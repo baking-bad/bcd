@@ -7,7 +7,11 @@
 
 <script>
 import { Chart } from "highcharts-vue";
+import Highcharts from 'highcharts'
+import exportingInit from 'highcharts/modules/exporting'
 import { MONTH_IN_MS } from "@/utils/date";
+
+exportingInit(Highcharts)
 
 function kilobyteFormatter(value, digits = 4) {
   return (value / 1024).toLocaleString(undefined, {
@@ -38,7 +42,7 @@ export default {
     title: String,
     name: String,
     formatter: String,
-    zoom: Boolean,
+    zoom: Boolean
   },
   components: {
     highcharts: Chart,
@@ -115,20 +119,58 @@ export default {
         scrollbar: {
           enabled: false,
         },
+        exporting: {
+          enabled: true,
+          buttons: {
+            contextButton: {
+              enabled:true,
+              titleKey: 'contextButtonTitle',
+              menuItems: ["viewFullscreen", "downloadSVG"],
+              symbolFill: '#00000000',
+              symbolStrokeWidth: 1,
+              symbolStroke: "var(--v-primary-base)",
+              theme: {
+                fill: 'transparent'
+              }
+            }
+          },
+          chartOptions: {
+            series: [
+              {
+                  type: "areaspline",
+                  data: this.data,
+                  color: "var(--v-primary-base)",
+                  name: this.name,
+                  borderColor: "transparent",
+                  label: {},
+                  lineWidth: 1,
+                  marker: {
+                    radius: 2
+                  },
+                  fillColor: '#75A34F20'
+              },
+            ],
+            chart: {
+                backgroundColor: "transparent",
+                plotBackgroundColor: "transparent",
+                marginTop: 50,
+                style: {
+                  fontFamily: "Roboto, sans-serif",
+              },
+            }
+          }
+        },
         xAxis: {
           type: "datetime",
           tickmarkPlacement: "off",
           title: {
             enabled: false,
           },
-          minPadding: 0.05,
-          maxPadding: 0.05,
           tickWidth: 0,
           lineWidth: 0,
           endOfTick: false,
-          gridLineWidth: 1,
+          gridLineWidth: 0,
           tickPixelInterval: 65,
-          gridLineColor: '#9993',
           dateTimeLabelFormats: {
             millisecond: "%H:%M:%S.%L",
             second: "%H:%M:%S",
@@ -150,8 +192,7 @@ export default {
           title: {
             text: "",
           },
-          gridLineWidth: 1,
-          gridLineColor: '#9993',
+          gridLineWidth: 0,
           labels: {
             enabled: true,
           },
@@ -199,20 +240,25 @@ export default {
         },
         series: [
           {
-            type: "line",
+            type: "areaspline",
             data: this.data,
             color: "var(--v-primary-base)",
             name: this.name,
             borderColor: "transparent",
-            label: {}
+            label: {},
+            lineWidth: 1,
+            marker: {
+              radius: 2
+            },
+            fillColor: '#75A34F20'
           },
         ],
         chart: {
-          backgroundColor: "transparent",
+          backgroundColor: "var(--v-data-base)",
           plotBackgroundColor: "transparent",
           marginTop: 50,
           style: {
-            fontFamily: "Roboto Condensed, sans-serif",
+            fontFamily: "Roboto, sans-serif",
           },
         },
         plotOptions: {
@@ -278,3 +324,33 @@ export default {
   },
 };
 </script>
+
+<style>
+.highcharts-contextmenu {
+  top: 10px  !important;
+  }
+
+.highcharts-menu-item:hover {
+  background: var(--v-canvas-base) !important;
+  color: var(--v-text-base) !important;
+}
+
+.highcharts-menu-item {
+  color: var(--v-text-base) !important;
+  font-size: 12px !important;
+   padding: 10px 15px !important;
+}
+
+.highcharts-menu {
+  background: var(--v-data-base) !important;
+  box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%) !important;
+  border-width: 0 !important;
+  border-radius: 4px !important;
+  padding: 0 !important;
+}
+
+
+.highcharts-button-box {
+  fill: transparent !important;
+}
+</style>

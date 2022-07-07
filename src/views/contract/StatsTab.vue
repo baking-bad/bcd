@@ -1,5 +1,5 @@
 <template>
-    <v-row>
+    <v-row class="mx-5">
         <v-col cols="12" class="d-flex justify-end align-center">
             <span class="overline mr-3">points per</span>
             <v-btn-toggle v-model="timeframe" dense>
@@ -10,7 +10,7 @@
             </v-btn-toggle>
         </v-col>
         <v-col cols="6">
-            <v-card :elevation="0">
+            <v-card :elevation="0" class="transparent">
                 <v-skeleton-loader :loading="!contractCalls" type="image" >
                     <LineChart
                         :data="contractCalls"
@@ -21,7 +21,7 @@
             </v-card>
         </v-col>
         <v-col cols="6">
-            <v-card :elevation="0">
+            <v-card :elevation="0" class="transparent">
                 <v-skeleton-loader :loading="!uniqueUsers" type="image" height="600">
                     <LineChart
                         :data="uniqueUsers"
@@ -32,7 +32,7 @@
             </v-card>
         </v-col>
         <v-col cols="6">
-            <v-card :elevation="0">
+            <v-card :elevation="0" class="transparent">
                 <v-skeleton-loader :loading="!consumedGas" type="image" height="600">
                     <LineChart
                         :data="consumedGas"
@@ -44,7 +44,7 @@
             </v-card>            
         </v-col>
         <v-col cols="6">
-            <v-card :elevation="0">
+            <v-card :elevation="0" class="transparent">
                 <v-skeleton-loader :loading="!burned" type="image" height="600">
                     <LineChart
                         :data="burned"
