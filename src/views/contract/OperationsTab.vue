@@ -196,6 +196,9 @@ export default {
   }),
   created() {
     this.fetchOperations();
+
+    this.getUsedBytes();
+    this.getPaidUsed();
   },
   computed: {
     loading() {
