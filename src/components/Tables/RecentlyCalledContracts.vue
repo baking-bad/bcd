@@ -4,10 +4,10 @@
       <v-data-table
         :items="recentlyCalledContracts"
         :headers="recentlyCalledTableHeaders"
-        class="ba-1 mt-4 avg-gas-consumption"
+        :class="['ba-1 mt-4 avg-gas-consumption', {'hide-pagination-count' : hidePaginationCount}]"
         :hide-default-footer="!pageable"
         :page.sync="page"
-        :items-per-page="itemsPerPage"
+        :options="{itemsPerPage}"
         :footer-props="{
             itemsPerPageOptions: []
         }"
@@ -57,6 +57,10 @@ export default {
     updateable: {
       type: Boolean,
       default: true,
+    },
+    hidePaginationCount: {
+      type: Boolean,
+      default: false,
     },
     pageable: {
       type: Boolean,
@@ -172,4 +176,5 @@ export default {
     font-weight: 400;
   }
 }
+
 </style>
