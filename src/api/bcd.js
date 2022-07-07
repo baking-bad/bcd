@@ -534,16 +534,6 @@ export class BetterCallApi {
       })
   }
 
-  getOperationDiff(network, id) {
-    return getCancellable(this.api, `/operation/${network}/${id}/diff`, {})
-      .then((res) => {
-        if (res.status != 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
-
   getOPG(hash, with_mempool=true, with_storage_diff=false, network=undefined) {
     let params = {}
     if (with_mempool) {
