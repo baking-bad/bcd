@@ -13,20 +13,9 @@ import { MONTH_IN_MS } from "@/utils/date";
 
 exportingInit(Highcharts)
 
-function kilobyteFormatter(value, digits = 4) {
-  return (value / 1024).toLocaleString(undefined, {
-    maximumFractionDigits: digits,
-  });
-}
 
-function gasFormatter(value, digits = 6) {
+function burnedFormatter(value, digits = 6) {
   return (value / 10 ** 6).toLocaleString(undefined, {
-    maximumFractionDigits: digits,
-  });
-}
-
-function floorFormatter(value, digits = 6) {
-  return value.toLocaleString(undefined, {
     maximumFractionDigits: digits,
   });
 }
@@ -41,8 +30,7 @@ export default {
     data: Array,
     title: String,
     name: String,
-    formatter: String,
-    zoom: Boolean
+    formatter: String
   },
   components: {
     highcharts: Chart,
@@ -80,13 +68,9 @@ export default {
   },
   computed: {
     labelFormatterFunction() {
-      if (this.formatter === "kilobyte") {
+      if (this.formatter === "burned") {
         return function () {
-          return kilobyteFormatter(this.total, 0);
-        };
-      } else if (this.formatter === "gas") {
-        return function () {
-          return gasFormatter(this.total, 0);
+          return burnedFormatter(this.total, 6);
         };
       }
       return function () {
@@ -94,14 +78,9 @@ export default {
       };
     },
     tooltipFormatterFunction() {
-      if (this.formatter === "kilobyte") {
+     if (this.formatter === "burned") {
         return function () {
-          let value = kilobyteFormatter(this.y);
-          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value} KB</b><br/>`;
-        };
-      } else if (this.formatter === "gas") {
-        return function () {
-          let value = floorFormatter(this.y, 0);
+          let value = burnedFormatter(this.y, 6);
           return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
         };
       }
@@ -112,7 +91,7 @@ export default {
     },
     options() {
       if (this.data == null) return {};
-      let options = {
+      return {
         navigator: {
           enabled: false,
         },
@@ -266,60 +245,11 @@ export default {
             shadow: true,
           },
         },
+        rangeSelector: {
+          enabled: false,
+          inputEnabled: false,
+        },
       };
-
-      if (this.zoom) {
-        options = Object.assign(options, {
-          rangeSelector: {
-            allButtonsEnabled: true,
-            buttonPosition: {
-              y: -32,
-              x: -10,
-            },
-            buttonTheme: {
-              fill: "none",
-              stroke: "none",
-              "stroke-width": 0,
-              style: {
-                color: "var(--v-primary-base)",
-              },
-              states: {
-                hover: {
-                  fill: "var(--v-primary-base)",
-                  style: {
-                    color: "#fff",
-                  },
-                },
-                select: {
-                  fill: "var(--v-primary-base)",
-                  style: {
-                    color: "#fff",
-                  },
-                },
-                disabled: {
-                  style: {
-                    color: "#666",
-                  },
-                },
-              },
-            },
-            buttons: this.setDefaultButtons(),
-            selected: 0,
-            labelStyle: {
-              color: "transparent",
-            },
-            inputEnabled: false,
-          },
-        });
-      } else {
-        options = Object.assign(options, {
-          rangeSelector: {
-            enabled: false,
-            inputEnabled: false,
-          },
-        });
-      }
-      return options;
     },
   },
 };

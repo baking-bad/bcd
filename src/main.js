@@ -133,7 +133,6 @@ let config = {
   TOKEN_METADATA_API:  process.env.TOKEN_METADATA_API || "https://metadata.dipdup.net",
   IPFS_NODE: process.env.IPFS_NODE || "https://ipfs.io",
   METADATA_API_URI: process.env.METADATA_API_URI || "https://metadata.dipdup.net",
-  STATS_API_URI: process.env.STATS_API_URI || "https://stats.dipdup.net/"
 }
 
 let api = new BetterCallApi(config.API_URI);
@@ -142,7 +141,9 @@ let aliases = new Aliases(1000);
 let searchService = new SearchService(config.SEARCH_SERVICE_URI);
 let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
-let stats = new StatsAPI(config.STATS_API_URI);
+let stats = new StatsAPI({
+  'mainnet': process.env.MAINNET_STATS_API_URI || 'https://stats.dipdup.net',
+});
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
 if (isDark) {

@@ -36,7 +36,6 @@
                 <v-skeleton-loader :loading="!consumedGas" type="image" height="600">
                     <LineChart
                         :data="consumedGas"
-                        formatter="gas"
                         title="Consumed gas"
                         name="Consumed gas"
                     />
@@ -48,7 +47,7 @@
                 <v-skeleton-loader :loading="!burned" type="image" height="600">
                     <LineChart
                         :data="burned"
-                        formatter="gas"
+                        formatter="burned"
                         title="Burned"
                         name="Burned"
                     />
@@ -96,13 +95,13 @@ export default {
             let dataset = [];
 
             response.forEach(item => {
-                dataset.push([item.ts * 1000, parseInt(item.value)]);
+                dataset.push([item.ts * 1000, parseFloat(item.value)]);
             })
 
             return dataset;
         },
         async getContractCalls() {
-            await this.stats.histogram('transactions', 'count', this.timeframe, {
+            await this.stats.histogram(this.network, 'transactions', 'count', this.timeframe, {
                 'Entrypoint.isnotnull': '',
                 'Target': this.address
             })
@@ -114,7 +113,7 @@ export default {
             })
         },
         async getUniqueUsers() {
-            await this.stats.histogram('transactions', 'distinct', this.timeframe, {
+            await this.stats.histogram(this.network, 'transactions', 'distinct', this.timeframe, {
                 'field': 'Initiator',
                 'Target': this.address
             })
@@ -126,7 +125,7 @@ export default {
             })
         },
         async getConsumedGas() {
-            await this.stats.consumedGas(this.timeframe, this.address)
+            await this.stats.consumedGas(this.network, this.timeframe, this.address)
             .then(res => {
                 this.consumedGas = this.createDataset(res);
             })
@@ -135,7 +134,7 @@ export default {
             })
         },
         async getBurned() {
-            await this.stats.burned(this.timeframe, this.address)
+            await this.stats.burned(this.network,this.timeframe, this.address)
             .then(res => {
                 this.burned = this.createDataset(res);
             })

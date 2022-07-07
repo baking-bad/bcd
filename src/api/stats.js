@@ -3,16 +3,27 @@ const axios = require('axios').default;
 export class RequestFailedError extends Error { }
 
 export class StatsAPI {
-    constructor(baseURL) {
-        this.api = axios.create({
-            baseURL: baseURL,
-            timeout: 10000,
-            responseType: 'json'
-        });
+    constructor(endpoints) {
+        this.api = {};
+        Object.keys(endpoints).forEach(function (network) {
+            this.api[network] = axios.create({
+                baseURL: endpoints[network],
+                timeout: 10000,
+                responseType: 'json'
+            });
+        }, this);
     }
 
-    summary(table, method, args = {}) {
-        return this.api.get(`v1/summary/${table}/${method}`, {
+    getApi(network) {
+      if (network in this.api) {
+        return this.api[network];
+      } else {
+        throw new RequestFailedError(`Don't have an RPC endpoint for the "${network}"`);
+      }
+    }
+
+    summary(network, table, method, args = {}) {
+        return this.getApi(network).get(`/v1/summary/${table}/${method}`, {
             params: args
         })
             .then((res) => {
@@ -23,8 +34,8 @@ export class StatsAPI {
             })
     }
 
-    histogram(table, method, timeframe, args = {}) {
-        return this.api.get(`v1/histogram/${table}/${method}/${timeframe}`, {
+    histogram(network, table, method, timeframe, args = {}) {
+        return this.getApi(network).get(`/v1/histogram/${table}/${method}/${timeframe}`, {
             params: args
         })
             .then((res) => {
@@ -35,7 +46,7 @@ export class StatsAPI {
             })
     }
 
-    paidStorageDiffSize(timeframe, address = undefined, from = 0) {
+    paidStorageDiffSize(network, timeframe, address = undefined, from = 0) {
         let params = {}
         if (address) {
             params['contract'] = address;
@@ -44,7 +55,7 @@ export class StatsAPI {
             params['from'] = from;
         }
 
-        return this.api.get(`v1/paid_storage_diff_size/${timeframe}`, {
+        return this.getApi(network).get(`/v1/paid_storage_diff_size/${timeframe}`, {
             params: params
         })
             .then((res) => {
@@ -56,7 +67,7 @@ export class StatsAPI {
     }
 
 
-    consumedGas(timeframe, address = undefined, from = 0) {
+    consumedGas(network, timeframe, address = undefined, from = 0) {
         let params = {}
         if (address) {
             params['contract'] = address;
@@ -65,7 +76,7 @@ export class StatsAPI {
             params['from'] = from;
         }
 
-        return this.api.get(`v1/consumed_gas/${timeframe}`, {
+        return this.getApi(network).get(`/v1/consumed_gas/${timeframe}`, {
             params: params
         })
             .then((res) => {
@@ -76,7 +87,7 @@ export class StatsAPI {
             })
     }
 
-    burned(timeframe, address = undefined, from = 0) {
+    burned(network, timeframe, address = undefined, from = 0) {
         let params = {}
         if (address) {
             params['contract'] = address;
@@ -85,7 +96,7 @@ export class StatsAPI {
             params['from'] = from;
         }
 
-        return this.api.get(`v1/burned/${timeframe}`, {
+        return this.getApi(network).get(`/v1/burned/${timeframe}`, {
             params: params
         })
             .then((res) => {
