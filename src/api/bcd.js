@@ -431,6 +431,17 @@ export class BetterCallApi {
       })
   }
 
+  getBigMapKeyState(network, ptr, key_hash) {
+    return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys/${key_hash}/state`, {})
+      .then((res) => {
+        if (!res) { return res; }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
   getContractBigMapKeys(network, ptr, q = '', offset = 0) {
     return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys?q=${q}&offset=${offset}`, {})
       .then((res) => {
