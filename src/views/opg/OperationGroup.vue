@@ -11,7 +11,6 @@
       <v-col cols="3" class="d-flex flex-row-reverse pr-8">
         <div>
             <v-btn
-              v-on="on"
               class="mr-2 pl-2 pr-2 text--secondary"
               text
               small
@@ -26,7 +25,6 @@
               <span class="ml-1 text--secondary"> Copy hash </span>
             </v-btn>
             <v-btn
-              v-on="on"
               text
               small
               class="mr-2 pl-2 pr-2 text--secondary"
@@ -36,7 +34,6 @@
               <span class="ml-1 text--secondary"> Raw JSON </span>
             </v-btn>
             <v-btn
-              v-on="on"
               class="pl-2 text--secondary"
               text
               small
@@ -216,7 +213,7 @@ export default {
     }),
     getOPG() {
       this.api
-        .getOPG(this.hash)
+        .getOPG(this.hash, true, false, this.network)
         .then((res) => {
           if (!res) return;
           this.operations = res;

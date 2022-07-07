@@ -1,7 +1,7 @@
 const axios = require('axios').default;
 const maxSize = 10;
 
-import { getCancellable, postCancellable, cancelRequests } from '@/utils/cancellation.js';
+import { getCancellable, postCancellable } from '@/utils/cancellation.js';
 
 export class RequestFailedError extends Error {
   constructor(response) {
@@ -129,6 +129,28 @@ export class BetterCallApi {
     })
       .then((res) => {
         if (!res) { return res; }
+        if (res.status !== 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getAccountOperationGroups(network, address, last_id = 0, size = 10) {
+    let params = {}
+    if (last_id > 0) {
+      params['last_id'] = last_id
+    }
+    if (size !== 0) {
+      params['size'] = size
+    }
+    return getCancellable(this.api, `/contract/${network}/${address}/opg`, {
+      params: params,
+    })
+      .then((res) => {
+        if (!res) {
+          return null;
+        }
         if (res.status !== 200) {
           throw new RequestFailedError(res);
         }
@@ -474,18 +496,6 @@ export class BetterCallApi {
       })
   }
 
-  getRandomContract(network) {
-    cancelRequests();
-    const request_url = network ? `/pick_random?network=${network}` : `/pick_random`;
-    return getCancellable(this.api, request_url, {})
-      .then((res) => {
-        if (res.status !== 200) {
-          throw new RequestFailedError(res);
-        }
-        return res.data
-      })
-  }
-
   getContractsStats(network, addresses, period) {
     return getCancellable(this.api, `/stats/${network}/contracts?period=${period}&contracts=${addresses.join(',')}`, {})
       .then((res) => {
@@ -524,8 +534,20 @@ export class BetterCallApi {
       })
   }
 
-  getProjects() {
-    return getCancellable(this.api, `/projects`, {})
+  getOPG(hash, with_mempool=true, with_storage_diff=false, network=undefined) {
+    let params = {}
+    if (with_mempool) {
+      params.with_mempool = with_mempool;
+    }
+    if (with_storage_diff) {
+      params.with_storage_diff = with_storage_diff;
+    }
+    if (network) {
+      params.network = network
+    }
+    return getCancellable(this.api, `/opg/${hash}`, {
+      params: params,
+    })
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -534,8 +556,8 @@ export class BetterCallApi {
       })
   }
 
-  getOPG(hash, with_mempool=true) {
-    return getCancellable(this.api, `/opg/${hash}?with_mempool=${with_mempool}`, {})
+  getImplicitOperation(network, counter) {
+    return getCancellable(this.api, `/implicit/${network}/${counter}`, {})
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -546,6 +568,20 @@ export class BetterCallApi {
 
   getOperationDiff(network, id) {
     return getCancellable(this.api, `/operation/${network}/${id}/diff`, {})
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getOperationsByHashAndCounter(hash, counter, network=null) {
+    let params = {};
+    if (network) {
+      params['network'] = network;
+    }
+    return getCancellable(this.api, `/opg/${hash}/${counter}`, params)
       .then((res) => {
         if (res.status != 200) {
           throw new RequestFailedError(res);
@@ -598,8 +634,8 @@ export class BetterCallApi {
       })
   }
 
-  getErrorLocation(operationId) {
-    return getCancellable(this.api, `/operation/${operationId}/error_location`, {})
+  getErrorLocation(network, operationId) {
+    return getCancellable(this.api, `/operation/${network}/${operationId}/error_location`, {})
       .then((res) => {
         if (!res) { return res; }
         if (res.status != 200) {

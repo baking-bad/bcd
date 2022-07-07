@@ -44,16 +44,7 @@
                 </v-list-item-title>
                 <v-list-item-subtitle
                   class="font-weight-light hash text--secondary"
-                  v-if="
-                    value &&
-                    !value.mempool &&
-                    value.internal_operations &&
-                    value.internal_operations.length
-                  "
-                  >{{
-                    value.internal_operations.length
-                  }}
-                  internal</v-list-item-subtitle
+                  v-if="value && !value.mempool && !isNaN(value.internals) && value.internals > 0">{{value.internals}} internal</v-list-item-subtitle
                 >
               </v-list-item-content>
             </v-list-item>
@@ -61,26 +52,26 @@
           <v-col cols="2">
             <v-list-item
               class="fill-height pl-1"
-              v-if="!open && totalLockedWithdrawn !== 0"
+              v-if="!open && !value.mempool && !isNaN(value.flow) && value.flow !== 0"
             >
               <v-list-item-content>
                 <v-list-item-title class="hash">{{
-                  totalLockedWithdrawn | uxtz
+                  value.flow | uxtz
                 }}</v-list-item-title>
                 <v-list-item-subtitle
                   class="font-weight-light hash text--secondary"
                 >
-                  <span v-if="totalLockedWithdrawn > 0">locked</span>
+                  <span v-if="value.flow > 0">locked</span>
                   <span v-else>withdrawn</span>
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-col>
           <v-col cols="2">
-            <v-list-item class="fill-height pl-2">
+            <v-list-item class="fill-height pl-2" v-if="value && !value.mempool && !isNaN(value.total_cost) ">
               <v-list-item-content>
                 <v-list-item-title class="hash">{{
-                  totalCost | uxtz
+                  value.total_cost | uxtz
                 }}</v-list-item-title>
                 <v-list-item-subtitle
                   class="font-weight-light hash text--secondary"
@@ -89,26 +80,16 @@
               </v-list-item-content>
             </v-list-item>
           </v-col>
-          <v-col cols="2">
+          <v-col cols="4">
             <v-list-item class="fill-height pl-3">
               <v-list-item-content>
                 <v-list-item-title>
-                  <span v-html="helpers.shortcut(value.hash)"></span>
+                  <Shortcut :str="value.hash" v-if="value.hash"/>
                 </v-list-item-title>
-                <v-list-item-subtitle
+                <v-list-item-subtitle v-if="value.content_index !== undefined"
                   class="font-weight-light hash text--secondary"
                   >content #{{ value.content_index }}</v-list-item-subtitle
                 >
-              </v-list-item-content>
-            </v-list-item>
-          </v-col>
-          <v-col cols="2">
-            <v-list-item class="fill-height pa-0" v-if="!open && invoker">
-              <v-list-item-content>
-                <v-list-item-title>
-                  <span class="font-weight-light">by</span>
-                  <span class="ml-1" v-html="helpers.shortcut(invoker)"></span>
-                </v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-col>
@@ -116,22 +97,23 @@
       </template>
     </v-expansion-panel-header>
     <v-expansion-panel-content class="opg-content">
-      <InternalOperation :data="value" :address="address" />
-      <template v-for="(item, idx) in value.internal_operations">
-        <v-divider :key="'divider' + idx"></v-divider>
+      <v-progress-linear v-if="loading" indeterminate color="primary"/>
+      <div v-else v-for="(item, idx) in value.internal_operations" :key="idx">
+        <v-divider></v-divider>
         <InternalOperation
           :data="item"
-          :mainOperation="value"
-          :address="address"
-          :key="idx"
+          :mainOperation="value.internal_operations[0]"
+          :address="address"          
         />
-      </template>
+      </div>      
     </v-expansion-panel-content>
   </v-expansion-panel>
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import InternalOperation from "@/components/InternalOperation.vue";
+import Shortcut from "@/components/Shortcut.vue";
 import { getContentItemHeaderClass } from '@/utils/styles';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
@@ -143,86 +125,25 @@ export default {
   props: {
     data: Object,
     address: String,
+    network: String,
   },
   components: {
     InternalOperation,
+    Shortcut,
   },
   created() {
     this.value = Object.assign({}, this.data);
   },
   computed: {
-    entryName() {
-      if (
-        this.value.entrypoint &&
-        (this.address === undefined ||
-          this.value.destination === this.address ||
-          (this.value.source === this.address && this.address.startsWith("tz")))
-      ) {
-        return this.value.entrypoint;
-      } else if (!this.value.mempool && this.value.internal_operations) {
-        for (let i = 0; i < this.value.internal_operations.length; i++) {
-          if (
-            this.value.internal_operations[i].entrypoint &&
-            this.value.internal_operations[i].destination === this.address
-          ) {
-            return this.value.internal_operations[i].entrypoint;
-          }
-        }
-      }
-
-      return null;
-    },
     text() {
       if (this.value == null) return "";
-      if (this.value.kind === "transaction") {
-        if (this.entryName) return this.entryName;
+      if (this.value.entrypoint) {
+        return this.value.entrypoint;
       }
-      if (this.value.source === this.address && this.address.startsWith("tz"))
-        return this.value.kind;
-      if (
-        this.address === undefined ||
-        this.value.destination === this.address
-      ) {
-        return this.value.kind;
-      } else if (this.value.internal_operations) {
-        for (let i = 0; i < this.value.internal_operations.length; i++) {
-          if (this.value.internal_operations[i].destination === this.address) {
-            return this.value.internal_operations[i].kind;
-          }
-        }
-      }
-      return null;
+      return this.value.kind;
     },
     statusHeaderClass() {
       return getContentItemHeaderClass(this.value.status);
-    },
-    totalLockedWithdrawn() {
-      return this.getTotalAmount(1) - this.getTotalAmount(-1);
-    },
-    totalCost() {
-      if (this.value.mempool) return 0;
-      let val = this.value.burned || 0;
-      if (this.value.internal_operations) {
-        for (let i = 0; i < this.value.internal_operations.length; i++) {
-          val += this.value.internal_operations[i].burned || 0;
-        }
-      }
-      if (!isNaN(this.value.fee)) {
-        val += this.value.fee;
-      }
-      return val;
-    },
-    invoker() {
-      if (this.value.destination === this.address) {
-        return this.getInvoker(this.value);
-      } else if (!this.value.mempool && !this.value.internal_operations) {
-        for (let i = 0; i < this.value.internal_operations.length; i++) {
-          if (this.value.internal_operations[i].destination === this.address) {
-            return this.getInvoker(this.value.internal_operations[i]);
-          }
-        }
-      }
-      return null;
     },
   },
   data: () => ({
@@ -230,37 +151,41 @@ export default {
     loading: false
   }),
   methods: {
-    getOrientedAmount(data, sign) {
-      if (this.address !== undefined && !isNaN(data.amount) && (
-          (data.source === this.address && sign < 0) ||
-          (data.destination === this.address && sign > 0)
-      )) {
-        return data.amount;
-      }
-      return 0;
-    },
-    getTotalAmount(sign) {
-      if (this.value.status !== "applied" || this.value.mempool) return 0;
-      let val = this.getOrientedAmount(this.value, sign);
-      if (this.value.internal_operations) {
-        for (let i = 0; i < this.value.internal_operations.length; i++) {
-          val += this.getOrientedAmount(
-            this.value.internal_operations[i],
-            sign
-          );
-        }
-      }
-      return val;
-    },
-    getInvoker(data) {
-      if (data.source_alias !== undefined) {
-        return data.source_alias;
-      } else if (data.internal && data.source.startsWith("KT")) {
-        return data.source;
+    ...mapActions(["showError"]),
+    onPanelStateChange() {
+      if (!this.value || this.value.internal_operations) return;
+      if (this.loading) return;
+
+      this.loading = true;
+
+      if (this.value.hash){
+        this.api.
+          getOperationsByHashAndCounter(this.value.hash, this.value.counter, this.network)
+          .then(res => {
+            this.value.internal_operations = res;
+          })
+          .catch(err => {
+            console.log(err);
+            this.showError(err);
+          })
+          .finally(() => {
+            this.loading = false;
+          })
       } else {
-        return null;
+        this.api.
+          getImplicitOperation(this.network, this.value.counter)
+          .then(res => {
+            this.value.internal_operations = res;
+          })
+          .catch(err => {
+            console.log(err);
+            this.showError(err);
+          })
+          .finally(() => {
+            this.loading = false;
+          })
       }
-    },
+    }
   },
 };
 </script>

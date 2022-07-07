@@ -1,100 +1,34 @@
 <template>
   <v-container fluid class="px-8 py-4 canvas fill-canvas">
+    <OperationFilters :contract="contract" v-model="openFilters" @filterChanged="filterChanged" :filters="filters"/>
     <v-row>
       <v-col cols="9">
         <v-row>
-          <v-col cols="3">
-            <v-select
-              v-model="status"
-              :items="[
-            'applied',
-            'failed',
-            'backtracked',
-            'skipped',
-            'pending',
-            'lost',
-            'refused',
-            'branch_refused',
-          ]"
-              chips
-              small-chips
-              filled
-              label="Status"
-              placeholder="Any"
-              multiple
+          <v-col cols="12" class="pt-0">
+             <v-text-field
+              v-model="search"
+              color="primary"
+              label="Filter by"
+              placeholder="Start entering hash of operation, source or destination address"
+              clearable
+              outlined
               background-color="data"
+              single-line
               hide-details
             >
-              <template v-slot:selection="{ item, index }">
-                <v-chip x-small v-if="index < 1">
-                  <span>{{ item }}</span> </v-chip
-                >&nbsp;
-                <span v-if="index === 1" class="grey--text caption"
-                >+{{ status.length - 1 }} others</span
-                >
+              <template v-slot:append-outer>
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">                    
+                      <v-btn icon @click="openFilters = !openFilters" v-bind="attrs" v-on="on" style="top: -6px;">
+                        <v-badge dot overlap bordered :value="isEmptyFilters ? '' : 'F'">
+                          <v-icon>mdi-filter-variant</v-icon>
+                        </v-badge>
+                      </v-btn>
+                  </template>
+                  <span>Filters</span>
+                </v-tooltip>
               </template>
-            </v-select>
-          </v-col>
-          <v-col cols="3" v-if="isContract">
-            <v-select
-              v-model="entrypoints"
-              :items="availableEntrypoints"
-              chips
-              small-chips
-              filled
-              background-color="data"
-              label="Entrypoint"
-              placeholder="Any"
-              multiple
-              hide-details
-            >
-              <template v-slot:selection="{ index }">
-                <v-chip x-small v-if="index < 1">
-                  <span>{{ shortestEntrypoint }}</span> </v-chip
-                >&nbsp;
-                <span v-if="index === 1" class="grey--text caption"
-                >+{{ entrypoints.length - 1 }} others</span
-                >
-              </template>
-            </v-select>
-          </v-col>
-
-          <v-col cols="6" class="d-flex justify-space-between align-center">
-            <v-menu
-              ref="menu"
-              v-model="datesModal"
-              :close-on-content-click="false"
-              :return-value.sync="dates"
-              transition="scale-transition"
-              offset-y
-              min-width="290px"
-            >
-              <template v-slot:activator="{ on }">
-                <v-text-field
-                  v-model="dateRangeText"
-                  label="Date range"
-                  placeholder="All time"
-                  readonly
-                  filled
-                  background-color="data"
-                  hide-details
-                  v-on="on"
-                ></v-text-field>
-              </template>
-              <v-date-picker v-model="datesBuf" min="2018-06-30" scrollable range show-current>
-                <v-spacer></v-spacer>
-                <v-btn text color="primary" @click="datesModal = false"
-                >Cancel</v-btn
-                >
-                <v-btn text color="primary" @click="$refs.menu.save(datesBuf)"
-                >OK</v-btn
-                >
-              </v-date-picker>
-            </v-menu>
-            <v-btn small text @click="fetchOperations">
-              <v-icon small class="mr-1 text--secondary">mdi-trash-can</v-icon>
-              <span class="text--secondary">clear filters</span>
-            </v-btn>
+            </v-text-field>
           </v-col>
         </v-row>
         <v-row>
@@ -118,6 +52,7 @@
                 <ContentItem
                   :data="item"
                   :address="address"
+                  :network="network"
                   v-for="(item, key) in items"
                   :key="item.hash + '_' + item.counter + '_' + key"
                 />
@@ -164,8 +99,7 @@
               >
               <v-list-item-title class="body-2" v-if="isContract">
                 {{ helpers.formatDatetime(contract.timestamp) }}
-                <span v-if="contract.last_action > contract.timestamp"
-                >—
+                <span v-if="contract.last_action > contract.timestamp">—
                       {{ helpers.formatDatetime(contract.last_action) }}</span
                 >
               </v-list-item-title>
@@ -225,10 +159,10 @@
 
 <script>
 import { mapActions } from "vuex";
+import OperationFilters from "@/views/contract/OperationFilters.vue";
 import ContentItem from "@/views/contract/ContentItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
-import Vue from 'vue';
 import AccountBox from "../../components/Dialogs/AccountBox";
 
 export default {
@@ -243,29 +177,25 @@ export default {
     AccountBox,
     ContentItem,
     EmptyState,
+    OperationFilters
   },
   data: () => ({
+    openFilters: false,
     operations: [],
     mempool: [],
     downloaded: false,
     operationsLoading: false,
     mempoolLoading: false,
-    last_id: null,
-    status: [],
-    dates: [],
-    datesBuf: [],
-    datesModal: false,
-    entrypoints: [],
-    availableEntrypoints: [],
-    operationsChannelName: null,
-    usedBytes: null,
-    paidUsed: null
+    last_id: 0,
+    filters: {
+      entrypoints: [],
+      status: [],
+      dates: []
+    },
+    search: ''
   }),
   created() {
-    this.init();
-
-    this.getUsedBytes();
-    this.getPaidUsed();
+    this.fetchOperations();
   },
   computed: {
     loading() {
@@ -282,11 +212,10 @@ export default {
       return null;
     },
     items() {
-      let operations = [];
       if (this.operations.length === 0) {
         return [];
       }
-      if (this.last_id !== null) operations = this.operations;
+      let operations = this.operations;
       if (this.config.mempool_enabled) {
         let mempoolOperations = this.getDisplayedMempool();
         if (mempoolOperations.length > 0) {
@@ -297,34 +226,40 @@ export default {
       }
       return operations;
     },
-    dateRangeText() {
-      let texts = this.dates.map((d) => dayjs(d).format("MMM DD"));
-      if (texts.length === 2) {
-        return texts.join(" — ");
-      } else if (texts.length === 1) {
-        return texts[0];
-      } else {
-        return "";
-      }
-    },
-    shortestEntrypoint() {
-      if (this.entrypoints.length === 0) return "";
-      let s = this.entrypoints[0];
-
-      for (let i = 1; i < this.entrypoints.length; i++) {
-        if (this.entrypoints[i].length < s.length) s = this.entrypoints[i];
-      }
-      return s;
-    },
     isContract() {
       return this.address.startsWith("KT");
     },
+    isEmptyFilters() {
+      return this.filters.dates.length == 0 &&
+        this.filters.entrypoints.length == 0 &&
+        this.filters.status.length == 0 &&
+        (this.search === '' || this.search === null)
+    },
+    timestampFilter() {
+      let timestamps = this.filters.dates.map((d) => dayjs(d).unix() * 1000).sort();
+      if (timestamps.length === 2) {
+        return {
+          gt: timestamps[0], 
+          lte: timestamps[1] + 86400000
+        };
+      } else if (timestamps.length === 1) {
+        return {
+          gt: timestamps[0], 
+          lte: timestamps[0] + 86400000
+        };
+      }
+      return null;
+    }
   },
   destroyed() {
     this.hideError();
   },
   methods: {
     ...mapActions(["showError", "hideError"]),
+    filterChanged(filters) {
+      this.filters = filters;
+      this.applyFilter(true);
+    },
     compareOperations(a, b) {
       if (a.timestamp < b.timestamp) {
         return 1;
@@ -372,49 +307,33 @@ export default {
           console.error(err);
         });
     },
-    async getOperations(clearData = false, resetFilters = false) {
-      if (this.operationsLoading || (this.downloaded && !clearData)) return;
-      this.operationsLoading = true;
-      if (clearData) {
+    clearData() {
         this.operations = [];
         this.downloaded = false;
-        this.last_id = null;
-      }
-      if (resetFilters) {
-        this.status = [];
-        this.dates = [];
-        this.datesBuf = [];
-        this.datesModal = false;
-        this.entrypoints = [];
-      }
+        this.last_id = 0;
+    },
+    getOperations(clearData = false) {
+      if (this.operationsLoading || (this.downloaded && !clearData)) return;
 
-      const onChainStatuses = ["applied", "failed", "skipped", "backtracked"];
-      let status = this.status.filter((s) => onChainStatuses.includes(s));
-      if (status.length === 0 && this.status.length > 0) {
-        this.operationsLoading = false;
-        return;
-      }
-      let entries = this.entrypoints;
-      let timestamps = this.getTimestamps();
+      this.operationsLoading = true;
+      if (clearData) this.clearData();
 
-      await this.api
-        .getContractOperations(
+      this.api
+        .getAccountOperationGroups(
           this.network,
           this.address,
           this.last_id,
-          timestamps[0],
-          timestamps[1],
-          status,
-          entries,
-          false // no diffs at this point, load them if expanded only
+          10,
         )
         .then((res) => {
           if (!res) {
             this.downloaded = true; // prevent endless polling
           } else {
-            this.downloaded = res.operations.length === 0;
-            this.last_id = res.last_id;
-            this.pushOperations(res.operations);
+            this.downloaded = res.length === 0;
+            if (res.length > 0){
+              this.last_id = res[res.length - 1].last_id;
+              this.operations.push(...res);
+            }
           }
         })
         .catch((err) => {
@@ -440,79 +359,99 @@ export default {
         .finally(() => (this.mempoolLoading = false));
     },
     getDisplayedMempool() {
+      if (this.search) return [];
       if (!this.mempool || this.mempool.length === 0) return [];
-      let mempoolOperations = this.mempool;
-
-      // Apply operation filters
-      if (this.status.length > 0) {
-        mempoolOperations = mempoolOperations.filter((o) =>
-          this.status.includes(o.status)
-        );
+      if (!this.isEmptyFilters) {
+        return [];
       }
-      if (this.entrypoints.length > 0) {
-        mempoolOperations = mempoolOperations.filter((o) =>
-          this.entrypoints.includes(o.entrypoint)
-        );
-      }
-      if (this.dates.length > 0) {
-        let timestamps = this.getTimestamps();
-        mempoolOperations = mempoolOperations.filter(function (op) {
-          const ts = dayjs(op.timestamp).unix() * 1000;
-          return ts >= timestamps[0] && ts < timestamps[1];
-        });
-      }
-
-      // Ensure no duplicates (tune the number if needed) and proper cut
-      if (this.operations.length > 0) {
-        const lastTimestamp = this.operations[this.operations.length - 1]
-          .timestamp;
-        const lastHashes = this.operations.slice(0, 15).map((o) => o.hash);
-        mempoolOperations = mempoolOperations.filter(
-          (o) => o.timestamp >= lastTimestamp && !lastHashes.includes(o.hash)
-        );
-      }
-
-      return mempoolOperations;
+      return this.mempool;
     },
-    pushOperations(data) {
+    pushOperationsFromSearch(data) {
       data.forEach((element) => {
-        if (element.internal) {
-          const lastEl = this.operations[this.operations.length - 1];
-          lastEl.internal_operations.push(
-              element
-          );
-          Vue.set(this.operations, this.operations.length - 1, lastEl);
-        } else {
-          element.internal_operations = [];
-          this.operations.push(element);
-        }
+        this.operations.push({
+          timestamp: element.body['@timestamp'],
+          hash: element.body.Hash,
+          counter: element.body.Counter,
+          level: element.body.Level,
+          kind: element.body.Type,
+          status: element.body.Status,
+          entrypoint: element.body.Entrypoint,
+          network: element.body.Network,
+        });
       });
     },
-    async onDownloadPage(entries, observer, isIntersecting) {
+    onDownloadPage(_e, _i, isIntersecting) {
       if (isIntersecting) {
-        await this.getOperations();
+        this.applyFilter(false);
       }
     },
     async fetchOperations() {
-
-      await this.getOperations(true, true);
+      await this.getOperations(true);
       if (this.config.mempool_enabled) {
         this.getMempool();
       }
-      this.getEntrypoints();
     },
-    async updateOperations() {
-      await this.getOperations(true, false);
+    searchOperations(clearData = false) {
+      if (this.operationsLoading || (this.downloaded && !clearData)) return;
+      this.operationsLoading = true;
+
+      if (clearData) this.clearData();
+
+      let status = this.filters.status.filter((s) => ["applied", "failed", "skipped", "backtracked"].includes(s));
+      if (status.length === 0 && this.filters.status.length > 0) {
+        this.operationsLoading = false;
+        return;
+      }
+
+      let filters = {
+          entrypoint: this.filters.entrypoints,
+          status: status,
+          network: this.network,
+          contract: this.address,
+      }
+
+      let date = this.timestampFilter;
+      if (date) {
+        filters.date = date;
+      }
+
+      const size = 20;
+
+      this.searchService.operations(
+        this.search,
+        filters,
+        size,
+        this.operations.length,
+      )
+      .then(res => {
+        if (!res) {
+            this.downloaded = true; // prevent endless polling
+          } else {
+            this.downloaded = res.items.length !== size;
+            this.pushOperationsFromSearch(res.items);
+          }
+      })
+      .catch(err => {
+        console.log(err);
+        this.showError(err);
+      })
+      .finally(() => {
+        this.operationsLoading = false;
+      })
     },
-    init() {
-      this.fetchOperations();
-    },
+    applyFilter(clearData = false) {
+      if (this.isEmptyFilters) {
+        this.getOperations(clearData);
+      } else {
+        this.searchOperations(clearData);
+      }
+     }
   },
   watch: {
-    address: "init",
-    status: "updateOperations",
-    entrypoints: "updateOperations",
-    dates: "updateOperations",
+    address: "fetchOperations",
+    search() {
+      this.applyFilter(true);
+    }
   },
 };
 </script>

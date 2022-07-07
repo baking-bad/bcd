@@ -42,7 +42,7 @@
           </template>
           <span>Repeat operation group</span>
         </v-tooltip>
-        <v-tooltip top>
+        <v-tooltip top v-if="data.hash">
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" icon class="mr-2 text--secondary" @click="showRaw = true">
               <v-icon>mdi-code-json</v-icon>
@@ -50,7 +50,7 @@
           </template>
           <span>View raw JSON</span>
         </v-tooltip>
-        <v-tooltip top>
+        <v-tooltip top v-if="data.hash">
           <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
@@ -66,7 +66,7 @@
           </template>
           <span>Copy operation hash</span>
         </v-tooltip>
-        <v-tooltip top>
+        <v-tooltip top v-if="data.hash">
           <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
@@ -92,7 +92,7 @@
       <v-col
         cols="1"
         class="py-0 d-flex justify-end align-center"
-        v-if="loadingDiffs || hasParameters || hasStorageDiff"
+        v-if="showDetails"
       >
         <v-btn
           text
@@ -253,9 +253,7 @@ export default {
   }),
   created() {
     this.showParams =
-      this.data.errors !== undefined ||
-      this.data.destination === this.address ||
-      this.address === undefined;
+      this.data.errors !== undefined;
   },
   computed: {
     source() {
@@ -354,6 +352,12 @@ export default {
         this.diffs !== undefined
       );
     },
+    showDetails() {
+      return this.data.hash === undefined || 
+        this.data.kind === 'origination' || 
+        this.hasParameters || 
+        this.hasStorageDiff;
+    },
     statusColor() {
       if (this.data.status === "applied") return "success";
       if (this.data.status === "backtracked") return "warning";
@@ -388,9 +392,10 @@ export default {
   methods: {
     ...mapActions(["showClipboardOK", "showError"]),
     getDiff() {
+      if (this.data.status !== "applied") return;
       if (this.diffs !== null) return;
-
       this.loadingDiffs = true;
+
       this.api.getOperationDiff(this.data.network, this.data.id).
         then((res) => {
           this.diffs = res;
