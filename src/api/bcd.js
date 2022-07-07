@@ -1,7 +1,7 @@
 const axios = require('axios').default;
 const maxSize = 10;
 
-import {getCancellable, postCancellable, cancelRequests} from '@/utils/cancellation.js';
+import { getCancellable, postCancellable } from '@/utils/cancellation.js';
 
 export class RequestFailedError extends Error {
     constructor(response) {
@@ -145,6 +145,28 @@ export class BetterCallApi {
                 return res.data
             })
     }
+
+  getAccountOperationGroups(network, address, last_id = 0, size = 10) {
+    let params = {}
+    if (last_id > 0) {
+      params['last_id'] = last_id
+    }
+    if (size !== 0) {
+      params['size'] = size
+    }
+    return getCancellable(this.api, `/contract/${network}/${address}/opg`, {
+      params: params,
+    })
+      .then((res) => {
+        if (!res) {
+          return null;
+        }
+        if (res.status !== 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
 
     getAccountInfo(network, address) {
         return getCancellable(this.api, `/account/${network}/${address}`, {})
@@ -323,15 +345,30 @@ export class BetterCallApi {
             })
     }
 
-    getContractEntrypointSchema(network, address, entrypoint, fill_type = 'empty') {
-        return this.api.get(`/contract/${network}/${address}/entrypoints/schema?fill_type=${fill_type}&entrypoint=${entrypoint}`)
-            .then((res) => {
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            })
+  getContractEntrypointSchema(network, address, entrypoint, fill_type = 'empty', hash = undefined, counter = undefined) {
+    let params = {}
+    if (fill_type) {
+      params['fill_type'] = fill_type;
     }
+    if (entrypoint) {
+      params['entrypoint'] = entrypoint;
+    }
+    if (hash) {
+      params['hash'] = hash;
+    }
+    if (counter) {
+      params['counter'] = counter;
+    }
+    return this.api.get(`/contract/${network}/${address}/entrypoints/schema`, {
+      params: params,
+    })
+      .then((res) => {
+        if (res.status !== 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
 
     getContractStorage(network, address, level = null) {
         let params = '?';
@@ -437,18 +474,27 @@ export class BetterCallApi {
             });
     }
 
-    getContractBigMapDiffsCount(network, ptr) {
-        return getCancellable(this.api, `/bigmap/${network}/${ptr}/count`, {})
-            .then((res) => {
-                if (!res) {
-                    return res;
-                }
-                if (res.status != 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            })
-    }
+  getContractBigMapDiffsCount(network, ptr) {
+    return getCancellable(this.api, `/bigmap/${network}/${ptr}/count`, {})
+      .then((res) => {
+        if (!res) { return res; }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
+
+  getBigMapKeyState(network, ptr, key_hash) {
+    return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys/${key_hash}/state`, {})
+      .then((res) => {
+        if (!res) { return res; }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
 
     getContractBigMapKeys(network, ptr, q = '', offset = 0) {
         return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys?q=${q}&offset=${offset}`, {})
@@ -486,30 +532,16 @@ export class BetterCallApi {
             })
     }
 
-    getRandomContract(network) {
-        cancelRequests();
-        const request_url = network ? `/pick_random?network=${network}` : `/pick_random`;
-        return getCancellable(this.api, request_url, {})
-            .then((res) => {
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            })
-    }
-
-    getContractsStats(network, addresses, period) {
-        return getCancellable(this.api, `/stats/${network}/contracts?period=${period}&contracts=${addresses.join(',')}`, {})
-            .then((res) => {
-                if (!res) {
-                    return res;
-                }
-                if (res.status != 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            })
-    }
+  getContractsStats(network, addresses, period) {
+    return getCancellable(this.api, `/stats/${network}/contracts?period=${period}&contracts=${addresses.join(',')}`, {})
+      .then((res) => {
+        if (!res) { return res; }
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
 
     getTokensByVersion(network, version, offset = 0, size = 0) {
         let params = {}
@@ -538,6 +570,27 @@ export class BetterCallApi {
             })
     }
 
+  getOPG(hash, with_mempool=true, with_storage_diff=false, network=undefined) {
+    let params = {}
+    if (with_mempool) {
+      params.with_mempool = with_mempool;
+    }
+    if (with_storage_diff) {
+      params.with_storage_diff = with_storage_diff;
+    }
+    if (network) {
+      params.network = network
+    }
+    return getCancellable(this.api, `/opg/${hash}`, {
+      params: params,
+    })
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
     getProjects() {
         return getCancellable(this.api, `/projects`, {})
             .then((res) => {
@@ -548,15 +601,15 @@ export class BetterCallApi {
             })
     }
 
-    getOPG(hash, with_mempool = true) {
-        return getCancellable(this.api, `/opg/${hash}?with_mempool=${with_mempool}`, {})
-            .then((res) => {
-                if (res.status != 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            })
-    }
+  getImplicitOperation(network, counter) {
+    return getCancellable(this.api, `/implicit/${network}/${counter}`, {})
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
 
     getOperationDiff(network, id) {
         return getCancellable(this.api, `/operation/${network}/${id}/diff`, {})
@@ -567,6 +620,20 @@ export class BetterCallApi {
                 return res.data
             })
     }
+
+  getOperationsByHashAndCounter(hash, counter, network=null) {
+    let params = {};
+    if (network) {
+      params['network'] = network;
+    }
+    return getCancellable(this.api, `/opg/${hash}/${counter}`, params)
+      .then((res) => {
+        if (res.status != 200) {
+          throw new RequestFailedError(res);
+        }
+        return res.data
+      })
+  }
 
     getStats() {
         return getCancellable(this.api, `/stats`, {})
@@ -618,12 +685,10 @@ export class BetterCallApi {
             })
     }
 
-    getErrorLocation(operationId) {
-        return getCancellable(this.api, `/operation/${operationId}/error_location`, {})
+    getErrorLocation(network, operationId) {
+        return getCancellable(this.api, `/operation/${network}/${operationId}/error_location`, {})
             .then((res) => {
-                if (!res) {
-                    return res;
-                }
+                if (!res) { return res; }
                 if (res.status != 200) {
                     throw new RequestFailedError(res);
                 }
@@ -725,6 +790,15 @@ export class BetterCallApi {
             });
     }
 
+  getCodeFromMichelson(data) {
+    return this.api.post(`/michelson`, data)
+          .then((res) => {
+              if (res.status !== 200) {
+                  throw new RequestFailedError(res);
+              }
+              return res.data;
+          });
+  }
     getTokenHoldersList(network, address, token_id) {
         return this.api.get(`/contract/${network}/${address}/tokens/holders?token_id=${token_id}`)
             .then(this.returnResponseData);
@@ -758,6 +832,19 @@ export class BetterCallApi {
 
     getConstant(network, address) {
         return this.api.get(`/global_constants/${network}/${address}`)
+            .then(this.returnResponseData);
+    }
+
+    getConstantsByContract(network, address, offset, size = 7) {
+        let params = {
+            size
+        }
+
+        if (offset > 0) {
+            params['offset'] = offset
+        }
+
+        return this.api.get(`/contract/${network}/${address}/global_constants`, {params})
             .then(this.returnResponseData);
     }
 }

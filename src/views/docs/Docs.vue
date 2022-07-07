@@ -1,10 +1,12 @@
 <template>
   <div id="docs-wrapper" :class="this.$vuetify.theme.isDark ? 'docs-wrapper_dark' : ''">
-    <DocsSnackbar />
+    
+    <APIRelocation v-model="isWarningOpened"/>
+   
     <div v-show="isDocsRerendering" class="ma-3">
       <h2 class="theme-is-changing">Theme is changing...</h2>
     </div>
-    <v-container v-show="!isDocsRerendering" class="pa-0 ma-0" fluid>
+    <v-container v-show="!isDocsRerendering" class="pa-0 mx-0" fluid>
       <div id="docs" ref="redoc-container"></div>
     </v-container>
   </div>
@@ -12,14 +14,14 @@
 
 <script>
 import { init as initRedoc } from "redoc/bundles/redoc.standalone.js";
-import DocsSnackbar from "../../components/Snackbar/DocsSnackbar";
+import APIRelocation from "../../components/Dialogs/APIRelocation";
 
 const RERENDERING_TIMEOUT = 200;
 
 export default {
   name: "Docs",
   components: {
-    DocsSnackbar,
+    APIRelocation,
   },
   mounted() {
     this.init();
@@ -134,6 +136,7 @@ export default {
   data() {
     return {
       isDocsRerendering: false,
+      isWarningOpened: true
     }
   }
 };

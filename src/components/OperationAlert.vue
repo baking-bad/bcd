@@ -74,7 +74,7 @@ import TreeNodeDetails from "@/components/Dialogs/TreeNodeDetails.vue";
 export default {
   name: "OperationAlert",
   props: {
-    operationId: String,
+    operationId: Number,
     errors: Array,
     network: String,
   },
@@ -98,7 +98,7 @@ export default {
     getErrorLocation() {
       this.errorLocationLoading = true;
       this.api
-        .getErrorLocation(this.operationId)
+        .getErrorLocation(this.network, this.operationId)
         .then((res) => {
           this.errorLocation = res;
           this.showErrorLocation = true;

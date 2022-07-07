@@ -7,9 +7,7 @@
           divider="/"
           :items="breadcrumbsItems"
         />
-        <Tags
-          :contract="contract"
-        />
+        <Tags :tags="contract.tags"/>
       </v-col>
       <v-col cols="3" class="d-flex justify-end pr-7">
         <div class="d-flex align-center justify-start pa-2 px-4">
@@ -62,7 +60,6 @@
       :contract="contract"
       :address="address"
       :tokensTotal="tokensTotal"
-      :tokenBalancesTotal="tokenBalancesTotal"
       :metadata="metadata"
       :is-anything-loading="isLoadingDataForTabs"
       :same-contracts="sameContracts"
@@ -76,6 +73,7 @@
         :network="network"
         :contract="contract"
         :tokenBalancesTotal="tokenBalancesTotal"
+        :tokensTotal="tokensTotal"
         :metadata="metadata"
         :same-contracts="sameContracts"
         :same-count="sameCount"
@@ -118,7 +116,6 @@ export default {
     contract: {},
     balance: 0,
     metadata: null,
-    tokenBalancesTotal: 0,
     tokensTotal: 0,
     contractTags: null,
     contractLink: '',
@@ -262,7 +259,6 @@ export default {
     },
     init() {
       this.tokensTotal = 0;
-      this.tokenBalancesTotal = 0;
       this.metadata = null;
       this.contract = {};
       if (this.isContract) {
@@ -273,9 +269,9 @@ export default {
         this.getContract();
         this.getTokensTotal();
         this.loadViewsSchema();
+      } else {
+        this.getInfo();
       }
-      this.getInfo();
-      this.getTokenBalancesTotal();
       this.getMetadata();
     },
     getContract() {
@@ -309,17 +305,6 @@ export default {
         .then((res) => {
           if (!res) return;
           this.tokensTotal = res.count || 0;
-        })
-        .catch((err) => {
-          this.showError(err);
-        })
-    },
-    getTokenBalancesTotal() {
-      this.api
-        .getAccountTokenBalances(this.network, this.address, 0, 1)
-        .then((res) => {
-          if (!res) return;
-          this.tokenBalancesTotal = res.total || 0;
         })
         .catch((err) => {
           this.showError(err);

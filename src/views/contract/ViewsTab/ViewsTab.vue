@@ -75,7 +75,7 @@
           <v-navigation-drawer floating permanent style="max-height: 80vh; width: 100%;">
             <div class="pa-3">
               <TypeDef
-                v-if="selectedItem.typedef"
+                v-if="selectedItem && selectedItem.typedef"
                 :typedef="selectedItem.typedef"
                 first="parameter"
                 class="pt-3 pb-1 px-6"

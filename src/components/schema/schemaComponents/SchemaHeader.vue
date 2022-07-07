@@ -1,7 +1,7 @@
 <template>
   <h2 class="d-flex justify-space-between align-center font-weight-regular px-6">
     <div>
-      <span class="hash">{{ isForkPage ? 'Fork: ' : 'Interact: '}}</span>
+      <span class="hash">{{ header }}</span>
       <span class="accent--text">{{ isForkPage ? (alias || shortcutOnly(address)) : storageName }}</span>
     </div>
   </h2>
@@ -29,6 +29,15 @@ export default {
   computed: {
     isForkPage() {
       return this.$route.name === 'fork';
+    },
+    header() {
+      if (this.$route.name === 'fork') {
+        return 'Fork: ';
+      }
+      if (this.$route.name === 'deploy') {
+        return 'Deploy';
+      }
+      return 'Interact: '
     }
   },
 }

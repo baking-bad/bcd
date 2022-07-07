@@ -38,7 +38,7 @@
             :name="selectedItem.name"
             :network="network"
             :address="address"
-            :alias="contract.alias"
+            :alias="contract && contract.alias ? contract.alias : ''"
           />
           <div v-else></div>
         </v-skeleton-loader>
@@ -72,6 +72,7 @@
 <script>
 import { mapActions } from "vuex";
 import { applyStyles } from '@/utils/styles.js';
+import { isOperationHash } from '@/utils/tz.js';
 import Schema from "@/components/schema/Schema.vue";
 import TypeDef from "@/views/contract/TypeDef";
 
@@ -91,6 +92,8 @@ export default {
     selected: -1,
     model: {},
     contract: null,
+    hash: undefined,
+    counter: undefined
   }),
   computed: {
     isShareable() {
@@ -108,6 +111,9 @@ export default {
     },
   },
   created() {
+    this.hash = this.$route.query.hash;
+    this.counter = this.$route.query.counter;
+
     const entrypoint = this.$route.params.entrypoint || this.$route.query.entrypoint;
     this.api
       .getContract(this.network, this.address)
@@ -115,6 +121,26 @@ export default {
         this.contract = contract;
       });
     this.getEntrypoints(entrypoint);
+
+    if (this.$route.query.hash && isOperationHash(this.$route.query.hash) && this.$route.query.counter) {
+      this.api.
+        getContractEntrypointSchema(
+          this.network, 
+          this.address, 
+          entrypoint, 
+          'operation', 
+          this.$route.query.hash, 
+          this.$route.query.counter)
+        .then(res=> {
+          let withoutName = res.default_model[entrypoint];
+          if (typeof withoutName === 'object' && !Array.isArray(withoutName))
+            this.model = withoutName;
+          else this.model = res.default_model;
+        })
+        .catch(err => {
+          console.log(err)
+        })
+    }
   },
   destroyed() {
     this.$router.push({path: this.$route.path, query: { ...this.$route.query, entrypoint: undefined }})
