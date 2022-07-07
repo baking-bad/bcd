@@ -2,6 +2,7 @@
   <v-expansion-panel
     class="bl-1 br-1 bt-1 op-panel"
     active-class="op-active-panel"
+    @change="onPanelStateChange"
   >
     <v-expansion-panel-header
       class="py-0 px-4"
