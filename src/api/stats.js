@@ -22,28 +22,23 @@ export class StatsAPI {
       }
     }
 
+    parseResponse(response) {
+        if (response.status !== 200) {
+            throw new RequestFailedError(response);
+        }
+        return response.data;
+    }
+
     summary(network, table, method, args = {}) {
         return this.getApi(network).get(`/v1/summary/${table}/${method}`, {
             params: args
-        })
-            .then((res) => {
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data;
-            })
+        }).then(this.parseResponse)
     }
 
     histogram(network, table, method, timeframe, args = {}) {
         return this.getApi(network).get(`/v1/histogram/${table}/${method}/${timeframe}`, {
             params: args
-        })
-            .then((res) => {
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data;
-            })
+        }).then(this.parseResponse)
     }
 
     paidStorageDiffSize(network, timeframe, address = undefined, from = 0) {
@@ -57,13 +52,7 @@ export class StatsAPI {
 
         return this.getApi(network).get(`/v1/paid_storage_diff_size/${timeframe}`, {
             params: params
-        })
-            .then((res) => {
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data;
-            })
+        }).then(this.parseResponse)
     }
 
 
@@ -78,13 +67,7 @@ export class StatsAPI {
 
         return this.getApi(network).get(`/v1/consumed_gas/${timeframe}`, {
             params: params
-        })
-            .then((res) => {
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data;
-            })
+        }).then(this.parseResponse)
     }
 
     burned(network, timeframe, address = undefined, from = 0) {
@@ -98,12 +81,6 @@ export class StatsAPI {
 
         return this.getApi(network).get(`/v1/burned/${timeframe}`, {
             params: params
-        })
-            .then((res) => {
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data;
-            })
+        }).then(this.parseResponse)
     }
 }
