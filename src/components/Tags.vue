@@ -1,46 +1,45 @@
 <template>
-  <div>
-    <v-list-item-action v-if="tags">
-      <v-list-item-action-text>
-        <v-chip
-          small
-          class="caption"
-          target="_blank"
-        >{{ tags.text }}</v-chip
-        >
-      </v-list-item-action-text>
-    </v-list-item-action>
-  </div>
+  <v-chip-group v-if="this.tags" active-class="primary--text" column>
+      <v-chip small class="caption" v-for="(tag) in readable" :key="tag">{{ tag }}</v-chip>
+  </v-chip-group>
 </template>
 
 <script>
+const standards = {
+  'fa2': "FA2",
+  'fa1-2': "FA1.2",
+  'fa1': "FA1",
+  'delegator': "Delegator",
+  'multisig': "Multisig",
+  'sapling': "Sapling",
+  'ledger': "Ledger",
+  'CREATE_CONTRACT': "Contract factory",
+  'SET_DELEGATE': "Delegatable",
+  'upgradable': "Upgradable",
+  'CHAIN_ID': "",
+  'CHECK_SIGNATURE': "",
+  'view_address': "",
+  'view_balance_of': "",
+  'view_nat': ""
+};
+
 export default {
   name: "Tags",
   props: {
-    contract: Object,
+    tags: Array,
   },
   computed: {
-    tags() {
-      const standards = {
-        fa2: "FA2",
-        fa12: "FA1.2",
-        fa1: "FA1",
-        delegator: "Delegator",
-        multisig: "Multisig",
-      };
-      if (this.contract && this.contract.tags) {
-        for (var tag in standards) {
-          if (this.contract.tags.includes(tag)) {
-            return { tag, text: standards[tag] };
-          }
-        }
+    readable() {
+      if (this.tags) {
+        let result = [];
+        this.tags.forEach(tag => {
+          let text = standards[tag];
+          if (text) result.push(text)
+        })
+        return result;
       }
       return null;
     }
   }
 }
 </script>
-
-<style scoped>
-
-</style>

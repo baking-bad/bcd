@@ -13,11 +13,12 @@ import VueMeta from 'vue-meta'
 import * as Sentry from "@sentry/vue";
 import { BrowserTracing } from "@sentry/tracing";
 
-import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
+import { shortcut, shortcutOnly, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { BetterCallApi } from "@/api/bcd.js";
 import { TokenMetadataApi } from "@/api/token_metadata.js";
 import { NodeRPC } from "@/api/rpc.js";
 import { Bookmarks } from "@/utils/bookmarks.js";
+import { SearchService } from "@/api/search.js";
 import { MetadataAPI } from "@/api/metadata.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
@@ -117,6 +118,7 @@ let config = {
 
 let api = new BetterCallApi(config.API_URI);
 let bookmarks = new Bookmarks();
+let searchService = new SearchService(process.env.SEARCH_SERVICE_URI || 'https://search.dipdup.net')
 let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
 
@@ -138,11 +140,11 @@ api.getConfig().then(response => {
   window.config = config;
 
   let rpc = new NodeRPC(config.rpc_endpoints);
-  let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress, round }
+  let helpers = { shortcut, shortcutOnly, formatDatetime, formatDate, plural, checkAddress, round }
 
   Vue.mixin({
     data() {
-      return { config, api, rpc, helpers, bookmarks, metadataAPI, tokenMetadata }
+      return { config, api, rpc, helpers, bookmarks, metadataAPI, tokenMetadata, searchService }
     }
   });
 
