@@ -20,7 +20,6 @@ import { NodeRPC } from "@/api/rpc.js";
 import { Bookmarks } from "@/utils/bookmarks.js";
 import { SearchService } from "@/api/search.js";
 import { MetadataAPI } from "@/api/metadata.js";
-import { SearchService } from "@/api/search.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
 
