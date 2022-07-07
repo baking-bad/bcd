@@ -9,9 +9,12 @@
           <v-expansion-panels mandatory flat>
             <BigMapDiff
               v-if="diff"
-              :diff="diff"
+              v-model="diff.data"
+              :key_hash="keyhash"
               :network="network"
               :address="address"
+              :is_active="diff.value !== null"
+              :timestamp="diff.timestamp"
               :ptr="ptr"
               :single="true"
             />

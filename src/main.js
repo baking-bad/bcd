@@ -13,11 +13,12 @@ import VueMeta from 'vue-meta'
 import * as Sentry from "@sentry/vue";
 import { BrowserTracing } from "@sentry/tracing";
 
-import { shortcut, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
+import { shortcut, shortcutOnly, formatDatetime, formatDate, plural, urlExtractBase58, checkAddress, round } from "@/utils/tz.js";
 import { BetterCallApi } from "@/api/bcd.js";
 import { TokenMetadataApi } from "@/api/token_metadata.js";
 import { NodeRPC } from "@/api/rpc.js";
 import { Bookmarks } from "@/utils/bookmarks.js";
+import { SearchService } from "@/api/search.js";
 import { MetadataAPI } from "@/api/metadata.js";
 import { SearchService } from "@/api/search.js";
 
@@ -110,6 +111,7 @@ Vue.filter('snakeToCamel', (str) => {
 let config = {
   API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
   HOME_PAGE: 'home',
+  SEARCH_SERVICE_URI: process.env.SEARCH_SERVICE_URI || 'https://search.dipdup.net'
   TOKEN_METADATA_API:  process.env.TOKEN_METADATA_API || "https://metadata.dipdup.net",
   IPFS_NODE: process.env.IPFS_NODE || "https://ipfs.io",
   METADATA_API_URI: process.env.METADATA_API_URI || "https://metadata.dipdup.net"
@@ -117,6 +119,7 @@ let config = {
 
 let api = new BetterCallApi(config.API_URI);
 let bookmarks = new Bookmarks();
+let searchService = new SearchService(config.SEARCH_SERVICE_URI);
 let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
 let searchService = new SearchService(process.env.SEARCH_SERVICE_URI);
@@ -139,7 +142,7 @@ api.getConfig().then(response => {
   window.config = config;
 
   let rpc = new NodeRPC(config.rpc_endpoints);
-  let helpers = { shortcut, formatDatetime, formatDate, plural, checkAddress, round }
+  let helpers = { shortcut, shortcutOnly, formatDatetime, formatDate, plural, checkAddress, round }
 
   Vue.mixin({
     data() {
