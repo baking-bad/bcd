@@ -221,15 +221,29 @@ export default {
           {
             type: "areaspline",
             data: this.data,
-            color: "var(--v-primary-base)",
+            color: "var(--v-chartLine-base)",
             name: this.name,
             borderColor: "transparent",
             label: {},
             lineWidth: 1,
             marker: {
-              radius: 2
+              radius: 1
             },
-            fillColor: '#75A34F20'
+            animation: {
+              duration: 1500
+            },
+            fillColor: {
+              linearGradient: {
+                  x1: 0,
+                  y1: 0,
+                  x2: 0,
+                  y2: 1
+              },
+              stops: [
+                  [0, "var(--v-chart-base)"],
+                  [1, 'var(--v-data-base)']
+              ]
+            }
           },
         ],
         chart: {
@@ -258,7 +272,7 @@ export default {
 <style>
 .highcharts-contextmenu {
   top: 10px  !important;
-  }
+}
 
 .highcharts-menu-item:hover {
   background: var(--v-canvas-base) !important;
