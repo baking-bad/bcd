@@ -238,7 +238,7 @@ export default {
       }
     },
     simulateActionCallback() {
-      return this.isParameter 
+      return this.isParameter
         ? () => {
           this.fireEvent("Simulate", "interact");
           this.simulateOperation();
@@ -536,6 +536,13 @@ export default {
       } else {
         await this.wallet.setActiveAccount(this.getLastUsedAccount());
       }
+
+      const activeAccount = await this.wallet.getActiveAccount();
+      
+      if(activeAccount) {
+        return this.isPermissionGiven = true;
+      }
+
       try {
         await this.wallet.requestPermissions({
           network: {
@@ -611,7 +618,7 @@ export default {
     async fork(isLast) {
       if (this.execution) return;
 
-      
+
 
       this.execution = true;
       try {
