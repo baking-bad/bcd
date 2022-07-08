@@ -10,61 +10,118 @@
             </v-btn-toggle>
         </v-col>
         <v-col cols="6">
-            <v-card :elevation="0" class="transparent">
-                <v-skeleton-loader :loading="!contractCalls" type="image" >
-                    <LineChart
-                        :data="contractCalls"
-                        title="Contract calls"
-                        name="Contract calls"
-                    />
-               </v-skeleton-loader>
+            <v-card :elevation="0" class="data" min-height="420">
+                <v-card-text class="pl-0 pt-0 mt-0">
+                    <v-row class="pa-0 ma-0">
+                        <v-col cols="9" class="px-0">
+                            <v-skeleton-loader :loading="!contractCalls" type="image">
+                                <LineChart
+                                    :data="contractCalls"
+                                    name="Contract calls"
+                                />
+                            </v-skeleton-loader>
+                        </v-col>
+                        <v-col cols="3" class="pt-6">
+                            <v-skeleton-loader :loading="!contractCalls" type="list-item,list-item-two-line,list-item-two-line,list-item-two-line">
+                                <StatsInfo 
+                                    title="Contract calls"
+                                    :total="contractCallsTotal"
+                                    :series="contractCalls"
+                                />
+                            </v-skeleton-loader>
+                        </v-col>
+                    </v-row>
+               </v-card-text>
             </v-card>
         </v-col>
         <v-col cols="6">
-            <v-card :elevation="0" class="transparent">
-                <v-skeleton-loader :loading="!uniqueUsers" type="image" height="600">
-                    <LineChart
-                        :data="uniqueUsers"
-                        title="Unique users"
-                        name="Unique users"
-                    />
-                </v-skeleton-loader>
+            <v-card :elevation="0" class="data" min-height="420">
+                <v-card-text class="pl-0 pt-0 mt-0">
+                    <v-row class="pa-0 ma-0">
+                        <v-col cols="9" class="px-0">
+                            <v-skeleton-loader :loading="!uniqueUsers" type="image">
+                                <LineChart
+                                    :data="uniqueUsers"
+                                    name="Unique users"
+                                />
+                            </v-skeleton-loader>
+                        </v-col>
+                        <v-col cols="3" class="pt-6">
+                            <v-skeleton-loader :loading="!uniqueUsers" type="list-item,list-item-two-line,list-item-two-line,list-item-two-line">
+                                <StatsInfo 
+                                    title="Unique users"
+                                    :total="uniqueUsersTotal"
+                                    :series="uniqueUsers"
+                                />
+                            </v-skeleton-loader>
+                        </v-col>
+                    </v-row>
+               </v-card-text>
             </v-card>
         </v-col>
         <v-col cols="6">
-            <v-card :elevation="0" class="transparent">
-                <v-skeleton-loader :loading="!consumedGas" type="image" height="600">
-                    <LineChart
-                        :data="consumedGas"
-                        title="Consumed gas"
-                        name="Consumed gas"
-                    />
-                </v-skeleton-loader>
+            <v-card :elevation="0" class="data" min-height="420">
+                <v-card-text class="pl-0 pt-0 mt-0">
+                    <v-row class="pa-0 ma-0">
+                        <v-col cols="9" class="px-0">
+                            <v-skeleton-loader :loading="!consumedGas" type="image">
+                                <LineChart
+                                    :data="consumedGas"
+                                    name="Consumed gas"
+                                />
+                            </v-skeleton-loader>
+                        </v-col>
+                        <v-col cols="3" class="pt-6">
+                            <v-skeleton-loader :loading="!consumedGas" type="list-item,list-item-two-line,list-item-two-line,list-item-two-line">
+                                <StatsInfo 
+                                    title="Consumed gas"
+                                    :total="consumedGasTotal"
+                                    :series="consumedGas"
+                                />
+                            </v-skeleton-loader>
+                        </v-col>
+                    </v-row>
+               </v-card-text>
+            </v-card>          
+        </v-col>
+        <v-col cols="6">
+            <v-card :elevation="0" class="data" min-height="420">
+                <v-card-text class="pl-0 pt-0 mt-0">
+                    <v-row class="pa-0 ma-0">
+                        <v-col cols="9" class="px-0">
+                            <v-skeleton-loader :loading="!burned" type="image">
+                                <LineChart
+                                    :data="burned"
+                                    name="Burned"
+                                    formatter="burned"
+                                />
+                            </v-skeleton-loader>
+                        </v-col>
+                        <v-col cols="3" class="pt-6">
+                            <v-skeleton-loader :loading="!burned" type="list-item,list-item-two-line,list-item-two-line,list-item-two-line">
+                                <StatsInfo 
+                                    title="Burned"
+                                    :total="burnedTotal"
+                                    :series="burned"
+                                    :isMutez="true"
+                                />
+                            </v-skeleton-loader>
+                        </v-col>
+                    </v-row>
+               </v-card-text>
             </v-card>            
-        </v-col>
-        <v-col cols="6">
-            <v-card :elevation="0" class="transparent">
-                <v-skeleton-loader :loading="!burned" type="image" height="600">
-                    <LineChart
-                        :data="burned"
-                        formatter="burned"
-                        title="Burned"
-                        name="Burned"
-                    />
-                </v-skeleton-loader>
-            </v-card>
-            
         </v-col>
     </v-row>
 </template>
 
 <script>
 import LineChart from "@/components/Charts/LineChart.vue";
+import StatsInfo from "@/views/contract/StatsInfo.vue";
 
 
 export default {
     name: "ContractStatsTab",
-    components: { LineChart  },
+    components: { LineChart, StatsInfo },
     props: {
         network: String,
         address: String
@@ -73,9 +130,13 @@ export default {
         return {
             timeframe: 'month',
             contractCalls: undefined,
+            contractCallsTotal: undefined,
             uniqueUsers: undefined,
+            uniqueUsersTotal: undefined,
             consumedGas: undefined,
-            burned: undefined
+            consumedGasTotal: undefined,
+            burned: undefined,
+            burnedTotal: undefined
         }
     },
     computed: {
@@ -86,6 +147,13 @@ export default {
     },
     methods: {
         init() {
+            this.getContractCallsTotal();
+            this.getUniqueUsersTotal();
+            this.getConsumedGasTotal();
+            this.getBurnedTotal();
+            this.getSeries();
+        },
+        getSeries() {
             this.getContractCalls();
             this.getUniqueUsers();
             this.getConsumedGas();
@@ -112,6 +180,18 @@ export default {
                 console.log(err);
             })
         },
+        async getContractCallsTotal() {
+            await this.stats.summary(this.network, 'transactions', 'count', {
+                'Entrypoint.isnotnull': '',
+                'Target': this.address
+            })
+            .then(res => {
+                this.contractCallsTotal = parseInt(res);                
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        },
         async getUniqueUsers() {
             await this.stats.histogram(this.network, 'transactions', 'distinct', this.timeframe, {
                 'field': 'Initiator',
@@ -119,6 +199,18 @@ export default {
             })
             .then(res => {
                 this.uniqueUsers = this.createDataset(res);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        },
+        async getUniqueUsersTotal() {
+            await this.stats.summary(this.network, 'transactions', 'distinct', {
+                'field': 'Initiator',
+                'Target': this.address
+            })
+            .then(res => {
+                this.uniqueUsersTotal = parseInt(res);
             })
             .catch(err => {
                 console.log(err);
@@ -133,6 +225,18 @@ export default {
                 console.log(err);
             })
         },
+        async getConsumedGasTotal() {
+            await this.stats.summary(this.network, 'transactions', 'sum', {
+                'field': 'GasUsed',
+                'Target': this.address
+            })
+            .then(res => {
+                this.consumedGasTotal = parseInt(res);
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        },
         async getBurned() {
             await this.stats.burned(this.network,this.timeframe, this.address)
             .then(res => {
@@ -141,11 +245,23 @@ export default {
             .catch(err => {
                 console.log(err);
             })
+        },
+        async getBurnedTotal() {
+            await this.stats.summary(this.network, 'transactions', 'sum', {
+                'field': 'StorageFee',
+                'Target': this.address
+            })
+            .then(res => {
+                this.burnedTotal = parseInt(res);
+            })
+            .catch(err => {
+                console.log(err);
+            })
         }
     },
     watch: {
-        'address': 'init',
-        'timeframe': 'init'
+        'address': 'getSeries',
+        'timeframe': 'getSeries'
     }
 }
 </script>

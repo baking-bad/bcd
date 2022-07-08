@@ -99,7 +99,7 @@ export default {
           enabled: false,
         },
         exporting: {
-          enabled: true,
+          enabled: false,
           buttons: {
             contextButton: {
               enabled:true,
@@ -113,31 +113,6 @@ export default {
               }
             }
           },
-          chartOptions: {
-            series: [
-              {
-                  type: "areaspline",
-                  data: this.data,
-                  color: "var(--v-primary-base)",
-                  name: this.name,
-                  borderColor: "transparent",
-                  label: {},
-                  lineWidth: 1,
-                  marker: {
-                    radius: 2
-                  },
-                  fillColor: '#75A34F20'
-              },
-            ],
-            chart: {
-                backgroundColor: "transparent",
-                plotBackgroundColor: "transparent",
-                marginTop: 50,
-                style: {
-                  fontFamily: "Roboto, sans-serif",
-              },
-            }
-          }
         },
         xAxis: {
           type: "datetime",
@@ -247,7 +222,7 @@ export default {
           },
         ],
         chart: {
-          backgroundColor: "var(--v-data-base)",
+          backgroundColor: "transparent",
           plotBackgroundColor: "transparent",
           marginTop: 50,
           style: {
