@@ -71,6 +71,7 @@
       <router-view
         :address="address"
         :network="network"
+        :alias="alias"
         :contract="contract"
         :tokensTotal="tokensTotal"
         :metadata="metadata"
@@ -80,7 +81,7 @@
         :off-chain-views="offChainViews"
       ></router-view>
 
-      <BookmarkDialog v-model="openBookMarkDialog" :alias="contract.alias || ``" @added="onBookmarkAdded"/>
+      <BookmarkDialog v-model="openBookMarkDialog" :alias="alias || ``" @added="onBookmarkAdded"/>
     </VContainer>
   </div>
 </template>
@@ -127,20 +128,10 @@ export default {
     offChainViews: [],
     offChainViewsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
     isBookmark: false,
-    openBookMarkDialog: false
+    openBookMarkDialog: false,
+    alias: undefined
   }),
   computed: {
-    alias() {
-      if (this.contract) {
-        if (this.contract.alias) {
-          return this.contract.alias;
-        } else if (this.metadata && this.metadata.name) {
-          return this.metadata.name;
-        }
-      }
-      return null;
-    },
-
     link() {
       let routeData = {};
       if (this.contract && this.contract.slug) {
@@ -179,7 +170,7 @@ export default {
           text: toTitleCase(this.network),
         },
         {
-          text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
+          text: this.alias ? this.alias : shortcutOnly(this.address),
           to: `/${this.network}/${this.address}`,
           disabled: false,
         },
@@ -260,6 +251,8 @@ export default {
       this.tokensTotal = 0;
       this.metadata = null;
       this.contract = {};
+
+      this.getAlias();
       if (this.isContract) {
         this.bookmarks.registerObserver(this.onBookmarkStateChanged);
         this.detectBookmark();
@@ -351,7 +344,7 @@ export default {
         this.bookmarks.remove(key);
       } else {
         this.openBookMarkDialog = !this.openBookMarkDialog;
-        this.name = this.contract.alias || "";
+        this.name = this.alias || "";
         
       }
     },
@@ -376,9 +369,20 @@ export default {
       this.bookmarks.add(key, {
         network: this.network,
         address: this.address,
-        alias: value || this.contract.alias,          
+        alias: value || this.alias,          
       })
       this.openBookMarkDialog = false;
+    },
+    async getAlias() {
+      this.alias = this.aliases.get(`${this.network}_${this.address}`);
+      if (this.alias !== undefined) return;
+
+      await this.searchService.alias(this.network, this.address)
+        .then(result => {
+          this.alias = result;
+          this.aliases.add(`${this.network}_${this.address}`, this.alias);
+        })
+        .catch(err => console.log(err));
     }
   },
   watch: {

@@ -111,7 +111,25 @@ export default {
         .then((data) => {
           this.recentlyCalledContracts = this.pageable ? this.recentlyCalledContracts.concat(data) : data;
           this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.SUCCESS;
-        });
+          return data;
+        })
+        .then((data) => this.getAliases(data));
+    },
+    async getAliases(contracts) {
+      for (const idx in contracts) {
+        if (contracts[idx].alias) continue;        
+        contracts[idx].alias = await this.getAlias(this.network, contracts[idx].address);
+      }
+    },
+    async getAlias(network, address) {
+      let alias = this.aliases.get(`${this.network}_${this.address}`);
+      if (alias !== undefined) return alias;
+
+      return await this.searchService.alias(network, address)
+        .then(alias => {
+          this.aliases.add(`${network}_${address}`, alias);
+          return alias;
+        })
     },
   },
   watch: {

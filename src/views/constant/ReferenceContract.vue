@@ -90,7 +90,25 @@ export default {
       this.contracts = await this.api.getConstantsByAddress(network, address, offset);
       this.isLastPage = this.contracts.length < this.itemsPerPage
 
+      await this.getAliases(network);
+
       this.loading = false;
+    },
+    async getAliases(network) {
+      for (const idx in this.contracts) {
+        this.getAlias(network, this.contracts[idx].address)
+          .then(alias => this.contracts[idx].alias = alias)
+      }
+    },
+    async getAlias(network, address) {
+      let alias = this.aliases.get(`${this.network}_${this.address}`);
+      if (alias !== undefined) return alias;
+
+      return await this.searchService.alias(network, address)
+        .then(alias => {
+          this.aliases.add(`${network}_${address}`, alias);
+          return alias;
+        })
     },
     navigate(path) {
       this.$router.push(path);

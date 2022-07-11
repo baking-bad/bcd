@@ -70,6 +70,8 @@
 </template>
 
 <script>
+import { getAccountAlias } from '@/api/search.js';
+
 export default {
     name: "AccountCard",
     props: {
@@ -81,10 +83,8 @@ export default {
     }),
     computed: {
         alias() {
-            if (this.item.body.TzKT) return this.item.body.TzKT.Name;
-            if (this.item.body.Profiles) return this.item.body.Profiles.Name;
-            if (this.item.body.Domains) return this.item.Domains.body.Name;
-            if (this.item.body.TZIP) return this.item.body.TZIP.Name;
+            let alias = getAccountAlias(this.item.body);
+            if (alias) return alias;
             return this.info.alias;
         }
     },

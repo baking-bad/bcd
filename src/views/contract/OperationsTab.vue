@@ -130,7 +130,6 @@
             title="Delegated to"
             :address="contract.delegate"
             :network="contract.network"
-            :alias="contract.delegate_alias"
             gutters
           />
           <v-list-item v-if="usedBytes">
@@ -170,6 +169,7 @@ export default {
   props: {
     address: String,
     network: String,
+    alias: String,
     balance: Number,
     contract: Object,
   },
@@ -205,16 +205,6 @@ export default {
   computed: {
     loading() {
       return this.items.length === 0 && (this.operationsLoading || this.mempoolLoading);
-    },
-    alias() {
-      if (this.contract) {
-        if (this.contract.alias) {
-          return this.contract.alias;
-        } else if (this.metadata && this.metadata.name) {
-          return this.metadata.name;
-        }
-      }
-      return null;
     },
     items() {
       if (this.operations.length === 0) {
