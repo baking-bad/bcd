@@ -538,7 +538,7 @@ export default {
       }
 
       const activeAccount = await this.wallet.getActiveAccount();
-      
+
       if(activeAccount) {
         return this.isPermissionGiven = true;
       }
