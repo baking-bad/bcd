@@ -22,15 +22,12 @@ function formatValue(val, typ) {
         let xtz = (val / 1000000).toLocaleString(undefined, { maximumFractionDigits: 6 });
         return `${xtz} \uA729`;
     } else if (typ === "timestamp") {
-        if (typeof val === 'string') {
-            let d = dayjs(val);
-            if (d.isValid())
-                return d.format("DD MMMM YYYY HH:mm");
-        } else {
-            let d = dayjs(val * 1000);
-            if (d.isValid())
-                return d.format("DD MMMM YYYY HH:mm");
+        let ts = parseTimestamp(val);
+        if (ts) {
+            return ts.format("DD MMMM YYYY HH:mm");
         }
+    } else if (typ === "nat" || typ === 'int') {
+        return parseInt(val, 10).toLocaleString(undefined);
     }
     if (val === undefined) return 'null';
     return val;
@@ -38,9 +35,38 @@ function formatValue(val, typ) {
 
 function getValue(x) {
     if (x.diff_type === 'update') {
-        return `${formatValue(x.from, x.type)} ${delimiter} ${formatValue(x.value, x.type)}`
+        return `${formatValue(x.from, x.type)} ${delimiter} ${formatValue(x.value, x.type)}${valueDiff(x)}`
     }
     return formatValue(x.value, x.type)
+}
+
+function valueDiff(x) {
+    if (!x.type) return '';
+
+    if (x.type === 'nat' || x.type === 'int') {
+        let value = parseInt(x.value, 10) - parseInt(x.from, 10);
+        return ` (${value > 0 ? '+' : ''}${value.toLocaleString(undefined)})`
+    } else if (x.type === 'timestamp') {
+        let from = parseTimestamp(x.from);
+        if (!from) return '';
+        let to = parseTimestamp(x.value);
+        if (!to) return '';        
+        return ` (${to.from(from, true)})`
+    }
+    return '';
+}
+
+function parseTimestamp(value) {
+    if (typeof value === 'string') {
+        let d = dayjs(value);
+        if (d.isValid())
+            return d;
+    } else {
+        let d = dayjs(value * 1000);
+        if (d.isValid())
+            return d;
+    }
+    return null;
 }
 
 function deducePrim(x) {
