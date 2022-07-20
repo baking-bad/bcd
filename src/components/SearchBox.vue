@@ -238,7 +238,7 @@ export default {
         this.pushTo(`/${network}/opg/${this.model.body.Hash}`);
       } else if (this.model.type === "recent") {
         addHistoryItem(this.buildHistoryItem(this.model, this.model.value));
-        this.$router.push({ name: "search", query: { text: this.searchText } });
+        this.$router.push({ name: "search", query: { text: this.model.value } });
       }
 
       this.$emit('search');
