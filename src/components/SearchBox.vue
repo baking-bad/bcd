@@ -78,7 +78,7 @@
             <Shortcut v-else :str="item.body.TokenID"/>
           </template>         
           <template v-if="item.type === 'recent'">
-            <span class="text--secondary hash">{{ item.body.type }}</span>
+            <span class="text--secondary hash">recent</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
             <Shortcut v-else-if="item.body.shortcut" :str="item.body.shortcut"/>
