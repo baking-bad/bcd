@@ -11,8 +11,7 @@
     <div v-else>
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
-          <img v-bind="attrs"
-               v-on="on" class="avatar" :src="`https://catava.dipdup.net/${account}`">
+          <img v-bind="attrs" v-on="on" alt="avatar" class="avatar" :src="`https://catava.dipdup.net/${account}`">
         </template>
         <v-list>
           <v-list-item class="px-4 cursor-pointer">
