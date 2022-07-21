@@ -80,8 +80,8 @@ import SchemaMichelson from "./schemaDialog/SchemaMichelson";
 import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
 import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
-import { DAppClient, TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@airgap/beacon-sdk'
-import TZKTBlockExplorer from "../../utils/tzkt";
+import { TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@airgap/beacon-sdk'
+import {Wallet} from "@/utils/wallet";
 
 const walletsToIcons = {
   "Temple - Tezos Wallet (ex. Thanos)": "mdi-alpha-t",
@@ -90,10 +90,6 @@ const walletsToIcons = {
   "Kukai": "mdi-alpha-k",
   "default": "mdi-alpha-w",
 };
-
-const CORRECT_NETWORK_TYPES = {
-  "hangzhou2net": "hangzhounet",
-}
 
 export default {
   name: "Schema",
@@ -202,6 +198,7 @@ export default {
   methods: {
     ...mapActions(["showError", "showClipboardOK", "showWarning", "hideError"]),
     stopGettingWallet() {
+
       if (this.isGettingWalletProgress) {
         this.execution = false;
         this.importing = false;
@@ -218,6 +215,7 @@ export default {
       this.model = val;
     },
     setSelectedNetwork(val) {
+
       this.selectedNetwork = val;
     },
     setSettings({key, val}) {
@@ -297,7 +295,7 @@ export default {
     beaconWalletGetAddress(isLast) {
       return async () => {
         if (isLast) {
-          const lastAccount = this.getLastUsedAccount();
+          const lastAccount = Wallet.getLastUsedAccount();
           return lastAccount.address;
         } else {
           const client = this.wallet ? this.wallet : await this.getWallet();
@@ -335,6 +333,7 @@ export default {
           callback: this.beaconClientActionCallback(false)
         },
       ];
+
       this.importActions.push(
           {
             text: "Wallet",
@@ -342,10 +341,6 @@ export default {
             callback: this.beaconWalletGetAddress(false)
           }
       );
-      const accounts = localStorage.getItem('beacon:accounts');
-      if (accounts && JSON.parse(accounts).length > 0) {
-        this.addLastUsedOption();
-      }
     },
     getIconForWalletName(name) {
       return name in walletsToIcons ? walletsToIcons[name] : walletsToIcons.default;
@@ -355,7 +350,7 @@ export default {
       this.importActions = this.importActions.filter(item => !item.isLastOption);
     },
     getLastUsedWalletInfo() {
-      const lastAccount = this.getLastUsedAccount();
+      const lastAccount = Wallet.getLastUsedAccount();
       const peers = localStorage.getItem('beacon:postmessage-peers-dapp');
       if (!peers) {
         return {
@@ -510,57 +505,8 @@ export default {
         })
         .finally(() => (this.execution = false));
     },
-    getLastUsedAccount() {
-      const accounts = localStorage.getItem('beacon:accounts');
-      const parsedAccounts = JSON.parse(accounts);
-      const connectionTimes = parsedAccounts.map(item => item.connectedAt);
-      const recentConnectionTime = Math.max(...connectionTimes);
-      return parsedAccounts.find(item => item.connectedAt === recentConnectionTime);
-    },
-    async getWallet() {
-      this.wallet = new DAppClient({
-        name: "Better Call Dev",
-        eventHandlers: this.getWalletEventHandlers(),
-        preferredNetwork: this.selectedNetwork in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[this.selectedNetwork] : this.selectedNetwork,
-        blockExplorer: new TZKTBlockExplorer(),
-      });
-      return this.wallet;
-    },
-    async getNewPermissions(isLast) {
-      this.isGettingWalletProgress = true;
-      const rpcUrl = this.config.rpc_endpoints[this.selectedNetwork];
-      const networkMap = { sandboxnet: "custom" };
-      const type = networkMap[this.selectedNetwork] || this.selectedNetwork;
-      if (!isLast) {
-        await this.wallet.clearActiveAccount();
-      } else {
-        await this.wallet.setActiveAccount(this.getLastUsedAccount());
-      }
-      try {
-        await this.wallet.requestPermissions({
-          network: {
-            type: type in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[type] : type,
-            rpcUrl
-          }
-        });
-        this.isPermissionGiven = true;
-      } finally {
-        this.isGettingWalletProgress = false;
-      }
-    },
-    async getClient(isLast) {
-      let client;
-      if (this.wallet && !isLast) {
-        this.isPermissionGiven = false;
-        await this.getNewPermissions(isLast);
-        client = this.wallet ? this.wallet : await this.getWallet();
-      } else {
-        client = this.wallet ? this.wallet : await this.getWallet();
-        if (!this.isPermissionGiven) {
-          await this.getNewPermissions(isLast);
-        }
-      }
-      return client;
+    async getClient() {
+      return await Wallet.getClient(this.selectedNetwork, this.getWalletEventHandlers(), true);
     },
     async callContract(isLast) {
       let parameter = await this.generateParameters(true);
