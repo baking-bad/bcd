@@ -19,7 +19,7 @@ export class Wallet {
         return Wallet.wallet
     }
 
-    static async getClient(network, eventHandlers = null, isLast) {
+    static async getClient(network, eventHandlers, isLast) {
         let client;
         if (Wallet.wallet && !isLast) {
             Wallet.isPermissionGiven = false
@@ -57,8 +57,8 @@ export class Wallet {
 
         return new Promise(async (resolve, reject) => {
             if(activeAccount) {
-                resolve();
-                return Wallet.isPermissionGiven = true;
+                Wallet.isPermissionGiven = true;
+                return resolve();
             }
 
             try {

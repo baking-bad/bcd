@@ -29,10 +29,6 @@
 <script>
 import {Wallet} from "@/utils/wallet";
 
-// const account = JSON.parse(localStorage.getItem('beacon:accounts'));
-
-console.log(localStorage.getItem('beacon:accounts'), 'localStorage.getItem(\'beacon:accounts\')')
-// console.log(account, 'account.address', account.address)
 export default {
   name: "ConnectWallet",
   data() {

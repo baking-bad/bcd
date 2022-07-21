@@ -506,7 +506,7 @@ export default {
         .finally(() => (this.execution = false));
     },
     async getClient() {
-      return await Wallet.getClient(this.selectedNetwork, this.getWalletEventHandlers(), true);
+      return Wallet.getClient(this.selectedNetwork, this.getWalletEventHandlers(), true);
     },
     async callContract(isLast) {
       let parameter = await this.generateParameters(true);
