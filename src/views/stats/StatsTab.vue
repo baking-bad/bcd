@@ -123,7 +123,7 @@ export default {
           this.details.deployments = parseInt(response, 10);
         })
         .catch(err => this.setErr(err))
-        .finally(() => (this.details.loading = false));
+        .finally(() => this.details.loading = false);
     },
     getContractCalls(network) {
       if (this.contractCalls.loading) return;
@@ -137,7 +137,7 @@ export default {
         response.forEach(x => this.contractCalls.series.push([x['ts']*1000, parseInt(x['value'], 10)]))
       })
       .catch(err => this.setErr(err))
-      .finally(this.contractCalls.loading = false);
+      .finally(() => this.contractCalls.loading = false);
     },
     getDeployments(network) {
       if (this.deployments.loading) return;
@@ -149,7 +149,7 @@ export default {
         response.forEach(x => this.deployments.series.push([x['ts']*1000, parseInt(x['value'], 10)]))
       })
       .catch(err => this.setErr(err))
-      .finally(this.deployments.loading = false);
+      .finally(() => this.deployments.loading = false);
     },
     getPaidStorageSizeDiff(network) {
       if (this.paidStorageSizeDiff.loading) return;
@@ -161,7 +161,7 @@ export default {
         response.forEach(x => this.paidStorageSizeDiff.series.push([x['ts']*1000, parseInt(x['value'], 10)]))
       })
       .catch(err => this.setErr(err))
-      .finally(this.paidStorageSizeDiff.loading = false);
+      .finally(() => this.paidStorageSizeDiff.loading = false);
     },
     getConsumedGas(network) {
       if (this.consumedGas.loading) return;
@@ -173,7 +173,7 @@ export default {
         response.forEach(x => this.consumedGas.series.push([x['ts']*1000, parseInt(x['value'], 10)]))
       })
       .catch(err => this.setErr(err))
-      .finally(this.consumedGas.loading = false);
+      .finally(() => this.consumedGas.loading = false);
     },
     setErr(err) {
       console.log(err);
