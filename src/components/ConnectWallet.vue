@@ -6,12 +6,12 @@
         class="text--secondary"
         @click="auth"
     >
-      <v-icon>mdi-wallet</v-icon>
+      <v-icon size="26">mdi-wallet</v-icon>
     </v-btn>
     <div v-else>
       <v-menu offset-y>
         <template v-slot:activator="{ on, attrs }">
-          <img v-bind="attrs" v-on="on" alt="avatar" class="avatar" :src="`https://catava.dipdup.net/${account}`">
+          <img v-bind="attrs" v-on="on" alt="avatar" class="avatar" :src="`https://catava.dipdup.net/${account.address}`">
         </template>
         <v-list>
           <v-list-item class="px-4 cursor-pointer">
@@ -58,8 +58,11 @@ export default {
       }
       this.account = Wallet.getLastUsedAccount();
     },
-    logOut() {
+    async logOut() {
       localStorage.removeItem('beacon:accounts')
+      await Wallet.wallet.clearActiveAccount();
+      Wallet.wallet = null
+      Wallet.isPermissionGiven = false
       this.account = null
     }
   },
@@ -76,5 +79,9 @@ export default {
   width: 40px;
   cursor: pointer;
   height: 40px;
+}
+
+.text--secondary {
+  margin-top: 2px;
 }
 </style>

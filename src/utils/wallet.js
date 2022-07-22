@@ -53,6 +53,7 @@ export class Wallet {
             await Wallet.wallet.setActiveAccount(Wallet.getLastUsedAccount());
         }
 
+
         const activeAccount = await this.wallet.getActiveAccount();
 
         return new Promise(async (resolve, reject) => {
