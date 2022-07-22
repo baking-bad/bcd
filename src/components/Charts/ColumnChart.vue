@@ -28,7 +28,7 @@ function floorFormatter(value, digits = 6) {
 }
 
 function defaultFormatter(value) {
-  return value;
+  return value.toLocaleString(undefined);
 }
 
 export default {

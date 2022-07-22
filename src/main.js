@@ -143,6 +143,8 @@ let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
 let stats = new StatsAPI({
   'mainnet': process.env.MAINNET_STATS_API_URI || 'https://stats.dipdup.net',
+  'jakartanet': 'https://stats-jakartanet.dipdup.net',
+  'ghostnet': 'https://stats-ghostnet.dipdup.net',
 });
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
