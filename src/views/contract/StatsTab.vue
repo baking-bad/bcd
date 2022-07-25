@@ -42,9 +42,9 @@
             </v-list-item-group>
         </v-col>
         <v-col cols="8">
-            <v-card :elevation="0" class="transparent themed-border" min-height="420">
-                <v-card-text class="pl-0 pt-0 mt-0">
-                    <v-skeleton-loader :loading="!this.selectedItem.series" type="image">
+            <v-card outlined style="background-color:transparent;" min-height="424">
+                <v-card-text class="pa-3 ma-0">
+                    <v-skeleton-loader :loading="!this.selectedItem.series" type="image@2" min-height="400">
                         <LineChart
                             :data="this.selectedItem.series"
                             :name="this.selectedItem.name"
