@@ -14,7 +14,7 @@ import { MONTH_IN_MS } from "@/utils/date";
 exportingInit(Highcharts)
 
 
-function burnedFormatter(value, digits = 6) {
+function utzFormatter(value, digits = 6) {
   return (value / 10 ** 6).toLocaleString(undefined, {
     maximumFractionDigits: digits,
   });
@@ -24,13 +24,21 @@ function defaultFormatter(value) {
   return value.toLocaleString(undefined);
 }
 
+
+function valueFormatterFunction(formatType, value) {
+  if (formatType === "utz") {
+    return utzFormatter(value, 6);
+  }
+  return defaultFormatter(value);
+}
+
 export default {
   name: "LineChart",
   props: {
     data: Array,
     title: String,
     name: String,
-    formatter: String
+    formatType: String
   },
   components: {
     highcharts: Chart,
@@ -67,28 +75,19 @@ export default {
     }
   },
   computed: {
-    labelFormatterFunction() {
-      if (this.formatter === "burned") {
-        return function () {
-          return burnedFormatter(this.total, 6);
-        };
-      }
-      return function () {
-        return defaultFormatter(this.total);
-      };
-    },
     tooltipFormatterFunction() {
-     if (this.formatter === "burned") {
-        return function () {
-          let value = burnedFormatter(this.y, 6);
-          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
-        };
-      }
+      let formatType = this.formatType;
       return function () {
-        let value = defaultFormatter(this.y);
+        let value = valueFormatterFunction(formatType, this.y);
         return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
       };
     },
+    customFormatter() {
+      let formatType = this.formatType;
+      return function(value) {
+        return valueFormatterFunction(formatType, value.value);
+      }
+    }, 
     options() {
       if (this.data == null) return {};
       return {
@@ -99,12 +98,11 @@ export default {
           enabled: false,
         },
         exporting: {
-          enabled: false,
+          enabled: true,
           buttons: {
             contextButton: {
               enabled:true,
               titleKey: 'contextButtonTitle',
-              menuItems: ["viewFullscreen", "downloadSVG"],
               symbolFill: '#00000000',
               symbolStrokeWidth: 1,
               symbolStroke: "var(--v-primary-base)",
@@ -121,7 +119,8 @@ export default {
             enabled: false,
           },
           tickWidth: 0,
-          lineWidth: 0,
+          lineWidth: 1,
+          lineColor: "var(--v-border-base)",
           endOfTick: false,
           gridLineWidth: 0,
           tickPixelInterval: 65,
@@ -146,9 +145,12 @@ export default {
           title: {
             text: "",
           },
-          gridLineWidth: 0,
+          gridLineWidth: 1,
+          gridLineColor: "var(--v-border-base)",
+          gridLineDashStyle: 'ShortDot',
           labels: {
             enabled: true,
+            formatter: this.customFormatter
           },
           stackLabels: {
             enabled: true,
@@ -158,7 +160,7 @@ export default {
               fontSize: "12px",
               textOutline: "none",
             },
-            formatter: this.labelFormatterFunction,
+            formatter: this.customFormatter
           },
         },
         title: {
@@ -201,6 +203,7 @@ export default {
             borderColor: "transparent",
             label: {},
             lineWidth: 1,
+            opacity: 0.7,
             marker: {
               radius: 1
             },
@@ -216,7 +219,7 @@ export default {
               },
               stops: [
                   [0, "var(--v-chart-base)"],
-                  [1, 'var(--v-data-base)']
+                  [1, 'var(--v-canvas-base)']
               ]
             }
           },

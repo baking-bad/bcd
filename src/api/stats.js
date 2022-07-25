@@ -83,4 +83,8 @@ export class StatsAPI {
             params: params
         }).then(this.parseResponse)
     }
+
+    usersAndCalls(network, timeframe, params = {}) {
+        return this.getApi(network).post(`/v1/users_and_calls_count/${timeframe}`, params).then(this.parseResponse)
+    }
 }

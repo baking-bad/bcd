@@ -55,7 +55,11 @@ Vue.use(PortalVue)
 Vue.use(Clipboard);
 
 Vue.filter('numberToCompactSIFormat', function (value, decimals) {
-  return SIFormatter.format(roundDownSignificantDigits(Number(value), decimals));
+  let num = Number(value);
+  if (num > 1000){
+    return SIFormatter.format(roundDownSignificantDigits(num, decimals));
+  }
+  return `${num}`;
 });
 
 Vue.filter('formatDate', function (value) {
@@ -142,9 +146,9 @@ let searchService = new SearchService(config.SEARCH_SERVICE_URI);
 let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
 let stats = new StatsAPI({
-  'mainnet': process.env.MAINNET_STATS_API_URI || 'https://stats.dipdup.net',
-  'jakartanet': 'https://stats-jakartanet.dipdup.net',
-  'ghostnet': 'https://stats-ghostnet.dipdup.net',
+  'mainnet': process.env.MAINNET_STATS_API_URI || 'https://stats-new.dipdup.net',
+  'jakartanet': process.env.TESTNET_STATS_API_URI ||'https://stats-jakartanet.dipdup.net',
+  'ghostnet': process.env.GHOSTNET_STATS_API_URI ||'https://stats-ghostnet.dipdup.net',
 });
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;

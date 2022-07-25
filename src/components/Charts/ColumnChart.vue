@@ -115,6 +115,21 @@ export default {
         scrollbar: {
           enabled: false,
         },
+        exporting: {
+          enabled: true,
+          buttons: {
+            contextButton: {
+              enabled:true,
+              titleKey: 'contextButtonTitle',
+              symbolFill: '#00000000',
+              symbolStrokeWidth: 1,
+              symbolStroke: "var(--v-primary-base)",
+              theme: {
+                fill: 'transparent'
+              }
+            }
+          },
+        },
         xAxis: {
           type: "datetime",
           tickmarkPlacement: "off",
