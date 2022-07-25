@@ -16,14 +16,14 @@
             <v-img :src="imageName" max-height="300" contain></v-img>
             <div class="information font-weight-regular mt-2">
             <span>
-              The Dapps store is permanently moved to tzkt.<br/>
+              The Dapps store is permanently moved to TzKT.<br/>
               All information and statistics about dapps can be found
               <a
-                  style="text-decoration: none"
+                  style="text-decoration: underline"
                   target="_blank"
                   rel="noopener"
                   href="https://tzkt.io/dapps"
-              >here</a>
+              >here</a>.
             </span>
             </div>
           </v-card-text>
