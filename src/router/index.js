@@ -75,10 +75,6 @@ const router = new Router({
     },
     {
       path: '/dapps',
-      redirect: { path: '/dapps/list' }
-    },
-    {
-      path: '/dapps',
       components: {
         default: MainDApp
       },
