@@ -42,7 +42,7 @@ export class Wallet {
             }
         }
 
-        Wallet.changer[0] = 'connect' + Math.floor(Math.random() * 10 * 100)
+        Wallet.changer[0] = 'connect' + Wallet.wallet.requestCounter[0]
 
         return client;
     }

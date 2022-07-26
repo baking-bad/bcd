@@ -14,8 +14,8 @@
       <v-card-text
           v-show="!!message"
           class="pa-4 text--primary"
-          v-html="message"
-      ></v-card-text>
+      >{{ message }}
+      </v-card-text>
       <v-card-actions class="pt-3">
         <v-spacer></v-spacer>
         <v-btn
