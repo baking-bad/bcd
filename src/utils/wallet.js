@@ -19,6 +19,16 @@ export class Wallet {
         return Wallet.wallet
     }
 
+    static changeWalletState(cb) {
+        const arrayChangeHandler = {
+            set() {
+                cb()
+                return true
+            }
+        };
+        Wallet.changer = new Proxy([], arrayChangeHandler);
+    }
+
     static async getClient(network, eventHandlers, isLast) {
         let client;
         if (Wallet.wallet && !isLast) {
@@ -31,16 +41,24 @@ export class Wallet {
                 await this.getNewPermissions(network, isLast);
             }
         }
+
+        Wallet.changer[0] = 'connect' + Math.floor(Math.random() * 10 * 100)
+
         return client;
     }
 
     static getLastUsedAccount() {
         const accounts = localStorage.getItem('beacon:accounts');
+        const peers = localStorage.getItem('beacon:postmessage-peers-dapp');
+
         if(!accounts) return null
         const parsedAccounts = JSON.parse(accounts);
         const connectionTimes = parsedAccounts.map(item => item.connectedAt);
         const recentConnectionTime = Math.max(...connectionTimes);
-        return parsedAccounts.find(item => item.connectedAt === recentConnectionTime);
+        const lastAccount = parsedAccounts.find(item => item.connectedAt === recentConnectionTime);
+        lastAccount.walletName =  JSON.parse(peers).find(item => item.extensionId === lastAccount.origin.id).name;
+
+        return lastAccount;
     }
 
     static async getNewPermissions(network, isLast) {
@@ -77,3 +95,4 @@ export class Wallet {
         })
     }
 }
+Wallet.changer = {}

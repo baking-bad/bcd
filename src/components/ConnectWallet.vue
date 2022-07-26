@@ -14,6 +14,12 @@
           <img v-bind="attrs" v-on="on" alt="avatar" class="avatar" :src="`https://catava.dipdup.net/${account.address}`">
         </template>
         <v-list>
+          <v-subheader>
+            <div class="wallet-info">
+              <small>{{account.walletName}}</small>
+              <span v-past-html="helpers.shortcut(account.address, 6)"></span>
+            </div>
+          </v-subheader>
           <v-list-item class="px-4 cursor-pointer">
             <v-list-item-title class="text-capitalize" @click="changeWallet">Change wallet</v-list-item-title>
           </v-list-item>
@@ -38,6 +44,11 @@ export default {
       isGettingWalletProgress: false
     }
   },
+  created() {
+    Wallet.changeWalletState(() => {
+      this.account = Wallet.getLastUsedAccount();
+    });
+  },
   mounted() {
     this.account = Wallet.getLastUsedAccount();
   },
@@ -59,8 +70,12 @@ export default {
       this.account = Wallet.getLastUsedAccount();
     },
     async logOut() {
+      if(Wallet.wallet) {
+        await Wallet.wallet.clearActiveAccount();
+      }
       localStorage.removeItem('beacon:accounts')
-      await Wallet.wallet.clearActiveAccount();
+      localStorage.setItem('beacon:active-peer', '');
+      localStorage.setItem('beacon:active-account', '');
       Wallet.wallet = null
       Wallet.isPermissionGiven = false
       this.account = null
@@ -83,5 +98,12 @@ export default {
 
 .text--secondary {
   margin-top: 2px;
+}
+
+.wallet-info {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 12px 8px 0;
+  border-bottom: 1px solid #414141;
 }
 </style>

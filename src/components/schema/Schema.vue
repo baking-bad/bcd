@@ -66,6 +66,7 @@
       :raw="parametersJSON"
       :type="isStorage || isDeploy ? 'script' : 'parameters'"
     />
+    <ConfirmDialog ref="confirm"/>
   </div>
 </template>
 
@@ -82,6 +83,7 @@ import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
 import { TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@airgap/beacon-sdk'
 import {Wallet} from "@/utils/wallet";
+import ConfirmDialog from "@/components/Dialogs/ConfirmDialog";
 
 const walletsToIcons = {
   "Temple - Tezos Wallet (ex. Thanos)": "mdi-alpha-t",
@@ -94,6 +96,7 @@ const walletsToIcons = {
 export default {
   name: "Schema",
   components: {
+    ConfirmDialog,
     SchemaAlertCustomSuccess,
     SchemaHeader,
     SchemaAlertOpHashSuccess,
@@ -221,12 +224,6 @@ export default {
     setSettings({key, val}) {
       Vue.set(this.settings, key, val);
     },
-    setResultOPG(val) {
-      this.showResultOPG = val;
-    },
-    setCmdline(val) {
-      this.showCmdline = val;
-    },
     fireEvent(action, category) {
       if (this.$gtag) {
         this.$gtag.event(action, {
@@ -275,34 +272,37 @@ export default {
           }
           : null;
     },
-    beaconClientActionCallback(isLast) {
+    beaconClientActionCallback() {
       if (this.isParameter) {
         return async () => {
+          const account = Wallet.getLastUsedAccount();
+
+          if(account && this.network !== account.network.type) {
+            const confirm = await this.$refs.confirm.open(
+                null,
+                "The networks of the active wallet and the current contract do not match.",
+                {
+                  ok: "Continue anyway",
+                  cancel: "Cancel operation"
+                }
+            )
+            if (!confirm) {
+              return
+            }
+          }
+
           this.fireEvent("Beacon Wallet", "interact");
-          await this.callContract(isLast);
+          await this.callContract(false);
         }
       } else if (this.isDeploy) {
         return async () => {
-          await this.makeDeploy(isLast);
+          await this.makeDeploy(false);
         }
       }
 
       return async () => {
         this.fireEvent("Tezos Client", "fork");
-        await this.fork(isLast);
-      }
-    },
-    beaconWalletGetAddress(isLast) {
-      return async () => {
-        if (isLast) {
-          const lastAccount = Wallet.getLastUsedAccount();
-          return lastAccount.address;
-        } else {
-          const client = this.wallet ? this.wallet : await this.getWallet();
-          await this.getNewPermissions(false);
-          const account = await client.getActiveAccount();
-          return account.address;
-        }
+        await this.fork(false);
       }
     },
     setExecuteActions() {
@@ -330,64 +330,17 @@ export default {
         {
           text: "Wallet",
           icon: this.getIconForWalletName(),
-          callback: this.beaconClientActionCallback(false)
+          callback: this.beaconClientActionCallback()
         },
       ];
-
-      this.importActions.push(
-          {
-            text: "Wallet",
-            icon: "mdi-lighthouse",
-            callback: this.beaconWalletGetAddress(false)
-          }
-      );
     },
     getIconForWalletName(name) {
       return name in walletsToIcons ? walletsToIcons[name] : walletsToIcons.default;
-    },
-    removeLastUsedOptions() {
-      this.executeActions = this.executeActions.filter(item => !item.isLastOption);
-      this.importActions = this.importActions.filter(item => !item.isLastOption);
-    },
-    getLastUsedWalletInfo() {
-      const lastAccount = Wallet.getLastUsedAccount();
-      const peers = localStorage.getItem('beacon:postmessage-peers-dapp');
-      if (!peers) {
-        return {
-          text: "Last used wallet",
-          icon: this.getIconForWalletName()
-        }
-      } else {
-        const text = JSON.parse(peers)
-            .find(item => item.extensionId === lastAccount.origin.id)
-            .name;
-        const icon = this.getIconForWalletName(text);
-        return { text, icon }
-      }
-    },
-    addLastUsedOption() {
-      const { text, icon } = this.getLastUsedWalletInfo();
-      this.removeLastUsedOptions();
-      this.executeActions.push({
-        text,
-        icon,
-        isLastOption: true,
-        callback: this.beaconClientActionCallback(true)
-      });
-      this.importActions.push(
-          {
-            text,
-            icon,
-            isLastOption: true,
-            callback: this.beaconWalletGetAddress(true)
-          }
-      );
     },
     getWalletEventHandlers() {
       return {
         PERMISSION_REQUEST_SUCCESS: {
           handler: async (data) => {
-            this.addLastUsedOption();
             await defaultEventCallbacks.PERMISSION_REQUEST_SUCCESS(data);
           }
         },
