@@ -64,7 +64,7 @@
       :is-anything-loading="isLoadingDataForTabs"
       :same-contracts="sameContracts"
       :migrations="migrations"
-      :offchain-views="offChainViews"
+      :on-chain-views="onChainViews"
     />
 
     <VContainer fluid>
@@ -77,7 +77,7 @@
         :same-contracts="sameContracts"
         :same-count="sameCount"
         :migrations="migrations"
-        :off-chain-views="offChainViews"
+        :on-chain-views="onChainViews"
       ></router-view>
 
       <BookmarkDialog v-model="openBookMarkDialog" :alias="contract.alias || ``" @added="onBookmarkAdded"/>
@@ -119,13 +119,12 @@ export default {
     contractTags: null,
     contractLink: '',
     isComboBoxExpanded: false,
-    sameContractsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
     sameContracts: [],
     sameCount: 0,
     migrationsLoading: DATA_LOADING_STATUSES.NOTHING,
     migrations: [],
-    offChainViews: [],
-    offChainViewsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
+    onChainViews: [],
+    onChainViewsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
     isBookmark: false,
     openBookMarkDialog: false
   }),
@@ -159,11 +158,11 @@ export default {
     isSameContractsLoading() {
       return this.sameContractsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
-    isLoadingDataForTabs() {
-      return this.isSameContractsLoading || this.isOffChainsLoading;
-    },
-    isOffChainsLoading() {
+    isOnChainsLoading() {
       return this.offChainViewsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
+    isLoadingDataForTabs() {
+      return this.isSameContractsLoading || this.isOnChainsLoading;
     },
     isContract() {
       return this.address.startsWith("KT");
@@ -195,19 +194,24 @@ export default {
       hideError: "hideError",
       showClipboardOK: "showClipboardOK",
     }),
-    async loadViewsSchema() {
-      this.offChainViewsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
-      this.offChainViews = [];
-      if (this.network && this.address) {
-        try {
-          let views = await this.api.getMetadataViewsSchema(this.network, this.address);
-          this.offChainViewsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
-          views.forEach(view => applyStyles(view.schema));
-          this.offChainViews = views;
-        } catch (err) {
-          this.showError("Error while fetching off-chain views");
-        }
+    loadOnChainViews() {
+      this.onChainViews = [];
+      if (!this.network || !this.address) {
+        return
       }
+      this.onChainViewsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+
+      this.api.getMetadataViewsSchema(this.network, this.address, 'on-chain')
+        .then(views => {
+          views.forEach(view => applyStyles(view.schema));
+          this.onChainViews = views;
+        })
+        .catch(err => {
+          this.showError(`Error while fetching off-chain views: ${err}`);
+        })
+        .finally(() => {
+          this.onChainViewsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
+        })
     },
     openInTzkt() {
       openTzktContract(this.network, this.contract);
@@ -225,11 +229,11 @@ export default {
           if (!res) return;
           this.sameContracts = res.contracts;
           this.sameCount = res.count;
-          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
         })
         .catch((err) => {
           this.showError(err);
-          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+        })
+        .finally(() => {
           this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
         });
     },
@@ -267,7 +271,7 @@ export default {
         this.requestSame();
         this.getContract();
         this.getTokensTotal();
-        this.loadViewsSchema();
+        this.loadOnChainViews();
       } else {
         this.getInfo();
       }
