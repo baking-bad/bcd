@@ -16,29 +16,26 @@
                 :value="selected"
                 mandatory
             >
-                <template v-for="(item, i) in items">
-                    <v-list-item @click="selected = i" class="token-card" :key="'stats-' + i">
-                        <v-list-item-content>
-                            <v-list-item-title class="overline">
-                                <span>{{ item.name }}</span>
-                            </v-list-item-title>
-                            <v-list-item-subtitle class="caption">
-                                <span>{{ item.description }}</span>
-                            </v-list-item-subtitle>
-                        </v-list-item-content>
-                        <v-list-item-action>
-                            <v-list-item-action-text class="body-2 secondary--text">
-                                <v-tooltip bottom>
-                                    <template v-slot:activator="{ on }">
-                                        <span v-on="on">{{ item.value | numberToCompactSIFormat }}</span>
-                                    </template>
-                                    <span>Total {{ item.name.toLowerCase() }}</span>
-                                </v-tooltip>
-                            </v-list-item-action-text>
-                        </v-list-item-action>
-                    </v-list-item>
-                    <v-divider :key="'divider-' + i"/>
-                </template>
+                <v-list-item @click="selected = i" class="token-card" v-for="(item, i) in items" :key="'stats-' + i">
+                    <v-list-item-content>
+                        <v-list-item-title class="overline">
+                            <span>{{ item.name }}</span>
+                        </v-list-item-title>
+                        <v-list-item-subtitle class="caption">
+                            <span>{{ item.description }}</span>
+                        </v-list-item-subtitle>
+                    </v-list-item-content>
+                    <v-list-item-action>
+                        <v-list-item-action-text class="body-2 secondary--text">
+                            <v-tooltip bottom>
+                                <template v-slot:activator="{ on }">
+                                    <span v-on="on">{{ item.value | numberToCompactSIFormat }}</span>
+                                </template>
+                                <span>Total {{ item.name.toLowerCase() }}</span>
+                            </v-tooltip>
+                        </v-list-item-action-text>
+                    </v-list-item-action>
+                </v-list-item>
             </v-list-item-group>
         </v-col>
         <v-col cols="8">
@@ -149,11 +146,13 @@ export default {
 
             this.selectedItem.series = await this.selectedItem.seriesGetter();
         },
-        createDataset(response) {
+        createDataset(response, isAbs = false) {
             let dataset = [];
 
             response.forEach(item => {
-                dataset.push([item.ts * 1000, parseFloat(item.value)]);
+                let value = parseFloat(item.value);
+                if (isAbs) value = Math.abs(value);
+                dataset.push([item.ts * 1000, value]);
             })
 
             return dataset;
@@ -231,9 +230,13 @@ export default {
             })
         },
         async getBurned() {
-            await this.stats.burned(this.network,this.timeframe, this.address)
+            await this.stats.histogram(this.network, 'balance_update', 'sum', this.timeframe, {
+                'field': 'Update',
+                'Kind': 2,
+                'Counterparty': this.address,
+            })
             .then(res => {
-                this.burned = this.createDataset(res) ;
+                this.burned = this.createDataset(res, true) ;
             })
             .catch(err => {
                 console.log(err);
