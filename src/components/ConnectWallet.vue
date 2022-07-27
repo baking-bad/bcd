@@ -20,11 +20,11 @@
               <span v-past-html="helpers.shortcut(account.address, 6)"></span>
             </div>
           </v-subheader>
-          <v-list-item class="px-4 cursor-pointer">
-            <v-list-item-title class="text-capitalize" @click="changeWallet">Change wallet</v-list-item-title>
+          <v-list-item class="px-4 cursor-pointer" @click="changeWallet">
+            <v-list-item-title class="text-capitalize">Change wallet</v-list-item-title>
           </v-list-item>
-          <v-list-item class="px-4 cursor-pointer">
-            <v-list-item-title class="text-capitalize" @click="logOut">Log out</v-list-item-title>
+          <v-list-item class="px-4 cursor-pointer" @click="logOut">
+            <v-list-item-title class="text-capitalize">Log out</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>

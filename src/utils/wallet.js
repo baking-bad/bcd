@@ -31,6 +31,7 @@ export class Wallet {
 
     static async getClient(network, eventHandlers, isLast) {
         let client;
+
         if (Wallet.wallet && !isLast) {
             Wallet.isPermissionGiven = false
             await this.getNewPermissions(network, isLast);
@@ -49,14 +50,29 @@ export class Wallet {
 
     static getLastUsedAccount() {
         const accounts = localStorage.getItem('beacon:accounts');
-        const peers = localStorage.getItem('beacon:postmessage-peers-dapp');
+        const communicationPeersDapp = localStorage.getItem('beacon:communication-peers-dapp');
+        const postmessagePeersDapp =  localStorage.getItem('beacon:postmessage-peers-dapp');
+        let peers = [];
+
+        if(communicationPeersDapp) {
+            peers = [...peers, ...JSON.parse(communicationPeersDapp)]
+        }
+
+        if(postmessagePeersDapp) {
+            peers = [...peers, ...JSON.parse(postmessagePeersDapp)]
+        }
+
 
         if(!accounts) return null
         const parsedAccounts = JSON.parse(accounts);
         const connectionTimes = parsedAccounts.map(item => item.connectedAt);
         const recentConnectionTime = Math.max(...connectionTimes);
         const lastAccount = parsedAccounts.find(item => item.connectedAt === recentConnectionTime);
-        lastAccount.walletName =  JSON.parse(peers).find(item => item.extensionId === lastAccount.origin.id).name;
+        const extension = peers.find(item => item.extensionId === lastAccount.origin.id || item.publicKey  === lastAccount.origin.id);
+
+        if(extension) {
+            lastAccount.walletName = extension.name
+        }
 
         return lastAccount;
     }
