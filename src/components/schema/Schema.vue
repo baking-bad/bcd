@@ -459,7 +459,7 @@ export default {
         .finally(() => (this.execution = false));
     },
     async getClient() {
-      return Wallet.getClient(this.selectedNetwork, this.getWalletEventHandlers(), true);
+      return Wallet.getClient(this.network, this.getWalletEventHandlers(), true);
     },
     async callContract(isLast) {
       let parameter = await this.generateParameters(true);
