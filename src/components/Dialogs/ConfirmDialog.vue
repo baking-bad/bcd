@@ -15,6 +15,14 @@
           v-show="!!message"
           class="pa-4 text--primary"
       >{{ message }}
+
+        <v-btn
+            x-small
+            v-if="!options.noconfirm"
+            color="primary"
+            @click.native="changeWallet"
+        >Change wallet
+        </v-btn>
       </v-card-text>
       <v-card-actions class="pt-3">
         <v-spacer></v-spacer>
@@ -32,6 +40,8 @@
 </template>
 
 <script>
+import {Wallet} from "@/utils/wallet";
+
 export default {
   name: "ConfirmDialog",
   data() {
@@ -71,6 +81,15 @@ export default {
       this.resolve(false);
       this.dialog = false;
     },
+    async changeWallet() {
+      await Wallet.getClient(
+          this.$route.params.network || this.$route.$query.network || 'main',
+          [],
+          false
+      );
+      this.resolve(true);
+      this.dialog = false;
+    }
   },
 };
 </script>

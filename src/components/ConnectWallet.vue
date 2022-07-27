@@ -83,7 +83,7 @@ export default {
   },
   computed: {
     selectedNetwork() {
-      return this.$route.query.network || this.$route.params.network || 'mainnet'
+      return 'mainnet'
     }
   }
 }
