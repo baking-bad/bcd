@@ -7,7 +7,7 @@
       </v-btn>
       </template>
       <v-list>
-        <v-list-item class="pr-8 pl-4 cursor-pointer" @click="auth('mainnet')" v-for="network in config.networks" :key="network">
+        <v-list-item class="pr-8 pl-4 cursor-pointer" @click="auth(network)" v-for="network in config.networks" :key="network">
           <v-list-item-title class="text-capitalize">{{network}}</v-list-item-title>
         </v-list-item>
       </v-list>

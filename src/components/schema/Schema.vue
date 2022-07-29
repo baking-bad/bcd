@@ -272,42 +272,47 @@ export default {
           }
           : null;
     },
+    async getClientErrorHandler() {
+      try {
+        await this.getClient(false);
+        return true
+      } catch (e) {
+        return false
+      }
+    },
+    async checkWalletNetwork() {
+      const account = Wallet.getLastUsedAccount();
+
+      if(account && this.network !== account.network.type) {
+        const confirm = await this.$refs.confirm.open(
+            null,
+            "The networks of the active wallet and the current contract do not match.",
+            {
+              ok: "Change wallet",
+              cancel: "Cancel operation",
+            }
+        )
+
+        if (!confirm) {
+          return false;
+        }
+
+        return this.getClientErrorHandler();
+      }
+
+      return true;
+    },
     beaconClientActionCallback() {
       if (this.isParameter) {
         return async () => {
-          const account = Wallet.getLastUsedAccount();
-
-          if(account && this.network !== account.network.type) {
-            const confirm = await this.$refs.confirm.open(
-                null,
-                "The networks of the active wallet and the current contract do not match.",
-                {
-                  ok: "Change wallet",
-                  cancel: "Cancel operation",
-                }
-            )
-
-            if (!confirm) {
-              return
-            } else {
-              try {
-                await Wallet.getClient(
-                    this.$route.params.network || this.$route.$query.network || 'main',
-                    [],
-                    false
-                );
-              } catch (e) {
-                return
-              }
-            }
+          if(await this.checkWalletNetwork()) {
+            this.fireEvent("Beacon Wallet", "interact");
+            await this.callContract();
           }
-
-          this.fireEvent("Beacon Wallet", "interact");
-          await this.callContract(false);
         }
       } else if (this.isDeploy) {
         return async () => {
-          await this.makeDeploy(false);
+          await this.makeDeploy();
         }
       }
 
@@ -469,16 +474,16 @@ export default {
         })
         .finally(() => (this.execution = false));
     },
-    async getClient() {
-      return Wallet.getClient(this.network, this.getWalletEventHandlers(), true);
+    async getClient(isLast = true) {
+      return Wallet.getClient(this.network, this.getWalletEventHandlers(), isLast);
     },
-    async callContract(isLast) {
+    async callContract() {
       let parameter = await this.generateParameters(true);
       if (!parameter) return;
 
       this.execution = true;
       try {
-        let client = await this.getClient(isLast);
+        let client = await this.getClient();
         const result = await client.requestOperation({
           operationDetails: [{
             kind: TezosOperationType.TRANSACTION,
@@ -545,7 +550,7 @@ export default {
       }
       return err.message;
     },
-    async makeDeploy(isLast) {
+    async makeDeploy() {
       if (this.execution) return;
 
       this.execution = true;
@@ -554,15 +559,15 @@ export default {
           script: JSON.stringify(this.script),
           storage: this.model,
         });
-        await this.deploy(isLast, data.code, data.storage);
+        await this.deploy(data.code, data.storage);
       } catch (err) {
         this.showError(err.description || err);
       } finally {
         this.execution = false;
       }
     },
-    async deploy(isLast, code, storage) {
-      const client = await this.getClient(isLast);
+    async deploy(code, storage) {
+      const client = await this.getClient();
       const operation = {
         kind: TezosOperationType.ORIGINATION,
         script: {

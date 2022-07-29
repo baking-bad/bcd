@@ -16,16 +16,14 @@
           class="pa-4 text--primary"
       >{{ message }}
       </v-card-text>
-      <v-card-actions class="pt-3">
-        <v-spacer></v-spacer>
+      <v-card-actions class="pt-3 justify-space-between">
         <v-btn
             v-if="!options.noconfirm"
             color="error"
             text
             @click.native="cancel"
         >{{ cancelBtn }}
-        </v-btn
-        >
+        </v-btn>
         <v-btn color="primary" text @click.native="agree">{{ okBtn }}</v-btn>
       </v-card-actions>
     </v-card>
