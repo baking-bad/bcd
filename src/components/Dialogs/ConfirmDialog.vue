@@ -3,11 +3,10 @@
       v-model="dialog"
       :max-width="options.width"
       :style="{ zIndex: options.zIndex }"
-      @keydown.esc="cancel"
   >
     <v-card outlined>
       <v-card-title class="sidebar d-flex justify-end py-1 pa-2">
-        <v-btn icon small @click.stop="cancel">
+        <v-btn icon small @click.stop="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>
       </v-card-title>
@@ -49,7 +48,18 @@ export default {
       },
     };
   },
+  mounted() {
+    document.addEventListener('keyup', this.handleKeyUp);
+  },
+  destroyed() {
+    document.removeEventListener('keyup', this.handleKeyUp);
+  },
   methods: {
+    handleKeyUp(e) {
+      if (e.key === "Escape"){
+        this.close();
+      }
+    },
     open(title, message, {ok = 'OK', cancel = 'Cancel'}, options) {
       this.dialog = true;
       this.title = title;
@@ -68,6 +78,10 @@ export default {
     },
     cancel() {
       this.resolve(false);
+      this.dialog = false;
+    },
+    close() {
+      this.resolve('CLOSE');
       this.dialog = false;
     },
   },

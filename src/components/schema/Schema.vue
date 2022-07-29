@@ -272,9 +272,9 @@ export default {
           }
           : null;
     },
-    async getClientErrorHandler() {
+    async getClientErrorHandler(isLast = false) {
       try {
-        await this.getClient(false);
+        await this.getClient(isLast);
         return true
       } catch (e) {
         return false
@@ -289,15 +289,15 @@ export default {
             "The networks of the active wallet and the current contract do not match.",
             {
               ok: "Change wallet",
-              cancel: "Cancel operation",
+              cancel: "Continue anyway",
             }
         )
 
-        if (!confirm) {
+        if (confirm === 'CLOSE') {
           return false;
         }
 
-        return this.getClientErrorHandler();
+        return this.getClientErrorHandler(!confirm);
       }
 
       return true;
