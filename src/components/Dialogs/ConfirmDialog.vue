@@ -16,7 +16,7 @@
           class="pa-4 text--primary"
       >{{ message }}
       </v-card-text>
-      <v-card-actions class="pt-3 justify-space-between">
+      <v-card-actions class="pt-3 justify-space-between px-5">
         <v-btn
             v-if="!options.noconfirm"
             color="error"
