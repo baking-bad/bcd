@@ -5,7 +5,10 @@
       :style="{ zIndex: options.zIndex }"
   >
     <v-card outlined>
-      <v-card-title class="sidebar d-flex justify-end py-1 pa-2">
+      <v-card-title class="sidebar d-flex justify-center py-1 pa-2">
+        <v-icon small color="orange">mdi-alert</v-icon>
+        <span class="body-1 ml-2 font-weight-medium text-uppercase text--secondary">{{ title }}</span>
+        <v-spacer></v-spacer>
         <v-btn icon small @click.stop="close">
           <v-icon>mdi-close</v-icon>
         </v-btn>

@@ -285,7 +285,7 @@ export default {
 
       if(account && this.network !== account.network.type) {
         const confirm = await this.$refs.confirm.open(
-            null,
+            "Warning",
             "The networks of the active wallet and the current contract do not match.",
             {
               ok: "Change wallet",
