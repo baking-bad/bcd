@@ -282,12 +282,23 @@ export default {
                 null,
                 "The networks of the active wallet and the current contract do not match.",
                 {
-                  ok: "Continue anyway",
-                  cancel: "Cancel operation"
+                  ok: "Change wallet",
+                  cancel: "Cancel operation",
                 }
             )
+
             if (!confirm) {
               return
+            } else {
+              try {
+                await Wallet.getClient(
+                    this.$route.params.network || this.$route.$query.network || 'main',
+                    [],
+                    false
+                );
+              } catch (e) {
+                return
+              }
             }
           }
 

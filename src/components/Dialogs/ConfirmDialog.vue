@@ -6,29 +6,22 @@
       @keydown.esc="cancel"
   >
     <v-card outlined>
-      <v-toolbar v-if="title" dark :color="options.color" dense flat>
-        <v-toolbar-title class="body-1 font-weight-medium text-uppercase text--secondary">
-          {{ title }}
-        </v-toolbar-title>
-      </v-toolbar>
+      <v-card-title class="sidebar d-flex justify-end py-1 pa-2">
+        <v-btn icon small @click.stop="cancel">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-card-title>
       <v-card-text
           v-show="!!message"
           class="pa-4 text--primary"
       >{{ message }}
-
-        <v-btn
-            x-small
-            v-if="!options.noconfirm"
-            color="primary"
-            @click.native="changeWallet"
-        >Change wallet
-        </v-btn>
       </v-card-text>
       <v-card-actions class="pt-3">
         <v-spacer></v-spacer>
         <v-btn
             v-if="!options.noconfirm"
-            color="primary"
+            color="error"
+            text
             @click.native="cancel"
         >{{ cancelBtn }}
         </v-btn
@@ -40,8 +33,6 @@
 </template>
 
 <script>
-import {Wallet} from "@/utils/wallet";
-
 export default {
   name: "ConfirmDialog",
   data() {
@@ -81,15 +72,6 @@ export default {
       this.resolve(false);
       this.dialog = false;
     },
-    async changeWallet() {
-      await Wallet.getClient(
-          this.$route.params.network || this.$route.$query.network || 'main',
-          [],
-          false
-      );
-      this.resolve(true);
-      this.dialog = false;
-    }
   },
 };
 </script>
