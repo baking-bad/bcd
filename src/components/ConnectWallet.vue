@@ -32,7 +32,7 @@
               <v-list-item-title class="text-capitalize">Log out</v-list-item-title>
             </v-list-item>
           </template>
-          <v-list-item v-else class="pr-8 pl-4 cursor-pointer" @click="auth('mainnet', false)" v-for="network in config.networks" :key="network">
+          <v-list-item v-else class="pr-8 pl-4 cursor-pointer" @click="auth(network, false)" v-for="network in config.networks" :key="network">
             <v-list-item-title class="text-capitalize">{{network}}</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -72,7 +72,7 @@ export default {
     async auth(network = 'mainnet', isLast = true) {
       this.isOpened = false;
       try {
-        await Wallet.getClient(network, [], isLast);
+        await Wallet.getClient(network.toLowerCase(), [], isLast);
       } catch (e) {
         console.error(e);
       }
