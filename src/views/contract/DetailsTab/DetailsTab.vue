@@ -124,28 +124,25 @@ export default {
                 .then((res) => {
                     if (!res)
                         return;
+                    this.getAliases(res.contracts);
                     this.currentlyLoadedSameContracts = res.contracts;
                     this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
-
-                    let aliasRequests = this.currentlyLoadedSameContracts.map(contract => {
-                        return new Promise((resolve) => {
-                          contract.name = this.getAlias(contract.network, contract.address);
-                          resolve();
-                        });
-                    })
-
-                    Promise.all(aliasRequests).then(() => {});
                 })
                 .catch((err) => {
                   this.showError(err);
                   this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
                 });
         },
-        getAlias(network, address) {
+        async getAliases(contracts) {
+          for (let idx in contracts) {
+            contracts[idx].name = await this.getAlias(contracts[idx].network, contracts[idx].address)
+          }
+        },
+        async getAlias(network, address) {
           let alias = this.aliases.get(`${network}_${address}`);
           if (alias !== undefined) return alias;
 
-          return this.searchService.alias(network, address)
+          return await this.searchService.alias(network, address)
             .then(result => {
               this.aliases.add(`${network}_${address}`, result);
               return result;
@@ -161,10 +158,12 @@ export default {
             this.requestSame(this.page_size * val);
         },
         sameContracts: {
-            handler(val) {
-                this.currentlyLoadedSameContracts = val;
-                if (this.sameContracts.length === 0) {
+            async handler(val) {
+                if (val === 0) {
                     this.requestSame(0);
+                } else {
+                  await this.getAliases(val);
+                  this.currentlyLoadedSameContracts = val;
                 }
             },
             immediate: true,
