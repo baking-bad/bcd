@@ -16,7 +16,8 @@
                 style="text-transform: none;"
                 target="_blank"
                 text>
-                <Shortcut :str="item.address"/>
+                <span v-if="item.name">{{ item.name }}</span>
+                <Shortcut v-else :str="item.address"/>
               </v-btn>
             </td>
             <td>
@@ -121,14 +122,37 @@ export default {
             this.api
                 .getSameContracts(this.network, this.address, offset)
                 .then((res) => {
-                if (!res)
-                    return;
-                this.currentlyLoadedSameContracts = res.contracts;
-                this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
-            })
+                    if (!res)
+                        return;
+                    this.currentlyLoadedSameContracts = res.contracts;
+                    this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
+
+                    let aliasRequests = this.currentlyLoadedSameContracts.map(contract => {
+                        return new Promise((resolve) => {
+                          contract.name = this.getAlias(contract.network, contract.address);
+                          resolve();
+                        });
+                    })
+
+                    Promise.all(aliasRequests).then(() => {});
+                })
                 .catch((err) => {
-                this.showError(err);
-                this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+                  this.showError(err);
+                  this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+                });
+        },
+        getAlias(network, address) {
+          let alias = this.aliases.get(`${network}_${address}`);
+          if (alias !== undefined) return alias;
+
+          return this.searchService.alias(network, address)
+            .then(result => {
+              this.aliases.add(`${network}_${address}`, result);
+              return result;
+            })
+            .catch((err) => {
+              console.log(err);
+              return;
             });
         }
     },
