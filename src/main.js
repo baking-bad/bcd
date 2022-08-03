@@ -136,7 +136,7 @@ let config = {
 
 let api = new BetterCallApi(config.API_URI);
 let bookmarks = new Bookmarks();
-let aliases = new Aliases(100);
+let aliases = new Aliases(1000);
 let searchService = new SearchService(config.SEARCH_SERVICE_URI);
 let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
@@ -167,6 +167,7 @@ api.getConfig().then(response => {
     },
     methods: {
       getAlias(network, address) {
+        console.log(network, address)
         let alias = this.aliases.get(`${network}_${address}`);
         if (alias !== undefined) return alias;
 

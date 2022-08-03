@@ -116,8 +116,7 @@ export default {
         .then((data) => this.getAliases(data));
     },
     async getAliases(contracts) {
-      for (const idx in contracts) {
-        if (contracts[idx].alias) continue;        
+      for (const idx in contracts) {     
         contracts[idx].alias = await this.getAlias(this.network, contracts[idx].address);
       }
     },
