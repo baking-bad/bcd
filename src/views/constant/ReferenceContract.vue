@@ -7,7 +7,7 @@
       <v-skeleton-loader :loading="loading" type="article" transition="fade-transition">
         <v-data-table
             :items="contracts"
-            v-if="contracts.length"
+            v-if="!isEmpty"
             hide-default-header
             :class="['ba-1 mt-4 avg-gas-consumption', 'hide-pagination-count']"
             hide-default-footer
@@ -76,6 +76,7 @@ export default {
       isLastPage: true,
       itemsPerPage: 10,
       page: 0,
+      isEmpty: true
     }
   },
   async mounted() {
@@ -87,8 +88,10 @@ export default {
 
       const offset = this.page * this.itemsPerPage;
       const {network, address} = this.$route.params;
-      this.contracts = await this.api.getConstantsByAddress(network, address, offset);
-      this.isLastPage = this.contracts.length < this.itemsPerPage
+      let contracts = await this.api.getConstantsByAddress(network, address, offset);
+      this.isLastPage = contracts.length < this.itemsPerPage;
+      this.isEmpty = contracts.length === 0 && this.contracts.length === 0;
+      this.contracts = contracts;
 
       await this.getAliases(network);
 
