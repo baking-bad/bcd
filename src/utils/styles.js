@@ -19,7 +19,7 @@ export function applyStyles(node) {
         if (node.prim === "nat" || node.prim === "mutez") {
             node["x-display"] = "custom-nat"
         }
-        if (node.prim === "bytes") {
+        if (node.prim === "bytes" || node.prim === "bls12_381_fr" || node.prim === "bls12_381_g1" || node.prim === "bls12_381_g2") {
             node["x-display"] = "custom-bytes";
         }
         if (node.prim === "address") {
