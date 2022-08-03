@@ -68,7 +68,6 @@ export default {
     sameContracts: Array,
     isAnythingLoading: Boolean,
     migrations: Array,
-    offchainViews: Array,
   },
   computed: {
     isContract() {
@@ -81,7 +80,7 @@ export default {
       return this.migrations.length > 0;
     },
     isOffChainViews() {
-      return this.offchainViews.length > 0;
+      return this.metadata && this.metadata.metadata && this.metadata.metadata.views && this.metadata.metadata.views.length > 0;
     },
   },
   methods: {
