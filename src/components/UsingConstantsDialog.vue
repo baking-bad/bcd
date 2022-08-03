@@ -100,6 +100,7 @@ export default {
     },
     navigate(address) {
       window.open(`/constant/${this.network}/${address}/`, '_blank')
+      this.hide()
     },
     changePage(newPageNum) {
       this.page = newPageNum;

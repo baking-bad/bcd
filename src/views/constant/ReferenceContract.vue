@@ -71,7 +71,7 @@ export default {
   data() {
     return {
       loading: true,
-      aliasMaxLength: 26,
+      aliasMaxLength: 24,
       contracts: [],
       isLastPage: true,
       itemsPerPage: 10,
