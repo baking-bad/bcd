@@ -90,7 +90,14 @@ export default {
       this.contracts = await this.api.getConstantsByAddress(network, address, offset);
       this.isLastPage = this.contracts.length < this.itemsPerPage
 
+      await this.getAliases(network);
+
       this.loading = false;
+    },
+    async getAliases(network) {
+      for (const idx in this.contracts) {
+        this.contracts[idx].alias = this.getAlias(network, this.contracts[idx].address);
+      }
     },
     navigate(path) {
       this.$router.push(path);

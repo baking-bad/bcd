@@ -14,7 +14,7 @@
             :network="$route.params.network"
             :address="$route.params.address"
             v-model="storage.default_model"
-            :alias="contract.alias"
+            :alias="alias"
           />
           <div v-else />
         </v-skeleton-loader>
@@ -50,6 +50,7 @@ export default {
   },
   props: {
     contract: Object,
+    alias: String,
   },
   data: () => ({
     storage: null,

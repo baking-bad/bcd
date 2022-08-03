@@ -148,6 +148,7 @@
 <script>
 import { mapActions } from "vuex";
 import { isKT1Address, isOperationHash } from "@/utils/tz.js";
+import { getAccountAlias } from '@/api/search.js';
 import {
   getHistory,
   addHistoryItem,
@@ -358,19 +359,7 @@ export default {
       this.suggests = this.getHistoryItems(null);
     },
     getAccountName(body) {
-      if (body.TzKT !== undefined) {
-        return body.TzKT.Name;
-      }
-      if (body.TZIP !== undefined) {
-        return body.TZIP.Name;
-      }
-      if (body.Profiles !== undefined) {
-        return body.Profiles.Name;
-      }
-      if (body.Domains !== undefined) {
-        return body.Domains.Name;
-      }
-      return '';
+      return getAccountAlias(body);
     }
   },
   watch: {

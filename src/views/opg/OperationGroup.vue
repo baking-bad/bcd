@@ -120,11 +120,7 @@
                 <span class="text--secondary" v-if="op.destination_alias">{{
                   op.destination_alias
                 }}</span>
-                <span
-                  class="text--secondary"
-                  v-else
-                  v-html="helpers.shortcut(op.destination)"
-                ></span>
+                <Shortcut v-else class="text--secondary" :str="op.destiantion"/>
                 <span class="text--secondary" style="font-size: 20px">→</span>
                 <span v-if="op.entrypoint" class="hash">{{ op.entrypoint }}()</span>
                 <span v-else>{{ op.amount | uxtz }}</span>
@@ -153,6 +149,7 @@ import { toTitleCase } from "../../utils/string";
 import { openTzktOPG } from "../../utils/tzkt";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import OpgContents from "@/views/opg/ContentsTab.vue";
+import Shortcut from "@/components/Shortcut.vue";
 
 export default {
   name: "OperationGroup",
@@ -163,6 +160,7 @@ export default {
   components: {
     RawJsonViewer,
     OpgContents,
+    Shortcut,
   },
   data: () => ({
     loading: true,
