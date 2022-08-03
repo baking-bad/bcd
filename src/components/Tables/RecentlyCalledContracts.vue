@@ -121,14 +121,14 @@ export default {
         contracts[idx].alias = await this.getAlias(this.network, contracts[idx].address);
       }
     },
-    async getAlias(network, address) {
+    getAlias(network, address) {
       let alias = this.aliases.get(`${this.network}_${this.address}`);
       if (alias !== undefined) return alias;
 
-      return await this.searchService.alias(network, address)
-        .then(alias => {
-          this.aliases.add(`${network}_${address}`, alias);
-          return alias;
+      return this.searchService.alias(network, address)
+        .then(name => {
+          this.aliases.add(`${network}_${address}`, name);
+          return name;
         })
     },
   },

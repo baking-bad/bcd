@@ -100,14 +100,14 @@ export default {
           .then(alias => this.contracts[idx].alias = alias)
       }
     },
-    async getAlias(network, address) {
+    getAlias(network, address) {
       let alias = this.aliases.get(`${this.network}_${this.address}`);
       if (alias !== undefined) return alias;
 
-      return await this.searchService.alias(network, address)
-        .then(alias => {
-          this.aliases.add(`${network}_${address}`, alias);
-          return alias;
+      return this.searchService.alias(network, address)
+        .then(name => {
+          this.aliases.add(`${network}_${address}`, name);
+          return name;
         })
     },
     navigate(path) {
