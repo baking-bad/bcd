@@ -119,7 +119,10 @@ export default {
             if (!res) {
               this.downloaded = true;
             } else {
-              this.bigmap.push(...res.items);
+              res.items.forEach(x => {
+                if (x.body.KeyHash && x.body.KeyHash != "") this.bigmap.push(x);
+              })
+              
               this.downloaded = res.items.length < 10;
             }
           })
