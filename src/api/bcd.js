@@ -770,8 +770,25 @@ export class BetterCallApi {
             })
     }
 
-    getMetadataViewsSchema(network, address) {
-        return this.api.get(`/contract/${network}/${address}/views/schema`)
+    getMetadataViewsSchema(network, address, kind = null) {
+        let params = {}
+        if (kind) {
+            params.kind = kind;
+        }
+        return this.api.get(`/contract/${network}/${address}/views/schema`, {
+            params: params,
+        })
+            .then((res) => {
+                if (res.status !== 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data;
+            });
+    }
+
+
+    getOffchainViewSchema(view) {
+        return this.api.post(`/off_chain_view`, view)
             .then((res) => {
                 if (res.status !== 200) {
                     throw new RequestFailedError(res);

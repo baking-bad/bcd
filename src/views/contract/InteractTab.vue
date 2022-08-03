@@ -38,7 +38,7 @@
             :name="selectedItem.name"
             :network="network"
             :address="address"
-            :alias="contract && contract.alias ? contract.alias : ''"
+            :alias="alias ? alias : ''"
           />
           <div v-else></div>
         </v-skeleton-loader>
@@ -81,6 +81,7 @@ export default {
   props: {
     address: String,
     network: String,
+    alias: String
   },
   components: {
     Schema,

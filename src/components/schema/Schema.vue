@@ -66,6 +66,7 @@
       :raw="parametersJSON"
       :type="isStorage || isDeploy ? 'script' : 'parameters'"
     />
+    <ConfirmDialog ref="confirm"/>
   </div>
 </template>
 
@@ -80,8 +81,9 @@ import SchemaMichelson from "./schemaDialog/SchemaMichelson";
 import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
 import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
-import { DAppClient, TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@airgap/beacon-sdk'
-import TZKTBlockExplorer from "../../utils/tzkt";
+import { TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@airgap/beacon-sdk'
+import {Wallet} from "@/utils/wallet";
+import ConfirmDialog from "@/components/Dialogs/ConfirmDialog";
 
 const walletsToIcons = {
   "Temple - Tezos Wallet (ex. Thanos)": "mdi-alpha-t",
@@ -91,13 +93,10 @@ const walletsToIcons = {
   "default": "mdi-alpha-w",
 };
 
-const CORRECT_NETWORK_TYPES = {
-  "hangzhou2net": "hangzhounet",
-}
-
 export default {
   name: "Schema",
   components: {
+    ConfirmDialog,
     SchemaAlertCustomSuccess,
     SchemaHeader,
     SchemaAlertOpHashSuccess,
@@ -202,6 +201,7 @@ export default {
   methods: {
     ...mapActions(["showError", "showClipboardOK", "showWarning", "hideError"]),
     stopGettingWallet() {
+
       if (this.isGettingWalletProgress) {
         this.execution = false;
         this.importing = false;
@@ -218,16 +218,11 @@ export default {
       this.model = val;
     },
     setSelectedNetwork(val) {
+
       this.selectedNetwork = val;
     },
     setSettings({key, val}) {
       Vue.set(this.settings, key, val);
-    },
-    setResultOPG(val) {
-      this.showResultOPG = val;
-    },
-    setCmdline(val) {
-      this.showCmdline = val;
     },
     fireEvent(action, category) {
       if (this.$gtag) {
@@ -238,7 +233,7 @@ export default {
       }
     },
     simulateActionCallback() {
-      return this.isParameter
+      return this.isParameter 
         ? () => {
           this.fireEvent("Simulate", "interact");
           this.simulateOperation();
@@ -277,34 +272,53 @@ export default {
           }
           : null;
     },
-    beaconClientActionCallback(isLast) {
+    async getClientErrorHandler(isLast = false) {
+      try {
+        await this.getClient(isLast);
+        return true
+      } catch (e) {
+        return false
+      }
+    },
+    async checkWalletNetwork() {
+      const account = Wallet.getLastUsedAccount();
+
+      if(account && this.network !== account.network.type) {
+        const confirm = await this.$refs.confirm.open(
+            "Warning",
+            "The networks of the active wallet and the current contract do not match.",
+            {
+              ok: "Change wallet",
+              cancel: "Continue anyway",
+            }
+        )
+
+        if (confirm === 'CLOSE') {
+          return false;
+        }
+
+        return this.getClientErrorHandler(!confirm);
+      }
+
+      return true;
+    },
+    beaconClientActionCallback() {
       if (this.isParameter) {
         return async () => {
-          this.fireEvent("Beacon Wallet", "interact");
-          await this.callContract(isLast);
+          if(await this.checkWalletNetwork()) {
+            this.fireEvent("Beacon Wallet", "interact");
+            await this.callContract();
+          }
         }
       } else if (this.isDeploy) {
         return async () => {
-          await this.makeDeploy(isLast);
+          await this.makeDeploy();
         }
       }
 
       return async () => {
         this.fireEvent("Tezos Client", "fork");
-        await this.fork(isLast);
-      }
-    },
-    beaconWalletGetAddress(isLast) {
-      return async () => {
-        if (isLast) {
-          const lastAccount = this.getLastUsedAccount();
-          return lastAccount.address;
-        } else {
-          const client = this.wallet ? this.wallet : await this.getWallet();
-          await this.getNewPermissions(false);
-          const account = await client.getActiveAccount();
-          return account.address;
-        }
+        await this.fork(false);
       }
     },
     setExecuteActions() {
@@ -332,67 +346,17 @@ export default {
         {
           text: "Wallet",
           icon: this.getIconForWalletName(),
-          callback: this.beaconClientActionCallback(false)
+          callback: this.beaconClientActionCallback()
         },
       ];
-      this.importActions.push(
-          {
-            text: "Wallet",
-            icon: "mdi-lighthouse",
-            callback: this.beaconWalletGetAddress(false)
-          }
-      );
-      const accounts = localStorage.getItem('beacon:accounts');
-      if (accounts && JSON.parse(accounts).length > 0) {
-        this.addLastUsedOption();
-      }
     },
     getIconForWalletName(name) {
       return name in walletsToIcons ? walletsToIcons[name] : walletsToIcons.default;
-    },
-    removeLastUsedOptions() {
-      this.executeActions = this.executeActions.filter(item => !item.isLastOption);
-      this.importActions = this.importActions.filter(item => !item.isLastOption);
-    },
-    getLastUsedWalletInfo() {
-      const lastAccount = this.getLastUsedAccount();
-      const peers = localStorage.getItem('beacon:postmessage-peers-dapp');
-      if (!peers) {
-        return {
-          text: "Last used wallet",
-          icon: this.getIconForWalletName()
-        }
-      } else {
-        const text = JSON.parse(peers)
-            .find(item => item.extensionId === lastAccount.origin.id)
-            .name;
-        const icon = this.getIconForWalletName(text);
-        return { text, icon }
-      }
-    },
-    addLastUsedOption() {
-      const { text, icon } = this.getLastUsedWalletInfo();
-      this.removeLastUsedOptions();
-      this.executeActions.push({
-        text,
-        icon,
-        isLastOption: true,
-        callback: this.beaconClientActionCallback(true)
-      });
-      this.importActions.push(
-          {
-            text,
-            icon,
-            isLastOption: true,
-            callback: this.beaconWalletGetAddress(true)
-          }
-      );
     },
     getWalletEventHandlers() {
       return {
         PERMISSION_REQUEST_SUCCESS: {
           handler: async (data) => {
-            this.addLastUsedOption();
             await defaultEventCallbacks.PERMISSION_REQUEST_SUCCESS(data);
           }
         },
@@ -510,72 +474,16 @@ export default {
         })
         .finally(() => (this.execution = false));
     },
-    getLastUsedAccount() {
-      const accounts = localStorage.getItem('beacon:accounts');
-      const parsedAccounts = JSON.parse(accounts);
-      const connectionTimes = parsedAccounts.map(item => item.connectedAt);
-      const recentConnectionTime = Math.max(...connectionTimes);
-      return parsedAccounts.find(item => item.connectedAt === recentConnectionTime);
+    async getClient(isLast = true) {
+      return Wallet.getClient(this.network, this.getWalletEventHandlers(), isLast);
     },
-    async getWallet() {
-      this.wallet = new DAppClient({
-        name: "Better Call Dev",
-        eventHandlers: this.getWalletEventHandlers(),
-        preferredNetwork: this.selectedNetwork in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[this.selectedNetwork] : this.selectedNetwork,
-        blockExplorer: new TZKTBlockExplorer(),
-      });
-      return this.wallet;
-    },
-    async getNewPermissions(isLast) {
-      this.isGettingWalletProgress = true;
-      const rpcUrl = this.config.rpc_endpoints[this.selectedNetwork];
-      const networkMap = { sandboxnet: "custom" };
-      const type = networkMap[this.selectedNetwork] || this.selectedNetwork;
-      if (!isLast) {
-        await this.wallet.clearActiveAccount();
-      } else {
-        await this.wallet.setActiveAccount(this.getLastUsedAccount());
-      }
-
-      const activeAccount = await this.wallet.getActiveAccount();
-
-      if(activeAccount) {
-        return this.isPermissionGiven = true;
-      }
-
-      try {
-        await this.wallet.requestPermissions({
-          network: {
-            type: type in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[type] : type,
-            rpcUrl
-          }
-        });
-        this.isPermissionGiven = true;
-      } finally {
-        this.isGettingWalletProgress = false;
-      }
-    },
-    async getClient(isLast) {
-      let client;
-      if (this.wallet && !isLast) {
-        this.isPermissionGiven = false;
-        await this.getNewPermissions(isLast);
-        client = this.wallet ? this.wallet : await this.getWallet();
-      } else {
-        client = this.wallet ? this.wallet : await this.getWallet();
-        if (!this.isPermissionGiven) {
-          await this.getNewPermissions(isLast);
-        }
-      }
-      return client;
-    },
-    async callContract(isLast) {
+    async callContract() {
       let parameter = await this.generateParameters(true);
       if (!parameter) return;
 
       this.execution = true;
       try {
-        let client = await this.getClient(isLast);
+        let client = await this.getClient();
         const result = await client.requestOperation({
           operationDetails: [{
             kind: TezosOperationType.TRANSACTION,
@@ -618,7 +526,7 @@ export default {
     async fork(isLast) {
       if (this.execution) return;
 
-
+      
 
       this.execution = true;
       try {
@@ -642,7 +550,7 @@ export default {
       }
       return err.message;
     },
-    async makeDeploy(isLast) {
+    async makeDeploy() {
       if (this.execution) return;
 
       this.execution = true;
@@ -651,15 +559,15 @@ export default {
           script: JSON.stringify(this.script),
           storage: this.model,
         });
-        await this.deploy(isLast, data.code, data.storage);
+        await this.deploy(data.code, data.storage);
       } catch (err) {
         this.showError(err.description || err);
       } finally {
         this.execution = false;
       }
     },
-    async deploy(isLast, code, storage) {
-      const client = await this.getClient(isLast);
+    async deploy(code, storage) {
+      const client = await this.getClient();
       const operation = {
         kind: TezosOperationType.ORIGINATION,
         script: {

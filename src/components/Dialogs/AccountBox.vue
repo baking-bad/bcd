@@ -1,7 +1,7 @@
 <template>
-  <v-dialog v-model="show" width="800">
+  <v-dialog v-model="show" width="800" @keydown.esc="show = false" ref="accountBox">
     <template v-slot:activator="{ on }">
-      <v-list-item v-on="on" class="link" :class="gutters ? '' : 'pa-0 ma-0'" selectable>
+      <v-list-item v-on="on" class="link" :class="gutters ? '' : 'pa-0 ma-0 mr-3'" selectable>
         <v-list-item-content>
           <v-list-item-subtitle v-if="title" :class="lowerTitle ? 'lower-overline' : 'overline'">
             <span>{{ title }}</span>
@@ -52,7 +52,6 @@ export default {
   props: {
     title: String,
     address: String,
-    alias: String,
     highlighted: Boolean,
     gutters: Boolean,
     network: String,
@@ -61,22 +60,18 @@ export default {
   components: {
     ValueInspector
   },
-  methods: {
-    handleKeyUp(e) {
-      if (e.key === "Escape"){
-        this.show = false;
-      }
-    },
-  },
-  mounted() {
-    document.addEventListener('keyup', this.handleKeyUp);
-  },
-  destroyed() {
-    document.removeEventListener('keyup', this.handleKeyUp);
-  },
   data: () => ({
-    show: false
-  })
+    show: false,
+    alias: null
+  }),
+  async mounted() {
+    this.alias = await this.getAlias(this.network, this.address);
+  },
+  updated() {
+      if (this.show) {
+          this.$refs.accountBox.show();
+      }
+  }
 }
 </script>
 

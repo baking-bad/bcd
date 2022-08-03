@@ -109,7 +109,6 @@
           v-if="data.source"
           :title="sourceHeader"
           :address="data.source"
-          :alias="data.source_alias"
           :highlighted="data.source == address"
           :network="data.network"
         />
@@ -118,7 +117,6 @@
         <AccountBox
           :title="destinationHeader"
           :address="data.destination"
-          :alias="data.destination_alias"
           :highlighted="data.destination == address"
           :network="data.network"
         />
@@ -135,7 +133,6 @@
           v-if="data.delegate"
           title="Delegate"
           :address="data.delegate"
-          :alias="data.delegate_alias"
           :highlighted="false"
           :network="data.network"
         />
@@ -153,7 +150,7 @@
     </v-row>
 
     <v-expand-transition>
-      <div v-show="showParams" class="px-4 pb-2">
+      <div v-if="showParams" class="px-4 pb-2">
         <v-row v-if="data.errors" no-gutters>
           <v-col>
             <OperationAlert :errors="data.errors" :operationId="data.id" :network="data.network"/>
@@ -257,18 +254,12 @@ export default {
   },
   computed: {
     source() {
-      if (this.data.source_alias) {
-        return this.data.source_alias;
-      }
       if (this.data.source) {
         return this.data.source;
       }
       return "unset";
     },
     destination() {
-      if (this.data.destination_alias) {
-        return this.data.destination_alias;
-      }
       if (this.data.destination) {
         return this.data.destination;
       }
@@ -411,7 +402,7 @@ export default {
   },
   watch: {
     showParams(newValue) {
-      if (newValue && this.diffs === null) {
+      if (newValue && this.diffs === null && !this.loadingDiffs) {
         this.getDiff();
       }
     }

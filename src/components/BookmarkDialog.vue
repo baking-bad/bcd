@@ -9,7 +9,7 @@
           </v-btn>
         </v-card-title>
         <v-card-text class="pt-6 pb-0">
-          <v-text-field 
+          <v-text-field
               v-model="name"
               hide-details
               label="Alias" 
