@@ -96,8 +96,7 @@ export default {
     },
     async getAliases(network) {
       for (const idx in this.contracts) {
-        this.getAlias(network, this.contracts[idx].address)
-          .then(alias => this.contracts[idx].alias = alias)
+        this.contracts[idx].alias = this.getAlias(network, this.contracts[idx].address);
       }
     },
     navigate(path) {
