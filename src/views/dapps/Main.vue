@@ -12,14 +12,47 @@
         </v-toolbar-title>
       </v-toolbar>
       <v-container style="max-width: 1280px">
-        <router-view></router-view>
+          <v-card-text class="d-flex flex-column align-center justify-center">
+            <v-img :src="imageName" max-height="300" contain></v-img>
+            <div class="information font-weight-regular mt-2">
+            <span>
+              The Dapps store is permanently moved to TzKT.<br/>
+              All information and statistics about dapps can be found
+              <a
+                  style="text-decoration: underline"
+                  target="_blank"
+                  rel="noopener"
+                  href="https://tzkt.io/dapps"
+              >here</a>.
+            </span>
+            </div>
+          </v-card-text>
       </v-container>
     </div>
   </div>
 </template>
 
 <script>
+const images = require.context('@/assets/', false, /\.png$/)
+
 export default {
   name: "MainDApp",
+  computed: {
+    imageName() {
+      if (this.$vuetify.theme.isDark) return images('./api_relocate_dark.png');
+      return images('./api_relocate_light.png');
+    }
+  }
 };
 </script>
+
+<style scoped>
+.information {
+  width: 650px;
+  font-style: normal;
+  font-size: 20px;
+  line-height: 160%;
+  text-align: center;
+  color: #959595;
+}
+</style>
