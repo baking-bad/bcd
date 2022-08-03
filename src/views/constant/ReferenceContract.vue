@@ -100,16 +100,6 @@ export default {
           .then(alias => this.contracts[idx].alias = alias)
       }
     },
-    getAlias(network, address) {
-      let alias = this.aliases.get(`${this.network}_${this.address}`);
-      if (alias !== undefined) return alias;
-
-      return this.searchService.alias(network, address)
-        .then(name => {
-          this.aliases.add(`${network}_${address}`, name);
-          return name;
-        })
-    },
     navigate(path) {
       this.$router.push(path);
     },

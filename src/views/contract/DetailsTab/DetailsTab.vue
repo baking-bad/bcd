@@ -138,19 +138,6 @@ export default {
             contracts[idx].name = await this.getAlias(contracts[idx].network, contracts[idx].address)
           }
         },
-        getAlias(network, address) {
-          let alias = this.aliases.get(`${network}_${address}`);
-          if (alias !== undefined) return alias;
-
-          return this.searchService.alias(network, address)
-            .then(result => {
-              this.aliases.add(`${network}_${address}`, result);
-              return result;
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
     },
     watch: {
         page(val) {

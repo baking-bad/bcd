@@ -65,20 +65,7 @@ export default {
     alias: null
   }),
   async mounted() {
-    await this.getAlias();
-  },
-  methods: {
-    async getAlias() {
-      this.alias = this.aliases.get(`${this.network}_${this.address}`);
-      if (this.alias !== undefined) return;
-
-      await this.searchService.alias(this.network, this.address)
-        .then(result => {
-          this.alias = result;
-          this.aliases.add(`${this.network}_${this.address}`, this.alias);
-        })
-        .catch(err => console.log(err));
-    }
+    this.alias = await this.getAlias(this.network, this.address);
   },
   updated() {
       if (this.show) {

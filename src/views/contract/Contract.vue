@@ -247,12 +247,12 @@ export default {
     handleSearchBoxBlur() {
       this.isComboBoxExpanded = false;
     },
-    init() {
+    async init() {
       this.tokensTotal = 0;
       this.metadata = null;
       this.contract = {};
 
-      this.getAlias();
+      this.alias = await this.getAlias(this.network, this.address);
       if (this.isContract) {
         this.bookmarks.registerObserver(this.onBookmarkStateChanged);
         this.detectBookmark();
@@ -373,17 +373,6 @@ export default {
       })
       this.openBookMarkDialog = false;
     },
-    async getAlias() {
-      this.alias = this.aliases.get(`${this.network}_${this.address}`);
-      if (this.alias !== undefined) return;
-
-      await this.searchService.alias(this.network, this.address)
-        .then(result => {
-          this.alias = result;
-          this.aliases.add(`${this.network}_${this.address}`, this.alias);
-        })
-        .catch(err => console.log(err));
-    }
   },
   watch: {
     address: {

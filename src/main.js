@@ -164,6 +164,19 @@ api.getConfig().then(response => {
   Vue.mixin({
     data() {
       return { config, api, rpc, helpers, bookmarks, metadataAPI, tokenMetadata, searchService, aliases }
+    },
+    methods: {
+      async getAlias(network, address) {
+        let alias = this.aliases.get(`${network}_${address}`);
+        if (alias !== undefined) return alias;
+
+        return await this.searchService.alias(network, address)
+          .then(result => {
+            this.aliases.add(`${network}_${address}`, result);
+            return result;
+          })
+          .catch(err => console.log(err));
+      }
     }
   });
 
