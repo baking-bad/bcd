@@ -1,5 +1,5 @@
 <template>
-  <div class="fill-height">
+  <div>
     <v-skeleton-loader
       :loading="loading"
       type="list-item-two-line, list-item-two-line, list-item-two-line, list-item-two-line"

@@ -46,6 +46,7 @@
                             :data="this.selectedItem.series"
                             :name="this.selectedItem.name"
                             :formatType="this.selectedItem.formatter"
+                            exporting
                         />
                     </v-skeleton-loader>
             </v-card-text>

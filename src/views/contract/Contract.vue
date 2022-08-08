@@ -58,6 +58,7 @@
     <MenuToolbar
       class="pl-7"
       :contract="contract"
+      :network="network"
       :address="address"
       :tokensTotal="tokensTotal"
       :metadata="metadata"

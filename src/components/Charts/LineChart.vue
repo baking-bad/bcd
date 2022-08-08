@@ -13,6 +13,11 @@ import { MONTH_IN_MS } from "@/utils/date";
 
 exportingInit(Highcharts)
 
+function kilobyteFormatter(value, digits = 4) {
+  return (value / 1024).toLocaleString(undefined, {
+    maximumFractionDigits: digits,
+  });
+}
 
 function utzFormatter(value, digits = 6) {
   return (value / 10 ** 6).toLocaleString(undefined, {
@@ -29,6 +34,9 @@ function valueFormatterFunction(formatType, value) {
   if (formatType === "utz") {
     return utzFormatter(value, 6);
   }
+  if (formatType === "kb") {
+    return kilobyteFormatter(value);
+  }
   return defaultFormatter(value);
 }
 
@@ -38,7 +46,8 @@ export default {
     data: Array,
     title: String,
     name: String,
-    formatType: String
+    formatType: String,
+    exporting: Boolean
   },
   components: {
     highcharts: Chart,
@@ -90,7 +99,7 @@ export default {
     }, 
     options() {
       if (this.data == null) return {};
-      return {
+      let options = {
         navigator: {
           enabled: false,
         },
@@ -98,19 +107,7 @@ export default {
           enabled: false,
         },
         exporting: {
-          enabled: true,
-          buttons: {
-            contextButton: {
-              enabled:true,
-              titleKey: 'contextButtonTitle',
-              symbolFill: '#00000000',
-              symbolStrokeWidth: 1,
-              symbolStroke: "var(--v-primary-base)",
-              theme: {
-                fill: 'transparent'
-              }
-            }
-          },
+          enabled: false,
         },
         xAxis: {
           type: "datetime",
@@ -242,6 +239,26 @@ export default {
           inputEnabled: false,
         },
       };
+
+      if (this.exporting) {
+        options.exporting = {
+          enabled: true,
+          buttons: {
+            contextButton: {
+              enabled:true,
+              titleKey: 'contextButtonTitle',
+              symbolFill: '#00000000',
+              symbolStrokeWidth: 1,
+              symbolStroke: "var(--v-primary-base)",
+              theme: {
+                fill: 'transparent'
+              }
+            }
+          },
+        }
+      }
+
+      return options;
     },
   },
 };

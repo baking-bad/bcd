@@ -45,7 +45,7 @@
       <v-tab v-show="isOffChainViews" :to="pushTo({name: 'views'})" replace>
         <v-icon left small>mdi-adjust</v-icon>Views
       </v-tab>
-      <v-tab v-show="contract.tx_count > 1" :to="pushTo({name: 'contract_stats'})" replace>
+      <v-tab v-show="hasStats" :to="pushTo({name: 'contract_stats'})" replace>
         <v-icon left small>mdi-align-vertical-bottom</v-icon>Statistics
       </v-tab>
       <v-tab v-show="isSameContracts || isMigrations" :to="pushTo({name: 'details'})" replace>
@@ -71,6 +71,7 @@ export default {
     sameContracts: Array,
     isAnythingLoading: Boolean,
     migrations: Array,
+    network: String
   },
   computed: {
     isContract() {
@@ -85,6 +86,9 @@ export default {
     isOffChainViews() {
       return this.metadata && this.metadata.metadata && this.metadata.metadata.views && this.metadata.metadata.views.length > 0;
     },
+    hasStats() {
+      return this.stats.hasApi(this.network);
+    }
   },
   methods: {
     pushTo(obj) {
