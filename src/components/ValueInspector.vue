@@ -45,15 +45,6 @@
     </v-btn>
 
     <v-btn
-      v-else-if="prim === 'big_map'"
-      text
-      small
-      link
-      :to="{ path: `/${network}/big_map/${value}` }"
-      >View Big Map</v-btn
-    >
-
-    <v-btn
       v-else-if="isIpfsHash"
       text
       small
