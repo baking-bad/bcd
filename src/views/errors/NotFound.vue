@@ -6,7 +6,7 @@
       <template #description>
         <span class='body-1 font-weight-light text--secondary mt-1'>
           Please, try again or write to our team in&nbsp;
-          <a class='no-decoration' href='https://discord.gg/aG8XKuwsQd' target='_blank' rel="noopener">Discord</a>.
+          <a class='no-decoration' href='https://discord.gg/4QgKst2hF7' target='_blank' rel="noopener">Discord</a>.
         </span>
       </template>
     </EmptyState>
