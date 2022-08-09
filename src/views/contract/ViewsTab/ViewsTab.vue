@@ -220,6 +220,10 @@ export default {
     metadata: {
       deep: true,
       handler: 'initViews'
+    },
+    onChainViews: {
+      deep: true,
+      handler: 'initViews'
     }
   }
 };
