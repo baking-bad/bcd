@@ -36,6 +36,10 @@ export default {
   data: () => ({
     links: [
       {
+        'href': 'https://discord.gg/4QgKst2hF7',
+        'icon': 'mdi-discord'
+      },
+      {
         'href': 'https://github.com/baking-bad/bcd/issues',
         'icon': 'mdi-github'
       },

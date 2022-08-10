@@ -75,7 +75,7 @@ const router = new Router({
       props: { default: true },
     },
     {
-      path: '/error',
+      path: '/error-discord-test',
       components: {
         default: ErrorState
       },
