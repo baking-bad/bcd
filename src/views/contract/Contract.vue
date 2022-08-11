@@ -68,7 +68,7 @@
       :on-chain-views="onChainViews"
     />
 
-    <VContainer fluid>
+    <VContainer fluid class="pt-0">
       <router-view
         :address="address"
         :network="network"

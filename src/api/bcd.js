@@ -706,4 +706,17 @@ export class BetterCallApi {
         return this.api.get(`/contract/${network}/${address}/global_constants`, {params})
             .then(this.returnResponseData);
     }
+
+    listEvents(network, address, offset, size = 10) {
+        let params = {
+            size
+        }
+
+        if (offset > 0) {
+            params['offset'] = offset
+        }
+
+        return this.api.get(`/contract/${network}/${address}/events`, {params})
+            .then(this.returnResponseData);
+    }
 }

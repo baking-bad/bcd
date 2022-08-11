@@ -8,6 +8,9 @@
       <v-tab :to="pushTo({ name: 'operations' })" :title="contract.tx_count" replace style="width: 175px">
         <v-icon left small>mdi-swap-horizontal</v-icon>operations
         <span class="ml-1">({{ contract.tx_count || 0 | numberToCompactSIFormat }})</span>
+      </v-tab> 
+      <v-tab :to="pushTo({ name: 'events' })" replace v-if="contract.events_count && contract.events_count > 0">
+        <v-icon left small>mdi-bell-outline</v-icon>Events
       </v-tab>
       <v-tab :to="pushTo({ name: 'storage' })" replace v-if="isContract">
         <v-icon left small>mdi-database</v-icon>Storage

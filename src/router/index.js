@@ -24,6 +24,7 @@ import ContractTokensTab from '@/views/contract/TokensTab/TokensTab.vue'
 import TransfersTab from '@/views/contract/TransfersTab/TransfersTab.vue'
 import MetadataTab from '@/views/contract/MetadataTab/MetadataTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
+import EventsTab from '@/views/contract/EventsTab/EventsTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
 import OpgContents from '@/views/opg/ContentsTab.vue'
@@ -220,6 +221,12 @@ const router = new Router({
           path: 'operations',
           name: 'operations',
           component: OperationsTab,
+          props: true
+        }, 
+        {
+          path: 'events',
+          name: 'events',
+          component: EventsTab,
           props: true
         },
         {
