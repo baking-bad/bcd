@@ -40,7 +40,6 @@ import NotFound from "../views/errors/NotFound";
 import DetailsTab from "../views/contract/DetailsTab/DetailsTab";
 import ConstantTab from "@/views/constant/ConstantTab";
 import Constant from "@/views/constant/Constant";
-import ErrorState from "@/components/ErrorState";
 
 Vue.use(VueRouter)
 
@@ -72,14 +71,6 @@ const router = new Router({
         default: ExtendedSearch
       },
       name: 'search',
-      props: { default: true },
-    },
-    {
-      path: '/error',
-      components: {
-        default: ErrorState
-      },
-      name: 'error',
       props: { default: true },
     },
     {

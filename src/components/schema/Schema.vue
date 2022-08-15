@@ -535,7 +535,7 @@ export default {
           address: this.address,
           storage: this.model,
         });
-        await this.deploy(isLast, data.code, data.storage);
+        await this.deploy(data.code, data.storage);
       } catch (err) {
         this.showError(this.makeHumanableErrorMessage(err));
       } finally {
