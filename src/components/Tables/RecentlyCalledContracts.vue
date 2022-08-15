@@ -111,7 +111,14 @@ export default {
         .then((data) => {
           this.recentlyCalledContracts = this.pageable ? this.recentlyCalledContracts.concat(data) : data;
           this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.SUCCESS;
-        });
+          return data;
+        })
+        .then((data) => this.getAliases(data));
+    },
+    async getAliases(contracts) {
+      for (const idx in contracts) {     
+        contracts[idx].alias = await this.getAlias(this.network, contracts[idx].address);
+      }
     },
   },
   watch: {

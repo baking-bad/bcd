@@ -18,6 +18,7 @@ import { BetterCallApi } from "@/api/bcd.js";
 import { TokenMetadataApi } from "@/api/token_metadata.js";
 import { NodeRPC } from "@/api/rpc.js";
 import { Bookmarks } from "@/utils/bookmarks.js";
+import { Aliases } from '@/utils/aliases.js';
 import { SearchService } from "@/api/search.js";
 import { MetadataAPI } from "@/api/metadata.js";
 
@@ -135,6 +136,7 @@ let config = {
 
 let api = new BetterCallApi(config.API_URI);
 let bookmarks = new Bookmarks();
+let aliases = new Aliases(1000);
 let searchService = new SearchService(config.SEARCH_SERVICE_URI);
 let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
@@ -161,7 +163,21 @@ api.getConfig().then(response => {
 
   Vue.mixin({
     data() {
-      return { config, api, rpc, helpers, bookmarks, metadataAPI, tokenMetadata, searchService }
+      return { config, api, rpc, helpers, bookmarks, metadataAPI, tokenMetadata, searchService, aliases }
+    },
+    methods: {
+      getAlias(network, address) {
+        console.log(network, address)
+        let alias = this.aliases.get(`${network}_${address}`);
+        if (alias !== undefined) return alias;
+
+        return this.searchService.alias(network, address)
+          .then(result => {
+            this.aliases.add(`${network}_${address}`, result);
+            return result;
+          })
+          .catch(err => console.log(err));
+      }
     }
   });
 

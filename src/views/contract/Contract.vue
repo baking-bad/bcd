@@ -64,23 +64,24 @@
       :is-anything-loading="isLoadingDataForTabs"
       :same-contracts="sameContracts"
       :migrations="migrations"
-      :offchain-views="offChainViews"
+      :on-chain-views="onChainViews"
     />
 
     <VContainer fluid>
       <router-view
         :address="address"
         :network="network"
+        :alias="alias"
         :contract="contract"
         :tokensTotal="tokensTotal"
         :metadata="metadata"
         :same-contracts="sameContracts"
         :same-count="sameCount"
         :migrations="migrations"
-        :off-chain-views="offChainViews"
+        :on-chain-views="onChainViews"
       ></router-view>
 
-      <BookmarkDialog v-model="openBookMarkDialog" :alias="contract.alias || ``" @added="onBookmarkAdded"/>
+      <BookmarkDialog v-model="openBookMarkDialog" :alias="alias || ``" @added="onBookmarkAdded"/>
     </VContainer>
   </div>
 </template>
@@ -119,28 +120,17 @@ export default {
     contractTags: null,
     contractLink: '',
     isComboBoxExpanded: false,
-    sameContractsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
     sameContracts: [],
     sameCount: 0,
     migrationsLoading: DATA_LOADING_STATUSES.NOTHING,
     migrations: [],
-    offChainViews: [],
-    offChainViewsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
+    onChainViews: [],
+    onChainViewsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
     isBookmark: false,
-    openBookMarkDialog: false
+    openBookMarkDialog: false,
+    alias: undefined
   }),
   computed: {
-    alias() {
-      if (this.contract) {
-        if (this.contract.alias) {
-          return this.contract.alias;
-        } else if (this.metadata && this.metadata.name) {
-          return this.metadata.name;
-        }
-      }
-      return null;
-    },
-
     link() {
       let routeData = {};
       if (this.contract && this.contract.slug) {
@@ -159,11 +149,11 @@ export default {
     isSameContractsLoading() {
       return this.sameContractsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
-    isLoadingDataForTabs() {
-      return this.isSameContractsLoading || this.isOffChainsLoading;
-    },
-    isOffChainsLoading() {
+    isOnChainsLoading() {
       return this.offChainViewsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
+    isLoadingDataForTabs() {
+      return this.isSameContractsLoading || this.isOnChainsLoading;
     },
     isContract() {
       return this.address.startsWith("KT");
@@ -179,7 +169,7 @@ export default {
           text: toTitleCase(this.network),
         },
         {
-          text: this.contract && this.contract.alias ? this.contract.alias : shortcutOnly(this.address),
+          text: this.alias ? this.alias : shortcutOnly(this.address),
           to: `/${this.network}/${this.address}`,
           disabled: false,
         },
@@ -195,19 +185,24 @@ export default {
       hideError: "hideError",
       showClipboardOK: "showClipboardOK",
     }),
-    async loadViewsSchema() {
-      this.offChainViewsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
-      this.offChainViews = [];
-      if (this.network && this.address) {
-        try {
-          let views = await this.api.getMetadataViewsSchema(this.network, this.address);
-          this.offChainViewsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
-          views.forEach(view => applyStyles(view.schema));
-          this.offChainViews = views;
-        } catch (err) {
-          this.showError("Error while fetching off-chain views");
-        }
+    loadOnChainViews() {
+      this.onChainViews = [];
+      if (!this.network || !this.address) {
+        return
       }
+      this.onChainViewsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+
+      this.api.getMetadataViewsSchema(this.network, this.address, 'on-chain')
+        .then(views => {
+          views.forEach(view => applyStyles(view.schema));
+          this.onChainViews = views;
+        })
+        .catch(err => {
+          this.showError(`Error while fetching off-chain views: ${err}`);
+        })
+        .finally(() => {
+          this.onChainViewsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
+        })
     },
     openInTzkt() {
       openTzktContract(this.network, this.contract);
@@ -225,11 +220,11 @@ export default {
           if (!res) return;
           this.sameContracts = res.contracts;
           this.sameCount = res.count;
-          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
         })
         .catch((err) => {
           this.showError(err);
-          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+        })
+        .finally(() => {
           this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
         });
     },
@@ -256,10 +251,12 @@ export default {
     handleSearchBoxBlur() {
       this.isComboBoxExpanded = false;
     },
-    init() {
+    async init() {
       this.tokensTotal = 0;
       this.metadata = null;
       this.contract = {};
+
+      this.alias = await this.getAlias(this.network, this.address);
       if (this.isContract) {
         this.bookmarks.registerObserver(this.onBookmarkStateChanged);
         this.detectBookmark();
@@ -267,7 +264,7 @@ export default {
         this.requestSame();
         this.getContract();
         this.getTokensTotal();
-        this.loadViewsSchema();
+        this.loadOnChainViews();
       } else {
         this.getInfo();
       }
@@ -351,7 +348,7 @@ export default {
         this.bookmarks.remove(key);
       } else {
         this.openBookMarkDialog = !this.openBookMarkDialog;
-        this.name = this.contract.alias || "";
+        this.name = this.alias || "";
         
       }
     },
@@ -376,10 +373,10 @@ export default {
       this.bookmarks.add(key, {
         network: this.network,
         address: this.address,
-        alias: value || this.contract.alias,          
+        alias: value || this.alias,          
       })
       this.openBookMarkDialog = false;
-    }
+    },
   },
   watch: {
     address: {

@@ -16,18 +16,8 @@
                 style="text-transform: none;"
                 target="_blank"
                 text>
-                <span v-if="item.alias">
-                  {{
-                    item.alias.length > aliasMaxLength
-                      ? item.alias.slice(0, aliasMaxLength).trim()
-                      : item.alias
-                  }}<i
-                  v-if="item.alias.length > aliasMaxLength"
-                  class="v-icon notranslate mdi mdi-dots-horizontal"
-                  style="font-size: 16px;"
-                />
-                </span>
-                <span v-else v-html="helpers.shortcut(item.address)"></span>
+                <span v-if="item.name">{{ item.name }}</span>
+                <Shortcut v-else :str="item.address"/>
               </v-btn>
             </td>
             <td>
@@ -88,106 +78,117 @@
 <script>
 import {DATA_LOADING_STATUSES} from "../../../utils/network";
 import {mapActions} from "vuex";
+import Shortcut from "../../../components/Shortcut.vue";
 
 const PAGE_SIZE = 10;
 
 export default {
-  name: "DetailsTab",
-  props: {
-    sameContracts: Array,
-    sameCount: Number,
-    network: String,
-    address: String,
-    migrations: Array,
-  },
-  computed: {
-    page_size() {
-      return PAGE_SIZE;
+    name: "DetailsTab",
+    props: {
+        sameContracts: Array,
+        sameCount: Number,
+        network: String,
+        address: String,
+        migrations: Array,
     },
-    endSlice() {
-      return Math.min(this.sameCount, (this.page + 1) * PAGE_SIZE);
-    },
-    totalPages() {
-      return Math.max(Math.floor(this.sameCount / this.page_size), 1);
-    },
-    isLoading() {
-      return this.sameContractsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
-    },
-    isRightDisabled() {
-      return this.endSlice >= this.sameCount;
-    }
-  },
-  methods: {
-    ...mapActions(['showError']),
-    left() {
-      if (this.page > 0) this.page--;
-    },
-    right() {
-      this.page++;
-    },
-    requestSame(offset) {
-      this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
-      this.api
-        .getSameContracts(this.network, this.address, offset)
-        .then((res) => {
-          if (!res) return;
-          this.currentlyLoadedSameContracts = res.contracts;
-          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
-        })
-        .catch((err) => {
-          this.showError(err);
-          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
-        });
-    }
-  },
-  watch: {
-    page(val) {
-      this.requestSame(this.page_size * val);
-    },
-    sameContracts: {
-      handler(val) {
-        this.currentlyLoadedSameContracts = val;
-        if (this.sameContracts.length === 0) {
-          this.requestSame(0);
+    computed: {
+        page_size() {
+            return PAGE_SIZE;
+        },
+        endSlice() {
+            return Math.min(this.sameCount, (this.page + 1) * PAGE_SIZE);
+        },
+        totalPages() {
+            return Math.max(Math.floor(this.sameCount / this.page_size), 1);
+        },
+        isLoading() {
+            return this.sameContractsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
+        },
+        isRightDisabled() {
+            return this.endSlice >= this.sameCount;
         }
-      },
-      immediate: true,
     },
-  },
-  data() {
-    return {
-      page: 0,
-      aliasMaxLength: 12,
-      currentlyLoadedSameContracts: [],
-      sameContractsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
-      headers: [
-        {
-          text: "Contract",
-          class: "pl-8",
-          sortable: false,
+    methods: {
+        ...mapActions(["showError"]),
+        left() {
+            if (this.page > 0)
+                this.page--;
         },
-        {
-          text: "Network",
-          sortable: false,
+        right() {
+            this.page++;
         },
-        {
-          text: "Last active",
-          sortable: false,
+        requestSame(offset) {
+            this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+            this.api
+                .getSameContracts(this.network, this.address, offset)
+                .then((res) => {
+                    if (!res)
+                        return;
+                    this.getAliases(res.contracts);
+                    this.currentlyLoadedSameContracts = res.contracts;
+                    this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
+                })
+                .catch((err) => {
+                  this.showError(err);
+                  this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+                });
         },
-      ],
-      migrationHeaders: [
-        {
-          text: "Action",
-          class: "pl-8",
-          sortable: false,
+        async getAliases(contracts) {
+          for (let idx in contracts) {
+            contracts[idx].name = await this.getAlias(contracts[idx].network, contracts[idx].address)
+          }
         },
-        {
-          text: "Date",
-          sortable: false,
-        }
-      ]
-    }
-  }
+    },
+    watch: {
+        page(val) {
+            this.requestSame(this.page_size * val);
+        },
+        sameContracts: {
+            async handler(val) {
+                if (val === 0) {
+                    this.requestSame(0);
+                } else {
+                  await this.getAliases(val);
+                  this.currentlyLoadedSameContracts = val;
+                }
+            },
+            immediate: true,
+        },
+    },
+    data() {
+        return {
+            page: 0,
+            currentlyLoadedSameContracts: [],
+            sameContractsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
+            headers: [
+                {
+                    text: "Contract",
+                    class: "pl-8",
+                    sortable: false,
+                },
+                {
+                    text: "Network",
+                    sortable: false,
+                },
+                {
+                    text: "Last active",
+                    sortable: false,
+                },
+            ],
+            migrationHeaders: [
+                {
+                    text: "Action",
+                    class: "pl-8",
+                    sortable: false,
+                },
+                {
+                    text: "Date",
+                    sortable: false,
+                }
+            ]
+        };
+    },
+    components: { Shortcut }
 }
 </script>
 

@@ -78,7 +78,7 @@
             <Shortcut v-else :str="item.body.TokenID"/>
           </template>         
           <template v-if="item.type === 'recent'">
-            <span class="text--secondary hash">{{ item.body.type }}</span>
+            <span class="text--secondary hash">recent</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.alias">{{ item.body.alias }}</span>
             <Shortcut v-else-if="item.body.shortcut" :str="item.body.shortcut"/>
@@ -148,6 +148,7 @@
 <script>
 import { mapActions } from "vuex";
 import { isKT1Address, isOperationHash } from "@/utils/tz.js";
+import { getAccountAlias } from '@/api/search.js';
 import {
   getHistory,
   addHistoryItem,
@@ -238,7 +239,7 @@ export default {
         this.pushTo(`/${network}/opg/${this.model.body.Hash}`);
       } else if (this.model.type === "recent") {
         addHistoryItem(this.buildHistoryItem(this.model, this.model.value));
-        this.$router.push({ name: "search", query: { text: this.searchText } });
+        this.$router.push({ name: "search", query: { text: this.model.value } });
       }
 
       this.$emit('search');
@@ -358,19 +359,7 @@ export default {
       this.suggests = this.getHistoryItems(null);
     },
     getAccountName(body) {
-      if (body.TzKT !== undefined) {
-        return body.TzKT.Name;
-      }
-      if (body.TZIP !== undefined) {
-        return body.TZIP.Name;
-      }
-      if (body.Profiles !== undefined) {
-        return body.Profiles.Name;
-      }
-      if (body.Domains !== undefined) {
-        return body.Domains.Name;
-      }
-      return '';
+      return getAccountAlias(body);
     }
   },
   watch: {

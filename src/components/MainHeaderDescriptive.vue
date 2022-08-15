@@ -37,6 +37,7 @@
       <SocialsList class="socials-list ml-3"/>
       <Bookmarks />
       <ThemeSwitcher />
+      <ConnectWallet :network="network"/>
     </div>
   </header>
 </template>
@@ -46,12 +47,14 @@ import SocialsList from "./SocialsList";
 import SearchBox from "./SearchBox";
 import ThemeSwitcher from "./ThemeSwitcher";
 import Bookmarks from "./Bookmarks";
+import ConnectWallet from "@/components/ConnectWallet";
 
 export default {
   name: "MainHeaderDescriptive",
-  components: { ThemeSwitcher, SearchBox, SocialsList, Bookmarks},
+  components: {ConnectWallet, ThemeSwitcher, SearchBox, SocialsList, Bookmarks},
   props: {
     noSearch: Boolean,
+    network: String,
   },
   computed: {
     headerAdditionalClass() {
