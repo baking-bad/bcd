@@ -523,10 +523,8 @@ export default {
         })
         .finally(() => (this.execution = false));
     },
-    async fork(isLast) {
+    async fork() {
       if (this.execution) return;
-
-      
 
       this.execution = true;
       try {
@@ -535,7 +533,7 @@ export default {
           address: this.address,
           storage: this.model,
         });
-        await this.deploy(isLast, data.code, data.storage);
+        await this.deploy(data.code, data.storage);
       } catch (err) {
         this.showError(this.makeHumanableErrorMessage(err));
       } finally {
@@ -662,7 +660,7 @@ export default {
           })
           .catch((err) => {
               if (err) {
-                console.log(err);
+                console.error(err);
               }
               this.showError('This contract most likely has not been called yet.');
               this.show = true;
