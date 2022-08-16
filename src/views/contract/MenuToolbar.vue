@@ -42,7 +42,7 @@
       <v-tab :to="pushTo({ name: 'fork' })" replace v-if="isContract">
         <v-icon left small>mdi-source-fork</v-icon>Fork
       </v-tab>
-      <v-tab v-show="isOffChainViews" :to="pushTo({name: 'views'})" replace>
+      <v-tab v-show="hasOffChainViews || hasOnChainViews" :to="pushTo({name: 'views'})" replace>
         <v-icon left small>mdi-adjust</v-icon>Views
       </v-tab>
       <v-tab v-show="hasStats" :to="pushTo({name: 'contract_stats'})" replace>
@@ -71,7 +71,8 @@ export default {
     sameContracts: Array,
     isAnythingLoading: Boolean,
     migrations: Array,
-    network: String
+    network: String,
+    onChainViews: Array
   },
   computed: {
     isContract() {
@@ -83,11 +84,14 @@ export default {
     isMigrations() {
       return this.migrations.length > 0;
     },
-    isOffChainViews() {
+    hasOffChainViews() {
       return this.metadata && this.metadata.metadata && this.metadata.metadata.views && this.metadata.metadata.views.length > 0;
     },
     hasStats() {
       return this.stats.hasApi(this.network);
+    },
+    hasOnChainViews() {
+      return this.onChainViews && this.onChainViews.length > 0;
     }
   },
   methods: {

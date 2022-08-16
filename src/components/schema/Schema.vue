@@ -318,7 +318,7 @@ export default {
 
       return async () => {
         this.fireEvent("Tezos Client", "fork");
-        await this.fork(false);
+        await this.fork();
       }
     },
     setExecuteActions() {
@@ -523,10 +523,8 @@ export default {
         })
         .finally(() => (this.execution = false));
     },
-    async fork(isLast) {
-      if (this.execution) return;
-
-      
+    async fork() {
+      if (this.execution) return;      
 
       this.execution = true;
       try {
@@ -535,7 +533,7 @@ export default {
           address: this.address,
           storage: this.model,
         });
-        await this.deploy(isLast, data.code, data.storage);
+        await this.deploy(data.code, data.storage);
       } catch (err) {
         this.showError(this.makeHumanableErrorMessage(err));
       } finally {
