@@ -1,14 +1,14 @@
-const axios = require('axios').default;
+import {createAxios} from "@/api/general.js";
 
 export class RequestFailedError extends Error { }
 
 export class SearchService {
     constructor(baseURL) {
-        this.api = axios.create({
-            baseURL: baseURL,
-            timeout: 10000,
-            responseType: 'json'
-        });
+        this.api = createAxios(baseURL);
+    }
+
+    created() {
+      return this.api !== null;
     }
 
     suggest(text, size = 0, offset = 0) {

@@ -1,6 +1,6 @@
 <template>
   <v-container fluid class="pa-0 ma-0 canvas fill-canvas">
-    <v-row no-gutters>
+    <v-row no-gutters v-if="searchable">
       <v-col cols="12">
         <v-text-field
           v-model="search"
@@ -89,6 +89,9 @@ export default {
     this.fetchSearchDebounced(this.search);
   },
   computed: {
+    searchable() {
+      return this.searchService.created()
+    },
     searchText() {
       const searchText = this.search ? this.search.trim() : "";
       if (searchText.length > 2) {
@@ -103,6 +106,8 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     fetchSearchDebounced(text) {
+      if (!this.searchable) return;
+      
       this.loading = true;
       clearTimeout(this._timerId);
 

@@ -24,7 +24,7 @@
       <v-tab
         :to="pushTo({ name: 'tokens' })"
         replace
-        v-if="isContract"
+        v-if="isContract && tokenMetadata.created()"
       >
         <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
       </v-tab>

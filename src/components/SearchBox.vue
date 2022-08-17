@@ -320,7 +320,7 @@ export default {
       return result;
     },
     fetchSearchDebounced(text, seqno) {
-      if (!text || text.length < 3) return;
+      if (!this.searchService.created() || !text || text.length < 3) return;
       if (text.length > 255) text = text.substring(0, 255)
 
       this.isSearchCalled = true;
