@@ -264,7 +264,6 @@ export default {
         this.getMigrations();
         this.requestSame();
         this.getContract();
-        this.getTokensTotal();
         this.loadOnChainViews();
       } else {
         this.getInfo();
@@ -295,17 +294,6 @@ export default {
           }
         })
         .finally(() => (this.contractLoading = false));
-    },
-    getTokensTotal() {
-      this.api
-        .getContractTokensCount(this.network, this.address)
-        .then((res) => {
-          if (!res) return;
-          this.tokensTotal = res.count || 0;
-        })
-        .catch((err) => {
-          this.showError(err);
-        })
     },
     getInfo() {
       this.contractLoading = true;

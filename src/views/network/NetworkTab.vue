@@ -15,8 +15,6 @@
 </template>
 
 <script>
-import Vue from 'vue';
-import { mapActions } from "vuex";
 import NetworkInfo from "./NetworkInfo";
 import Toolbar from "@/views/network/Toolbar";
 
@@ -30,79 +28,6 @@ export default {
     NetworkInfo,
     Toolbar,
   },
-  created() {
-    if (this.network) {
-      this.getDetails(this.network);
-    }
-  },
-  data: () => ({
-    loading: true,
-    details: {},
-    series: {},
-  }),
-  computed: {
-    languages() {
-      if (!this.loading && this.details.languages) {
-        let res = Object.keys(this.details.languages)
-          .map(lang => [`${lang[0].toUpperCase()}${lang.slice(1)}`, this.details.languages[lang]]);
-
-        res.push({
-          name: 'Others',
-          y: this.details.contracts_count - res.reduce((acc, x) => acc + x[1], 0),
-          dataLabels: {
-            enabled: false
-          }
-        });
-        return res;
-      }
-      return [];
-    }
-  },
-  methods: {
-    ...mapActions(["showError"]),
-    setDetailsDataToDefault() {
-      this.details = {};
-      ['contract', 'operation', 'consumedGas', 'paidStorageSizeDiff']
-          .forEach((key) => this.setRes(key, null));
-    },
-    getDetails(network) {
-      this.loading = true;
-
-      this.api
-        .getNetworkStats(network)
-        .then(res => { this.details = res; })
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        })
-        .finally(() => (this.loading = false));
-
-      this.requestStatsData(network, "contract", 'contract');
-      this.requestStatsData(network, "operation", 'operation');
-      this.requestStatsData(network, "paid_storage_size_diff", 'paidStorageSizeDiff');
-      this.requestStatsData(network, "consumed_gas", 'consumedGas');
-    },
-    requestStatsData(network, index, key) {
-      this.api
-          .getNetworkStatsSeries(network, index, "month")
-          .then(res => this.setRes(key, res))
-          .catch(err => this.setErr(key, err));
-    },
-    setErr(key, err) {
-      Vue.set(this.series, key, []);
-      console.log(err);
-      this.showError(err);
-    },
-    setRes(key, res) {
-      Vue.set(this.series, key, res);
-    },
-  },
-  watch: {
-    network(newValue) {
-      this.setDetailsDataToDefault();
-      this.getDetails(newValue);
-    }
-  }
 };
 </script>
 
