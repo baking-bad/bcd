@@ -32,6 +32,8 @@ export function makeVuetify(dark) {
                     telegram: '#0088cc',
                     gitlab: '#F26D25',
                     instagram: '#e30181',
+                    chart: '#B8E194',
+                    chartLine: '#5b942a'
                 },
                 dark: {
                     primary: '#75A34F',
@@ -54,6 +56,8 @@ export function makeVuetify(dark) {
                     telegram: '#0088cc',
                     gitlab: '#F26D25',
                     instagram: '#e30181',
+                    chart: '#20350F',
+                    chartLine: '#5b942a'
                 }
             },
         },

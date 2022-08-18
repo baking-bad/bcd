@@ -21,6 +21,7 @@ import { Bookmarks } from "@/utils/bookmarks.js";
 import { Aliases } from '@/utils/aliases.js';
 import { SearchService } from "@/api/search.js";
 import { MetadataAPI } from "@/api/metadata.js";
+import { StatsAPI } from "@/api/stats.js";
 
 import { makeVuetify } from '@/plugins/vuetify';
 
@@ -54,7 +55,11 @@ Vue.use(PortalVue)
 Vue.use(Clipboard);
 
 Vue.filter('numberToCompactSIFormat', function (value, decimals) {
-  return SIFormatter.format(roundDownSignificantDigits(Number(value), decimals));
+  let num = Number(value);
+  if (num > 1000){
+    return SIFormatter.format(roundDownSignificantDigits(num, decimals));
+  }
+  return `${num}`;
 });
 
 Vue.filter('formatDate', function (value) {
@@ -131,7 +136,7 @@ let config = {
   SEARCH_SERVICE_URI: process.env.SEARCH_SERVICE_URI || 'https://search.dipdup.net',
   TOKEN_METADATA_API:  process.env.TOKEN_METADATA_API || "https://metadata.dipdup.net",
   IPFS_NODE: process.env.IPFS_NODE || "https://ipfs.io",
-  METADATA_API_URI: process.env.METADATA_API_URI || "https://metadata.dipdup.net"
+  METADATA_API_URI: process.env.METADATA_API_URI || "https://metadata.dipdup.net",
 }
 
 let api = new BetterCallApi(config.API_URI);
@@ -140,6 +145,11 @@ let aliases = new Aliases(1000);
 let searchService = new SearchService(config.SEARCH_SERVICE_URI);
 let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
+let stats = new StatsAPI({
+  'mainnet': process.env.MAINNET_STATS_API_URI || 'https://stats.dipdup.net',
+  'jakartanet': process.env.TESTNET_STATS_API_URI ||'https://stats-jakartanet.dipdup.net',
+  'ghostnet': process.env.GHOSTNET_STATS_API_URI ||'https://stats-ghostnet.dipdup.net',
+});
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
 if (isDark) {
@@ -163,7 +173,7 @@ api.getConfig().then(response => {
 
   Vue.mixin({
     data() {
-      return { config, api, rpc, helpers, bookmarks, metadataAPI, tokenMetadata, searchService, aliases }
+      return { config, api, rpc, helpers, bookmarks, metadataAPI, tokenMetadata, searchService, aliases, stats }
     },
     methods: {
       getAlias(network, address) {

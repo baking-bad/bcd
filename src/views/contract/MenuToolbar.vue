@@ -45,6 +45,9 @@
       <v-tab v-show="hasOffChainViews || hasOnChainViews" :to="pushTo({name: 'views'})" replace>
         <v-icon left small>mdi-adjust</v-icon>Views
       </v-tab>
+      <v-tab v-show="hasStats" :to="pushTo({name: 'contract_stats'})" replace>
+        <v-icon left small>mdi-align-vertical-bottom</v-icon>Statistics
+      </v-tab>
       <v-tab v-show="isSameContracts || isMigrations" :to="pushTo({name: 'details'})" replace>
         <v-icon left small>mdi-alert-circle-outline</v-icon>Details
       </v-tab>
@@ -68,6 +71,7 @@ export default {
     sameContracts: Array,
     isAnythingLoading: Boolean,
     migrations: Array,
+    network: String,
     onChainViews: Array
   },
   computed: {
@@ -82,6 +86,9 @@ export default {
     },
     hasOffChainViews() {
       return this.metadata && this.metadata.metadata && this.metadata.metadata.views && this.metadata.metadata.views.length > 0;
+    },
+    hasStats() {
+      return this.stats.hasApi(this.network);
     },
     hasOnChainViews() {
       return this.onChainViews && this.onChainViews.length > 0;

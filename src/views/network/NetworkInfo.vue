@@ -7,7 +7,7 @@
         <span>Constants</span>
       </v-btn>
     </header>
-    <div class="ba-1 bg-database px-4 py-2 mt-4 radius-1">
+    <div class="ba-1 bg-database px-4 py-2 radius-1" style="margin-top: 19px;">
       <v-list-item
         class="pl-0"
         v-for="(field, pos) in networkObjInfo"

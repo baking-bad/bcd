@@ -7,7 +7,11 @@
 
 <script>
 import { Chart } from "highcharts-vue";
+import Highcharts from 'highcharts'
+import exportingInit from 'highcharts/modules/exporting'
 import { MONTH_IN_MS } from "@/utils/date";
+
+exportingInit(Highcharts)
 
 function kilobyteFormatter(value, digits = 4) {
   return (value / 1024).toLocaleString(undefined, {
@@ -15,14 +19,8 @@ function kilobyteFormatter(value, digits = 4) {
   });
 }
 
-function gasFormatter(value, digits = 6) {
+function utzFormatter(value, digits = 6) {
   return (value / 10 ** 6).toLocaleString(undefined, {
-    maximumFractionDigits: digits,
-  });
-}
-
-function floorFormatter(value, digits = 6) {
-  return value.toLocaleString(undefined, {
     maximumFractionDigits: digits,
   });
 }
@@ -31,14 +29,25 @@ function defaultFormatter(value) {
   return value.toLocaleString(undefined);
 }
 
+
+function valueFormatterFunction(formatType, value) {
+  if (formatType === "utz") {
+    return utzFormatter(value, 6);
+  }
+  if (formatType === "kb") {
+    return kilobyteFormatter(value);
+  }
+  return defaultFormatter(value);
+}
+
 export default {
-  name: "ColumnChart",
+  name: "LineChart",
   props: {
     data: Array,
     title: String,
     name: String,
-    formatter: String,
-    zoom: Boolean,
+    formatType: String,
+    exporting: Boolean
   },
   components: {
     highcharts: Chart,
@@ -75,37 +84,19 @@ export default {
     }
   },
   computed: {
-    labelFormatterFunction() {
-      if (this.formatter === "kilobyte") {
-        return function () {
-          return kilobyteFormatter(this.total, 0);
-        };
-      } else if (this.formatter === "gas") {
-        return function () {
-          return gasFormatter(this.total, 0);
-        };
-      }
-      return function () {
-        return defaultFormatter(this.total);
-      };
-    },
     tooltipFormatterFunction() {
-      if (this.formatter === "kilobyte") {
-        return function () {
-          let value = kilobyteFormatter(this.y);
-          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value} KB</b><br/>`;
-        };
-      } else if (this.formatter === "gas") {
-        return function () {
-          let value = floorFormatter(this.y, 0);
-          return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
-        };
-      }
+      let formatType = this.formatType;
       return function () {
-        let value = defaultFormatter(this.y);
+        let value = valueFormatterFunction(formatType, this.y);
         return `<span style="color:${this.color}">●</span> ${this.series.name}: <b>${value}</b><br/>`;
       };
     },
+    customFormatter() {
+      let formatType = this.formatType;
+      return function(value) {
+        return valueFormatterFunction(formatType, value.value);
+      }
+    }, 
     options() {
       if (this.data == null) return {};
       let options = {
@@ -116,19 +107,7 @@ export default {
           enabled: false,
         },
         exporting: {
-          enabled: true,
-          buttons: {
-            contextButton: {
-              enabled:true,
-              titleKey: 'contextButtonTitle',
-              symbolFill: '#00000000',
-              symbolStrokeWidth: 1,
-              symbolStroke: "var(--v-primary-base)",
-              theme: {
-                fill: 'transparent'
-              }
-            }
-          },
+          enabled: false,
         },
         xAxis: {
           type: "datetime",
@@ -136,10 +115,9 @@ export default {
           title: {
             enabled: false,
           },
-          minPadding: 0.05,
-          maxPadding: 0.05,
           tickWidth: 0,
-          lineWidth: 0,
+          lineWidth: 1,
+          lineColor: "var(--v-border-base)",
           endOfTick: false,
           gridLineWidth: 0,
           tickPixelInterval: 65,
@@ -160,13 +138,16 @@ export default {
           },
         },
         yAxis: {
-          enabled: false,
+          enabled: true,
           title: {
             text: "",
           },
-          gridLineWidth: 0,
+          gridLineWidth: 1,
+          gridLineColor: "var(--v-border-base)",
+          gridLineDashStyle: 'ShortDot',
           labels: {
-            enabled: false,
+            enabled: true,
+            formatter: this.customFormatter
           },
           stackLabels: {
             enabled: true,
@@ -176,7 +157,7 @@ export default {
               fontSize: "12px",
               textOutline: "none",
             },
-            formatter: this.labelFormatterFunction,
+            formatter: this.customFormatter
           },
         },
         title: {
@@ -194,7 +175,7 @@ export default {
           backgroundColor: "var(--v-sidebar-base)",
           shadow: false,
           borderWidth: 0,
-          xDateFormat: "%B %Y",
+          xDateFormat: "%e %B %Y",
           useHTML: true,
           style: {
             color: "var(--v-text-base)",
@@ -212,12 +193,32 @@ export default {
         },
         series: [
           {
-            type: "column",
+            type: "areaspline",
             data: this.data,
-            color: "var(--v-primary-base)",
+            color: "var(--v-chartLine-base)",
             name: this.name,
             borderColor: "transparent",
             label: {},
+            lineWidth: 1,
+            opacity: 0.7,
+            marker: {
+              radius: 1
+            },
+            animation: {
+              duration: 1500
+            },
+            fillColor: {
+              linearGradient: {
+                  x1: 0,
+                  y1: 0,
+                  x2: 0,
+                  y2: 1
+              },
+              stops: [
+                  [0, "var(--v-chart-base)"],
+                  [1, 'var(--v-canvas-base)']
+              ]
+            }
           },
         ],
         chart: {
@@ -225,69 +226,70 @@ export default {
           plotBackgroundColor: "transparent",
           marginTop: 50,
           style: {
-            fontFamily: "Roboto Condensed, sans-serif",
+            fontFamily: "Roboto, sans-serif",
           },
         },
         plotOptions: {
-          column: {
-            stacking: "normal",
+          line: {
+            shadow: true,
           },
+        },
+        rangeSelector: {
+          enabled: false,
+          inputEnabled: false,
         },
       };
 
-      if (this.zoom) {
-        options = Object.assign(options, {
-          rangeSelector: {
-            allButtonsEnabled: true,
-            buttonPosition: {
-              y: -32,
-              x: -10,
-            },
-            buttonTheme: {
-              fill: "none",
-              stroke: "none",
-              "stroke-width": 0,
-              style: {
-                color: "var(--v-primary-base)",
-              },
-              states: {
-                hover: {
-                  fill: "var(--v-primary-base)",
-                  style: {
-                    color: "#fff",
-                  },
-                },
-                select: {
-                  fill: "var(--v-primary-base)",
-                  style: {
-                    color: "#fff",
-                  },
-                },
-                disabled: {
-                  style: {
-                    color: "#666",
-                  },
-                },
-              },
-            },
-            buttons: this.setDefaultButtons(),
-            selected: 0,
-            labelStyle: {
-              color: "transparent",
-            },
-            inputEnabled: false,
+      if (this.exporting) {
+        options.exporting = {
+          enabled: true,
+          buttons: {
+            contextButton: {
+              enabled:true,
+              titleKey: 'contextButtonTitle',
+              symbolFill: '#00000000',
+              symbolStrokeWidth: 1,
+              symbolStroke: "var(--v-primary-base)",
+              theme: {
+                fill: 'transparent'
+              }
+            }
           },
-        });
-      } else {
-        options = Object.assign(options, {
-          rangeSelector: {
-            enabled: false,
-            inputEnabled: false,
-          },
-        });
+        }
       }
+
       return options;
     },
   },
 };
 </script>
+
+<style>
+.highcharts-contextmenu {
+  top: 10px  !important;
+}
+
+.highcharts-menu-item:hover {
+  background: var(--v-canvas-base) !important;
+  color: var(--v-text-base) !important;
+}
+
+.highcharts-menu-item {
+  color: var(--v-text-base) !important;
+  font-size: 12px !important;
+   padding: 10px 15px !important;
+}
+
+.highcharts-menu {
+  background: var(--v-data-base) !important;
+  box-shadow: 0px 5px 5px -3px rgb(0 0 0 / 20%), 0px 8px 10px 1px rgb(0 0 0 / 14%), 0px 3px 14px 2px rgb(0 0 0 / 12%) !important;
+  border-width: 0 !important;
+  border-radius: 4px !important;
+  padding: 0 !important;
+}
+
+
+.highcharts-button-box {
+  fill: transparent !important;
+}
+</style>

@@ -7,9 +7,9 @@ import Home from '@/views/home/Home.vue'
 import ExtendedSearch from '@/views/extended_search/ExtendedSearch.vue'
 
 import Network from '@/views/network/Network.vue'
-import NetworkTab from '@/views/network/NetworkTab.vue'
-import Stats from '@/views/stats/Stats.vue'
-import StatsTab from '@/views/stats/StatsTab.vue'
+import RecentlyCalledTab from '@/views/network/RecentlyCalledTab.vue'
+import ConstantsTab from '@/views/network/ConstantsTab.vue'
+import StatsTab from '@/views/network/StatsTab.vue'
 import Diff from '@/views/diff/Diff.vue'
 import Deploy from '@/views/deploy/Deploy.vue'
 import Docs from '@/views/docs/Docs.vue'
@@ -19,7 +19,6 @@ import OperationsTab from '@/views/contract/OperationsTab.vue'
 import CodeTab from '@/views/contract/CodeTab.vue'
 import InteractTab from '@/views/contract/InteractTab.vue'
 import ViewsTab from '@/views/contract/ViewsTab/ViewsTab.vue'
-import TokensTab from '@/views/stats/TokensTab.vue'
 import StorageTab from '@/views/contract/StorageTab.vue'
 import ContractTokensTab from '@/views/contract/TokensTab/TokensTab.vue'
 import TransfersTab from '@/views/contract/TransfersTab/TransfersTab.vue'
@@ -40,6 +39,7 @@ import NotFound from "../views/errors/NotFound";
 import DetailsTab from "../views/contract/DetailsTab/DetailsTab";
 import ConstantTab from "@/views/constant/ConstantTab";
 import Constant from "@/views/constant/Constant";
+import ContractStatsTab from "@/views/contract/StatsTab.vue";
 
 Vue.use(VueRouter)
 
@@ -104,38 +104,6 @@ const router = new Router({
       ]
     },
     {
-      path: '/stats/:network',
-      components: {
-        default: Stats,
-      },
-      props: { default: true },
-      children: [
-        {
-          path: '',
-          name: 'stats',
-          redirect: 'stats_general'
-        },
-        {
-          name: 'stats_general',
-          path: 'general',
-          component: StatsTab,
-          props: true
-        },
-        {
-          path: 'fa12',
-          name: 'stats_fa12',
-          component: TokensTab,
-          props: true
-        },
-        {
-          path: 'fa2',
-          name: 'stats_fa20',
-          component: TokensTab,
-          props: true
-        }
-      ]
-    },
-    {
       path: '/diff',
       components: {
         default: Diff,
@@ -168,7 +136,7 @@ const router = new Router({
       children: [
         {
           path: '',
-          name: 'network',
+          name: 'constant',
           component: ConstantTab,
           props: true,
         },
@@ -184,7 +152,21 @@ const router = new Router({
         {
           path: '',
           name: 'network',
-          component: NetworkTab,
+          redirect: 'recently_called'
+        },{
+          path: 'recently_called',
+          name: 'recently_called',
+          component: RecentlyCalledTab,
+          props: true,
+        },{
+          path: 'constants',
+          name: 'network_constants',
+          component: ConstantsTab,
+          props: true,
+        },{
+          path: 'stats',
+          name: 'network_stats',
+          component: StatsTab,
           props: true,
         },
       ]
@@ -310,6 +292,12 @@ const router = new Router({
           path: 'tokens',
           name: 'tokens',
           component: ContractTokensTab,
+          props: true
+        },
+        {
+          path: 'stats',
+          name: 'contract_stats',
+          component: ContractStatsTab,
           props: true
         },
         {

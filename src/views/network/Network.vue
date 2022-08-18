@@ -1,16 +1,16 @@
 <template>
-  <div class="fill-height">
+  <div class="fill-height bg-canvas-base">
     <v-row>
        <v-col cols="12">
           <v-breadcrumbs :items="breadcrumbs" divider="/" class="ml-10 pl-0 pt-0 mt-3" />
        </v-col>
     </v-row>
-    <v-row class="fill-height px-8 mt-1" no-gutters>
-      <v-col cols="2">
-        <SideBar :loading="loading" :states="states" :network="currentNetwork" />
+    <v-row class="px-8 mt-1" no-gutters>
+      <v-col cols="2" >
+        <SideBar style="margin-top: 47px;" :loading="loading" :states="states" :network="currentNetwork" />
       </v-col>
       <v-col cols="10">
-        <router-view :network="currentNetwork" :state="currentState"></router-view>
+        <NetworkTab :network="currentNetwork" :state="currentState"></NetworkTab>
       </v-col>
     </v-row>
   </div>
@@ -20,11 +20,13 @@
 import { mapActions } from "vuex";
 import SideBar from "./SideBar.vue";
 import capitalize from 'lodash.capitalize';
+import NetworkTab from "./NetworkTab.vue";
 
 export default {
   name: "Network",
   components: {
     SideBar,
+    NetworkTab
   },
   data: () => ({
     loading: true,
