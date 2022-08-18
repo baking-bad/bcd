@@ -15,9 +15,6 @@
         <v-col cols="12">
           <InformationBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
         </v-col>
-        <v-col cols="12">
-          <StatisticsBlock class="island elevation-1" :dapp="dapp" :loading="loading" />
-        </v-col>
         <v-col cols="12" v-if="dexTokens && dexTokens.length">
           <DEXBlock class="island elevation-1" :dapp="dapp" :dex-tokens="dexTokens" :loading="loading" />
         </v-col>
@@ -34,7 +31,6 @@ import { mapActions } from "vuex";
 import HeaderBlock from "@/views/dapps/HeaderBlock.vue";
 import InformationBlock from "@/views/dapps/InformationBlock.vue";
 import ScreenshotsBlock from "@/views/dapps/ScreenshotsBlock.vue";
-import StatisticsBlock from "@/views/dapps/StatisticsBlock.vue";
 import DEXBlock from "@/views/dapps/DEXBlock.vue";
 import TokenBlock from "@/views/dapps/TokenBlock.vue";
 import { DAPP_CATEGORIES } from "../../constants/dapp_categories";
@@ -45,7 +41,6 @@ export default {
     HeaderBlock,
     ScreenshotsBlock,
     InformationBlock,
-    StatisticsBlock,
     DEXBlock,
     TokenBlock,
   },
