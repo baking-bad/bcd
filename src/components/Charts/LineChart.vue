@@ -175,7 +175,7 @@ export default {
           backgroundColor: "var(--v-sidebar-base)",
           shadow: false,
           borderWidth: 0,
-          xDateFormat: "%B %Y",
+          xDateFormat: "%e %B %Y",
           useHTML: true,
           style: {
             color: "var(--v-text-base)",
