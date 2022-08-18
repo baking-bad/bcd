@@ -1,5 +1,5 @@
 <template>
-  <span>
+  <span v-if="str">
     <span class="font-weight-light">{{ str.slice(0, head) }}</span>{{ str.slice(head, head + tail) }}<v-icon>mdi-dots-horizontal</v-icon>{{ str.slice(str.length - tail) }}
   </span>
 </template>

@@ -117,10 +117,10 @@
             >
               <span v-if="op.internal" class="mr-2" style="font-size: 14px">↳</span>
               <div>
-                <span class="text--secondary" v-if="op.destination_alias">{{
-                  op.destination_alias
+                <span class="text--secondary" v-if="getAlias(network, op.destination)">{{
+                  getAlias(network, op.destination)
                 }}</span>
-                <Shortcut v-else class="text--secondary" :str="op.destiantion"/>
+                <Shortcut v-else class="text--secondary" :str="op.destination"/>
                 <span class="text--secondary" style="font-size: 20px">→</span>
                 <span v-if="op.entrypoint" class="hash">{{ op.entrypoint }}()</span>
                 <span v-else>{{ op.amount | uxtz }}</span>

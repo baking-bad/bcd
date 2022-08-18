@@ -167,7 +167,6 @@ api.getConfig().then(response => {
     },
     methods: {
       getAlias(network, address) {
-        console.log(network, address)
         let alias = this.aliases.get(`${network}_${address}`);
         if (alias !== undefined) return alias;
 

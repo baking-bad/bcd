@@ -27,10 +27,14 @@ function formatValue(val, typ) {
             return ts.format("DD MMMM YYYY HH:mm");
         }
     } else if (typ === "nat" || typ === 'int') {
-        return parseInt(val, 10).toLocaleString(undefined);
+        return formatInt(val);
     }
     if (val === undefined) return 'null';
     return val;
+}
+
+function formatInt(x) {
+    return x.replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",");
 }
 
 function getValue(x) {
