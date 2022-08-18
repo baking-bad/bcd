@@ -146,7 +146,7 @@ let searchService = new SearchService(config.SEARCH_SERVICE_URI);
 let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
 let metadataAPI = new MetadataAPI(config.METADATA_API_URI);
 let stats = new StatsAPI({
-  'mainnet': process.env.MAINNET_STATS_API_URI || 'https://stats-new.dipdup.net',
+  'mainnet': process.env.MAINNET_STATS_API_URI || 'https://stats.dipdup.net',
   'jakartanet': process.env.TESTNET_STATS_API_URI ||'https://stats-jakartanet.dipdup.net',
   'ghostnet': process.env.GHOSTNET_STATS_API_URI ||'https://stats-ghostnet.dipdup.net',
 });
