@@ -86,7 +86,7 @@ export default {
     _timerId: null
   }),
   created() {
-    this.fetchSearchDebounced(this.search);
+    this.fetch(this.search);
   },
   computed: {
     searchable() {
@@ -105,6 +105,10 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    fetch(text) {
+       if (this.searchable) return this.fetchSearchDebounced(text);
+       return this.fetchDebounced();
+    },
     fetchSearchDebounced(text) {
       if (!this.searchable) return;
       
@@ -141,9 +145,46 @@ export default {
           });
       }, 100);
     },
-    onDownloadPage(entries, observer, isIntersecting) {
+    fetchDebounced() {
+      this.loading = true;
+      clearTimeout(this._timerId);
+
+      this._timerId = setTimeout(() => {
+        this.api
+          .getBigMapKeys(this.network, this.ptr, 10, this.bigmap.length)
+          .then(res => {
+            if (!res) {
+              this.downloaded = true;
+            } else {
+              res.forEach(x => {
+                this.bigmap.push({
+                  body: {
+                    '@timestamp': x.data.timestamp,
+                    'BigMapID': x.data.ptr,
+                    'IsActive': x.data.is_active,
+                    'KeyHash': x.data.key_hash,
+                    'Network': x.data.network,
+                    'Name': x.data.key_string
+                  }
+                });
+              })
+              
+              this.downloaded = res.length < 10;
+            }
+          })
+          .catch(err => {
+            console.log(err);
+            this.showError(err);
+            this.downloaded = true;
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }, 100);
+    },
+    onDownloadPage(_entries, _observer, isIntersecting) {
       if (isIntersecting) {
-        this.fetchSearchDebounced(this.searchText);
+        this.fetch(this.searchText);
       }
     },
     onFiltersChange(searchText) {
@@ -153,7 +194,7 @@ export default {
       searchText = searchText ? searchText.trim() : "";
       if (searchText.length > 2 || searchText.length === 0) {
         this.bigmap = [];
-        this.fetchSearchDebounced(searchText);
+        this.fetch(searchText);
       }
       this._locked = false;
     }

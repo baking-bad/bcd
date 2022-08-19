@@ -105,14 +105,6 @@ const router = new Router({
       ]
     },
     {
-      path: '/diff',
-      components: {
-        default: Diff,
-      },
-      name: 'diff',
-      props: { default: true },
-    },
-    {
       path: '/deploy',
       components: {
         default: Deploy,
