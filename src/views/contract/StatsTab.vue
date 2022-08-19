@@ -2,7 +2,7 @@
     <v-row class="mx-5">
         <v-col cols="12" class="d-flex justify-end align-center">
             <span class="overline mr-3">points per</span>
-            <v-btn-toggle v-model="timeframe" dense>
+            <v-btn-toggle v-model="timeframe" dense mandatory>
                 <v-btn small value="day">Day</v-btn>
                 <v-btn small value="week">Week</v-btn>
                 <v-btn small value="month">Month</v-btn>
