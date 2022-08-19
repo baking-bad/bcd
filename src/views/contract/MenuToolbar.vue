@@ -45,7 +45,7 @@
       <v-tab v-show="hasOffChainViews || hasOnChainViews" :to="pushTo({name: 'views'})" replace>
         <v-icon left small>mdi-adjust</v-icon>Views
       </v-tab>
-      <v-tab v-show="hasStats" :to="pushTo({name: 'contract_stats'})" replace>
+      <v-tab v-show="isContract && hasStats" :to="pushTo({name: 'contract_stats'})" replace>
         <v-icon left small>mdi-align-vertical-bottom</v-icon>Statistics
       </v-tab>
       <v-tab v-show="isSameContracts || isMigrations" :to="pushTo({name: 'details'})" replace>
