@@ -14,7 +14,7 @@
               <v-list-item-subtitle class="text--secondary caption">the number of originated contracts excluding manager.tz</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-btn-toggle v-model="deployments.period" dense>
+              <v-btn-toggle v-model="deployments.period" dense mandatory>
                 <v-btn small value="day">Day</v-btn>
                 <v-btn small value="week">Week</v-btn>
                 <v-btn small value="month">Month</v-btn>
@@ -45,7 +45,7 @@
               <v-list-item-subtitle class="text--secondary caption">the number of transactions that have an entrypoint in parameters</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-btn-toggle v-model="contractCalls.period" dense>
+              <v-btn-toggle v-model="contractCalls.period" dense mandatory>
                 <v-btn small value="day">Day</v-btn>
                 <v-btn small value="week">Week</v-btn>
                 <v-btn small value="month">Month</v-btn>
@@ -76,7 +76,7 @@
               <v-list-item-subtitle class="text--secondary caption">the amount of storage bytes which was paid</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-btn-toggle v-model="paidStorageSizeDiff.period" dense>
+              <v-btn-toggle v-model="paidStorageSizeDiff.period" dense mandatory>
                 <v-btn small value="day">Day</v-btn>
                 <v-btn small value="week">Week</v-btn>
                 <v-btn small value="month">Month</v-btn>
@@ -108,7 +108,7 @@
               <v-list-item-subtitle class="text--secondary caption">the amount of consumed gas</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
-              <v-btn-toggle v-model="consumedGas.period" dense>
+              <v-btn-toggle v-model="consumedGas.period" dense mandatory>
                 <v-btn small value="day">Day</v-btn>
                 <v-btn small value="week">Week</v-btn>
                 <v-btn small value="month">Month</v-btn>
