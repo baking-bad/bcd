@@ -10,7 +10,6 @@ import Network from '@/views/network/Network.vue'
 import RecentlyCalledTab from '@/views/network/RecentlyCalledTab.vue'
 import ConstantsTab from '@/views/network/ConstantsTab.vue'
 import StatsTab from '@/views/network/StatsTab.vue'
-import Diff from '@/views/diff/Diff.vue'
 import Deploy from '@/views/deploy/Deploy.vue'
 import Docs from '@/views/docs/Docs.vue'
 
