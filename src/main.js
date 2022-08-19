@@ -5,7 +5,7 @@ import App from './App.vue'
 import './styles';
 
 import store from '@/store'
-import router from '@/router'
+import { newRouter } from '@/router/index.js'
 
 import VueGtag from "vue-gtag";
 import VueMeta from 'vue-meta'
@@ -190,21 +190,14 @@ api.getConfig().then(response => {
     }
   });
 
+  let router = newRouter(config.networks)
+
   router.beforeEach((_to, _from, next) => {
     store.dispatch('hideError');
     next();
   });
 
   router.addRoutes([
-    {
-      path: '/@:slug([a-zA-Z0-9_.:-]*)',
-      name: 'slug',
-      beforeEnter: async function (to, from, next) {
-        return await api.getContractBySlug(to.params.slug)
-          .then(res => next(`/${res.network}/${res.address}`))
-          .catch(() => next(`/not_found`))
-      }
-    },
     {
       path: '*',
       beforeEnter: async function (to, from, next) {
