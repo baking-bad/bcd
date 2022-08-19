@@ -48,7 +48,7 @@
       <v-tab v-show="isContract && hasStats" :to="pushTo({name: 'contract_stats'})" replace>
         <v-icon left small>mdi-align-vertical-bottom</v-icon>Statistics
       </v-tab>
-      <v-tab v-show="isSameContracts || isMigrations" :to="pushTo({name: 'details'})" replace>
+      <v-tab v-show="isContract" :to="pushTo({name: 'details'})" replace>
         <v-icon left small>mdi-alert-circle-outline</v-icon>Details
       </v-tab>
       <v-tab v-if="isAnythingLoading">
@@ -68,21 +68,13 @@ export default {
     tokensTotal: Number,
     tokenBalancesTotal: Number,
     metadata: Object,
-    sameContracts: Array,
     isAnythingLoading: Boolean,
-    migrations: Array,
     network: String,
     onChainViews: Array
   },
   computed: {
     isContract() {
       return this.address.startsWith("KT");
-    },
-    isSameContracts() {
-      return this.sameContracts.length > 0;
-    },
-    isMigrations() {
-      return this.migrations.length > 0;
     },
     hasOffChainViews() {
       return this.metadata && this.metadata.metadata && this.metadata.metadata.views && this.metadata.metadata.views.length > 0;
