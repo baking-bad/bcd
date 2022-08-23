@@ -42,13 +42,13 @@
       <v-tab :to="pushTo({ name: 'fork' })" replace v-if="isContract">
         <v-icon left small>mdi-source-fork</v-icon>Fork
       </v-tab>
-      <v-tab v-show="hasOffChainViews || hasOnChainViews" :to="pushTo({name: 'views'})" replace>
+      <v-tab v-if="hasOffChainViews || hasOnChainViews" :to="pushTo({name: 'views'})" replace>
         <v-icon left small>mdi-adjust</v-icon>Views
       </v-tab>
-      <v-tab v-show="isContract && hasStats" :to="pushTo({name: 'contract_stats'})" replace>
+      <v-tab v-if="isContract && hasStats" :to="pushTo({name: 'contract_stats'})" replace>
         <v-icon left small>mdi-align-vertical-bottom</v-icon>Statistics
       </v-tab>
-      <v-tab v-show="isSameContracts || isMigrations" :to="pushTo({name: 'details'})" replace>
+      <v-tab v-if="isSameContracts || isMigrations" :to="pushTo({name: 'details'})" replace>
         <v-icon left small>mdi-alert-circle-outline</v-icon>Details
       </v-tab>
       <v-tab v-if="isAnythingLoading">

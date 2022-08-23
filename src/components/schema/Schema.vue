@@ -524,7 +524,11 @@ export default {
         .finally(() => (this.execution = false));
     },
     async fork() {
-      if (this.execution) return;      
+      if(!(await this.checkWalletNetwork())) {
+        return
+      }
+
+      if (this.execution) return;
 
       this.execution = true;
       try {
@@ -565,6 +569,10 @@ export default {
       }
     },
     async deploy(code, storage) {
+      if(!(await this.checkWalletNetwork())) {
+        return
+      }
+
       const client = await this.getClient();
       const operation = {
         kind: TezosOperationType.ORIGINATION,
