@@ -1,7 +1,7 @@
 <template>
     <v-row class="px-8 pt-4">
         <v-col cols="3" class="pl-4">
-            <v-list-item-group v-model="selected" class="pt-0 pb-0 themed-border radius-1">
+            <v-list-item-group v-model="selected" class="pt-0 pb-0 themed-border radius-1" mandatory>
                 <template v-for="(event, idx) in events">
                     <v-list-item :key="idx">
                         <v-list-item-content>
