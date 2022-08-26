@@ -1,6 +1,7 @@
 <template>
   <v-toolbar flat class color="toolbar" height="48">
     <v-tabs
+      v-if="isContractLoaded"
       center-active
       background-color="transparent"
       slider-color="primary"
@@ -77,6 +78,9 @@ export default {
   computed: {
     isContract() {
       return this.address.startsWith("KT");
+    },
+    isContractLoaded() {
+      return Object.keys(this.contract || {}).length
     },
     isSameContracts() {
       return this.sameContracts.length > 0;

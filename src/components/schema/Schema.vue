@@ -283,7 +283,7 @@ export default {
     async checkWalletNetwork() {
       const account = Wallet.getLastUsedAccount();
 
-      if(account && this.network !== account.network.type) {
+      if(account && (this.network || this.selectedNetwork) !== account.network.type) {
         const confirm = await this.$refs.confirm.open(
             "Warning",
             "The networks of the active wallet and the current contract do not match.",
@@ -475,7 +475,7 @@ export default {
         .finally(() => (this.execution = false));
     },
     async getClient(isLast = true) {
-      return Wallet.getClient(this.network, this.getWalletEventHandlers(), isLast);
+      return Wallet.getClient((this.network || this.selectedNetwork), this.getWalletEventHandlers(), isLast);
     },
     async callContract() {
       let parameter = await this.generateParameters(true);
@@ -553,6 +553,10 @@ export default {
       return err.message;
     },
     async makeDeploy() {
+      if(!(await this.checkWalletNetwork())) {
+        return
+      }
+
       if (this.execution) return;
 
       this.execution = true;
@@ -569,10 +573,6 @@ export default {
       }
     },
     async deploy(code, storage) {
-      if(!(await this.checkWalletNetwork())) {
-        return
-      }
-
       const client = await this.getClient();
       const operation = {
         kind: TezosOperationType.ORIGINATION,

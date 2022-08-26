@@ -97,7 +97,7 @@ export default {
             .then(account => {
                 this.info = account;
             })
-            .catch(err => console.log(err))
+            .catch(err => console.error(err))
             .finally(() => this.loading = false);
         },
     },

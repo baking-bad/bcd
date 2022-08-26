@@ -392,7 +392,7 @@ export default {
           this.diffs = res;
         }).
         catch(err => {
-          console.log(err);
+          console.error(err);
           this.showError(err);
         }).
         finally(() => {
