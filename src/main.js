@@ -133,21 +133,23 @@ Vue.directive('pastHtml', {
 let config = {
   API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
   HOME_PAGE: 'home',
-  IPFS_NODE: process.env.IPFS_NODE || "https://ipfs.io",
+  IPFS_NODE: process.env.VUE_APP_IPFS_NODE || "https://ipfs.io",
 }
 
 let api = new BetterCallApi(config.API_URI);
 let bookmarks = new Bookmarks();
 let aliases = new Aliases(1000);
-let searchService = new SearchService(config.SEARCH_SERVICE_URI);
-let tokenMetadata = new TokenMetadataApi(config.TOKEN_METADATA_API);
-let metadataService = new MetadataAPI(config.METADATA_API_URI);
+let searchService = new SearchService(process.env.VUE_APP_SEARCH_SERVICE_URI);
+let tokenMetadata = new TokenMetadataApi(process.env.VUE_APP_TOKEN_METADATA_API);
+let metadataService = new MetadataAPI(process.env.VUE_APP_METADATA_API_URI);
 let stats = new StatsAPI({
-  'mainnet': process.env.MAINNET_STATS_API_URI || 'https://stats.dipdup.net',
-  'jakartanet': process.env.TESTNET_STATS_API_URI ||'https://stats-jakartanet.dipdup.net',
-  'ghostnet': process.env.GHOSTNET_STATS_API_URI ||'https://stats-ghostnet.dipdup.net',
-  'kathmandunet': process.env.KATHMANDU_STATS_API_URI ||'https://stats-kathmandu.dipdup.net',
+  'mainnet': process.env.VUE_APP_MAINNET_STATS_API_URI,
+  'jakartanet': process.env.VUE_APP_TESTNET_STATS_API_URI,
+  'ghostnet': process.env.VUE_APP_GHOSTNET_STATS_API_URI,
+  'kathmandunet': process.env.VUE_APP_KATHMANDU_STATS_API_URI,
 });
+
+console.log(process.env)
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
 if (isDark) {
