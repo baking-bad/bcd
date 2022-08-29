@@ -146,6 +146,7 @@ let stats = new StatsAPI({
   'mainnet': process.env.MAINNET_STATS_API_URI || 'https://stats.dipdup.net',
   'jakartanet': process.env.TESTNET_STATS_API_URI ||'https://stats-jakartanet.dipdup.net',
   'ghostnet': process.env.GHOSTNET_STATS_API_URI ||'https://stats-ghostnet.dipdup.net',
+  'kathmandunet': process.env.KATHMANDU_STATS_API_URI ||'https://stats-kathmandu.dipdup.net',
 });
 
 const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
