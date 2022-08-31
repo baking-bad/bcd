@@ -14,12 +14,12 @@
       </v-col>
     </v-row>
     <v-row justify="center" no-gutters>
-      <v-col cols="12" sm="8" lg="6" xl="4">
+      <v-col cols="12" sm="8" lg="6" xl="5">
         <SearchBox />
       </v-col>
     </v-row>
     <v-row justify="center" no-gutters>
-      <v-col cols="12" sm="8" lg="6" xl="4">
+      <v-col cols="12" sm="8" lg="6" xl="5">
         <header class="d-flex justify-space-between align-center">
           <h3 class="text--secondary font-weight-regular header-table">Recently called contracts</h3>
           <div>
