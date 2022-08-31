@@ -23,7 +23,12 @@
                     <v-list-item two-line>
                         <v-list-item-content>
                             <v-list-item-title class="headline accent--text">{{ item.tag }}</v-list-item-title>
-                            <v-list-item-subtitle>{{ item.hash }}</v-list-item-subtitle>
+                            <v-list-item-subtitle>
+                                <router-link class="text--secondary caption" style="text-decoration: none;" exact :to="`/${network}/opg/${item.hash}`">
+                                    {{ item.hash }}
+                                    <v-icon small>mdi-open-in-new</v-icon>
+                                </router-link>
+                            </v-list-item-subtitle>
                         </v-list-item-content>
                         <v-list-item-action class="justify-end">
                             <v-list-item-action-text class="caption">{{ item.timestamp | formatShortTime}}</v-list-item-action-text>
