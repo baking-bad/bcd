@@ -1,51 +1,45 @@
 <template>
   <v-container class="fill-height canvas main-rows-wrapper" fluid>
     <v-row no-gutters class="search-row">
-      <v-col cols="12">
-        <v-row>
-          <v-col
-            cols="12"
-            class="d-flex flex-column align-center justify-center primary--text"
+      <v-col
+        cols="12"
+        class="d-flex flex-column align-center justify-center primary--text"
+      >
+          <span
+            class="script-casual"
+            style="font-size: 72px"
           >
-              <span
-                class="script-casual"
-                style="font-size: 72px"
-              >
-                Better Call Dev
-              </span>
-          </v-col>
-        </v-row>
-        <v-row justify="center" no-gutters>
-          <v-col cols="12" sm="8" lg="6" xl="4">
-            <SearchBox />
-          </v-col>
-        </v-row>
+            Better Call Dev
+          </span>
       </v-col>
     </v-row>
-    <v-row no-gutters>
-      <v-col cols="12">
-        <v-row justify="center" no-gutters>
-          <v-col cols="12" sm="8" lg="6" xl="4">
-            <header class="d-flex justify-space-between">
-              <h3 class="text--secondary font-weight-regular header-table">Recently called contracts</h3>
-              <v-btn-toggle v-model="selectedNetwork" color="primary" dense mandatory>
-                <v-btn
-                  small
-                  :value="data"
-                  v-for="data in networks"
-                  :key="data"
-                >
-                  {{ data }}
-                  <div
-                    v-if="networksStats.length > 0"
-                    :class="getSyncClass(data)"
-                  ></div>
-                </v-btn>
-              </v-btn-toggle>
-            </header>
-            <RecentlyCalledContracts class="mt-4" :network="selectedNetwork" />
-          </v-col>
-        </v-row>
+    <v-row justify="center" no-gutters>
+      <v-col cols="12" sm="8" lg="6" xl="4">
+        <SearchBox />
+      </v-col>
+    </v-row>
+    <v-row justify="center" no-gutters>
+      <v-col cols="12" sm="8" lg="6" xl="4">
+        <header class="d-flex justify-space-between align-center">
+          <h3 class="text--secondary font-weight-regular header-table">Recently called contracts</h3>
+          <div>
+            <v-btn-toggle v-model="selectedNetwork" color="primary" dense mandatory>
+              <v-btn
+                small
+                :value="data"
+                v-for="data in networks"
+                :key="data"
+              >
+                {{ data }}
+                <div
+                  v-if="networksStats.length > 0"
+                  :class="getSyncClass(data)"
+                ></div>
+              </v-btn>
+            </v-btn-toggle>
+          </div>
+        </header>
+        <RecentlyCalledContracts class="mt-4" :network="selectedNetwork" />
       </v-col>
     </v-row>
     <v-row>
