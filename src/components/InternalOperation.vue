@@ -85,9 +85,11 @@
     <v-row no-gutters class="px-4 pt-4" style="font-size: 16px;">
       <v-col cols="11">
         <span v-if="data.tag" class="hash accent--text">event {{ data.tag }}</span>
-        <span v-else-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
-        <span v-else-if="data.entrypoint" class="hash secondary--text">{{ data.entrypoint }}</span>
-        <span v-else class="hash accent--text">{{ data.kind }}</span>
+        <span v-else>
+          <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
+          <span v-if="data.entrypoint" class="hash secondary--text">{{ data.entrypoint }}</span>
+          <span v-else class="hash accent--text">{{ data.kind }}</span>
+        </span>
         <v-chip class="ml-3 overline" :color="statusColor" small outlined label>{{ data.status }}</v-chip>
       </v-col>
       <v-col
