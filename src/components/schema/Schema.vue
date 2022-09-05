@@ -259,10 +259,13 @@ export default {
       }
     },
     michelsonActionCallback() {
-      return this.isDeploy ? null : () => {
-        this.fireEvent("Michelson", "interact");
-        this.michelsonParameters();
+      if (this.isParameter) {
+        return () => {
+          this.fireEvent("Michelson", "interact");
+          this.michelsonParameters()
+        }
       }
+      return null;      
     },
     tezosClientActionCallback() {
       return this.isParameter
