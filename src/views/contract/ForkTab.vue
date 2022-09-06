@@ -9,7 +9,6 @@
             title="Fork"
             type="storage"
             header="Storage"
-            :isStorage="true"
             :schema="storage.schema"
             :network="$route.params.network"
             :address="$route.params.address"
