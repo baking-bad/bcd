@@ -109,7 +109,7 @@ export default {
                 this.step = 2;
             })
             .catch(err => {
-                console.log(err);
+                console.error(err);
                 this.fileUploadErrorText = 'Error occured during upload file. Please, check file format and size.';
             })
             .finally(() => {

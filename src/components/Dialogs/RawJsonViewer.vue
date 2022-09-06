@@ -263,7 +263,7 @@ export default {
           this.loaded = true;
         })
         .catch((err) => {
-          console.log(err);
+          console.error(err);
           this.showError(err);
         });
     },

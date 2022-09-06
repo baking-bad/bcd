@@ -1,6 +1,7 @@
 <template>
   <v-toolbar flat class color="toolbar" height="48">
     <v-tabs
+      :key="componentKey"
       center-active
       background-color="transparent"
       slider-color="primary"
@@ -45,10 +46,10 @@
       <v-tab :to="pushTo({ name: 'fork' })" replace v-if="isContract">
         <v-icon left small>mdi-source-fork</v-icon>Fork
       </v-tab>
-      <v-tab v-show="hasOffChainViews || hasOnChainViews" :to="pushTo({name: 'views'})" replace>
+      <v-tab v-if="hasOffChainViews || hasOnChainViews" :to="pushTo({name: 'views'})" replace>
         <v-icon left small>mdi-adjust</v-icon>Views
       </v-tab>
-      <v-tab v-show="isContract && hasStats" :to="pushTo({name: 'contract_stats'})" replace>
+      <v-tab v-if="isContract && hasStats" :to="pushTo({name: 'contract_stats'})" replace>
         <v-icon left small>mdi-align-vertical-bottom</v-icon>Statistics
       </v-tab>
       <v-tab v-show="isContract" :to="pushTo({name: 'details'})" replace>
@@ -74,6 +75,16 @@ export default {
     isAnythingLoading: Boolean,
     network: String,
     onChainViews: Array
+  },
+  data() {
+    return {
+      componentKey: 1
+    }
+  },
+  watch: {
+    'contract.tx_count'() {
+      this.componentKey += 1;
+    }
   },
   computed: {
     isContract() {

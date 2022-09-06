@@ -12,7 +12,7 @@
       <v-tab :to="pushTo({ name: 'network_constants' })"  replace>
         <v-icon left small>mdi-alphabetical-variant</v-icon>Global constants
       </v-tab>
-      <v-tab v-show="hasStats" :to="pushTo({name: 'network_stats'})" replace>
+      <v-tab v-if="hasStats" :to="pushTo({name: 'network_stats'})" replace>
         <v-icon left small>mdi-align-vertical-bottom</v-icon>Statistics
       </v-tab>
     </v-tabs>
