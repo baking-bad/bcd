@@ -655,7 +655,9 @@ export default {
           )
           .then((res) => {
             if (!res) return;
-            this.model = res.default_model[this.name];
+            let model = res.default_model[this.name];
+            if (typeof(model) === 'object') this.model = model;
+            else this.model = res.default_model;
             this.show = true;
           })
           .catch((err) => {
