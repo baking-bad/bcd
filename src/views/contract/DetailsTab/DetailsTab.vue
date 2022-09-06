@@ -85,11 +85,9 @@ const PAGE_SIZE = 10;
 export default {
     name: "DetailsTab",
     props: {
-        sameContracts: Array,
         sameCount: Number,
         network: String,
         address: String,
-        migrations: Array,
     },
     computed: {
         page_size() {
@@ -107,6 +105,10 @@ export default {
         isRightDisabled() {
             return this.endSlice >= this.sameCount;
         }
+    },
+    mounted() {
+      this.requestSame(0);
+      this.requestMigrations(0);
     },
     methods: {
         ...mapActions(["showError"]),
@@ -133,6 +135,20 @@ export default {
                   this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
                 });
         },
+        requestMigrations() {
+            this.migrationsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
+            this.api
+              .getContractMigrations(this.network, this.address)
+              .then((res) => {
+                if (!res) return;
+                this.migrations = res;
+                this.migrationsLoadingStatus = DATA_LOADING_STATUSES.SUCCESS;
+              })
+              .catch((err) => {
+                this.showError(err);
+                this.migrationsLoadingStatus = DATA_LOADING_STATUSES.ERROR;
+              });
+        },
         async getAliases(contracts) {
           for (let idx in contracts) {
             contracts[idx].name = await this.getAlias(contracts[idx].network, contracts[idx].address)
@@ -143,23 +159,15 @@ export default {
         page(val) {
             this.requestSame(this.page_size * val);
         },
-        sameContracts: {
-            async handler(val) {
-                if (val === 0) {
-                    this.requestSame(0);
-                } else {
-                  await this.getAliases(val);
-                  this.currentlyLoadedSameContracts = val;
-                }
-            },
-            immediate: true,
-        },
     },
     data() {
         return {
             page: 0,
             currentlyLoadedSameContracts: [],
-            sameContractsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
+            sameContractsLoadingStatus: DATA_LOADING_STATUSES.PROGRESS,
+            migrationsLoadingStatus: DATA_LOADING_STATUSES.PROGRESS,
+            sameContracts: [],
+            migrations: [],
             headers: [
                 {
                     text: "Contract",
