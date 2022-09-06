@@ -9,6 +9,9 @@
       <v-tab :to="pushTo({ name: 'operations' })" :title="contract.tx_count" replace style="width: 175px">
         <v-icon left small>mdi-swap-horizontal</v-icon>operations
         <span class="ml-1">({{ contract.tx_count || 0 | numberToCompactSIFormat }})</span>
+      </v-tab> 
+      <v-tab :to="pushTo({ name: 'events' })" replace v-if="contract.events_count && contract.events_count > 0">
+        <v-icon left small>mdi-bell-outline</v-icon>Events
       </v-tab>
       <v-tab :to="pushTo({ name: 'storage' })" replace v-if="isContract">
         <v-icon left small>mdi-database</v-icon>Storage
@@ -22,7 +25,7 @@
       <v-tab
         :to="pushTo({ name: 'tokens' })"
         replace
-        v-if="isContract"
+        v-if="isContract && tokenMetadata.created()"
       >
         <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
       </v-tab>
@@ -49,7 +52,7 @@
       <v-tab v-if="isContract && hasStats" :to="pushTo({name: 'contract_stats'})" replace>
         <v-icon left small>mdi-align-vertical-bottom</v-icon>Statistics
       </v-tab>
-      <v-tab v-if="isSameContracts || isMigrations" :to="pushTo({name: 'details'})" replace>
+      <v-tab v-show="isContract" :to="pushTo({name: 'details'})" replace>
         <v-icon left small>mdi-alert-circle-outline</v-icon>Details
       </v-tab>
       <v-tab v-if="isAnythingLoading">
@@ -69,9 +72,7 @@ export default {
     tokensTotal: Number,
     tokenBalancesTotal: Number,
     metadata: Object,
-    sameContracts: Array,
     isAnythingLoading: Boolean,
-    migrations: Array,
     network: String,
     onChainViews: Array
   },
@@ -88,12 +89,6 @@ export default {
   computed: {
     isContract() {
       return this.address.startsWith("KT");
-    },
-    isSameContracts() {
-      return this.sameContracts.length > 0;
-    },
-    isMigrations() {
-      return this.migrations.length > 0;
     },
     hasOffChainViews() {
       return this.metadata && this.metadata.metadata && this.metadata.metadata.views && this.metadata.metadata.views.length > 0;

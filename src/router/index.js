@@ -10,7 +10,6 @@ import Network from '@/views/network/Network.vue'
 import RecentlyCalledTab from '@/views/network/RecentlyCalledTab.vue'
 import ConstantsTab from '@/views/network/ConstantsTab.vue'
 import StatsTab from '@/views/network/StatsTab.vue'
-import Diff from '@/views/diff/Diff.vue'
 import Deploy from '@/views/deploy/Deploy.vue'
 import Docs from '@/views/docs/Docs.vue'
 
@@ -24,6 +23,7 @@ import ContractTokensTab from '@/views/contract/TokensTab/TokensTab.vue'
 import TransfersTab from '@/views/contract/TransfersTab/TransfersTab.vue'
 import MetadataTab from '@/views/contract/MetadataTab/MetadataTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
+import EventsTab from '@/views/contract/EventsTab/EventsTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
 import OpgContents from '@/views/opg/ContentsTab.vue'
@@ -32,9 +32,6 @@ import BigMap from '@/views/big_map/BigMap.vue'
 import BigMapKeys from '@/views/big_map/KeysTab.vue'
 import BigMapHistory from '@/views/big_map/HistoryTab.vue'
 
-import DAppList from '@/views/dapps/List.vue'
-import DApp from '@/views/dapps/DApp.vue'
-import MainDApp from '@/views/dapps/Main.vue'
 import NotFound from "../views/errors/NotFound";
 import DetailsTab from "../views/contract/DetailsTab/DetailsTab";
 import ConstantTab from "@/views/constant/ConstantTab";
@@ -74,42 +71,11 @@ const router = new Router({
       props: { default: true },
     },
     {
-      path: '/dapps',
-      components: {
-        default: MainDApp
-      },
+      path: '/dapps*',
       props: { default: true },
-      children: [
-        {
-          path: '',
-          name: 'dapps',
-          redirect: 'list'
-        },
-        {
-          path: 'list',
-          components: {
-            default: DAppList
-          },
-          name: 'dapps_list',
-          props: { default: true },
-        },
-        {
-          path: ':slug',
-          components: {
-            default: DApp
-          },
-          name: 'dapp',
-          props: { default: true },
-        },
-      ]
-    },
-    {
-      path: '/diff',
-      components: {
-        default: Diff,
-      },
-      name: 'diff',
-      props: { default: true },
+      redirect() {
+        window.location.href = 'https://tzkt.io/dapps'
+      }
     },
     {
       path: '/deploy',
@@ -220,6 +186,12 @@ const router = new Router({
           path: 'operations',
           name: 'operations',
           component: OperationsTab,
+          props: true
+        }, 
+        {
+          path: 'events',
+          name: 'events',
+          component: EventsTab,
           props: true
         },
         {

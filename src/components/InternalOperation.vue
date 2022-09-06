@@ -84,9 +84,12 @@
     </v-row>
     <v-row no-gutters class="px-4 pt-4" style="font-size: 16px;">
       <v-col cols="11">
-        <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
-        <span v-if="data.entrypoint" class="hash secondary--text">{{ data.entrypoint }}</span>
-        <span v-else class="hash accent--text">{{ data.kind }}</span>
+        <span v-if="data.tag" class="hash accent--text">event {{ data.tag }}</span>
+        <span v-else>
+          <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
+          <span v-if="data.entrypoint" class="hash secondary--text">{{ data.entrypoint }}</span>
+          <span v-else class="hash accent--text">{{ data.kind }}</span>
+        </span>
         <v-chip class="ml-3 overline" :color="statusColor" small outlined label>{{ data.status }}</v-chip>
       </v-col>
       <v-col
@@ -204,6 +207,16 @@
               >{{ data.storage_size | bytes}}</span>
               <MiguelTreeView :miguel="diffs" :network="data.network" diffMode />
             </template>
+          </v-col>
+        </v-row>
+        <v-row
+          class="my-1 parameters px-2 py-3 canvas"
+          v-else-if="hasEventPayload"
+          no-gutters
+        >
+          <v-col :cols="expanded ? 12 : 6">
+              <span class="overline ml-3">Payload</span>
+              <MiguelTreeView :miguel="data.event" :network="data.network" openAll />
           </v-col>
         </v-row>
       </div>
@@ -343,11 +356,20 @@ export default {
         this.diffs !== undefined
       );
     },
+    hasEventPayload() {
+      return (
+        this.data != null &&
+        this.data !== undefined &&
+        this.data.event != null &&
+        this.data.event !== undefined
+      );
+    },
     showDetails() {
       return this.data.hash === undefined || 
         this.data.kind === 'origination' || 
         this.hasParameters || 
-        this.hasStorageDiff;
+        this.hasStorageDiff ||
+        this.hasEventPayload;
     },
     statusColor() {
       if (this.data.status === "applied") return "success";

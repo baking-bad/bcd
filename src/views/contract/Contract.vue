@@ -63,12 +63,10 @@
       :tokensTotal="tokensTotal"
       :metadata="metadata"
       :is-anything-loading="isLoadingDataForTabs"
-      :same-contracts="sameContracts"
-      :migrations="migrations"
       :on-chain-views="onChainViews"
     />
 
-    <VContainer fluid>
+    <VContainer fluid class="pt-0">
       <router-view
         :address="address"
         :network="network"
@@ -76,9 +74,7 @@
         :contract="contract"
         :tokensTotal="tokensTotal"
         :metadata="metadata"
-        :same-contracts="sameContracts"
-        :same-count="sameCount"
-        :migrations="migrations"
+        :same-count="contract ? contract.same_count: 0"
         :on-chain-views="onChainViews"
       ></router-view>
 
@@ -121,10 +117,6 @@ export default {
     contractTags: null,
     contractLink: '',
     isComboBoxExpanded: false,
-    sameContracts: [],
-    sameCount: 0,
-    migrationsLoading: DATA_LOADING_STATUSES.NOTHING,
-    migrations: [],
     onChainViews: [],
     onChainViewsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
     isBookmark: false,
@@ -147,14 +139,11 @@ export default {
       }
       return `${window.location.protocol}//${window.location.host}${routeData.href}`;
     },
-    isSameContractsLoading() {
-      return this.sameContractsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
-    },
     isOnChainsLoading() {
       return this.offChainViewsLoadingStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
     isLoadingDataForTabs() {
-      return this.isSameContractsLoading || this.isOnChainsLoading;
+      return this.isOnChainsLoading;
     },
     isContract() {
       return this.address.startsWith("KT");
@@ -208,41 +197,6 @@ export default {
     openInTzkt() {
       openTzktContract(this.network, this.contract);
     },
-    requestSame() {
-      if (!this.isContract
-        || this.sameContractsLoadingStatus !== DATA_LOADING_STATUSES.NOTHING
-      ) return;
-      this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.PROGRESS;
-      this.sameContracts = [];
-      this.sameCount = 0;
-      this.api
-        .getSameContracts(this.network, this.address, 0)
-        .then((res) => {
-          if (!res) return;
-          this.sameContracts = res.contracts;
-          this.sameCount = res.count;
-        })
-        .catch((err) => {
-          this.showError(err);
-        })
-        .finally(() => {
-          this.sameContractsLoadingStatus = DATA_LOADING_STATUSES.NOTHING;
-        });
-    },
-    getMigrations() {
-      this.migrations = [];
-      this.migrationsLoading = true;
-      this.api
-        .getContractMigrations(this.network, this.address)
-        .then((res) => {
-          if (!res) return;
-          this.migrations = res;
-        })
-        .catch((err) => {
-          this.showError(err);
-        })
-        .finally(() => (this.migrationsLoading = false));
-    },
     handleSearchBoxFocus() {
       const { width } = this.$refs.searchbox.$el.getBoundingClientRect();
       if (width < MIN_SEARCHBOX_WIDTH) {
@@ -261,8 +215,6 @@ export default {
       if (this.isContract) {
         this.bookmarks.registerObserver(this.onBookmarkStateChanged);
         this.detectBookmark();
-        this.getMigrations();
-        this.requestSame();
         this.getContract();
         this.loadOnChainViews();
       } else {
@@ -321,7 +273,9 @@ export default {
         .finally(() => (this.contractLoading = false));
     },
     getMetadata() {
-      this.metadataAPI
+      if (!this.metadataService.created()) return;
+
+      this.metadataService
         .get(this.network, this.address)
         .then((res) => {
           if (!res) return;

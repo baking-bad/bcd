@@ -260,10 +260,13 @@ export default {
       }
     },
     michelsonActionCallback() {
-      return this.isDeploy ? null : () => {
-        this.fireEvent("Michelson", "interact");
-        this.michelsonParameters();
+      if (this.isParameter) {
+        return () => {
+          this.fireEvent("Michelson", "interact");
+          this.michelsonParameters()
+        }
       }
+      return null;      
     },
     tezosClientActionCallback() {
       return this.isParameter
@@ -664,7 +667,9 @@ export default {
           )
           .then((res) => {
             if (!res) return;
-            this.model = res.default_model[this.name];
+            let model = res.default_model[this.name];
+            if (typeof(model) === 'object') this.model = model;
+            else this.model = res.default_model;
             this.show = true;
           })
           .catch((err) => {
