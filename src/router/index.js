@@ -32,9 +32,6 @@ import BigMap from '@/views/big_map/BigMap.vue'
 import BigMapKeys from '@/views/big_map/KeysTab.vue'
 import BigMapHistory from '@/views/big_map/HistoryTab.vue'
 
-import DAppList from '@/views/dapps/List.vue'
-import DApp from '@/views/dapps/DApp.vue'
-import MainDApp from '@/views/dapps/Main.vue'
 import NotFound from "../views/errors/NotFound";
 import DetailsTab from "../views/contract/DetailsTab/DetailsTab";
 import ConstantTab from "@/views/constant/ConstantTab";
@@ -74,34 +71,11 @@ const router = new Router({
       props: { default: true },
     },
     {
-      path: '/dapps',
-      components: {
-        default: MainDApp
-      },
+      path: '/dapps*',
       props: { default: true },
-      children: [
-        {
-          path: '',
-          name: 'dapps',
-          redirect: 'list'
-        },
-        {
-          path: 'list',
-          components: {
-            default: DAppList
-          },
-          name: 'dapps_list',
-          props: { default: true },
-        },
-        {
-          path: ':slug',
-          components: {
-            default: DApp
-          },
-          name: 'dapp',
-          props: { default: true },
-        },
-      ]
+      redirect() {
+        window.location.href = 'https://tzkt.io/dapps'
+      }
     },
     {
       path: '/deploy',
