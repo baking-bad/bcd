@@ -453,8 +453,17 @@ export class BetterCallApi {
         })
     }
 
-    getContractBigMapKeys(network, ptr, q = '', offset = 0) {
-        return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys?q=${q}&offset=${offset}`, {})
+    getBigMapKeys(network, ptr, limit = 10, offset = 0) {
+        let params = {
+            limit: 10
+        }
+        if (offset) {
+            params['offset'] = offset;
+        }
+        if (limit > 0 && limit < 10) {
+            params['limit'] = limit;
+        }
+        return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys`, {params: params})
             .then((res) => {
                 if (!res) {
                     return res;
@@ -704,6 +713,19 @@ export class BetterCallApi {
         }
 
         return this.api.get(`/contract/${network}/${address}/global_constants`, {params})
+            .then(this.returnResponseData);
+    }
+
+    listEvents(network, address, offset, size = 10) {
+        let params = {
+            size
+        }
+
+        if (offset > 0) {
+            params['offset'] = offset
+        }
+
+        return this.api.get(`/contract/${network}/${address}/events`, {params})
             .then(this.returnResponseData);
     }
 }

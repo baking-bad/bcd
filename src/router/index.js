@@ -10,7 +10,6 @@ import Network from '@/views/network/Network.vue'
 import RecentlyCalledTab from '@/views/network/RecentlyCalledTab.vue'
 import ConstantsTab from '@/views/network/ConstantsTab.vue'
 import StatsTab from '@/views/network/StatsTab.vue'
-import Diff from '@/views/diff/Diff.vue'
 import Deploy from '@/views/deploy/Deploy.vue'
 import Docs from '@/views/docs/Docs.vue'
 
@@ -24,6 +23,7 @@ import ContractTokensTab from '@/views/contract/TokensTab/TokensTab.vue'
 import TransfersTab from '@/views/contract/TransfersTab/TransfersTab.vue'
 import MetadataTab from '@/views/contract/MetadataTab/MetadataTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
+import EventsTab from '@/views/contract/EventsTab/EventsTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
 import OpgContents from '@/views/opg/ContentsTab.vue'
@@ -102,14 +102,6 @@ const router = new Router({
           props: { default: true },
         },
       ]
-    },
-    {
-      path: '/diff',
-      components: {
-        default: Diff,
-      },
-      name: 'diff',
-      props: { default: true },
     },
     {
       path: '/deploy',
@@ -220,6 +212,12 @@ const router = new Router({
           path: 'operations',
           name: 'operations',
           component: OperationsTab,
+          props: true
+        }, 
+        {
+          path: 'events',
+          name: 'events',
+          component: EventsTab,
           props: true
         },
         {

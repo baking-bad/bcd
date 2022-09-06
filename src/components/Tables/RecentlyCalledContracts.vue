@@ -110,10 +110,12 @@ export default {
       return this.api.getRecentlyCalledContracts(this.network, this.itemsPerPage, offset)
         .then((data) => {
           this.recentlyCalledContracts = this.pageable ? this.recentlyCalledContracts.concat(data) : data;
-          this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.SUCCESS;
           return data;
         })
-        .then((data) => this.getAliases(data));
+        .then((data) => this.getAliases(data))
+        .finally(() => {
+          this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.SUCCESS;
+        });
     },
     async getAliases(contracts) {
       for (const idx in contracts) {     

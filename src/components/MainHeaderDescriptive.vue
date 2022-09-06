@@ -7,7 +7,7 @@
       </RouterLink>
     </div>
     <div>
-      <v-btn text small :to="{ name: 'search' }" class="text--secondary" active-class="bg-before-transparent">
+      <v-btn text small :to="{ name: 'search' }" class="text--secondary" active-class="bg-before-transparent" v-if="searchService.created()">
         Search
       </v-btn>
       <v-btn text small :to="{ path: networksPath }" class="text--secondary" active-class="bg-before-transparent">

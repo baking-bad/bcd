@@ -1,14 +1,6 @@
-const axios = require('axios').default;
+import {createAxios} from "@/api/general.js";
 
 export class RequestFailedError extends Error { }
-
-function createAxios(baseURL, timeout = 10000) {
-  return axios.create({
-    baseURL: baseURL,
-    timeout: timeout,
-    responseType: 'json'
-  })
-}
 
 function get(api, query) {
   return api.post('/v1/graphql', query)
@@ -36,6 +28,10 @@ function buildQuery(query, address, network, limit, offset) {
 export class TokenMetadataApi {
     constructor(baseURL) {
       this.api = createAxios(baseURL);
+    }
+
+    created() {
+      return this.api !== null;
     }
 
     get(network, address, limit=10, offset=0) {

@@ -68,7 +68,7 @@
       :on-chain-views="onChainViews"
     />
 
-    <VContainer fluid>
+    <VContainer fluid class="pt-0">
       <router-view
         :address="address"
         :network="network"
@@ -321,7 +321,9 @@ export default {
         .finally(() => (this.contractLoading = false));
     },
     getMetadata() {
-      this.metadataAPI
+      if (!this.metadataService.created()) return;
+
+      this.metadataService
         .get(this.network, this.address)
         .then((res) => {
           if (!res) return;
