@@ -1,6 +1,6 @@
 <template>
   <v-chip-group v-if="this.tags" active-class="primary--text" column>
-      <v-chip small class="caption" v-for="(tag) in readable" :key="tag">{{ tag }}</v-chip>
+      <v-chip disabled active small class="caption chip" v-for="(tag) in readable" :key="tag">{{ tag }}</v-chip>
   </v-chip-group>
 </template>
 
@@ -43,3 +43,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.chip {
+  opacity: 1;
+}
+</style>
