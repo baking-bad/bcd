@@ -8,7 +8,6 @@
              <v-text-field
               v-model="search"
               color="primary"
-              label="Filter by"
               placeholder="Start entering hash of operation, source or destination address"
               clearable
               outlined
