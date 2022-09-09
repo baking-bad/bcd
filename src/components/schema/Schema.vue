@@ -353,6 +353,23 @@ export default {
           callback: this.beaconClientActionCallback()
         },
       ];
+      this.importActions.push(
+          {
+            text: "Wallet",
+            icon: "mdi-lighthouse",
+            callback: this.beaconWalletGetAddress()
+          }
+      );
+    },
+    beaconWalletGetAddress() {
+      return async () => {
+        let lastAccount = Wallet.getLastUsedAccount();
+        if (!lastAccount) {   
+          await this.getClient(false);
+          lastAccount = Wallet.getLastUsedAccount();        
+        }
+        return lastAccount.address;  
+      }
     },
     getIconForWalletName(name) {
       return name in walletsToIcons ? walletsToIcons[name] : walletsToIcons.default;
