@@ -39,13 +39,14 @@
             </v-list-item-group>
         </v-col>
         <v-col cols="8">
-            <v-card outlined style="background-color:transparent;" min-height="424">
-                <v-card-text class="pa-3 ma-0">
-                    <v-skeleton-loader :loading="!this.selectedItem.series" type="image@2" min-height="400">
+            <v-card outlined style="background-color:transparent;" min-height="400">
+                <v-card-text class="ma-0 pa-0">
+                    <v-skeleton-loader :loading="!selectedItem.series" type="image@2" tile min-height="400">
                         <LineChart
-                            :data="this.selectedItem.series"
-                            :name="this.selectedItem.name"
-                            :formatType="this.selectedItem.formatter"
+                            class="ma-4"
+                            :data="selectedItem.series"
+                            :name="selectedItem.name"
+                            :formatType="selectedItem.formatter"
                             exporting
                         />
                     </v-skeleton-loader>
