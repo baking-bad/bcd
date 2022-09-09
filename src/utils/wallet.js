@@ -1,8 +1,9 @@
-import {DAppClient, ColorMode} from "@airgap/beacon-sdk";
+import {DAppClient, ColorMode, NetworkType} from "@airgap/beacon-sdk";
 import TZKTBlockExplorer from "@/utils/tzkt";
 
 const CORRECT_NETWORK_TYPES = {
-    "hangzhou2net": "hangzhounet",
+    "hangzhou2net": NetworkType.HANGZHOUNET,
+    "sandboxnet": NetworkType.CUSTOM
 }
 
 export class Wallet {
@@ -86,8 +87,7 @@ export class Wallet {
 
     static async getNewPermissions(network, isLast) {
         const rpcUrl = window.config.rpc_endpoints[network];
-        const networkMap = {sandboxnet: "custom"};
-        const type = networkMap[network] || network;
+        const type = CORRECT_NETWORK_TYPES[network] || network;
         if (!isLast) {
             await Wallet.wallet.clearActiveAccount();
         } else {

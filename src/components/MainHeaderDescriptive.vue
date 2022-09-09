@@ -61,6 +61,9 @@ export default {
       return this.$vuetify.theme.dark;
     },
     networksPath() {
+      if (this.config.sandbox_mode) {
+        return `/${this.$route.params.network || 'sandboxnet'}/`
+      }
       return `/${this.$route.params.network || 'mainnet'}/`
     }
   },
