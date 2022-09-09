@@ -16,16 +16,7 @@
             <v-col cols="12">
                 <v-select
                     v-model="internalFilters.status"
-                    :items="[
-                        'applied',
-                        'failed',
-                        'backtracked',
-                        'skipped',
-                        'pending',
-                        'lost',
-                        'refused',
-                        'branch_refused',
-                    ]"
+                    :items="status"
                     chips
                     outlined
                     clearable
@@ -37,6 +28,19 @@
                     background-color="data"
                     hide-details
                 >
+                <template v-slot:prepend-item>
+                  <v-list-item ripple @mousedown.prevent @click="selectAllStatuses">
+                    <v-list-item-action>
+                      <v-icon>{{ selectAllIconStatuses }}</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        Select All
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider></v-divider>
+                </template>
                 <template v-slot:selection="{ item, index }">
                     <v-chip x-small v-if="index < 1">
                     <span>{{ item }}</span> </v-chip
@@ -62,6 +66,19 @@
                     multiple
                     hide-details
                 >
+                <template v-slot:prepend-item>
+                  <v-list-item ripple @mousedown.prevent @click="selectAllEntrypoints">
+                    <v-list-item-action>
+                      <v-icon>{{ selectAllIconEntrypoints }}</v-icon>
+                    </v-list-item-action>
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        Select All
+                      </v-list-item-title>
+                    </v-list-item-content>
+                  </v-list-item>
+                  <v-divider></v-divider>
+                </template>
                 <template v-slot:selection="{ index }">
                     <v-chip x-small v-if="index < 1">
                         <span>{{ shortestEntrypoint }}</span> 
@@ -141,6 +158,18 @@ export default {
           this.$emit('input', value)
         }
       },
+      status() {
+        return [
+            'applied',
+            'failed',
+            'backtracked',
+            'skipped',
+            'pending',
+            'lost',
+            'refused',
+            'branch_refused',
+        ]
+      },
       isContract() {
         if (this.contract.address) return isKT1Address(this.contract.address);
         return false;
@@ -166,6 +195,24 @@ export default {
       },
       maxDate() {
         return dayjs().format("YYYY-MM-DD");
+      },
+      selectedAllStatuses() {
+        return this.internalFilters.status.length == this.status.length;
+      },
+      selectAllIconStatuses() {
+        if (this.selectedAllStatuses) {
+          return 'mdi-close-box';
+        }
+        return  'mdi-checkbox-blank-outline';
+      },
+      selectedAllEntrypoints() {
+        return this.internalFilters.entrypoints.length == this.contract.entrypoints.length;
+      },
+      selectAllIconEntrypoints() {
+        if (this.selectedAllEntrypoints) {
+          return 'mdi-close-box';
+        }
+        return  'mdi-checkbox-blank-outline';
       }
     },
     methods: {
@@ -188,6 +235,20 @@ export default {
         saveOnEnter() {
           this.filter();
           this.show = false;
+        },
+        selectAllStatuses() {
+          if (this.selectedAllStatuses) {
+            this.internalFilters.status = [];
+          } else  {
+            this.internalFilters.status = this.status;
+          }
+        },
+        selectAllEntrypoints() {
+          if (this.selectedAllEntrypoints) {
+            this.internalFilters.entrypoints = [];
+          } else  {
+            this.internalFilters.entrypoints = this.contract.entrypoints;
+          }
         }
     },
 }
