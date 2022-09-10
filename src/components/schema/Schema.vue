@@ -599,11 +599,9 @@ export default {
     getRandomContract(props) {
       this.show = false;
       this.api
-        .search(props.schema.tag, ["contract"], 0, [this.network], [], {}, 0)
+        .findContractByTag(this.network, props.schema.tag)
         .then((res) => {
-          if (res.items) {
-            Vue.set(this.model, props.fullKey, res.items[0].value);
-          }
+            Vue.set(this.model, props.fullKey, res.address);
         })
         .catch((err) => {
           this.showError(err.message);
