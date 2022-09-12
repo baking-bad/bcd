@@ -1,8 +1,9 @@
-import {DAppClient} from "@airgap/beacon-sdk";
+import {DAppClient, ColorMode, NetworkType} from "@airgap/beacon-sdk";
 import TZKTBlockExplorer from "@/utils/tzkt";
 
 const CORRECT_NETWORK_TYPES = {
-    "hangzhou2net": "hangzhounet",
+    "hangzhou2net": NetworkType.HANGZHOUNET,
+    "sandboxnet": NetworkType.CUSTOM
 }
 
 export class Wallet {
@@ -15,6 +16,8 @@ export class Wallet {
             preferredNetwork: network in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[network] : network,
             blockExplorer: new TZKTBlockExplorer(),
         });
+
+        await Wallet.setTheme();
 
         return Wallet.wallet
     }
@@ -32,12 +35,17 @@ export class Wallet {
     static async getClient(network, eventHandlers, isLast) {
         let client;
 
-        if (Wallet.wallet && !isLast) {
-            Wallet.isPermissionGiven = false
-            await this.getNewPermissions(network, isLast);
-            client = Wallet.wallet ? Wallet.wallet : await Wallet.getWallet(network, eventHandlers);
+        if (Wallet.wallet) {
+            client = Wallet.wallet;
+            await Wallet.setTheme();
         } else {
-            client = Wallet.wallet ? Wallet.wallet : await Wallet.getWallet(network, eventHandlers);
+            client = await Wallet.getWallet(network, eventHandlers)
+        }
+
+        if (!isLast) {
+            Wallet.isPermissionGiven = false            
+            await this.getNewPermissions(network, isLast);            
+        } else {
             if (!Wallet.isPermissionGiven) {
                 await this.getNewPermissions(network, isLast);
             }
@@ -79,8 +87,7 @@ export class Wallet {
 
     static async getNewPermissions(network, isLast) {
         const rpcUrl = window.config.rpc_endpoints[network];
-        const networkMap = {sandboxnet: "custom"};
-        const type = networkMap[network] || network;
+        const type = CORRECT_NETWORK_TYPES[network] || network;
         if (!isLast) {
             await Wallet.wallet.clearActiveAccount();
         } else {
@@ -109,6 +116,12 @@ export class Wallet {
                 reject();
             }
         })
+    }
+
+    static async setTheme() {
+        if (!Wallet.wallet) return;
+        let mode = localStorage.getItem("dark") === 'true' ? ColorMode.DARK : ColorMode.LIGHT;
+        await Wallet.wallet.setColorMode(mode);
     }
 }
 Wallet.changer = {}
