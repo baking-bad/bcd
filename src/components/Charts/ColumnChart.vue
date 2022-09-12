@@ -109,6 +109,16 @@ export default {
     options() {
       if (this.data == null) return {};
       let options = {
+        noData: {
+            style: {
+                fontSize: '15px',
+                color: 'var(--v-text-base)',
+                opacity: 0.9
+            }
+        },
+        lang: {
+          noData: "No data for this period are available"
+        },
         navigator: {
           enabled: false,
         },

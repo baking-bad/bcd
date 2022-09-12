@@ -9,9 +9,10 @@
 import { Chart } from "highcharts-vue";
 import Highcharts from 'highcharts'
 import exportingInit from 'highcharts/modules/exporting'
-import { MONTH_IN_MS } from "@/utils/date";
+import HighchartsNoData from 'highcharts-no-data-to-display';
 
-exportingInit(Highcharts)
+exportingInit(Highcharts);
+HighchartsNoData(Highcharts);
 
 function kilobyteFormatter(value, digits = 4) {
   return (value / 1024).toLocaleString(undefined, {
@@ -52,37 +53,6 @@ export default {
   components: {
     highcharts: Chart,
   },
-  methods: {
-    setDefaultButtons() {
-      const firstElement = this.data[0];
-      const firstData = firstElement[0];
-      if (new Date() - firstData < MONTH_IN_MS * 6) {
-        return [
-          {
-            type: "all",
-            text: "All",
-          },
-        ];
-      } else {
-        return [
-          {
-            type: "month",
-            count: 6,
-            text: "6m",
-          },
-          {
-            type: "year",
-            count: 1,
-            text: "1Y",
-          },
-          {
-            type: "all",
-            text: "All",
-          },
-        ];
-      }
-    }
-  },
   computed: {
     tooltipFormatterFunction() {
       let formatType = this.formatType;
@@ -121,6 +91,7 @@ export default {
           endOfTick: false,
           gridLineWidth: 0,
           tickPixelInterval: 65,
+          showEmpty: false,
           dateTimeLabelFormats: {
             millisecond: "%H:%M:%S.%L",
             second: "%H:%M:%S",
@@ -230,13 +201,28 @@ export default {
           },
         },
         plotOptions: {
-          line: {
+          areaspline: {
             shadow: true,
           },
         },
         rangeSelector: {
           enabled: false,
           inputEnabled: false,
+        },
+        noData: {
+            style: {
+                fontSize: '15px',
+                color: 'var(--v-text-base)',
+                opacity: 0.7,
+                fontWeight: 'normal',
+            },
+            position: {
+              y: -5
+            }
+        },
+        lang: {
+          noData: "No data for this period are available",
+          loading: "Loading..."
         },
       };
 
@@ -260,7 +246,7 @@ export default {
 
       return options;
     },
-  },
+  }
 };
 </script>
 
