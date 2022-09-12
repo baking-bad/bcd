@@ -728,4 +728,13 @@ export class BetterCallApi {
         return this.api.get(`/contract/${network}/${address}/events`, {params})
             .then(this.returnResponseData);
     }
+
+    findContractByTag(network, tags) {
+        let params = {
+            tags
+        }
+
+        return this.api.get(`/helpers/contracts/${network}`, {params})
+            .then(this.returnResponseData);
+    }
 }
