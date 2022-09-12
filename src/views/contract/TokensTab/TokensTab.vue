@@ -67,7 +67,7 @@
             <v-col cols="2" v-if="token.metadata.thumbnailUri" class="d-flex flex-column align-center justify-start">
               <span class="overline mt-10" v-if="!token.loaded">Loading thumbnail...</span>
               <div class="d-flex flex-column align-center justify-start">
-                <v-img @load="loadedImage(token)" :src="getIPFS(token.metadata.thumbnailUri)" sizes="200" alt="Thumbnail" contain eager max-height="200">
+                <v-img @load="loadedImage(token)" :src="getIPFS(token.metadata.thumbnailUri)" max-width="200" alt="Thumbnail" eager max-height="200">
                 </v-img>
                 <div class="mt-4" v-if="token.loaded">
                   <p class="overline">Image from thumbnail URL</p>
