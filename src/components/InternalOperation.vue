@@ -203,7 +203,7 @@
               </v-tooltip>
               <span
                 class="text--secondary caption"
-                v-if="data"
+                v-if="data && data.storage_size"
               >{{ data.storage_size | bytes}}</span>
               <MiguelTreeView :miguel="diffs" :network="data.network" diffMode />
             </template>
@@ -407,6 +407,10 @@ export default {
     getDiff() {
       if (this.data.status !== "applied") return;
       if (this.diffs !== null) return;
+      if (this.data.storage_diff) {
+        this.diffs = this.data.storage_diff;
+        return;
+      }
       this.loadingDiffs = true;
 
       this.api.getOperationDiff(this.data.network, this.data.id).
