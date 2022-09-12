@@ -77,7 +77,7 @@ export default {
   data: () => ({
     stats: [],
     loadingHead: true,
-    selectedNetwork: 'mainnet',
+    selectedNetwork: null,
     networks: window.config.networks,
     networksStats: [],
     listenerNetworksSync: null,
@@ -88,17 +88,15 @@ export default {
       return this.loadingNetworkSync === DATA_LOADING_STATUSES.PROGRESS;
     }
   },
-  created() {
-    this.listenNetworksSync();
-  },
   destroyed() {
     this.stopListeningNetworksSync();
   },
   mounted() {
+    this.listenNetworksSync();
+
     if (this.$route.name !== this.config.HOME_PAGE) {
       this.$router.push({ path: this.config.HOME_PAGE });
     }
-    this.getHead();
   },
   methods: {
     ...mapActions(["showError"]),
@@ -113,7 +111,7 @@ export default {
           this.loadingNetworkSync = DATA_LOADING_STATUSES.SUCCESS;
         });
     },
-    listenNetworksSync() {
+    listenNetworksSync() {      
       this.requestNetworkSync();
       this.listenerNetworksSync = setTimeout(() => {
         this.listenNetworksSync();

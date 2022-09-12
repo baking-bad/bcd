@@ -273,19 +273,29 @@ export default {
 
       await waitUntil(() => this.isSearchCalled === false);
       if (isKT1Address(searchText)) {
-        const firstContractSuggest = this.suggests.find((suggest) => suggest.type === 'account');
-        if (firstContractSuggest) {
-          const { body } = firstContractSuggest;
-          await this.$router.push({path: `/${body.Network}/${body.Address}`});
+        if (this.config.sandbox_mode) {
+          await this.$router.push({path: `/sandboxnet/${searchText}`});
           return;
+        } else {
+          const firstContractSuggest = this.suggests.find((suggest) => suggest.type === 'account');
+          if (firstContractSuggest) {
+            const { body } = firstContractSuggest;
+            await this.$router.push({path: `/${body.Network}/${body.Address}`});
+            return;
+          }
         }
       }
       if (isOperationHash(searchText)) {
-        const firstOperationSuggest = this.suggests.find((suggest) => suggest.type === 'operation');
-        if (firstOperationSuggest) {
-          const { body } = firstOperationSuggest;
-          await this.$router.push({path: `/${body.Network}/opg/${body.Hash}`});
+        if (this.config.sandbox_mode) {
+          await this.$router.push({path: `/sandboxnet/opg/${searchText}`});
           return;
+        } else {
+          const firstOperationSuggest = this.suggests.find((suggest) => suggest.type === 'operation');
+          if (firstOperationSuggest) {
+            const { body } = firstOperationSuggest;
+            await this.$router.push({path: `/${body.Network}/opg/${body.Hash}`});
+            return;
+          }
         }
       }
       if (searchText !== null && searchText.length > 2) {
