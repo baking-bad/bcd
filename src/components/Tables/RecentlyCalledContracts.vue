@@ -43,18 +43,15 @@
           </tr>
         </template>
         <template v-slot:footer v-if="pageable">
-          <v-toolbar flat>
-            <v-spacer></v-spacer>
-            <span
-                class="caption grey--text mr-4"
-            ></span>
+          <div class="footer-pagination">
+            <span class="caption grey--text mr-2">{{ offset }} - {{ offset + itemsPerPage }} of {{ totalItems }}</span>
             <v-btn icon @click="page --" :disabled="page === 0">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
-            <v-btn icon @click="page ++" :disabled="totalPage < page">
+            <v-btn icon @click="page ++" :disabled="(totalItems  / itemsPerPage) < page">
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
-          </v-toolbar>
+          </div>
         </template>
       </v-data-table>
     </v-skeleton-loader>
@@ -89,34 +86,21 @@ export default {
     isRecentlyCalledLoading() {
       return this.loadingRecentlyCalledContractsStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
+    offset() {
+      return this.recentlyCalledContracts.length
+    }
   },
   mounted() {
     this.init();
   },
-  destroyed() {
-    if (this.updateable) {
-      this.stopListeningRecentlyCalledContracts();
-    }
-  },
   methods: {
     async init() {
-      if (!this.network) return;
-      
-      this.listenRecentlyCalledContracts();
+      if (!this.network) return;      
+      this.requestRecentlyCalledContracts();
 
       if (!this.updateable) {
-        this.totalPage = Number((await this.api.getContractsCount(this.network)) / this.itemsPerPage);
+        this.totalItems = Number((await this.api.getContractsCount(this.network)));
       }
-    },
-    listenRecentlyCalledContracts() {
-      this.requestRecentlyCalledContracts();
-      this.listenerRecentlyCalledContracts = setTimeout(() => {
-        this.listenRecentlyCalledContracts();
-      }, 30 * 1000);
-    },
-    stopListeningRecentlyCalledContracts() {
-      this.recentlyCalledContracts = [];
-      clearTimeout(this.listenerRecentlyCalledContracts);
     },
     requestRecentlyCalledContracts(offset = 0) {
       this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.PROGRESS;
@@ -143,8 +127,8 @@ export default {
       this.init();
     },
     page(val) {
-      if (val === this.recentlyCalledContracts.length / this.itemsPerPage) {
-        this.requestRecentlyCalledContracts(this.recentlyCalledContracts.length);
+      if (val === this.offset / this.itemsPerPage) {
+        this.requestRecentlyCalledContracts(this.offset);
       }
     }
   },
@@ -152,7 +136,7 @@ export default {
     return {
       aliasMaxLength: 24,
       page: 0,
-      totalPage: 0,
+      totalItems: 0,
       loadingRecentlyCalledContractsStatus: DATA_LOADING_STATUSES.NOTHING,
       recentlyCalledTableHeaders: [
         {
