@@ -5,7 +5,7 @@
         :items="recentlyCalledContracts"
         :headers="recentlyCalledTableHeaders"
         :class="['ba-1 mt-4 avg-gas-consumption', {'hide-pagination-count' : hidePaginationCount}]"
-        :hide-default-footer="!pageable"
+        hide-default-footer
         :page.sync="page"
         :options="{itemsPerPage}"
         :footer-props="{
@@ -41,6 +41,20 @@
               <span class="text--secondary">{{ helpers.formatDatetime(item.last_action)  }}</span>
             </td>
           </tr>
+        </template>
+        <template v-slot:footer v-if="pageable">
+          <v-toolbar flat>
+            <v-spacer></v-spacer>
+            <span
+                class="caption grey--text mr-4"
+            ></span>
+            <v-btn icon @click="page --" :disabled="page === 0">
+              <v-icon>mdi-chevron-left</v-icon>
+            </v-btn>
+            <v-btn icon @click="page ++" :disabled="totalPage < page">
+              <v-icon>mdi-chevron-right</v-icon>
+            </v-btn>
+          </v-toolbar>
         </template>
       </v-data-table>
     </v-skeleton-loader>
@@ -85,16 +99,13 @@ export default {
     }
   },
   methods: {
-    init() {
+    async init() {
       if (!this.network) return;
       
-      if (this.updateable) {
-        this.listenRecentlyCalledContracts();
-      } else {
-        const request = this.requestRecentlyCalledContracts();
-        if (this.pageable) {
-          request.then(() => this.page = 1);
-        }
+      this.listenRecentlyCalledContracts();
+
+      if (!this.updateable) {
+        this.totalPage = Number((await this.api.getContractsCount(this.network)) / this.itemsPerPage);
       }
     },
     listenRecentlyCalledContracts() {
@@ -128,7 +139,7 @@ export default {
   watch: {
     network() {
       this.recentlyCalledContracts = [];
-      this.page = -1;
+      this.page = 0;
       this.init();
     },
     page(val) {
@@ -141,6 +152,7 @@ export default {
     return {
       aliasMaxLength: 24,
       page: 0,
+      totalPage: 0,
       loadingRecentlyCalledContractsStatus: DATA_LOADING_STATUSES.NOTHING,
       recentlyCalledTableHeaders: [
         {
