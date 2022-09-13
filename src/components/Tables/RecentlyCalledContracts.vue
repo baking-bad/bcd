@@ -76,7 +76,7 @@ export default {
       return this.loadingRecentlyCalledContractsStatus === DATA_LOADING_STATUSES.PROGRESS;
     },
   },
-  created() {
+  mounted() {
     this.init();
   },
   destroyed() {
@@ -86,6 +86,8 @@ export default {
   },
   methods: {
     init() {
+      if (!this.network) return;
+      
       if (this.updateable) {
         this.listenRecentlyCalledContracts();
       } else {
