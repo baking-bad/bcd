@@ -44,7 +44,7 @@
         </template>
         <template v-slot:footer v-if="pageable">
           <div class="footer-pagination">
-            <span class="caption grey--text mr-2">{{ offset }} - {{ offset + itemsPerPage }} of {{ totalItems }}</span>
+            <span class="caption grey--text mr-2">{{ page * itemsPerPage }} - {{ page * itemsPerPage + itemsPerPage }} of {{ totalItems }}</span>
             <v-btn icon @click="page --" :disabled="page === 0">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
