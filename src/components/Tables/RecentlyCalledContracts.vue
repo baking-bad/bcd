@@ -44,11 +44,11 @@
         </template>
         <template v-slot:footer v-if="pageable">
           <div class="footer-pagination">
-            <span class="caption grey--text mr-2">{{ page * itemsPerPage }} - {{ page * itemsPerPage + itemsPerPage }} of {{ totalItems }}</span>
-            <v-btn icon @click="page --" :disabled="page === 0">
+            <span class="caption grey--text mr-2">{{ (page - 1) * itemsPerPage+1 }} - {{ nextPageCount }} of {{ totalItems }}</span>
+            <v-btn icon @click="changePage(page-1)" :disabled="page === 1">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
-            <v-btn icon @click="page ++" :disabled="(totalItems  / itemsPerPage) < page">
+            <v-btn icon @click="changePage(page+1)" :disabled="(totalItems  / itemsPerPage) < page">
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
           </div>
@@ -88,12 +88,22 @@ export default {
     },
     offset() {
       return this.recentlyCalledContracts.length
+    },
+    nextPageCount() {
+      const count = this.page * this.itemsPerPage;
+      return count < this.totalItems ? count : this.totalItems;
     }
   },
   mounted() {
     this.init();
   },
   methods: {
+    changePage(page) {
+      this.page = page;
+      if (this.page - 1 === this.offset / this.itemsPerPage) {
+        this.requestRecentlyCalledContracts(this.offset);
+      }
+    },
     async init() {
       if (!this.network) return;      
       this.requestRecentlyCalledContracts();
@@ -123,19 +133,14 @@ export default {
   watch: {
     network() {
       this.recentlyCalledContracts = [];
-      this.page = 0;
+      this.page = 1;
       this.init();
     },
-    page(val) {
-      if (val === this.offset / this.itemsPerPage) {
-        this.requestRecentlyCalledContracts(this.offset);
-      }
-    }
   },
   data() {
     return {
       aliasMaxLength: 24,
-      page: 0,
+      page: 1,
       totalItems: 0,
       loadingRecentlyCalledContractsStatus: DATA_LOADING_STATUSES.NOTHING,
       recentlyCalledTableHeaders: [
