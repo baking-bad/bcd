@@ -7,8 +7,9 @@
         hide-default-footer
         :page.sync="page"
         :options="{itemsPerPage}"
-        :loading="isRecentlyCalledLoading"
+        :loading="loading"
         loading-text="Loading recently called contracts... Please wait"
+        :server-items-length="totalItems"
         :footer-props="{
             itemsPerPageOptions: []
         }"
@@ -59,8 +60,6 @@
 </template>
 
 <script>
-import {DATA_LOADING_STATUSES} from "../../utils/network";
-
 export default {
   name: "RecentlyCalledContracts",
   props: {
@@ -83,9 +82,6 @@ export default {
     }
   },
   computed: {
-    isRecentlyCalledLoading() {
-      return this.loadingRecentlyCalledContractsStatus === DATA_LOADING_STATUSES.PROGRESS;
-    },
     offset() {
       return this.recentlyCalledContracts.length
     },
@@ -99,10 +95,9 @@ export default {
   },
   methods: {
     changePage(page) {
+      const offset = this.page * this.itemsPerPage;
       this.page = page;
-      if (this.page - 1 === this.offset / this.itemsPerPage) {
-        this.requestRecentlyCalledContracts(this.offset);
-      }
+      this.requestRecentlyCalledContracts(offset);
     },
     async init() {
       if (!this.network) return;      
@@ -113,16 +108,15 @@ export default {
       }
     },
     requestRecentlyCalledContracts(offset = 0) {
-      this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.PROGRESS;
+      if (this.loading) return;
+      this.loading = true;
       return this.api.getRecentlyCalledContracts(this.network, this.itemsPerPage, offset)
         .then((data) => {
-          this.recentlyCalledContracts = this.pageable ? this.recentlyCalledContracts.concat(data) : data;
+          this.recentlyCalledContracts = data;
           return data;
         })
         .then((data) => this.getAliases(data))
-        .finally(() => {
-          this.loadingRecentlyCalledContractsStatus = DATA_LOADING_STATUSES.SUCCESS;
-        });
+        .finally(() => this.loading = false);
     },
     async getAliases(contracts) {
       for (const idx in contracts) {     
@@ -142,7 +136,7 @@ export default {
       aliasMaxLength: 24,
       page: 1,
       totalItems: 0,
-      loadingRecentlyCalledContractsStatus: DATA_LOADING_STATUSES.NOTHING,
+      loading: false,
       recentlyCalledTableHeaders: [
         {
           text: "Contract",
