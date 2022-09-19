@@ -3,12 +3,14 @@
       <v-data-table
         :items="recentlyCalledContracts"
         :headers="recentlyCalledTableHeaders"
-        :class="['ba-1 mt-4 avg-gas-consumption', {'hide-pagination-count' : hidePaginationCount}]"
+        :class="['ba-1 mt-4 recently-called', {'hide-pagination-count' : hidePaginationCount}]"
         hide-default-footer
         :page.sync="page"
         :options="{itemsPerPage}"
         :loading="loading"
         loading-text="Loading recently called contracts... Please wait"
+        no-data-text="No called contracts found"
+        no-results-text="No called contracts found"
         :server-items-length="totalItems"
         :footer-props="{
             itemsPerPageOptions: []
@@ -22,18 +24,18 @@
                 :to="`/${network}/${item.address}/`"
                 style="text-transform: none;"
                 text>
-                        <span v-if="item.alias">
-                          {{
-                            item.alias.length > aliasMaxLength
-                              ? item.alias.slice(0, aliasMaxLength).trim()
-                              : item.alias
-                          }}<em
-                          v-if="item.alias.length > aliasMaxLength"
-                          class="v-icon notranslate mdi mdi-dots-horizontal"
-                          style="font-size: 16px;"
-                        />
-                        </span>
-                <span v-else v-html="helpers.shortcut(item.address, 8)"></span>
+                  <span v-if="item.alias">
+                    {{
+                      item.alias.length > aliasMaxLength
+                        ? item.alias.slice(0, aliasMaxLength).trim()
+                        : item.alias
+                    }}<em
+                    v-if="item.alias.length > aliasMaxLength"
+                    class="v-icon notranslate mdi mdi-dots-horizontal"
+                    style="font-size: 16px;"
+                  />
+                  </span>
+                <Shortcut v-else :str="item.address"/>
               </v-btn>
             </td>
             <td>
@@ -60,118 +62,127 @@
 </template>
 
 <script>
+import Shortcut from '../Shortcut.vue';
 export default {
-  name: "RecentlyCalledContracts",
-  props: {
-    network: String,
-    updateable: {
-      type: Boolean,
-      default: true,
+    name: "RecentlyCalledContracts",
+    props: {
+        network: String,
+        updateable: {
+            type: Boolean,
+            default: true,
+        },
+        hidePaginationCount: {
+            type: Boolean,
+            default: false,
+        },
+        pageable: {
+            type: Boolean,
+            default: false,
+        },
+        itemsPerPage: {
+            type: Number,
+            default: 3,
+        }
     },
-    hidePaginationCount: {
-      type: Boolean,
-      default: false,
+    computed: {
+        offset() {
+            return this.recentlyCalledContracts.length;
+        },
+        nextPageCount() {
+            const count = this.page * this.itemsPerPage;
+            return this.totalItems > 0 && count < this.totalItems ? count : this.totalItems;
+        }
     },
-    pageable: {
-      type: Boolean,
-      default: false,
+    mounted() {
+        this.init();
     },
-    itemsPerPage: {
-      type: Number,
-      default: 3,
-    }
-  },
-  computed: {
-    offset() {
-      return this.recentlyCalledContracts.length
-    },
-    nextPageCount() {
-      const count = this.page * this.itemsPerPage;
-      return count < this.totalItems ? count : this.totalItems;
-    }
-  },
-  mounted() {
-    this.init();
-  },
-  methods: {
-    changePage(page) {
-      const offset = this.page * this.itemsPerPage;
-      this.page = page;
-      this.requestRecentlyCalledContracts(offset);
-    },
-    async init() {
-      if (!this.network) return;      
-      this.requestRecentlyCalledContracts();
+    methods: {
+        changePage(page) {
+            const offset = this.page * this.itemsPerPage;
+            this.page = page;
+            this.requestRecentlyCalledContracts(offset);
+        },
+        async init() {
+            if (!this.network)
+                return;
 
-      if (!this.updateable) {
-        this.totalItems = Number((await this.api.getContractsCount(this.network)));
-      }
-    },
-    requestRecentlyCalledContracts(offset = 0) {
-      if (this.loading) return;
-      this.loading = true;
-      return this.api.getRecentlyCalledContracts(this.network, this.itemsPerPage, offset)
-        .then((data) => {
-          this.recentlyCalledContracts = data;
-          return data;
-        })
-        .then((data) => this.getAliases(data))
-        .finally(() => this.loading = false);
-    },
-    async getAliases(contracts) {
-      for (const idx in contracts) {     
-        contracts[idx].alias = await this.getAlias(this.network, contracts[idx].address);
-      }
-    },
-  },
-  watch: {
-    network() {
-      this.recentlyCalledContracts = [];
-      this.page = 1;
-      this.init();
-    },
-  },
-  data() {
-    return {
-      aliasMaxLength: 24,
-      page: 1,
-      totalItems: 0,
-      loading: false,
-      recentlyCalledTableHeaders: [
-        {
-          text: "Contract",
-          class: "pl-8",
-          sortable: false,
+            this.requestRecentlyCalledContracts();
+            if (!this.updateable) {
+                this.totalItems = Number((await this.api.getContractsCount(this.network)));
+            }
         },
-        {
-          text: "Calls",
-          sortable: false,
+        requestRecentlyCalledContracts(offset = 0) {
+            if (this.loading)
+                return;
+            this.loading = true;
+            return this.api.getRecentlyCalledContracts(this.network, this.itemsPerPage, offset)
+                .then((data) => {
+                this.recentlyCalledContracts = data;
+                return data;
+            })
+                .then((data) => this.getAliases(data))
+                .finally(() => this.loading = false);
         },
-        {
-          text: "Last active",
-          class: "pl-8",
-          sortable: false,
+        async getAliases(contracts) {
+            for (const idx in contracts) {
+                contracts[idx].alias = await this.getAlias(this.network, contracts[idx].address);
+            }
         },
-      ],
-      recentlyCalledContracts: [],
-      listenerRecentlyCalledContracts: null,
-    }
-  }
+    },
+    watch: {
+        network(val, old) {
+          if (val === old)
+              return;
+          this.recentlyCalledContracts = [];
+          this.page = 1;
+          this.init();
+        },
+    },
+    data() {
+        return {
+            aliasMaxLength: 24,
+            page: 1,
+            totalItems: -1,
+            loading: false,
+            recentlyCalledTableHeaders: [
+                {
+                    text: "Contract",
+                    class: "pl-8",
+                    sortable: false,
+                },
+                {
+                    text: "Calls",
+                    sortable: false,
+                },
+                {
+                    text: "Last active",
+                    class: "pl-8",
+                    sortable: false,
+                },
+            ],
+            recentlyCalledContracts: [],
+            listenerRecentlyCalledContracts: null,
+        };
+    },
+    components: { Shortcut }
 }
 </script>
 
 <style lang="scss" scoped>
-.avg-gas-consumption {
+.recently-called {
   background: var(--v-data-base)!important;
-  tbody tr:hover {
-    background: var(--v-sidebar-base)!important;
-  }
 }
-.table-row {
+
+.table-row {  
   & > td:first-child {
     width: 55%;
   }
 }
+
+.table-row:hover {
+  background: var(--v-sidebar-base)!important;
+}
+
 ::v-deep .v-data-table-header {
   & > tr > th:last-child,
   & + tbody > tr > td:last-child {
