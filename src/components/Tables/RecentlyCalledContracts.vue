@@ -1,6 +1,5 @@
 <template>
   <v-fade-transition>
-    <v-skeleton-loader :loading="isRecentlyCalledLoading" class="recently-loader" type="article" transition="fade-transition">
       <v-data-table
         :items="recentlyCalledContracts"
         :headers="recentlyCalledTableHeaders"
@@ -8,6 +7,8 @@
         hide-default-footer
         :page.sync="page"
         :options="{itemsPerPage}"
+        :loading="isRecentlyCalledLoading"
+        loading-text="Loading recently called contracts... Please wait"
         :footer-props="{
             itemsPerPageOptions: []
         }"
@@ -54,7 +55,6 @@
           </div>
         </template>
       </v-data-table>
-    </v-skeleton-loader>
   </v-fade-transition>
 </template>
 
@@ -186,16 +186,6 @@ export default {
   & > tr > th > span {
     font-size: 16px;
     font-weight: 400;
-  }
-}
-
-.recently-loader {
-  min-height: 420px;
-
-  ::v-deep {
-    .v-skeleton-loader__article {
-      min-height: 420px;
-    }
   }
 }
 
