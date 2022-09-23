@@ -50,9 +50,12 @@
               </v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-alert v-if="token.error && token.metadata === null" type="error" prominent text class="ma-0 align-center">
-            <div class="overline">Resolving token metadata error</div>
-            <div class="text--primary"> {{ token.error }}</div>
+          <v-alert v-if="token.status === 2 && token.metadata === null" type="error" prominent text class="ma-0 align-center">
+            <div class="overline">Resolving token metadata error {{ token.retry_count ? `(after ${token.retry_count} attempts)`: ''}}</div>
+            <div class="text--primary">{{ token.error }}</div>
+          </v-alert>
+          <v-alert v-if="token.status === 1 && token.metadata === null" icon="mdi-progress-download" color="grey" prominent text class="ma-0 align-center">
+            <span class="overline">We're trying to get your file. Please, wait...</span>
           </v-alert>
           <v-row v-if="token.metadata">
             <v-col :cols="token.metadata.thumbnailUri ? 10 : 12">
@@ -138,6 +141,7 @@ export default {
       if (metadata.status === 1) return 'item-header-mempool';
       if (metadata.status === 2) return 'item-header-failed';
       if (metadata.status === 3) return 'item-header-applied';
+      return 'item-header-applied';
     },
     loadedImage(token) {
       token.loaded = true;
