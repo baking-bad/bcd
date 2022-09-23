@@ -10,7 +10,7 @@
                   :key="token.token_id"
                   class="bl-1 br-1 bt-1 token-panel" 
                   active-class="token-active-panel">
-        <v-expansion-panel-header class="py-0 px-4" :class="token.metadata === null && token.error !== null ? 'item-header-failed' : 'item-header-applied' " ripple :title="title(token)">
+        <v-expansion-panel-header class="py-0 px-4" :class="getHeaderClass(token)" ripple :title="title(token)">
           <template>
              <v-list-item class="fill-height pa-0">
                 <v-list-item-content>
@@ -132,6 +132,12 @@ export default {
       }
 
       return `${this.config.IPFS_NODE}/ipfs/${url.replace('ipfs://', '')}`
+    },
+    getHeaderClass(metadata) {
+      if (metadata === null) return 'item-header-failed';
+      if (metadata.status === 1) return 'item-header-mempool';
+      if (metadata.status === 2) return 'item-header-failed';
+      if (metadata.status === 3) return 'item-header-applied';
     },
     loadedImage(token) {
       token.loaded = true;
