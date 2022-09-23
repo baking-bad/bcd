@@ -50,6 +50,7 @@ export class TokenMetadataApi {
               link
               metadata
               token_id
+              status
             }
           }`, address, network, limit, offset)
 
