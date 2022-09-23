@@ -51,6 +51,7 @@ export class TokenMetadataApi {
               metadata
               token_id
               status
+              retry_count
             }
           }`, address, network, limit, offset)
 
