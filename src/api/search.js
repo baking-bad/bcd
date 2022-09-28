@@ -11,10 +11,10 @@ export class SearchService {
       return this.api !== null;
     }
 
-    suggest(text, size = 0, offset = 0) {
+    suggest(text, size = 10, offset = 0) {
         let request = {
             query: text,
-            size: size ? size : 10,
+            size: size,
             offset: offset
         };
         return this.api.post(
@@ -22,10 +22,10 @@ export class SearchService {
         ).then(this.parseResponse)
     }
 
-    search(text, filters, size = 0, offset = 0) {
+    search(text, filters, size = 10, offset = 0) {
         let request = {
             query: text,
-            size: size ? size : 10,
+            size: size,
             offset: offset
         };
         if (filters) {
@@ -38,11 +38,11 @@ export class SearchService {
         ).then(this.parseResponse)
     }
 
-    bigMapKeys(text, filters, size = 0, offset = 0) {
+    bigMapKeys(text, filters, size = 10, offset = 0) {
         return this.api.post(
             `/v1/search`,  {
                 query: text,
-                size: size ? size : 10,
+                size: size,
                 offset: offset,
                 filters: {
                     big_maps: filters,
@@ -52,14 +52,31 @@ export class SearchService {
         ).then(this.parseResponse)
     }
 
-    operations(text, filters, size = 0, offset = 0) {
+    operations(text, filters, size = 10, offset = 0) {
         return this.api.post(
             `/v1/search`,  {
                 query: text,
-                size: size ? size : 10,
+                size: size,
                 offset: offset,
                 filters: {
                     operations: filters,
+                }
+            }
+
+        ).then(this.parseResponse)
+    }
+
+    tokens(text, network, contract, size = 10, offset = 0) {
+        return this.api.post(
+            `/v1/search`,  {
+                query: text,
+                size: size,
+                offset: offset,
+                filters: {
+                    tokens: {
+                        network: network,
+                        contract: contract
+                    }
                 }
             }
 
