@@ -18,7 +18,7 @@
         <SearchBox />
         <div class="text-center text--secondary" style="position: relative; margin-top: -1em; margin-bottom: 2em;">
           <v-chip outlined label color="secondary" x-small class="mr-2">ads</v-chip>
-          <span class="caption">Need a custom API for your dapp? Try <a href="https://dipdup.io" target="_blank">DipDup</a> framework</span>
+          <span class="caption">Need a custom API for your dapp? Try <a href="https://dipdup.io" target="_blank" rel="noopener">DipDup</a> framework</span>
         </div>
       </v-col>
     </v-row>
