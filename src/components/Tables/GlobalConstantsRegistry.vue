@@ -13,7 +13,7 @@
         }"
       >
         <template v-slot:item="{item}">
-          <tr class="table-row">
+          <tr class="table-row" :key="item.address">
             <td>
               <v-btn
                   :to="`/constant/${network}/${item.address}/`"
