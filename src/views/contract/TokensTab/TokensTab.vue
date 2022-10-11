@@ -1,7 +1,7 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>   
     <v-row>
-      <v-col cols="12">
+      <v-col cols="12" v-if="tokens.length > 0 && !loading">
         <v-text-field
           v-model="search"
           color="primary"
