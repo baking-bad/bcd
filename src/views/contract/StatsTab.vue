@@ -162,7 +162,8 @@ export default {
         async getContractCalls() {
             await this.stats.histogram(this.network, 'transactions', 'count', this.timeframe, {
                 'Entrypoint.isnotnull': '',
-                'Target': this.address
+                'Target': this.address,
+                'Status': 1
             })
             .then(res => {
                 this.contractCalls = this.createDataset(res);                
@@ -174,7 +175,8 @@ export default {
         async getContractCallsTotal() {
             await this.stats.summary(this.network, 'transactions', 'count', {
                 'Entrypoint.isnotnull': '',
-                'Target': this.address
+                'Target': this.address,
+                'Status': 1
             })
             .then(res => {
                 this.contractCallsTotal = parseInt(res);                
@@ -186,7 +188,8 @@ export default {
         async getUniqueUsers() {
             await this.stats.histogram(this.network, 'transactions', 'distinct', this.timeframe, {
                 'field': 'Sender',
-                'Target': this.address
+                'Target': this.address,
+                'Status': 1
             })
             .then(res => {
                 this.uniqueUsers = this.createDataset(res);
@@ -198,7 +201,8 @@ export default {
         async getUniqueUsersTotal() {
             await this.stats.summary(this.network, 'transactions', 'distinct', {
                 'field': 'Sender',
-                'Target': this.address
+                'Target': this.address,
+                'Status': 1
             })
             .then(res => {
                 this.uniqueUsersTotal = parseInt(res);
