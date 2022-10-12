@@ -15,6 +15,7 @@
                             type="number"
                             dense
                             outlined
+                            autofocus
                             label="Amount"
                             v-model="amount"
                             placeholder="Please enter amount to increase paid storage"
@@ -43,7 +44,7 @@
 
 <script>
 import { mapActions } from "vuex";
-import {defaultEventCallbacks } from '@airgap/beacon-sdk'
+import {defaultEventCallbacks } from '@airgap/beacon-sdk';
 import {Wallet} from "@/utils/wallet";
 
 export default {
@@ -99,13 +100,17 @@ export default {
                     throw new Error('network of connected wallet and contract does not equal')
                 }
 
+                console.log('here')
+
                 const result = await beacon.client.requestOperation({
                     operationDetails: [{
-                        kind: 'increase_paid_storage',
+                        kind: 'Increase_paid_storage',
                         destination: this.address,
-                        amount: this.amount
+                        amount: this.amount,
+                        source: beacon.account.address,
                     }],
                     network: this.network,
+                    sourceAddress: beacon.account.address,
                 });
                 this.hash = result.opHash;
             } catch (err) {
