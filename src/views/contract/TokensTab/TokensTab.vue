@@ -1,7 +1,7 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>   
     <v-row>
-      <v-col cols="12" v-if="tokens.length > 0 && !loading">
+      <v-col cols="12" v-if="hasTokens">
         <v-text-field
           v-model="search"
           color="primary"
@@ -123,6 +123,7 @@ export default {
     VueJsonPretty
   },
   data: () => ({
+    hasTokens: false,
     tokens: [],
     loading: false,
     downloaded: false,
@@ -191,6 +192,8 @@ export default {
             this.downloaded = res.length === 0;
             res.forEach(x => x.loaded = false);
             this.tokens.push(...res);
+
+            if (!this.hasTokens) this.hasTokens = true;
           }
         })
         .catch((err) => {
@@ -201,7 +204,7 @@ export default {
           this.loading = false;
         });
     },
-    async searchTokens(text) {
+    async searchTokens(text, clear=false) {
       if (this.loading || this.downloaded) return;
       clearTimeout(this._timerId);
 
@@ -209,9 +212,14 @@ export default {
         this.loading = true;
 
         try {
+          if (clear) {
+            this.tokens = [];
+          }
+
           let searchResult = await this.searchService.tokens(text, this.network, this.address, 20, this.tokens.length)
           if (searchResult.items.length === 0) {
             this.downloaded = true; // prevent endless polling
+            this.loading = false;
             return;
           }
           let token_ids = [];
@@ -242,18 +250,19 @@ export default {
     },
   },
   watch: {
-    address: "getTokens",
+    address: 'getTokens',
     async search(newValue, oldValue) {
       if (newValue === oldValue) return;
-      this.tokens = [];
 
+      this.downloaded = false;
       const text = newValue ? newValue.trim(): '';
       if (!text || text.length === 0) {
+        this.tokens = [];
         await this.getTokens()
         return;
       }
 
-      await this.searchTokens(text);
+      await this.searchTokens(text, true);
     }
   },
 };
