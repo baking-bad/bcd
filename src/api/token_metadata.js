@@ -42,7 +42,7 @@ export class TokenMetadataApi {
                 network: {_eq: $network}}
               limit: $limit
               offset: $offset
-              order_by: {update_id: desc}
+              order_by: {token_id: desc}
             ) {
               network
               contract
@@ -75,7 +75,7 @@ export class DipDupTokenMetadataApi {
                 network: {_eq: $network}}
               limit: $limit
               offset: $offset
-              order_by: {update_id: desc}
+              order_by: {token_id: desc}
             ) {
               network
               contract
