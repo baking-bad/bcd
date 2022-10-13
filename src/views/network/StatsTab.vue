@@ -188,11 +188,12 @@ export default {
       this.details.loading = true;
 
       this.stats.summary(network, 'transactions', 'count', {
-          'Entrypoint.isnotnull': ''
+          'Entrypoint.isnotnull': '',
+          "Status": 1
         })
         .then(response => { 
           this.details.contractCalls = parseInt(response, 10);
-          return this.stats.summary(network, 'originations', 'count', {});
+          return this.stats.summary(network, 'originations', 'count', {"Status": 1});
         })
         .then(response => { 
           this.details.deployments = parseInt(response, 10);
@@ -213,7 +214,8 @@ export default {
       this.contractCalls.loading = true;
 
       this.stats.histogram(network, 'transactions', 'count', this.contractCalls.period, {
-        'Entrypoint.isnotnull': ''
+        'Entrypoint.isnotnull': '',
+        "Status": 1
       })
       .then(response => {
         this.contractCalls.series = [];
@@ -226,7 +228,7 @@ export default {
       if (this.deployments.loading) return;
       this.deployments.loading = true;
     
-      this.stats.histogram(network, 'originations', 'count', this.deployments.period, {})
+      this.stats.histogram(network, 'originations', 'count', this.deployments.period, {"Status": 1})
       .then(response => {
         this.deployments.series = [];
         response.forEach(x => this.deployments.series.push([x['ts']*1000, parseInt(x['value'], 10)]))
