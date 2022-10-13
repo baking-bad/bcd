@@ -16,8 +16,8 @@
             itemsPerPageOptions: []
         }"
       >
-        <template v-slot:item="{item}">
-          <tr class="table-row">
+        <template v-slot:item="{item}" >
+          <tr class="table-row" :key="item.address">
             <td>
               <v-btn
                 class="text--secondary hash"

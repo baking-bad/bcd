@@ -9,7 +9,7 @@
             :items="contracts"
             v-if="!isEmpty"
             hide-default-header
-            :class="['ba-1 mt-4 avg-gas-consumption', 'hide-pagination-count']"
+            :class="['ba-1 mt-4 referenced-contracts', 'hide-pagination-count']"
             hide-default-footer
             :page.sync="page"
             :options="{itemsPerPage}"
@@ -112,8 +112,28 @@ export default {
   }
 }
 </script>
-<style scoped>
+
+<style lang="scss" scoped>
 .not-found-text {
   color: rgba(255, 255, 255, 0.5);
+}
+
+.referenced-contracts {
+  background: var(--v-data-base)!important;
+}
+
+.table-row:hover {
+  background: var(--v-sidebar-base)!important;
+}
+
+::v-deep .v-data-table-header {
+  & > tr > th:last-child,
+  & + tbody > tr > td:last-child {
+    padding-left: 0 !important;
+  }
+  & > tr > th > span {
+    font-size: 16px;
+    font-weight: 400;
+  }
 }
 </style>
