@@ -23,9 +23,17 @@ export default {
     components: {
         Shortcut
     },
-    computed: {
-        alias() {
-            return this.getAlias(this.network, this.operation.destination)
+    data: () => {
+        return {
+            alias: null
+        }
+    },
+    async created() {
+        this.alias = await this.fetchAlias();
+    },
+    methods: {
+        async fetchAlias() {
+            return await this.getAlias(this.network, this.operation.destination)
         }
     }
 }
