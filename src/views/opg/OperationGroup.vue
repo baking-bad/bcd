@@ -102,32 +102,7 @@
           </v-list-item>
         </v-list>
 
-        <v-list v-if="content" class="mt-5">
-          <v-list-item style="height: 44px">
-            <v-list-item-content two-line>
-              <v-list-item-title class="headline">Call stack</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <div class="d-flex flex-column px-4 call-stack-content-wrapper" style="font-size: 15px">
-            <div
-              v-for="(op, idx) in operations"
-              :key="idx"
-              class="d-flex align-center"
-              :class="op.internal ? 'mt-2' : 'mt-4'"
-            >
-              <span v-if="op.internal" class="mr-2" style="font-size: 14px">↳</span>
-              <div>
-                <span class="text--secondary" v-if="getAlias(network, op.destination)">{{
-                  getAlias(network, op.destination)
-                }}</span>
-                <Shortcut v-else class="text--secondary" :str="op.destination"/>
-                <span class="text--secondary" style="font-size: 20px">→</span>
-                <span v-if="op.entrypoint" class="hash">{{ op.entrypoint }}()</span>
-                <span v-else>{{ op.amount | uxtz }}</span>
-              </div>
-            </div>
-          </div>
-        </v-list>
+        <CallStack v-if="content" :network="network" :operations="operations"/>
       </v-col>
     </v-row>
 
@@ -149,7 +124,7 @@ import { toTitleCase } from "../../utils/string";
 import { openTzktOPG } from "../../utils/tzkt";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import OpgContents from "@/views/opg/ContentsTab.vue";
-import Shortcut from "@/components/Shortcut.vue";
+import CallStack from "@/views/opg/CallStack.vue";
 
 export default {
   name: "OperationGroup",
@@ -160,7 +135,7 @@ export default {
   components: {
     RawJsonViewer,
     OpgContents,
-    Shortcut,
+    CallStack
   },
   data: () => ({
     loading: true,

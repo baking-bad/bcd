@@ -37,7 +37,6 @@ export class Aliases {
 
     checkExpirationTime() {
         const now = new Date().getTime();
-        console.log(now, this.expiry)
         if (now > this.expiry) {
             this.aliases = {};
             localStorage.removeItem(aliasesKey);
