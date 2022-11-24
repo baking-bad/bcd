@@ -1,8 +1,8 @@
 <template>
-    <v-list-item>
+    <v-list-item two-line>
         <v-list-item-content>
             <v-list-item-title class="hash">
-            <span class="mr-2">{{ item.action }}</span>
+            <span class="mr-2">{{ item.action }} at {{ item.level }} level</span>
             <template v-if="item.action == 'copy'">
                 <span
                     class="text--secondary font-weight-light"
@@ -11,7 +11,7 @@
                 <span
                 class="text--secondary font-weight-light"
                 v-else-if="item.source_ptr"
-                >from</span>
+                >from</span> 
             </template>
             </v-list-item-title>
             <v-list-item-subtitle>
