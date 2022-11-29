@@ -144,7 +144,7 @@ let tokenMetadata = new TokenMetadataApi(process.env.VUE_APP_TOKEN_METADATA_API)
 let metadataService = new MetadataAPI(process.env.VUE_APP_METADATA_API_URI);
 let stats = new StatsAPI({
   'mainnet': process.env.VUE_APP_MAINNET_STATS_API_URI,
-  'jakartanet': process.env.VUE_APP_TESTNET_STATS_API_URI,
+  'limanet': process.env.VUE_APP_TESTNET_STATS_API_URI,
   'ghostnet': process.env.VUE_APP_GHOSTNET_STATS_API_URI,
   'kathmandunet': process.env.VUE_APP_KATHMANDU_STATS_API_URI,
 });

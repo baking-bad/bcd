@@ -25,6 +25,7 @@ export default class TZKTBlockExplorer extends BlockExplorer {
       [NetworkType.ITHACANET]: "https://ithacanet.tzkt.io",
       [NetworkType.JAKARTANET]: "https://jakartanet.tzkt.io",
       [NetworkType.GHOSTNET]: "https://ghostnet.tzkt.io",
+      // [NetworkType.LIMANET]: "https://limanet.tzkt.io",
       [NetworkType.CUSTOM]: "https://tzkt.io",
     };
     super(rpcUrls);

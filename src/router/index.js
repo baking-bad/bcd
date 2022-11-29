@@ -266,8 +266,8 @@ export function newRouter(networks) {
         ]
       },
       {
-        path: '/:network(mainnet|ghostnet|jakartanet|kathmandunet|sandboxnet)/opg/:hash(o[0-9A-z]{50})',
-        alias: '/:network(mainnet|ghostnet|jakartanet|kathmandunet|sandboxnet)/:hash(o[0-9A-z]{50})',
+        path: '/:network(mainnet|ghostnet|limanet|kathmandunet|sandboxnet)/opg/:hash(o[0-9A-z]{50})',
+        alias: '/:network(mainnet|ghostnet|limanet|kathmandunet|sandboxnet)/:hash(o[0-9A-z]{50})',
         components: {
           default: OperationGroup
         },
