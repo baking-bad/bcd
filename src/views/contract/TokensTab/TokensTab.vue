@@ -159,7 +159,12 @@ export default {
         return '';
       }
 
-      return `${this.config.IPFS_NODE}/ipfs/${url.replace('ipfs://', '')}`
+      let result = `${this.config.IPFS_NODE}/ipfs/${url.replace('ipfs://', '')}`;
+      try {
+        return new URL(result).toString();
+      } catch (_) {
+        return '';
+      }
     },
     getHeaderClass(metadata) {
       if (metadata === null) return 'item-header-failed';

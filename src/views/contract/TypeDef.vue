@@ -13,7 +13,6 @@
 </template>
 
 <script>
-import sanitizeHtml from 'sanitize-html';
 
 export default {
   name: "TypeDef",
@@ -23,7 +22,7 @@ export default {
   },
   methods: {
     highlightType(expr) {
-      return sanitizeHtml(expr.replace(/(\$\w+)/g, '<span class="accent--text">$1</span>'));
+      return this.$sanitize(expr.replace(/(\$\w+)/g, '<span class="accent--text">$1</span>'));
     },
   },
 };

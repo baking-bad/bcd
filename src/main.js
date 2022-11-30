@@ -8,7 +8,8 @@ import store from '@/store'
 import { newRouter } from '@/router/index.js'
 
 import VueGtag from "vue-gtag";
-import VueMeta from 'vue-meta'
+import VueMeta from 'vue-meta';
+import VueSanitize from "vue-sanitize";
 
 import * as Sentry from "@sentry/vue";
 import { BrowserTracing } from "@sentry/tracing";
@@ -50,9 +51,10 @@ Vue.config.productionTip = false;
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
-Vue.use(PortalVue)
+Vue.use(PortalVue);
 
 Vue.use(Clipboard);
+Vue.use(VueSanitize);
 
 Vue.filter('numberToCompactSIFormat', function (value, decimals) {
   let num = Number(value);

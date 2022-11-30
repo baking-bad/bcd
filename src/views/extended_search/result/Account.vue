@@ -44,7 +44,7 @@ export default {
   computed: {
     alias() {
         let alias = getAccountAlias(this.item.body);
-        if (alias) return alias;
+        if (alias) return this.$sanitize(alias);
         return undefined;
     }
   },

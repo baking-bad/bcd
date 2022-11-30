@@ -56,7 +56,7 @@
           style="z-index: 0"
         >
           <span class="overline">Created by</span>
-          <a href="https://baking-bad.org/docs" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Baking Bad</a>
+          <a href="https://bakingbad.dev/" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Baking Bad</a>
           <span class="ml-1 mr-2">·</span>
           <span class="overline">Hosted on</span>
           <a href="https://www.netlify.com" target="_blank" rel="noopener" class="text--secondary text-small ml-1 pa-1 no-decoration overline">Netlify</a>

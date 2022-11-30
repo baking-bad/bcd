@@ -122,7 +122,7 @@
               ].includes(item.body.found_by) &&
               item.highlights[item.body.found_by]
             "
-            v-html="sanitizeHtml(item.highlights[item.body.found_by][0])"
+            v-html="sanitize(item.highlights[item.body.found_by][0])"
           ></span>
         </v-list-item-action-text>
         <v-list-item-action-text>
@@ -156,7 +156,6 @@ import {
 } from "@/utils/history.js";
 import {SEARCH_TABS} from "../constants/searchTabs";
 import waitUntil from "async-wait-until";
-import sanitizeHtml from 'sanitize-html';
 import Shortcut from '@/components/Shortcut.vue';
 
 export default {
@@ -194,7 +193,6 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
-    sanitizeHtml,
     handleSearchBoxFocus() {
       this.isFocused = true;
     },
