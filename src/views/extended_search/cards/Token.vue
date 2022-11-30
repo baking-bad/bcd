@@ -8,7 +8,7 @@
                     </v-list-item-avatar>
                     <v-list-item-content>
                         <v-list-item-title>
-                            <span class="text-h4 text--primary">{{ item.body.Name ? item.body.Name : info.TokenID }}</span>
+                            <span class="text-h4 text--primary">{{ item.body.Name ? this.$sanitize(item.body.Name) : info.TokenID }}</span>
                         </v-list-item-title>
                         <v-list-item-subtitle>
                             <span class="secondary--text overline">{{ item.body.Network }}</span>

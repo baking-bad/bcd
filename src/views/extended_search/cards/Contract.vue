@@ -92,8 +92,8 @@ export default {
     computed: {
         alias() {
             let alias = getAccountAlias(this.item.body);
-            if (alias) return alias;
-            return this.info.alias;
+            if (alias) return this.$sanitize(alias);
+            return this.$sanitize(this.info.alias);
         }
     },
     created() {

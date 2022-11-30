@@ -7,7 +7,7 @@
                         <span class="hash">Token</span>
                         <span class="text--secondary" style="font-size: 20px;"> → </span>
                         <router-link class="serp-link" target="_blank" :to="`/${item.body.Network}/${item.body.Address}/tokens?token_id=${item.body.TokenID}`">
-                            <span v-if="item.body.Name" class="alias">{{ item.body.Name }}</span>
+                            <span v-if="item.body.Name" class="alias">{{ sanitize(item.body.Name) }}</span>
                         </router-link>
                     </v-list-item-title>
                     <v-list-item-subtitle>
@@ -35,6 +35,11 @@ export default {
     components: {
         Highlight
     },
+    methods: {
+        sanitize(text) {
+            return this.$sanitize(text);
+        }
+    }
 }
 </script>
 
