@@ -68,7 +68,7 @@
               </v-btn>
             </v-card-title>
             <v-card-text class="pa-8">
-              <MiguelTreeView :miguel="successResponse" />
+              <MiguelTreeView :network="network" :miguel="successResponse" />
             </v-card-text>
           </v-card>
         </v-dialog>
