@@ -1,7 +1,7 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
     <v-skeleton-loader :loading="isLoading" type="table">
-      <v-data-table :items="currentlyLoadedSameContracts" :headers="headers" class="ba-1 avg-gas-consumption" hide-default-footer>
+      <v-data-table :items="currentlyLoadedSameContracts" :headers="headers" class="ba-1 bcd-table" hide-default-footer>
         <template v-slot:top>
           <v-toolbar flat color="sidebar">
             <span class="table-title mx-auto">Same contracts</span>
@@ -29,7 +29,7 @@
           </tr>
         </template>
         <template v-slot:footer>
-          <v-toolbar flat>
+          <div class="footer-pagination">
             <v-spacer></v-spacer>
             <span
               class="caption grey--text mr-4"
@@ -40,11 +40,11 @@
             <v-btn icon @click="right" :disabled="isRightDisabled">
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
-          </v-toolbar>
+          </div>
         </template>
       </v-data-table>
     </v-skeleton-loader>
-    <v-data-table v-show="migrations.length > 0" :items="migrations" :headers="migrationHeaders" class="ba-1 avg-gas-consumption mt-6" hide-default-footer>
+    <v-data-table v-show="migrations.length > 0" :items="migrations" :headers="migrationHeaders" class="ba-1 bcd-table mt-6" hide-default-footer>
       <template v-slot:top>
         <v-toolbar flat color="sidebar">
           <span class="table-title mx-auto">Migrations</span>

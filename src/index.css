@@ -76,3 +76,11 @@
     width: 43px;
     margin-left: 7px;
 }
+
+.bcd-table {
+    background: var(--v-data-base) !important;
+}
+
+.bcd-table tbody tr:hover {
+    background: var(--v-sidebar-base) !important;
+}
