@@ -11,6 +11,13 @@
       </v-col>
       <v-col cols="3" class="d-flex justify-end pr-7">
         <div class="d-flex align-center justify-start pa-2 px-4">
+          <v-btn class="mr-2 pl-2 pr-2 text--secondary"
+            outlined
+            small
+            @click="openIncreasePaidStorageDialog = true">
+            <v-icon class="text--secondary" small>mdi-view-grid-plus-outline</v-icon>
+            <span class="ml-1 text--secondary">Increase paid storage</span>
+          </v-btn>
           <v-btn
             class="mr-2 pl-2 pr-2 text--secondary"
             outlined
@@ -79,6 +86,7 @@
       ></router-view>
 
       <BookmarkDialog v-model="openBookMarkDialog" :alias="alias || ``" @added="onBookmarkAdded"/>
+      <IncreasePaidStorageDialog v-model="openIncreasePaidStorageDialog" :address="address" :network="network"/>
     </VContainer>
   </div>
 </template>
@@ -94,6 +102,7 @@ import BookmarkDialog from "@/components/BookmarkDialog.vue";
 import {openTzktContract} from "../../utils/tzkt";
 import {DATA_LOADING_STATUSES} from "../../utils/network";
 import {applyStyles} from "../../utils/styles";
+import IncreasePaidStorageDialog from '@/components/Dialogs/IncreasePaidStorageDialog.vue';
 
 const MIN_SEARCHBOX_WIDTH = 240;
 
@@ -102,7 +111,8 @@ export default {
   components: {
     Tags,
     MenuToolbar,
-    BookmarkDialog
+    BookmarkDialog,
+    IncreasePaidStorageDialog
   },
   props: {
     network: String,
@@ -121,6 +131,7 @@ export default {
     onChainViewsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
     isBookmark: false,
     openBookMarkDialog: false,
+    openIncreasePaidStorageDialog: false,
     alias: undefined
   }),
   computed: {
