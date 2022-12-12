@@ -81,6 +81,6 @@
     background: var(--v-data-base) !important;
 }
 
-.bcd-table > tbody tr:hover {
+.bcd-table tbody tr:hover {
     background: var(--v-sidebar-base) !important;
 }
