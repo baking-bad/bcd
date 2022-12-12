@@ -4,7 +4,7 @@
       <v-data-table
           :items="globalConstantsItems"
           :headers="globalConstantsTableHeaders"
-          :class="['ba-1 mt-4 avg-gas-consumption', {'hide-pagination-count' : hidePaginationCount}]"
+          :class="['ba-1 mt-4 bcd-table', {'hide-pagination-count' : hidePaginationCount}]"
           hide-default-footer
           :page.sync="page"
           :options="{itemsPerPage}"
@@ -137,14 +137,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.avg-gas-consumption {
-  background: var(--v-data-base) !important;
-
-  tbody tr:hover {
-    background: var(--v-sidebar-base) !important;
-  }
-}
-
 .table-row {
   & > td:first-child {
     width: 55%;

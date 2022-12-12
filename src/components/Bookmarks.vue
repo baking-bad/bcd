@@ -6,7 +6,7 @@
             <v-icon v-else>mdi-star-outline</v-icon>
         </v-btn>
       </template>
-      <v-list v-if="keysCount > 0" class="pa-0 avg-gas-consumption">
+      <v-list v-if="keysCount > 0" class="pa-0">
         <v-list-item v-for="(item, index) in items" :key="index" :to="`/${item.network}/${item.address}/operations`">
             <v-list-item-content>
                 <v-list-item-title>{{ item.alias || item.address }}</v-list-item-title>
