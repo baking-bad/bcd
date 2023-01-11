@@ -2,115 +2,115 @@
 # yarn lockfile v1
 
 
-"@airgap/beacon-blockchain-substrate@^3.3.0":
-  "integrity" "sha512-1JFuxrZtp3sqrKotg0iSpBE11/dSBjIHEyAUiznDiDv2WbCWK+sC+l/hLzW0rbuoniCQc4XYZv/WZ2jqD6t2iw=="
-  "resolved" "https://registry.npmjs.org/@airgap/beacon-blockchain-substrate/-/beacon-blockchain-substrate-3.3.0.tgz"
-  "version" "3.3.0"
+"@airgap/beacon-blockchain-substrate@^3.3.2":
+  "integrity" "sha512-HY/OD33UYuJuQQuXqW6h+vogYivWZGqaWwTTx1HZE846EUq5RkThOWz2fHbhZGUWn7yxttCqhIh4MV3a8GgIlQ=="
+  "resolved" "https://registry.npmjs.org/@airgap/beacon-blockchain-substrate/-/beacon-blockchain-substrate-3.3.2.tgz"
+  "version" "3.3.2"
   dependencies:
-    "@airgap/beacon-types" "^3.3.0"
-    "@airgap/beacon-ui" "^3.3.0"
+    "@airgap/beacon-types" "^3.3.2"
+    "@airgap/beacon-ui" "^3.3.2"
 
-"@airgap/beacon-blockchain-tezos@^3.3.0":
-  "integrity" "sha512-0+c5pNA/O0tTvJW0LjmHJKoudJj35xIOoZ85VCS54DmGrcwx0GBCeC9jOyOc1L4/3ZRSOJoigFvrV6vd9lWycg=="
-  "resolved" "https://registry.npmjs.org/@airgap/beacon-blockchain-tezos/-/beacon-blockchain-tezos-3.3.0.tgz"
-  "version" "3.3.0"
+"@airgap/beacon-blockchain-tezos@^3.3.2":
+  "integrity" "sha512-VaID13hLqFhpswpb3A6E1XlgTwgGHT8PeC8QzjpnnqUiWvP3ZrM0g4xAxNlSPodBXY8QDZQ+xDMM43vC14kPSQ=="
+  "resolved" "https://registry.npmjs.org/@airgap/beacon-blockchain-tezos/-/beacon-blockchain-tezos-3.3.2.tgz"
+  "version" "3.3.2"
   dependencies:
-    "@airgap/beacon-types" "^3.3.0"
-    "@airgap/beacon-ui" "^3.3.0"
+    "@airgap/beacon-types" "^3.3.2"
+    "@airgap/beacon-ui" "^3.3.2"
 
-"@airgap/beacon-core@^3.3.0":
-  "integrity" "sha512-QgwZcqB8Fn+m5MpGus6Nn1BZti1qdMDFKsUYAVhYlh8LWKJz/uPjZkIYNTECjuSI4Lqflg2nMjVyOMsuZpYVnQ=="
-  "resolved" "https://registry.npmjs.org/@airgap/beacon-core/-/beacon-core-3.3.0.tgz"
-  "version" "3.3.0"
+"@airgap/beacon-core@^3.3.2":
+  "integrity" "sha512-H8d0V15cxT+TvvPu+Pn29Wh9Jg5LDEbpS4OFyI8Jk8PpmwwJSr4NYxhuj+JtNz99S4VeXrW+lzIb6FVqSv8U6A=="
+  "resolved" "https://registry.npmjs.org/@airgap/beacon-core/-/beacon-core-3.3.2.tgz"
+  "version" "3.3.2"
   dependencies:
-    "@airgap/beacon-types" "^3.3.0"
-    "@airgap/beacon-utils" "^3.3.0"
+    "@airgap/beacon-types" "^3.3.2"
+    "@airgap/beacon-utils" "^3.3.2"
     "@stablelib/ed25519" "^1.0.3"
     "@stablelib/nacl" "^1.0.4"
     "@stablelib/utf8" "^1.0.1"
     "@stablelib/x25519-session" "^1.0.4"
     "bs58check" "2.1.2"
 
-"@airgap/beacon-dapp@^3.3.0":
-  "integrity" "sha512-Ffq/E7uf8/BjH1yxVQeSTTV/7AwCa+56ratnr47cN5NER5EUZLpLcCwm1WfitQPhXSNe1TDQAtxYm/Ud3DrAIA=="
-  "resolved" "https://registry.npmjs.org/@airgap/beacon-dapp/-/beacon-dapp-3.3.0.tgz"
-  "version" "3.3.0"
+"@airgap/beacon-dapp@^3.3.0", "@airgap/beacon-dapp@^3.3.2":
+  "integrity" "sha512-5yrmoFFUJhmoRKiXWtMgjfk4hVHfmi7BjElYe5wjeazMdLRJ0JgjNmWS461wMTFnMqy9fGTsua3sl1zBu2CBQQ=="
+  "resolved" "https://registry.npmjs.org/@airgap/beacon-dapp/-/beacon-dapp-3.3.2.tgz"
+  "version" "3.3.2"
   dependencies:
-    "@airgap/beacon-core" "^3.3.0"
-    "@airgap/beacon-transport-matrix" "^3.3.0"
-    "@airgap/beacon-transport-postmessage" "^3.3.0"
-    "@airgap/beacon-ui" "^3.3.0"
+    "@airgap/beacon-core" "^3.3.2"
+    "@airgap/beacon-transport-matrix" "^3.3.2"
+    "@airgap/beacon-transport-postmessage" "^3.3.2"
+    "@airgap/beacon-ui" "^3.3.2"
     "qrcode-generator" "1.4.4"
 
-"@airgap/beacon-sdk@^3.3.0":
-  "integrity" "sha512-qKs374OlKMaNRWO+vo0QR1uYKWo/Q5kz1+vtKNjeXIt0h6XtAdGS0SKhiKY8efMLW/VKmHNGf1Fq6yKXtXLEzQ=="
-  "resolved" "https://registry.npmjs.org/@airgap/beacon-sdk/-/beacon-sdk-3.3.0.tgz"
-  "version" "3.3.0"
+"@airgap/beacon-sdk@^3.3.2":
+  "integrity" "sha512-xPUNKSfvRdmjmcIDid5W3PgrK34WTrUDfwlxY+cmquik1ulAHcS370Ne5nZ8VGfJUOj95boIYSW9quSIwuWEDQ=="
+  "resolved" "https://registry.npmjs.org/@airgap/beacon-sdk/-/beacon-sdk-3.3.2.tgz"
+  "version" "3.3.2"
   dependencies:
-    "@airgap/beacon-blockchain-substrate" "^3.3.0"
-    "@airgap/beacon-blockchain-tezos" "^3.3.0"
-    "@airgap/beacon-core" "^3.3.0"
-    "@airgap/beacon-dapp" "^3.3.0"
-    "@airgap/beacon-transport-matrix" "^3.3.0"
-    "@airgap/beacon-transport-postmessage" "^3.3.0"
-    "@airgap/beacon-types" "^3.3.0"
-    "@airgap/beacon-ui" "^3.3.0"
-    "@airgap/beacon-utils" "^3.3.0"
-    "@airgap/beacon-wallet" "^3.3.0"
+    "@airgap/beacon-blockchain-substrate" "^3.3.2"
+    "@airgap/beacon-blockchain-tezos" "^3.3.2"
+    "@airgap/beacon-core" "^3.3.2"
+    "@airgap/beacon-dapp" "^3.3.2"
+    "@airgap/beacon-transport-matrix" "^3.3.2"
+    "@airgap/beacon-transport-postmessage" "^3.3.2"
+    "@airgap/beacon-types" "^3.3.2"
+    "@airgap/beacon-ui" "^3.3.2"
+    "@airgap/beacon-utils" "^3.3.2"
+    "@airgap/beacon-wallet" "^3.3.2"
 
-"@airgap/beacon-transport-matrix@^3.3.0":
-  "integrity" "sha512-wY3ak4AehZuQzqEU9JLZTE33W3hCRp2ypkGW6q7w5pOBjQ2AII6cRHcopP/brQZxoBqBFlaLe/I/2jdGNeJeJA=="
-  "resolved" "https://registry.npmjs.org/@airgap/beacon-transport-matrix/-/beacon-transport-matrix-3.3.0.tgz"
-  "version" "3.3.0"
+"@airgap/beacon-transport-matrix@^3.3.2":
+  "integrity" "sha512-eE6UWuPQus8Z1yG6PpmaDCfiKjtfw0lJtw+KL4qvEsKDzJvhON0q2Wbr8swGxx6KaznA3U8auKg6vZFsDjCViw=="
+  "resolved" "https://registry.npmjs.org/@airgap/beacon-transport-matrix/-/beacon-transport-matrix-3.3.2.tgz"
+  "version" "3.3.2"
   dependencies:
-    "@airgap/beacon-core" "^3.3.0"
-    "@airgap/beacon-utils" "^3.3.0"
+    "@airgap/beacon-core" "^3.3.2"
+    "@airgap/beacon-utils" "^3.3.2"
     "axios" "0.24.0"
 
-"@airgap/beacon-transport-postmessage@^3.3.0":
-  "integrity" "sha512-eLVnMtTqf8sEyXf0ZR6LwvmgwHpMcAY6EpnG1tAh2ZYqMRj+MdTTaWHy+uhR5aXUElWgVn+dJXKE8+fghRtsLQ=="
-  "resolved" "https://registry.npmjs.org/@airgap/beacon-transport-postmessage/-/beacon-transport-postmessage-3.3.0.tgz"
-  "version" "3.3.0"
+"@airgap/beacon-transport-postmessage@^3.3.2":
+  "integrity" "sha512-STgr1fRmIWiUeGWTMhFXzYOvcOnLkEtmREidJvz5Lmts4TKgF6diRPDZa510XnuQoGsyZFnhHq/CQaLY53PfjQ=="
+  "resolved" "https://registry.npmjs.org/@airgap/beacon-transport-postmessage/-/beacon-transport-postmessage-3.3.2.tgz"
+  "version" "3.3.2"
   dependencies:
-    "@airgap/beacon-core" "^3.3.0"
-    "@airgap/beacon-types" "^3.3.0"
-    "@airgap/beacon-utils" "^3.3.0"
+    "@airgap/beacon-core" "^3.3.2"
+    "@airgap/beacon-types" "^3.3.2"
+    "@airgap/beacon-utils" "^3.3.2"
 
-"@airgap/beacon-types@^3.3.0":
-  "integrity" "sha512-wO2sGOC/lnQN+M/IWLG/oPLa3O0WUvkofGJXRXldOa43UUrszPhcn+DOosTnofVi6z8OBHzz2N2ptTCDJSwG3Q=="
-  "resolved" "https://registry.npmjs.org/@airgap/beacon-types/-/beacon-types-3.3.0.tgz"
-  "version" "3.3.0"
+"@airgap/beacon-types@^3.3.2":
+  "integrity" "sha512-U4CM2eF04bAG+OGK9SiA32aVVkWBY/CuWfqhOX0T6vI7eRvK2Fc5tmGMp+HBqORBkb5ljPac9T47YUv8Wy/q2w=="
+  "resolved" "https://registry.npmjs.org/@airgap/beacon-types/-/beacon-types-3.3.2.tgz"
+  "version" "3.3.2"
   dependencies:
     "@types/chrome" "0.0.163"
 
-"@airgap/beacon-ui@^3.3.0":
-  "integrity" "sha512-j+S0PBP+BXMCWO3U4k794LFllIGuW94p5JttXOAA5qo5SqKv5FlF0k5TYRoFV84AGbr0oNtNZTCA6/AG/0/l+w=="
-  "resolved" "https://registry.npmjs.org/@airgap/beacon-ui/-/beacon-ui-3.3.0.tgz"
-  "version" "3.3.0"
+"@airgap/beacon-ui@^3.3.2":
+  "integrity" "sha512-V9gGZyfsTMIUe3ES10Uls51fp+7B13edPR970Fa4BoZxo6tyL8fPk1dD6plu/pJz2JxUZofpSinDYxW1iquAew=="
+  "resolved" "https://registry.npmjs.org/@airgap/beacon-ui/-/beacon-ui-3.3.2.tgz"
+  "version" "3.3.2"
   dependencies:
-    "@airgap/beacon-core" "^3.3.0"
-    "@airgap/beacon-transport-postmessage" "^3.3.0"
-    "@airgap/beacon-types" "^3.3.0"
-    "@airgap/beacon-utils" "^3.3.0"
+    "@airgap/beacon-core" "^3.3.2"
+    "@airgap/beacon-transport-postmessage" "^3.3.2"
+    "@airgap/beacon-types" "^3.3.2"
+    "@airgap/beacon-utils" "^3.3.2"
 
-"@airgap/beacon-utils@^3.3.0":
-  "integrity" "sha512-jRxnQS/oQeDCaOz/cTHQ8bwYTGVzOMmj89GKXMnhendYPT3h0tR8P0Q9Pe4o7wr9TXq+baSlYDoA2Dh6zTx2UA=="
-  "resolved" "https://registry.npmjs.org/@airgap/beacon-utils/-/beacon-utils-3.3.0.tgz"
-  "version" "3.3.0"
+"@airgap/beacon-utils@^3.3.2":
+  "integrity" "sha512-nKK5FzluJfX7hgsq+uDeDlUip206G1OkvbvVSBXB4RppBHeg5ApHTvE8+0CMjvas20XMNdosnU5pFed3n4kF4Q=="
+  "resolved" "https://registry.npmjs.org/@airgap/beacon-utils/-/beacon-utils-3.3.2.tgz"
+  "version" "3.3.2"
   dependencies:
     "@stablelib/nacl" "^1.0.3"
     "@stablelib/random" "^1.0.2"
     "@stablelib/utf8" "^1.0.1"
     "bs58check" "2.1.2"
 
-"@airgap/beacon-wallet@^3.3.0":
-  "integrity" "sha512-EZdR0WrUj9YUjYBdCgcM2ezdV6CTq8ib9u9O+EVUMPe5OX7dN5gO2v8UfVcu6nL0wpSDwGRGWtPPyiiZnMEp3Q=="
-  "resolved" "https://registry.npmjs.org/@airgap/beacon-wallet/-/beacon-wallet-3.3.0.tgz"
-  "version" "3.3.0"
+"@airgap/beacon-wallet@^3.3.2":
+  "integrity" "sha512-rcHHWnMzcADgHa9vAN466F1IjoPV75A0rfee7/ySCsrX/dDvDQZtwubf+MpCH+Ar5g1qxlWCuqBM95TH/0mXsA=="
+  "resolved" "https://registry.npmjs.org/@airgap/beacon-wallet/-/beacon-wallet-3.3.2.tgz"
+  "version" "3.3.2"
   dependencies:
-    "@airgap/beacon-core" "^3.3.0"
-    "@airgap/beacon-transport-matrix" "^3.3.0"
-    "@airgap/beacon-transport-postmessage" "^3.3.0"
+    "@airgap/beacon-core" "^3.3.2"
+    "@airgap/beacon-transport-matrix" "^3.3.2"
+    "@airgap/beacon-transport-postmessage" "^3.3.2"
 
 "@akryum/winattr@^3.0.0":
   "integrity" "sha512-t4WmWoGV9gyzypwG3y3JlcK2t8fKLtvzBA7xEoFTj9SMPvOuLsf13uh4ikK0RRaaa9RPPWLgFUdOyIRaQvCpwQ=="
