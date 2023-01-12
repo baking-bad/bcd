@@ -67,7 +67,7 @@ export default {
                     this.schema = response;
                 })
                 .catch(err => console.log(err))
-                .finally(this.isLoading = false)
+                .finally(() => this.isLoading = false)
         }
     }
 }
