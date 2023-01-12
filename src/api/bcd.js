@@ -750,4 +750,14 @@ export class BetterCallApi {
         return this.api.get(`/helpers/contracts/${network}`, {params})
             .then(this.returnResponseData);
     }
+
+    approveSchema() {
+        return this.api.get(`/helpers/approve/schema`, {})
+            .then(this.returnResponseData);
+    }
+
+    approveData(data = {}) {
+        return this.api.post(`/helpers/approve/data`, data)
+            .then(this.returnResponseData);
+    }
 }

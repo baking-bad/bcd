@@ -13,16 +13,14 @@
             :value="selected"
             mandatory
           >
-            <template v-for="(item, i) in entrypoints">
-              <v-list-item @click="selected = i" class="token-card" :key="'entrypoint-' + i">
-                <v-list-item-content>
-                  <v-list-item-title>
-                    <span v-if="item.name">{{ item.name }}</span>
-                    <span v-else class="text--disabled">NO NAME</span>
-                  </v-list-item-title>
-                </v-list-item-content>
-              </v-list-item>
-            </template>
+            <v-list-item @click="selected = i" class="token-card" v-for="(item, i) in entrypoints" :key="'entrypoint-' + i">
+              <v-list-item-content>
+                <v-list-item-title>
+                  <span v-if="item.name">{{ item.name }}</span>
+                  <span v-else class="text--disabled">NO NAME</span>
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
           </v-list-item-group>
         </v-skeleton-loader>
       </v-col>
@@ -81,7 +79,8 @@ export default {
   props: {
     address: String,
     network: String,
-    alias: String
+    alias: String,
+    tags: Array
   },
   components: {
     Schema,

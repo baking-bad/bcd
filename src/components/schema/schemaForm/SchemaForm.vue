@@ -94,18 +94,35 @@
     <div v-else-if="fallbackText">
       <p class="text--disabled">{{ fallbackText }}</p>
     </div>
-    <SchemaOptionalSettings
-      v-if="isOptionalSettings"
-      :is-storage="isStorage"
-      :is-deploy="isDeploy"
-      :networks="networks"
-      :settings="settings"
-      :importing="importing"
-      :import-actions="importActions"
-      :schema-selected-network="schemaSelectedNetwork"
-      @selectedNetwork="(val) => this.$emit('selectedNetwork', val)"
-      @settingsChange="(args) => this.$emit('settingsChange', args)"
-    />
+
+    <v-expansion-panels flat hover multiple tile class="mb-6 pr-2">
+      <v-expansion-panel>
+        <v-expansion-panel-header class="canvas caption font-weight-medium text-uppercase text--disabled">Settings (optional)</v-expansion-panel-header>
+        <v-expansion-panel-content class="canvas">
+          <SchemaOptionalSettings
+            v-if="isOptionalSettings"
+            :is-storage="isStorage"
+            :is-deploy="isDeploy"
+            :networks="networks"
+            :settings="settings"
+            :importing="importing"
+            :import-actions="importActions"
+            :schema-selected-network="schemaSelectedNetwork"
+            @selectedNetwork="(val) => this.$emit('selectedNetwork', val)"
+            @settingsChange="(args) => this.$emit('settingsChange', args)"
+          />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+      <v-expansion-panel v-if="!isStorage && !isDeploy">
+        <v-expansion-panel-header class="canvas caption font-weight-medium text-uppercase text--disabled">Tokens approvals (optional)</v-expansion-panel-header>
+        <v-expansion-panel-content class="canvas">
+          <SchemaFormApprove
+            :model="approveModel"
+          />
+        </v-expansion-panel-content>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
     <SchemaFormExecutionActions
       :execution="execution"
       :execute-actions="executeActions"
@@ -117,6 +134,7 @@
 
 <script>
 import SchemaOptionalSettings from "./SchemaOptionalSettings";
+import SchemaFormApprove from "./SchemaFormApprove.vue";
 import SchemaFormExecutionActions from "./SchemaFormExecutionActions";
 import Michelson from "@/components/Michelson";
 import { isKT1Address, isTzAddress } from "@/utils/tz.js";
@@ -126,7 +144,8 @@ name: "SchemaForm",
   components: {
     Michelson,
     SchemaFormExecutionActions,
-    SchemaOptionalSettings
+    SchemaOptionalSettings,
+    SchemaFormApprove
   },
   props: {
     schema: Object,
@@ -149,6 +168,7 @@ name: "SchemaForm",
     importActions: Array,
     executeActions: Array,
     fallbackText: String,
+    approveModel: Object
   },
   watch: {
     selectedFillType(val) {

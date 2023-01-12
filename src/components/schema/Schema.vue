@@ -26,6 +26,7 @@
             :import-actions="importActions"
             :execution="execution"
             :execute-actions="executeActions"
+            :approve-model="approveModel"
             @getRandomContract="getRandomContract"
             @executeAction="stopGettingWallet"
             @selectedNetwork="setSelectedNetwork"
@@ -116,7 +117,7 @@ export default {
     header: String,
     title: String,
     type: String,
-    script: Array,
+    script: Array
   },
   data: () => ({
     show: true,
@@ -153,6 +154,7 @@ export default {
       },
     ],
     model: {},
+    approveModel: {}
   }),
   created() {
     this.selectedNetwork = this.network;
@@ -502,19 +504,13 @@ export default {
       let parameter = await this.generateParameters(true);
       if (!parameter) return;
 
+      let operations = await this.buildTransactions(parameter);
+
       this.execution = true;
       try {
         let client = await this.getClient();
         const result = await client.requestOperation({
-          operationDetails: [{
-            kind: TezosOperationType.TRANSACTION,
-            destination: this.address,
-            amount: String(parseInt(this.settings.amount || "0")),
-            parameters: {
-              entrypoint: this.name,
-              value: parameter
-            },
-          }]
+          operationDetails: operations,
         });
         this.injectedOpHash = result.opHash;
       } catch (err) {
@@ -523,6 +519,85 @@ export default {
       } finally {
         this.execution = false;
       }
+    },
+    async buildTransactions(parameter) {
+      let contractCall = {
+        kind: TezosOperationType.TRANSACTION,
+        destination: this.address,
+        amount: String(parseInt(this.settings.amount || "0")),
+        parameters: {
+          entrypoint: this.name,
+          value: parameter
+        },
+      };
+
+      if (this.approveModel && this.approveModel.allowances && this.approveModel.allowances.length > 0){
+        return await this.buildApproveTransactions(contractCall);
+      } 
+      return [contractCall];
+    },
+    async buildApproveTransactions(contractCall) {
+      let transactions = [];
+      let response = await this.api.approveData(this.approveModel);
+
+      response.fa1_2.forEach(item => {
+        item.revokes.forEach(revoke => {
+          transactions.push({
+            kind: TezosOperationType.TRANSACTION,
+            destination: item.destination,
+            amount: "0",
+            parameters: {
+              entrypoint: revoke.entrypoint,
+              value: revoke.value
+            },
+          });
+        });
+
+        item.allows.forEach(allow => {
+          transactions.push({
+            kind: TezosOperationType.TRANSACTION,
+            destination: item.destination,
+            amount: "0",
+            parameters: {
+              entrypoint: allow.entrypoint,
+              value: allow.value
+            },
+          });
+        });
+      });
+
+
+      response.fa2.forEach(item => {
+        item.allows.forEach(allow => {
+          transactions.push({
+            kind: TezosOperationType.TRANSACTION,
+            destination: item.destination,
+            amount: "0",
+            parameters: {
+              entrypoint: allow.entrypoint,
+              value: allow.value
+            },
+          });
+        });
+      });
+      
+      transactions.push(contractCall);
+
+      response.fa2.forEach(item => {
+        item.revokes.forEach(revoke => {
+          transactions.push({
+            kind: TezosOperationType.TRANSACTION,
+            destination: item.destination,
+            amount: "0",
+            parameters: {
+              entrypoint: revoke.entrypoint,
+              value: revoke.value
+            },
+          });
+        });
+      });
+
+      return transactions;
     },
     prepareContractToFork(show) {
       if (this.execution) return;
