@@ -98,7 +98,7 @@
     <div class="mb-4">
       <span class="caption font-weight-medium text-uppercase text--disabled">Optional</span>
     </div>
-    <v-expansion-panels flat hover multiple tile class="mb-6 pr-2">
+    <v-expansion-panels flat hover multiple tile class="mb-6 pr-2" v-model="optional">
       <v-expansion-panel>
         <v-expansion-panel-header class="canvas caption font-weight-medium text-uppercase text--disabled">Settings</v-expansion-panel-header>
         <v-expansion-panel-content class="canvas">
@@ -118,7 +118,7 @@
       </v-expansion-panel>
       <v-expansion-panel v-if="!isStorage && !isDeploy">
         <v-expansion-panel-header class="canvas caption font-weight-medium text-uppercase text--disabled">
-          Tokens approvals 
+          Token approvals 
           {{ approveModel.allowances && approveModel.allowances.length > 0 ? '(' + approveModel.allowances.length + ')' : '' }}
         </v-expansion-panel-header>
         <v-expansion-panel-content class="canvas">
@@ -194,6 +194,7 @@ name: "SchemaForm",
     return {
       selectedFillType: 'empty',
       model: {},
+      optional: !this.isStorage && !this.isDeploy ? [] : [0],
       rules: {
         contract:[
           v => v.length == 36 || 'The length of the contract address is 36 characters',
