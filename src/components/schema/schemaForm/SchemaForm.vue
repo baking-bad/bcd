@@ -20,6 +20,11 @@
           :schema="schema"
           :options="{
             initialValidation: false,
+            arrayItemCardProps: {
+              'elevation': 0,
+              'tile': true,
+              'outlined': true
+            }
           }"
         >
           <template slot="custom-codemirror" slot-scope="{value, label, on}">
@@ -143,7 +148,7 @@ import SchemaOptionalSettings from "./SchemaOptionalSettings";
 import SchemaFormApprove from "./SchemaFormApprove.vue";
 import SchemaFormExecutionActions from "./SchemaFormExecutionActions";
 import Michelson from "@/components/Michelson";
-import { isKT1Address, isTzAddress } from "@/utils/tz.js";
+import { validationRules } from "@/utils/tz.js";
  
 export default {
 name: "SchemaForm",
@@ -195,40 +200,8 @@ name: "SchemaForm",
       selectedFillType: 'empty',
       model: {},
       optional: !this.isStorage && !this.isDeploy ? [] : [0],
-      rules: {
-        contract:[
-          v => v.length == 36 || 'The length of the contract address is 36 characters',
-          v => isKT1Address(v) || 'In this field you should write the address of the contract. It begins with KT.'
-        ],
-        nat: [
-          v => /^\d+$/.test(v) || 'Only digits are allowed',
-          v => this.validateNat(v)
-        ],
-        bytes: [
-          v => v.length % 2 == 0 || "The length of the byte string must be even",
-          v => /^[0-9a-fA-F]*$/.test(v) || 'Only 0-9 and a-f are allowed',
-        ],
-        address: [
-          v => v.length == 36 || 'The length of the address is 36 characters',
-          v => isTzAddress(v) || isKT1Address(v) || 'In this field you should write the address'
-        ]
-      }
+      rules: validationRules
     };
   },
-  methods: {
-    validateNat(value) {
-      if (value.length == 0) {
-        return 'Nat field is required';
-      }
-      let nat = parseInt(value);
-      if (nat < 0) {
-        return 'Nat must be positive';
-      }
-      if (value.length > 1 && value[0] === '0') {
-        return "Nat can't starts from zero";
-      }
-      return true;
-    }
-  }
 }
 </script>
