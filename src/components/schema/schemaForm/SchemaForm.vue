@@ -95,9 +95,12 @@
       <p class="text--disabled">{{ fallbackText }}</p>
     </div>
 
+    <div class="mb-4">
+      <span class="caption font-weight-medium text-uppercase text--disabled">Optional</span>
+    </div>
     <v-expansion-panels flat hover multiple tile class="mb-6 pr-2">
       <v-expansion-panel>
-        <v-expansion-panel-header class="canvas caption font-weight-medium text-uppercase text--disabled">Settings (optional)</v-expansion-panel-header>
+        <v-expansion-panel-header class="canvas caption font-weight-medium text-uppercase text--disabled">Settings</v-expansion-panel-header>
         <v-expansion-panel-content class="canvas">
           <SchemaOptionalSettings
             v-if="isOptionalSettings"
@@ -114,7 +117,10 @@
         </v-expansion-panel-content>
       </v-expansion-panel>
       <v-expansion-panel v-if="!isStorage && !isDeploy">
-        <v-expansion-panel-header class="canvas caption font-weight-medium text-uppercase text--disabled">Tokens approvals (optional)</v-expansion-panel-header>
+        <v-expansion-panel-header class="canvas caption font-weight-medium text-uppercase text--disabled">
+          Tokens approvals 
+          {{ approveModel.allowances && approveModel.allowances.length > 0 ? '(' + approveModel.allowances.length + ')' : '' }}
+        </v-expansion-panel-header>
         <v-expansion-panel-content class="canvas">
           <SchemaFormApprove
             :model="approveModel"
