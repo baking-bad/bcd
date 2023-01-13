@@ -84,6 +84,7 @@ import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
 import { TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@airgap/beacon-sdk'
 import {Wallet} from "@/utils/wallet";
+import { approveData } from "@/utils/approve";
 import ConfirmDialog from "@/components/Dialogs/ConfirmDialog";
 
 const walletsToIcons = {
@@ -504,7 +505,7 @@ export default {
       let parameter = await this.generateParameters(true);
       if (!parameter) return;
 
-      let operations = await this.buildTransactions(parameter);
+      let operations = this.buildTransactions(parameter);
 
       this.execution = true;
       try {
@@ -520,7 +521,7 @@ export default {
         this.execution = false;
       }
     },
-    async buildTransactions(parameter) {
+    buildTransactions(parameter) {
       let contractCall = {
         kind: TezosOperationType.TRANSACTION,
         destination: this.address,
@@ -532,70 +533,21 @@ export default {
       };
 
       if (this.approveModel && this.approveModel.allowances && this.approveModel.allowances.length > 0){
-        return await this.buildApproveTransactions(contractCall);
+        return this.buildApproveTransactions(contractCall);
       } 
       return [contractCall];
     },
-    async buildApproveTransactions(contractCall) {
+    buildApproveTransactions(contractCall) {
       let transactions = [];
-      let response = await this.api.approveData(this.approveModel);
+      let response = approveData(this.approveModel.allowances, this.address);
 
-      response.fa1_2.forEach(item => {
-        item.revokes.forEach(revoke => {
-          transactions.push({
-            kind: TezosOperationType.TRANSACTION,
-            destination: item.destination,
-            amount: "0",
-            parameters: {
-              entrypoint: revoke.entrypoint,
-              value: revoke.value
-            },
-          });
-        });
-
-        item.allows.forEach(allow => {
-          transactions.push({
-            kind: TezosOperationType.TRANSACTION,
-            destination: item.destination,
-            amount: "0",
-            parameters: {
-              entrypoint: allow.entrypoint,
-              value: allow.value
-            },
-          });
-        });
-      });
-
-
-      response.fa2.forEach(item => {
-        item.allows.forEach(allow => {
-          transactions.push({
-            kind: TezosOperationType.TRANSACTION,
-            destination: item.destination,
-            amount: "0",
-            parameters: {
-              entrypoint: allow.entrypoint,
-              value: allow.value
-            },
-          });
-        });
-      });
+      transactions.push(...response.fa1.revokes);
+      transactions.push(...response.fa1.approves);
+      transactions.push(...response.fa2.approves);
       
       transactions.push(contractCall);
 
-      response.fa2.forEach(item => {
-        item.revokes.forEach(revoke => {
-          transactions.push({
-            kind: TezosOperationType.TRANSACTION,
-            destination: item.destination,
-            amount: "0",
-            parameters: {
-              entrypoint: revoke.entrypoint,
-              value: revoke.value
-            },
-          });
-        });
-      });
+      transactions.push(...response.fa2.revokes);
 
       return transactions;
     },
