@@ -62,7 +62,7 @@
 </template>
 
 <script>
-import { schema } from '@/utils/approve.js';
+import { getSchema } from '@/utils/approve.js';
 import { validationRules } from '@/utils/tz';
 import { Wallet } from "@/utils/wallet";
 
@@ -74,15 +74,12 @@ export default {
     created() {
       let account = Wallet.getLastUsedAccount();
       if (account){
-        this.schema.properties.
-          allowances.items.properties.
-          token_type.oneOf[1].properties.
-          owner.default = account.address;
+        this.schema = getSchema(account.address)
       }      
     },
     data() {
         return {
-            schema: schema,
+            schema: getSchema(),
             rules: validationRules
         }
     }
