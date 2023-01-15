@@ -165,7 +165,7 @@ export function getSchema(owner = '') {
 }
 
 function processFa1(item, spender) {
-    if (!item.allowance || typeof item.allowance !== 'number') {
+    if (!item.allowance && typeof item.allowance !== 'number') {
         throw new Error(`invalid allowance value: ${item.allowance}`) 
     }
 
@@ -189,7 +189,7 @@ function processFa1(item, spender) {
 }
 
 function processFa2(item, spender)  {
-    if (!item.token_id || typeof item.token_id !== 'number') {
+    if (!item.token_id && typeof item.token_id !== 'number') {
         throw new Error(`invalid token_id value: ${item.token_id}`) 
     }
 
