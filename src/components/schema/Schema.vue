@@ -26,6 +26,7 @@
             :import-actions="importActions"
             :execution="execution"
             :execute-actions="executeActions"
+            :approve-model="approveModel"
             @getRandomContract="getRandomContract"
             @executeAction="stopGettingWallet"
             @selectedNetwork="setSelectedNetwork"
@@ -83,6 +84,7 @@ import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
 import { TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@airgap/beacon-sdk'
 import {Wallet} from "@/utils/wallet";
+import { approveData } from "@/utils/approve";
 import ConfirmDialog from "@/components/Dialogs/ConfirmDialog";
 
 const walletsToIcons = {
@@ -116,7 +118,7 @@ export default {
     header: String,
     title: String,
     type: String,
-    script: Array,
+    script: Array
   },
   data: () => ({
     show: true,
@@ -153,6 +155,7 @@ export default {
       },
     ],
     model: {},
+    approveModel: {}
   }),
   created() {
     this.selectedNetwork = this.network;
@@ -502,19 +505,13 @@ export default {
       let parameter = await this.generateParameters(true);
       if (!parameter) return;
 
+      let operations = this.buildTransactions(parameter);
+
       this.execution = true;
       try {
         let client = await this.getClient();
         const result = await client.requestOperation({
-          operationDetails: [{
-            kind: TezosOperationType.TRANSACTION,
-            destination: this.address,
-            amount: String(parseInt(this.settings.amount || "0")),
-            parameters: {
-              entrypoint: this.name,
-              value: parameter
-            },
-          }]
+          operationDetails: operations,
         });
         this.injectedOpHash = result.opHash;
       } catch (err) {
@@ -523,6 +520,36 @@ export default {
       } finally {
         this.execution = false;
       }
+    },
+    buildTransactions(parameter) {
+      let contractCall = {
+        kind: TezosOperationType.TRANSACTION,
+        destination: this.address,
+        amount: String(parseInt(this.settings.amount || "0")),
+        parameters: {
+          entrypoint: this.name,
+          value: parameter
+        },
+      };
+
+      if (this.approveModel && this.approveModel.allowances && this.approveModel.allowances.length > 0){
+        return this.buildApproveTransactions(contractCall);
+      } 
+      return [contractCall];
+    },
+    buildApproveTransactions(contractCall) {
+      let transactions = [];
+      let response = approveData(this.approveModel.allowances, this.address);
+
+      transactions.push(...response.fa1.revokes);
+      transactions.push(...response.fa1.approves);
+      transactions.push(...response.fa2.approves);
+      
+      transactions.push(contractCall);
+
+      transactions.push(...response.fa2.revokes);
+
+      return transactions;
     },
     prepareContractToFork(show) {
       if (this.execution) return;

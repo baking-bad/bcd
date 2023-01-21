@@ -1,10 +1,5 @@
 <template>
-  <div class="px-6 pt-4 pb-0 mr-2 mb-6 canvas optional-settings">
-    <div class="mb-6">
-      <span
-          class="caption font-weight-medium text-uppercase text--disabled"
-      >Optional settings</span>
-    </div>
+  <div class="pb-0 mr-2canvas optional-settings">
     <div class="mb-6">
       <v-btn-toggle
           v-model="selectedNetwork"
