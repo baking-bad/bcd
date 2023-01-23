@@ -199,7 +199,7 @@ function processFa2(item, spender)  {
         amount: "0",
         parameters: {
             entrypoint: updateOperatorsEntrypoint,
-            value: JSON.parse(`{"prim":"Left","args":[{"prim":"Pair","args":[{"string":"${item.owner}"},{"prim":"Pair","args":[{"string":"${spender}"},{"int":"${item.token_id}"}]}]}]}`)
+            value: JSON.parse(`[{"prim":"Left","args":[{"prim":"Pair","args":[{"string":"${item.owner}"},{"prim":"Pair","args":[{"string":"${spender}"},{"int":"${item.token_id}"}]}]}]}]`)
         },
     }, {        
         kind: TezosOperationType.TRANSACTION,
@@ -207,7 +207,7 @@ function processFa2(item, spender)  {
         amount: "0",
         parameters: {
             entrypoint: updateOperatorsEntrypoint,
-            value: JSON.parse(`{"prim":"Right","args":[{"prim":"Pair","args":[{"string":"${item.owner}"},{"prim":"Pair","args":[{"string":"${spender}"},{"int":"${item.token_id}"}]}]}]}`)
+            value: JSON.parse(`[{"prim":"Right","args":[{"prim":"Pair","args":[{"string":"${item.owner}"},{"prim":"Pair","args":[{"string":"${spender}"},{"int":"${item.token_id}"}]}]}]}]`)
         },
     }];
 }
