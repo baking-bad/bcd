@@ -17,13 +17,28 @@
         <template v-slot:activator="{ on, attrs }">
           <img v-bind="attrs" v-on="on" alt="avatar" class="avatar" :src="`https://catava.dipdup.net/${account.address}`">
         </template>
-        <v-list>
-          <v-subheader>
-            <div class="wallet-info">
-              <small>{{account.walletName}}</small>
-              <span v-past-html="helpers.shortcut(account.address, 6)"></span>
-            </div>
-          </v-subheader>
+        <v-list max-width="250" class="pt-0">
+          <v-list-item three-line>
+            <v-list-item-content>
+              <v-list-item-title>{{account.walletName}}</v-list-item-title>
+              <v-list-item-subtitle class="hash" v-past-html="helpers.shortcut(account.address, 6)"></v-list-item-subtitle>
+              <v-list-item-subtitle class="overline">{{ account.network.type }}</v-list-item-subtitle>
+            </v-list-item-content>
+            <v-list-item-action>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                    <v-btn v-on="on" class="mt-2" icon @click="{
+                      $clipboard(account.address);
+                      showClipboardOK();
+                    }">
+                        <v-icon class="text--secondary">mdi-content-copy</v-icon>
+                    </v-btn>
+                </template>
+                <span>Copy wallet address</span>
+              </v-tooltip>
+            </v-list-item-action>
+          </v-list-item>
+          <v-divider/>
           <template v-if="!isChangeWallet">
             <v-list-item class="px-4 cursor-pointer" @click="isChangeWallet = true">
               <v-list-item-title class="text-capitalize">Change wallet</v-list-item-title>
@@ -43,6 +58,7 @@
 
 <script>
 import {Wallet} from "@/utils/wallet";
+import { mapActions } from "vuex";
 
 export default {
   name: "ConnectWallet",
@@ -69,6 +85,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["showClipboardOK"]),
     async auth(network = 'mainnet', isLast = true) {
       this.isOpened = false;
       try {
@@ -114,7 +131,6 @@ export default {
 .wallet-info {
   display: flex;
   flex-direction: column;
-  padding: 4px 12px 8px 0;
-  border-bottom: 1px solid #414141;
+  padding: 12px 12px 12px 0;  
 }
 </style>
