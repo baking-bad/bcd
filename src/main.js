@@ -151,7 +151,14 @@ let stats = new StatsAPI({
   'kathmandunet': process.env.VUE_APP_KATHMANDU_STATS_API_URI,
 });
 
-const isDark = localStorage.getItem('dark') ? JSON.parse(localStorage.getItem('dark')) : true;
+const darkLocalStorage = localStorage.getItem('dark');
+let isDark = true;
+if (darkLocalStorage) {
+  isDark = JSON.parse(localStorage.getItem('dark'));
+} else {
+  localStorage.setItem('dark', true);
+}
+
 if (isDark) {
   document.body.classList.add('dark-theme-background');
 }

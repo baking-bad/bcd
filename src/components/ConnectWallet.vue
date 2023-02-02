@@ -1,23 +1,27 @@
 <template>
   <div>
-    <v-menu offset-y v-if="!account">
+    <v-menu offset-y tile v-if="!account">
       <template v-slot:activator="{ on, attrs }">
       <v-btn icon class="text--secondary" v-bind="attrs" v-on="on" >
         <v-icon size="26">mdi-wallet</v-icon>
       </v-btn>
       </template>
-      <v-list>
+      <v-list class="py-0" width="150">
+        <v-subheader class="overline">Select network</v-subheader>
+          <v-divider/>
         <v-list-item class="pr-8 pl-4 cursor-pointer" @click="auth(network)" v-for="network in config.networks" :key="network">
           <v-list-item-title class="text-capitalize">{{network}}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
     <div v-else>
-      <v-menu offset-y  v-model="isOpened" :close-on-content-click="false">
+      <v-menu offset-y tile v-model="isOpened" :close-on-content-click="false">
         <template v-slot:activator="{ on, attrs }">
-          <img v-bind="attrs" v-on="on" alt="avatar" class="avatar" :src="`https://catava.dipdup.net/${account.address}`">
+          <v-btn icon style="padding-top: 4px" v-on="on" v-bind="attrs">
+            <img alt="avatar" class="avatar" :src="`https://catava.dipdup.net/${account.address}`">
+          </v-btn>
         </template>
-        <v-list max-width="250" class="pt-0">
+        <v-list max-width="250" class="py-0">
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title>{{account.walletName}}</v-list-item-title>
@@ -41,10 +45,10 @@
           <v-divider/>
           <template v-if="!isChangeWallet">
             <v-list-item class="px-4 cursor-pointer" @click="isChangeWallet = true">
-              <v-list-item-title class="text-capitalize">Change wallet</v-list-item-title>
+              <v-list-item-title>Change wallet</v-list-item-title>
             </v-list-item>
             <v-list-item class="px-4 cursor-pointer" @click="logOut">
-              <v-list-item-title class="text-capitalize">Log out</v-list-item-title>
+              <v-list-item-title>Log out</v-list-item-title>
             </v-list-item>
           </template>
           <v-list-item v-else class="pr-8 pl-4 cursor-pointer" @click="auth(network, false)" v-for="network in config.networks" :key="network">
@@ -119,9 +123,8 @@ export default {
 
 <style scoped lang="scss">
 .avatar {
-  width: 40px;
-  cursor: pointer;
-  height: 40px;
+  width: 34px;
+  height: 34px;
 }
 
 .text--secondary {
