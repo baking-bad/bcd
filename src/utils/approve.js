@@ -5,7 +5,7 @@ import { TezosOperationType } from '@airgap/beacon-sdk'
 const approveEntrypoint = 'approve';
 const updateOperatorsEntrypoint = "update_operators"
 
-export function approveData(allowances, spender) {
+export function approveData(tokenApprovals, spender) {
     if (!checkAddress(spender)) {
         throw new Error(`invalid spender address: ${spender}`) 
     }
@@ -20,148 +20,23 @@ export function approveData(allowances, spender) {
             revokes: []
         }
     }
-    allowances.forEach(item => {
-        let x = item.token_type;
-        let typ = x.schema_key;
-
-        if (!checkAddress(x.token_contract)) {
-            throw new Error(`invalid token contract address: ${x.token_contract}`) 
+    tokenApprovals.forEach(item => {
+        if (!checkAddress(item.value.tokenContract)) {
+            throw new Error(`invalid token contract address: ${item.value.tokenContract}`) 
         }
 
-        if (typ == 1) {
-            let body = processFa1(x, spender);
+        if (item.type == 1) {
+            let body = processFa1(item.value, spender);
             result.fa1.approves.push(body[0]);
             result.fa1.revokes.push(body[1]);
-        } else if (typ == 2) {
-            let body = processFa2(x, spender);
+        } else if (item.type == 2) {
+            let body = processFa2(item.value, spender);
             result.fa2.approves.push(body[0]);
             result.fa2.revokes.push(body[1]);
         }
     });
 
     return result;
-}
-
-export function getSchema(owner = '') {
-    return {
-        "x-props": {
-            "outlined": true,
-            "dense": true
-        },
-        "type": "object",
-        "properties": {
-            "allowances": {
-                "x-props": {
-                    "outlined": true,
-                    "dense": true
-                },
-                "type": "array",
-                "prim": "list",
-                "default": [],
-                "items": {
-                    "x-props": {
-                        "outlined": true,
-                        "dense": true
-                    },
-                    "type": "object",
-                    "required": [
-                        "token_type"
-                    ],
-                    "properties": {
-                        "token_type": {
-                            "x-props": {
-                                "outlined": true,
-                                "dense": true
-                            },
-                            "oneOf": [
-                                {
-                                    "title": "FA1.2",
-                                    "properties": {
-                                        "schema_key": {
-                                            "type": "integer",
-                                            "const": 1
-                                        },
-                                        "token_contract": {
-                                            "x-props": {
-                                                "outlined": true,
-                                                "dense": true
-                                            },
-                                            "type": "string",
-                                            "title": "Token contract",
-                                            "prim": "address",
-                                            "default": "",
-                                            "minLength": 36,
-                                            "maxLength": 36
-                                        },
-                                        "allowance": {
-                                            "x-props": {
-                                                "outlined": true,
-                                                "dense": true
-                                            },
-                                            "type": "integer",
-                                            "title": "Allowance",
-                                            "prim": "nat",
-                                            "default": 0
-                                        }
-                                    }
-                                },
-                                {
-                                    "title": "FA2",
-                                    "properties": {
-                                        "schema_key": {
-                                            "type": "integer",
-                                            "const": 2
-                                        },
-                                        "token_contract": {
-                                            "x-props": {
-                                                "outlined": true,
-                                                "dense": true
-                                            },
-                                            "type": "string",
-                                            "title": "Token contract",
-                                            "prim": "address",
-                                            "default": "",
-                                            "minLength": 36,
-                                            "maxLength": 36
-                                        },
-                                        "owner": {
-                                            "x-display": "custom-wallet-address",
-                                            "x-props": {
-                                                "outlined": true,
-                                                "dense": true
-                                            },
-                                            "type": "string",
-                                            "title": "Owner",
-                                            "prim": "address",
-                                            "default": owner,
-                                            "minLength": 36,
-                                            "maxLength": 36
-                                        },
-                                        "token_id": {
-                                            "x-props": {
-                                                "outlined": true,
-                                                "dense": true
-                                            },
-                                            "type": "integer",
-                                            "title": "Token id",
-                                            "prim": "nat",
-                                            "default": 0
-                                        }
-                                    }
-                                }
-                            ],
-                            "title": "Token type",
-                            "prim": "or",
-                            "type": "object"
-                        }
-                    },
-                    "x-options": {
-                        "sectionsClass": "pl-0"
-                    }
-                }
-            }
-        }
-    }
 }
 
 function processFa1(item, spender) {
@@ -171,7 +46,7 @@ function processFa1(item, spender) {
 
     return [{        
         kind: TezosOperationType.TRANSACTION,
-        destination: item.token_contract,
+        destination: item.tokenContract,
         amount: "0",
         parameters: {
             entrypoint: approveEntrypoint,
@@ -179,7 +54,7 @@ function processFa1(item, spender) {
         },
     }, {        
         kind: TezosOperationType.TRANSACTION,
-        destination: item.token_contract,
+        destination: item.tokenContract,
         amount: "0",
         parameters: {
             entrypoint: approveEntrypoint,
@@ -189,25 +64,25 @@ function processFa1(item, spender) {
 }
 
 function processFa2(item, spender)  {
-    if (!item.token_id && typeof item.token_id !== 'number') {
-        throw new Error(`invalid token_id value: ${item.token_id}`) 
+    if (!item.tokenId && typeof item.tokenId !== 'number') {
+        throw new Error(`invalid tokenId value: ${item.tokenId}`) 
     }
 
     return [{        
         kind: TezosOperationType.TRANSACTION,
-        destination: item.token_contract,
+        destination: item.tokenContract,
         amount: "0",
         parameters: {
             entrypoint: updateOperatorsEntrypoint,
-            value: JSON.parse(`[{"prim":"Left","args":[{"prim":"Pair","args":[{"string":"${item.owner}"},{"prim":"Pair","args":[{"string":"${spender}"},{"int":"${item.token_id}"}]}]}]}]`)
+            value: JSON.parse(`[{"prim":"Left","args":[{"prim":"Pair","args":[{"string":"${item.owner}"},{"prim":"Pair","args":[{"string":"${spender}"},{"int":"${item.tokenId}"}]}]}]}]`)
         },
     }, {        
         kind: TezosOperationType.TRANSACTION,
-        destination: item.token_contract,
+        destination: item.tokenContract,
         amount: "0",
         parameters: {
             entrypoint: updateOperatorsEntrypoint,
-            value: JSON.parse(`[{"prim":"Right","args":[{"prim":"Pair","args":[{"string":"${item.owner}"},{"prim":"Pair","args":[{"string":"${spender}"},{"int":"${item.token_id}"}]}]}]}]`)
+            value: JSON.parse(`[{"prim":"Right","args":[{"prim":"Pair","args":[{"string":"${item.owner}"},{"prim":"Pair","args":[{"string":"${spender}"},{"int":"${item.tokenId}"}]}]}]}]`)
         },
     }];
 }

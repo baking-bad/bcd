@@ -26,13 +26,13 @@
             :import-actions="importActions"
             :execution="execution"
             :execute-actions="executeActions"
-            :approve-model="approveModel"
             @getRandomContract="getRandomContract"
             @executeAction="stopGettingWallet"
             @selectedNetwork="setSelectedNetwork"
             @settingsChange="setSettings"
             @selectedFillType="setSelectedFillType"
             @modelChange="setModel"
+            @tokenApprovalsChanged="tokenApprovalsChanged"
         />
         <SchemaAlertOpHashSuccess
             v-show="injectedOpHash"
@@ -63,11 +63,11 @@
       :code="michelsonCode"
     />
     <RawJsonViewer
-      :show.sync="showRawJSON"
+      v-model="showRawJSON"
       :raw="parametersJSON"
       :type="isStorage || isDeploy ? 'script' : 'parameters'"
     />
-    <ConfirmDialog ref="confirm"/>
+    <ConfirmDialog ref="confirm" v-model="showConfirmDialog" @onDecision="onWrongWalletNetworkDialogDecision"/>
   </div>
 </template>
 
@@ -137,6 +137,7 @@ export default {
     showResultOPG: false,
     showMichelson: false,
     showSimulationSettings: false,
+    showConfirmDialog: false,
     tezosClientCmdline: null,
     parametersJSON: null,
     isGettingWalletProgress: false,
@@ -155,7 +156,7 @@ export default {
       },
     ],
     model: {},
-    approveModel: {}
+    tokenApprovals: []
   }),
   created() {
     this.selectedNetwork = this.network;
@@ -287,24 +288,25 @@ export default {
         return false
       }
     },
+    onWrongWalletNetworkDialogDecision(value) {
+      if (value) {
+        return this.getClientErrorHandler(false);
+      }
+      return false;
+    },
     async checkWalletNetwork() {
       const account = Wallet.getLastUsedAccount();
 
       if(account && (this.selectedNetwork) !== account.network.type) {
-        const confirm = await this.$refs.confirm.open(
-            "Warning",
-            "The networks of the active wallet and the current contract do not match.",
-            {
-              ok: "Change wallet",
-              cancel: "Continue anyway",
-            }
-        )
-
-        if (confirm === 'CLOSE') {
-          return false;
+        this.showConfirmDialog = true;
+        try {
+          const confirm = await this.$refs.confirm.open();
+          return this.getClientErrorHandler(!confirm);
+        }
+        catch {
+          return false
         }
 
-        return this.getClientErrorHandler(!confirm);
       }
 
       return true;
@@ -532,14 +534,14 @@ export default {
         },
       };
 
-      if (this.approveModel && this.approveModel.allowances && this.approveModel.allowances.length > 0){
+      if (this.tokenApprovals && this.tokenApprovals.length > 0){
         return this.buildApproveTransactions(contractCall);
       } 
       return [contractCall];
     },
     buildApproveTransactions(contractCall) {
       let transactions = [];
-      let response = approveData(this.approveModel.allowances, this.address);
+      let response = approveData(this.tokenApprovals, this.address);
 
       transactions.push(...response.fa1.revokes);
       transactions.push(...response.fa1.approves);
@@ -652,6 +654,9 @@ export default {
         })
         .finally(() => (this.show = true));
     },
+    tokenApprovalsChanged(value) {
+      this.tokenApprovals = value;
+    }
   },
   watch: {
     value: {
