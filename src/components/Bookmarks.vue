@@ -62,7 +62,4 @@ export default {
 
 
 <style scoped>
-.btn-class {
-  width: 2.25rem;
-}
 </style>
