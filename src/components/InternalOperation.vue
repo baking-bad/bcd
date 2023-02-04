@@ -222,7 +222,7 @@
       </div>
     </v-expand-transition>
     <RawJsonViewer
-      :show.sync="showRaw"
+      v-model="showRaw"
       type="operation"
       :network="data.network"
       :level="data.level"

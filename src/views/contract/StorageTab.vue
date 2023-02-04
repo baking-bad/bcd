@@ -120,7 +120,7 @@
       </v-row>
     </v-skeleton-loader>
     <RawJsonViewer
-      :show.sync="showRaw"
+      v-model="showRaw"
       type="storage"
       :network="network"
       :address="address"
