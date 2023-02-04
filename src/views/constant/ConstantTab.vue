@@ -38,7 +38,7 @@
     </v-row>
     <RawJsonViewer
         :raw="constantInfo.value"
-        :show.sync="showRaw"
+        v-model="showRaw"
         type="constants"
         :network="network"
         :address="address"

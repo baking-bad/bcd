@@ -24,7 +24,7 @@
       </v-list-item>
     </div>
     <RawJsonViewer
-      :show.sync="showRaw"
+      v-model="showRaw"
       type="constants"
       :network="network"
     />

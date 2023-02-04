@@ -108,7 +108,7 @@
 
     <RawJsonViewer
       v-if="content"
-      :show.sync="showRaw"
+      v-model="showRaw"
       type="operation"
       :network="network"
       :level="content.level"

@@ -57,7 +57,7 @@
       </v-col>
     </v-row>
     <RawJsonViewer
-        :show.sync="showRaw"
+        v-model="showRaw"
         type="code"
         :network="network"
         :address="address"

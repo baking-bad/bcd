@@ -94,7 +94,7 @@
     </v-expansion-panel-content>
     <RawJsonViewer
       v-if="diff"
-      :show.sync="showRaw"
+      v-model="showRaw"
       type="big_map"
       :network="network"
       :level="diff.last_update_level"
