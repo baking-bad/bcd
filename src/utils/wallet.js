@@ -2,7 +2,6 @@ import {DAppClient, ColorMode, NetworkType} from "@airgap/beacon-sdk";
 import TZKTBlockExplorer from "@/utils/tzkt";
 
 const CORRECT_NETWORK_TYPES = {
-    "hangzhou2net": NetworkType.HANGZHOUNET,
     "sandboxnet": NetworkType.CUSTOM
 }
 
@@ -97,24 +96,23 @@ export class Wallet {
 
         const activeAccount = await this.wallet.getActiveAccount();
 
-        return new Promise(async (resolve, reject) => {
+        return new Promise((resolve, reject) => {
             if(activeAccount) {
                 Wallet.isPermissionGiven = true;
                 return resolve();
             }
 
-            try {
-                await this.wallet.requestPermissions({
-                    network: {
-                        type: type in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[type] : type,
-                        rpcUrl
-                    }
-                });
+            this.wallet.requestPermissions({
+                network: {
+                    type: type in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[type] : type,
+                    rpcUrl
+                }
+            })
+            .then(() => {
                 Wallet.isPermissionGiven = true
                 resolve();
-            } finally {
-                reject();
-            }
+            })
+            .finally(() => reject())
         })
     }
 

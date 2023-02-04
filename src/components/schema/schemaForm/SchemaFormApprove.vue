@@ -9,8 +9,15 @@
           arrayItemCardProps: {
             'elevation': 0,
             'tile': true,
-            'outlined': true,
-            'autoFixArrayItems': false
+            'outlined': true
+          },
+          textFieldProps: {
+            outlined: true,
+            dense: true
+          },
+          numberProps: {
+            outlined: true,
+            dense: true
           }
         }"
       >
@@ -29,6 +36,7 @@
         </template>
         <template slot="custom-address" slot-scope="props">
           <v-text-field
+              :id="props.fullKey"
               :ref="props.fullKey"
               :label="props.label"
               v-on="props.on"
@@ -71,10 +79,10 @@ export default {
     props: {
         model: Object,
     },
-    created() {
+    mounted() {
       let account = Wallet.getLastUsedAccount();
       if (account){
-        this.schema = getSchema(account.address)
+        console.log(this.model)
       }      
     },
     data() {

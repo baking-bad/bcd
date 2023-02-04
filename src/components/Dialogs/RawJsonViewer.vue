@@ -5,7 +5,8 @@
     fullscreen
     scrollable
     persistent
-    :retain-focus="false"
+    @keydown.esc="close"
+    ref="rawJsonDialog"
   >
     <v-card>
       <v-card-title class="sidebar py-2" primary-title>
@@ -113,7 +114,7 @@ const BIG_SIZE_JSON_SYMBOLS = 10000;
 export default {
   name: "RawJsonViewer",
   props: {
-    show: Boolean,
+    value: Boolean,
     raw: [Object, Array],
     type: String,
     network: String,
@@ -126,6 +127,16 @@ export default {
       type: Boolean,
       default: true
     }
+  },
+  computed: {
+      show: {
+        get () {
+          return this.value
+        },
+        set (value) {
+          this.$emit('input', value)
+        }
+      }
   },
   components: {
     VueJsonPretty,
@@ -141,7 +152,7 @@ export default {
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
     close() {
-      this.$emit("update:show", false);
+      this.$emit("input", false);
     },
     handleCopyClick() {
       if (!this.isCopiableOptions && this.raw) {
@@ -150,11 +161,6 @@ export default {
     },
     isTokenMetadata() {
       return this.type.toLowerCase() === 'token metadata';
-    },
-    handleKeyUp(e) {
-      if (e.key === "Escape"){
-        this.close();
-      }
     },
     reset() {
       this.loaded = false;
@@ -205,11 +211,10 @@ export default {
       this.isLastBigDataPushed = false;
     }
   },
-  mounted() {
-    document.addEventListener('keyup', this.handleKeyUp);
-  },
-  destroyed() {
-    document.addEventListener('keyup', this.handleKeyUp);
+  updated() {
+      if (this.show) {
+          this.$refs.rawJsonDialog.show();
+      }
   },
   watch: {
     show(newValue) {

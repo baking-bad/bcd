@@ -124,12 +124,10 @@
       <v-expansion-panel v-if="!isStorage && !isDeploy">
         <v-expansion-panel-header class="canvas caption font-weight-medium text-uppercase text--disabled">
           Token approvals 
-          {{ approveModel.allowances && approveModel.allowances.length > 0 ? '(' + approveModel.allowances.length + ')' : '' }}
+          {{ tokenApprovals && tokenApprovals.length > 0 ? '(' + tokenApprovals.length + ')' : '' }}
         </v-expansion-panel-header>
         <v-expansion-panel-content class="canvas">
-          <SchemaFormApprove
-            :model="approveModel"
-          />
+          <ApproveForm v-model="tokenApprovals"/>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -145,7 +143,7 @@
 
 <script>
 import SchemaOptionalSettings from "./SchemaOptionalSettings";
-import SchemaFormApprove from "./SchemaFormApprove.vue";
+import ApproveForm from "./approve/ApproveForm.vue";
 import SchemaFormExecutionActions from "./SchemaFormExecutionActions";
 import Michelson from "@/components/Michelson";
 import { validationRules } from "@/utils/tz.js";
@@ -156,7 +154,7 @@ name: "SchemaForm",
     Michelson,
     SchemaFormExecutionActions,
     SchemaOptionalSettings,
-    SchemaFormApprove
+    ApproveForm
   },
   props: {
     schema: Object,
@@ -178,15 +176,17 @@ name: "SchemaForm",
     networks: Array,
     importActions: Array,
     executeActions: Array,
-    fallbackText: String,
-    approveModel: Object
+    fallbackText: String
   },
   watch: {
     selectedFillType(val) {
       this.$emit('selectedFillType', val)
     },
     model(val) {
-      this.$emit('modelChange', val)
+      this.$emit('modelChange', val);
+    },
+    tokenApprovals(val) {
+      this.$emit('tokenApprovalsChanged', val);
     },
     schemaModel(val) {
       this.model = val;
@@ -199,6 +199,7 @@ name: "SchemaForm",
     return {
       selectedFillType: 'empty',
       model: {},
+      tokenApprovals: [],
       optional: !this.isStorage && !this.isDeploy ? [] : [0],
       rules: validationRules
     };
