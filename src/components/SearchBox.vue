@@ -75,7 +75,7 @@
             <span class="text--secondary hash">token</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             <span v-if="item.body.Name">{{ item.body.Name }}</span>
-            <Shortcut v-else :str="item.body.TokenID"/>
+            <Shortcut v-else :str="item.body.Address"/>
           </template>         
           <template v-if="item.type === 'recent'">
             <span class="text--secondary hash">recent</span>
