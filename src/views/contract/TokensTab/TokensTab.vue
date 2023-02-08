@@ -233,7 +233,14 @@ export default {
           }
           let tokens = await this.metadataApi.token(this.network, this.address, token_ids);
           tokens.forEach(x => x.loaded = false);
-          this.tokens.push(...tokens);
+          for (let i = 0; i < token_ids.length; i++) {
+            for (let j = 0; j < tokens.length; j++) {
+              if (token_ids[i] === tokens[j].token_id) {
+                this.tokens.push(tokens[j]);
+                break
+              }
+            }
+          }
         }
         catch (err) {
             this.showError(err);
