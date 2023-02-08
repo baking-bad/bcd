@@ -232,11 +232,11 @@ export default {
             token_ids.push(searchResult.items[i].body.TokenID);
           }
           let tokens = await this.metadataApi.token(this.network, this.address, token_ids);
-          tokens.forEach(x => x.loaded = false);
-          for (let i = 0; i < token_ids.length; i++) {
-            for (let j = 0; j < tokens.length; j++) {
-              if (token_ids[i] === tokens[j].token_id) {
-                this.tokens.push(tokens[j]);
+          for (const token_id of token_ids) {
+            for (let token of tokens) {
+              if (token_id === token.token_id) {
+                token.loaded = false;
+                this.tokens.push(token);
                 break
               }
             }

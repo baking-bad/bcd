@@ -88,8 +88,8 @@ export default {
         async processSearchResult(res, seqno) {
             if (seqno === this.seqno) {
                 if (res && res.items) {
-                    for(let i = 0; i < res.items.length; i++) {  
-                        res.items[i].type = await this.getContractType(res.items[i])
+                    for(let item of res.items) {  
+                        item.type = await this.getContractType(item)
                     }
 
                     // additional condition: it's required because getContractType is asyncronous and seqno may change while it executes.
