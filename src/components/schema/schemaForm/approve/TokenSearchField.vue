@@ -92,7 +92,10 @@ export default {
                         res.items[i].type = await this.getContractType(res.items[i])
                     }
 
-                    this.suggests.push(...res.items);
+                    // additional condition: it's required because getContractType is asyncronous and seqno may change while it executes.
+                    if (seqno === this.seqno) {
+                        this.suggests.push(...res.items);
+                    }
                 }
             }
         },
@@ -100,7 +103,6 @@ export default {
             if (!this.searchService.created() || !text || text.length < 3) return;
             if (text.length > 255) text = text.substring(0, 255)
 
-            this.isSearchCalled = true;
             clearTimeout(this._timerId);
 
             this._timerId = setTimeout(() => {
@@ -114,7 +116,6 @@ export default {
                     })
                     .finally(() => {
                         this.isSuggestionsLoading = false;
-                        this.isSearchCalled = false;
                     });
             }, 500);
         },
