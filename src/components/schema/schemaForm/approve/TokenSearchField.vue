@@ -106,7 +106,7 @@ export default {
             this._timerId = setTimeout(() => {
                 this.isSuggestionsLoading = true;
                 this.searchService
-                    .search(text, {index: ["tokens"]}, 5)
+                    .search(text, {index: ["tokens"], network: [this.network]}, 5)
                     .then(res => this.processSearchResult(res, seqno))
                     .catch((err) => {
                         console.log(err);

@@ -9,6 +9,17 @@
             </v-card-title>
             <v-card-text class="pt-4 pb-0">
                 <v-row>
+                    <v-col cols="12" v-if="!isEdit" class="pb-0">
+                        <v-alert
+                            dense
+                            text
+                            border="left"
+                            type="warning"
+                            class="caption"
+                            >
+                            Check <strong>token contract</strong> and <strong>id</strong> found in the search. Tokens can have the same name.
+                        </v-alert>
+                    </v-col>
                     <v-col cols="12" v-if="!isEdit">
                         <TokenSearchField v-model="searchToken" :network="network"/>
                     </v-col>
