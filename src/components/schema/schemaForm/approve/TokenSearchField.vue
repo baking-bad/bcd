@@ -9,6 +9,7 @@
         autocomplete="off"
         prepend-inner-icon="mdi-magnify"
         background-color="data"
+        :item-text="item => getItemText(item)"
         outlined
         dense
         no-filter
@@ -47,6 +48,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import Shortcut from '@/components/Shortcut.vue';
 
 export default {
@@ -84,6 +86,10 @@ export default {
         clearTimeout(this._timerId);
     },
     methods: {
+        ...mapActions(["showError"]),
+        getItemText(item) {
+            return `${item.body.Name} (${item.body.Address} with token id ${item.body.TokenID})`
+        },
         async processSearchResult(res, seqno) {
             if (seqno === this.seqno) {
                 if (res && res.items) {
@@ -135,6 +141,12 @@ export default {
                 console.log(e)
             }
         },
+        reset() {
+            this.searchText = '';
+            this.suggests = [];
+            this.isSuggestionsLoading = false;
+            this.isSearchCalled = false;
+        }
     },
     watch: {
         searchText(val, oldVal) {

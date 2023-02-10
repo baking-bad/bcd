@@ -21,7 +21,7 @@
                         </v-alert>
                     </v-col>
                     <v-col cols="12" v-if="!isEdit">
-                        <TokenSearchField v-model="searchToken" :network="network"/>
+                        <TokenSearchField ref=tokenSearchField v-model="searchToken" :network="network"/>
                     </v-col>
                     <v-col cols="12">
                         <v-chip v-if="isEdit" active-class="primary--text" disabled active small class="caption chip hash">
@@ -126,6 +126,7 @@ export default {
                     this.$emit('tokenAdded', {type: 2, value: this.fa2, typeName: 'FA2'})
                 }
             }
+            this.$refs.tokenSearchField.reset();
         },
         onCancel() {
             this.show = false;
