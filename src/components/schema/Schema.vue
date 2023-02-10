@@ -18,6 +18,7 @@
             :schema-selected-network="selectedNetwork"
             :fill-types="fillTypes"
             :header="header"
+            :network="network"
             :is-deploy="isDeploy"
             :is-storage="isStorage"
             :networks="networks"

@@ -10,6 +10,7 @@
             validate-on-blur
             label="Token contract"
             placeholder="Token contract"
+            background-color="data"
             :rules="rules.address"
         >
         </v-text-field>
@@ -23,6 +24,7 @@
             validate-on-blur
             label="Owner"
             placeholder="Owner"
+            background-color="data"
             :rules="rules.address"
             persistent-hint
             hint="If you attached a wallet, its address will be pasted automatically"
@@ -32,6 +34,7 @@
             key="fa2-token-id"
             v-model="model.tokenId"
             type="number"
+            background-color="data"
             outlined
             dense
             validate-on-blur

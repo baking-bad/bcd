@@ -42,6 +42,7 @@
         <TokenAddDialog 
             ref="tokenAddDialog"
             v-model="showTokenAddDialog"
+            :network="network"
             @tokenAdded="onTokenAdded"
         />
     </div>
@@ -52,7 +53,8 @@ import TokenAddDialog from './TokenAddDialog.vue';
 export default {
     name: "ApproveForm",
     props: {
-        value: Array
+        value: Array,
+        network: String
     },
     components: {
         TokenAddDialog

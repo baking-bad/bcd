@@ -127,7 +127,7 @@
           {{ tokenApprovals && tokenApprovals.length > 0 ? '(' + tokenApprovals.length + ')' : '' }}
         </v-expansion-panel-header>
         <v-expansion-panel-content class="canvas">
-          <ApproveForm v-model="tokenApprovals"/>
+          <ApproveForm v-model="tokenApprovals" :network="network"/>
         </v-expansion-panel-content>
       </v-expansion-panel>
     </v-expansion-panels>
@@ -176,7 +176,8 @@ name: "SchemaForm",
     networks: Array,
     importActions: Array,
     executeActions: Array,
-    fallbackText: String
+    fallbackText: String,
+    network: String
   },
   watch: {
     selectedFillType(val) {

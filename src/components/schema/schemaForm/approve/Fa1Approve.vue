@@ -9,6 +9,7 @@
             validate-on-blur
             label="Token contract"
             placeholder="Token contract"
+            background-color="data"
             :rules="rules.address"
         >
         </v-text-field>
@@ -21,6 +22,7 @@
             validate-on-blur
             label="Allowance"
             placeholder="Allowance"
+            background-color="data"
             :rules="rules.nat"
         >
         </v-text-field>

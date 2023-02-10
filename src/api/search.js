@@ -15,7 +15,10 @@ export class SearchService {
         let request = {
             query: text,
             size: size,
-            offset: offset
+            offset: offset,
+            filters: {
+                search: {}
+            }
         };
         return this.api.post(
             `/v1/search`, request
