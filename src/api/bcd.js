@@ -42,32 +42,6 @@ export class BetterCallApi {
             })
     }
 
-    search(text, indices = [], offset = 0, networks = [], time = {}, group = 0) {
-        let params = {
-            q: text
-        }
-        if (offset > 0) {
-            params.o = offset
-        }
-        if (indices.length > 0) {
-            params.i = indices.join(',')
-        }
-        if (networks.length > 0) {
-            params.n = networks.join(',')
-        }
-        if (group >= 0) {  // maybe remove group parameter?
-            params.g = 1
-        }
-        params = Object.assign(params, time)
-        return this.api.get(`/search`, {params})
-            .then((res) => {
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            })
-    }
-
     getHead() {
         return getCancellable(this.api, `/head`, {})
             .then((res) => {
@@ -81,9 +55,13 @@ export class BetterCallApi {
             })
     }
 
-    getContract(network, address) {
-        let params = {};
-        return getCancellable(this.api, `/contract/${network}/${address}`, params)
+    getContract(network, address, stats = true) {
+        let params = {
+            stats: stats,
+        };
+        return getCancellable(this.api, `/contract/${network}/${address}`, {
+            params: params
+        })
             .then((res) => {
                 if (!res) {
                     return res;

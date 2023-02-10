@@ -9,7 +9,6 @@
         autocomplete="off"
         prepend-inner-icon="mdi-magnify"
         background-color="data"
-        item-text="body.Name"
         outlined
         dense
         no-filter
@@ -123,7 +122,7 @@ export default {
             if (!item || !item.body) return;
 
             try {
-                let contract = await this.api.getContract(item.body.Network, item.body.Address)
+                let contract = await this.api.getContract(item.body.Network, item.body.Address, false)
                 if (contract.tags && contract.tags.length > 0) {
                     if (contract.tags.includes('fa2')) {
                         return 2;
