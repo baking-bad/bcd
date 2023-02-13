@@ -21,13 +21,13 @@
           </v-col>
           <v-col cols="4" class="d-flex justify-end pt-4">
             <v-chip-group
-              v-model="networks"
+              v-model="filters.network"
               column
               multiple
               mandatory
               active-class="secondary--text"
             >
-              <v-chip filter outlined v-for="(net) in config.networks" :key="net">{{ net }}</v-chip>
+              <v-chip filter outlined v-for="(net) in config.networks" :value="net" :key="net">{{ net }}</v-chip>
             </v-chip-group>
           </v-col>
         </v-row>
@@ -50,22 +50,38 @@
             <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
           </v-tab>
         </v-tabs>
+
+        <v-btn small text @click="isFiltersOpen = !isFiltersOpen" class="mr-2 text--secondary" v-if="tab == 4">
+          <v-icon v-if="!isFiltersOpen">mdi-chevron-down</v-icon>
+          <v-icon v-else>mdi-chevron-up</v-icon>
+          <span>Filters</span>
+        </v-btn>
       </template>
     </v-app-bar>
 
-    <v-container fluid class="canvas fill-canvas px-10 pt-8">
-      <v-row v-if="(completed || loading) || total > 0">
-        <v-col cols="8" class="pl-8">
+    <v-container fluid class="canvas fill-canvas pa-0">
+      <v-expand-transition>
+        <keep-alive>
+          <v-row v-show="isFiltersOpen" no-gutters>
+            <v-col>
+              <TokenFilters v-model="filters" v-if="tab == 4" @applied="fetch"/>
+              <v-divider/>
+            </v-col>
+          </v-row>
+        </keep-alive>
+      </v-expand-transition>
+      <v-row v-if="(completed || loading) || total > 0" class="px-10 pt-8">
+        <v-col cols="7" class="pl-8">
           <template v-if="total > 0">
             <v-overlay :value="loading" color="data" style="z-index:4" absolute></v-overlay>
             <span
               class="text--secondary caption ml-4"
             >Found {{ total == 10000 ? `more than ${total}` : total }} documents ({{ elasticTime }} ms)</span>
             <template v-for="(item, idx) in suggests">
-              <Account   :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'account'"/>
-              <BigMapKey :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'bigmapkey'"/>
-              <Operation :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'operation'"/>
-              <Token     :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'token'"/>
+              <Account   :item="item" :words="getSearchWords()" :key="idx" v-if="item.type === 'account'" @click="selectedIndex = idx" :active="selectedIndex == idx"/>
+              <BigMapKey :item="item" :words="getSearchWords()" :key="idx" v-else-if="item.type === 'bigmapkey'" @click="selectedIndex = idx" :active="selectedIndex == idx"/>
+              <Operation :item="item" :words="getSearchWords()" :key="idx" v-else-if="item.type === 'operation'" @click="selectedIndex = idx" :active="selectedIndex == idx"/>
+              <Token     :item="item" :words="getSearchWords()" :key="idx" v-else-if="item.type === 'token'" @click="selectedIndex = idx" :active="selectedIndex == idx"/>
             </template>
             <span v-intersect="onDownloadPage" v-if="!completed && !loading"></span>
           </template>
@@ -79,12 +95,14 @@
             <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
           </v-overlay>
         </v-col>
-        <v-col cols="4" v-if="first" class="pt-10 mt-2 pr-8">
-          <AccountCard   :item="first" v-if="first.type === 'account' && !first.body.IsContract"/>
-          <ContractCard  :item="first" v-if="first.type === 'account' && first.body.IsContract"/>
-          <BigMapKeyCard :item="first" v-if="first.type === 'bigmapkey'"/>
-          <OperationCard :item="first" v-if="first.type === 'operation'"/>
-          <TokenCard     :item="first" v-if="first.type === 'token'"/>
+        <v-col cols="5" v-if="selected" class="pt-10 mt-2 pr-8">
+          <keep-alive>
+            <AccountCard   :item="selected" v-if="selected.type === 'account' && !selected.body.IsContract"/>
+            <ContractCard  :item="selected" v-else-if="selected.type === 'account' && selected.body.IsContract"/>
+            <BigMapKeyCard :item="selected" v-else-if="selected.type === 'bigmapkey'"/>
+            <OperationCard :item="selected" v-else-if="selected.type === 'operation'"/>
+            <TokenCard     :item="selected" v-else-if="selected.type === 'token'"/>
+          </keep-alive>
         </v-col>
       </v-row>
       <StartSearchState v-else/>
@@ -106,6 +124,9 @@ import ContractCard from "./cards/Contract.vue";
 import BigMapKeyCard from "./cards/BigMapKey.vue";
 import OperationCard from "./cards/Operation.vue";
 import TokenCard from "./cards/Token.vue";
+import TokenFilters from './filters/TokenFilters.vue';
+
+const MIN_SEARCH_LENGTH = 3;
 
 export default {
   name: "ExtendedSearch",
@@ -120,7 +141,8 @@ export default {
     Token,
     TokenCard,
     EmptyState,
-    StartSearchState
+    StartSearchState,
+    TokenFilters,
   },
   data: () => ({
     suggests: [],
@@ -134,31 +156,50 @@ export default {
     tab: 0,
     _timerId: null,
     _locked: false,
-    networks: [],
     seqno: 0,
+    selectedIndex: -1,
+    isFiltersOpen: false,
+    filters: {
+      tags: [],
+      creators: [],
+      minters: [],
+      mime_types: [],
+      network: [],
+      index: []
+    }
   }),
   computed: {
-    indices() {
-      if (this.tab == 1) {
-        return ["accounts"];
-      } else if (this.tab == 2) {
-        return ["operations"];
-      } else if (this.tab == 3) {
-        return ["big-maps"];
-      } else if (this.tab == 4) {
-        return ["tokens"];
+    selected() {
+      if (this.selectedIndex < 0) {
+        return;
       }
-      return ["accounts", "operations", "big-maps", "tokens"];
+      if (this.suggests.length < this.selectedIndex + 1) {
+        return;
+      }
+      return this.suggests[this.selectedIndex];
     },
-    first() {
-      if (this.suggests.length > 0) {
-        return this.suggests[0];
+    isTokensFilters() {
+      return this.filters.tags.length > 0 ||
+        this.filters.creators.length > 0 ||
+        this.filters.minters.length > 0 ||
+        this.filters.mime_types.length > 0
+    },
+    requestFilters() {
+      if (this.isTokensFilters){
+        return {
+          tokens: this.filters
+        }
       }
-      return undefined;
+      return {
+          search: this.filters
+      }
+    },
+    networks() {
+      return this.filters.network;
     }
   },
   mounted() {
-    this.networks = [...this.config.networks.keys()];
+    this.filters.network = [...this.config.networks];
     this.$nextTick(() => {
       this.initializing = false;
       this.searchText = this.$route.query.text;
@@ -175,7 +216,7 @@ export default {
       }
     },
     fetchSearchDebounced(text, seqno, push = false) {
-      if (!text || text.length < 3) return;
+      if (!text || text.length < MIN_SEARCH_LENGTH) return;
 
       this.loading = true;
       this.completed = false;
@@ -183,18 +224,9 @@ export default {
       clearTimeout(this._timerId);
 
       const offset = push ? this.suggests.length : 0;
-      let networks = [];
-      this.networks.forEach(x => {
-        networks.push(this.config.networks[x]);
-      });
-      let filters = {
-        network: networks,
-        index: this.indices
-      } 
-
       this._timerId = setTimeout(() => {
         this.searchService
-          .search(text, filters, 10, offset)
+          .search(text, this.requestFilters, 10, offset)
           .then((res) => {
             if (seqno !== this.seqno || !res) return;
 
@@ -204,6 +236,10 @@ export default {
               } else {
                 this.suggests = res.items;
               }
+            }
+
+            if (this.selectedIndex < 0 && this.suggests.length > 0) {
+              this.selectedIndex = 0;
             }
 
             this.total = res.total;
@@ -245,6 +281,18 @@ export default {
       this.suggests = [];
       this.total = 0;
       this.cold = true;
+      this.selectedIndex = -1;
+    },
+    fetch() {
+      if (this.initializing) return;
+      this.selectedIndex = -1;
+      this.fetchSearchDebounced(this.searchText, ++this.seqno);
+    },
+    resetFilters() {
+      this.filters.tags = [];
+      this.filters.creators = [];
+      this.filters.minters = [];
+      this.isFiltersOpen = false;
     }
   },
   watch: {
@@ -253,28 +301,42 @@ export default {
         this.clearTotal();
         return;
       }
-      if (val.length < 3 || this._locked || this.initializing) return;
+      if (val.length < MIN_SEARCH_LENGTH || this._locked || this.initializing) return;
       if (val.length > 255) val = val.substring(0, 255);
       this._locked = true;
       this.searchText = val ? val.trim() : "";
       if (this.searchText) {
-        this.fetchSearchDebounced(this.searchText, ++this.seqno);
+        this.fetch();
       } else {
         this.clearTotal();
       }
       this._locked = false;
     },
-    indices() {
-      if (this.initializing) return;
-      this.fetchSearchDebounced(this.searchText, ++this.seqno);
-    },
     networks: {
       deep: true,
       handler: function () {
-        if (this.initializing) return;
-        this.fetchSearchDebounced(this.searchText, ++this.seqno);
+        this.fetch();
       },
     },
+    tab(value) {
+      if (value == 1) {
+        this.filters.index = ["accounts"];
+        this.resetFilters();
+      } else if (value == 2) {
+        this.filters.index = ["operations"];
+        this.resetFilters();
+      } else if (value == 3) {
+        this.filters.index = ["big-maps"];
+        this.resetFilters();
+      } else if (value == 4) {
+        this.filters.index = ["tokens"];
+      } else {
+        this.filters.index =["accounts", "operations", "big-maps", "tokens"];
+        this.resetFilters();
+      }
+
+      this.fetch();
+    }
   },
 };
 </script>

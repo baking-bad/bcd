@@ -74,8 +74,7 @@
               </v-alert>
               <v-row v-if="token.metadata">
                 <v-col :cols="token.metadata.thumbnailUri ? 10 : 12">
-                  <vue-json-pretty
-                    
+                  <vue-json-pretty                    
                     class="raw-json-viewer py-3"
                     :data="token.metadata"
                     :highlightMouseoverNode="true"
@@ -83,13 +82,8 @@
                 ></vue-json-pretty>
                 </v-col>
                 <v-col cols="2" v-if="token.metadata.thumbnailUri" class="d-flex flex-column align-center justify-start">
-                  <span class="overline mt-10" v-if="!token.loaded">Loading thumbnail...</span>
                   <div class="d-flex flex-column align-center justify-start">
-                    <v-img @load="loadedImage(token)" :src="getIPFS(token.metadata.thumbnailUri)" max-width="200" alt="Thumbnail" eager max-height="200">
-                    </v-img>
-                    <div class="mt-4" v-if="token.loaded">
-                      <p class="overline">Image from thumbnail URL</p>
-                    </div>
+                    <TokenImage v-if="token.metadata.thumbnailUri" :uri="token.metadata.thumbnailUri" :size="200"/>
                   </div>
                 </v-col>
               </v-row>
@@ -111,6 +105,7 @@ import { mapActions } from "vuex";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import VueJsonPretty from "vue-json-pretty";
 import { DipDupTokenMetadataApi } from "@/api/token_metadata.js";
+import TokenImage from '@/components/TokenImage.vue';
 
 export default {
   name: "ContractTokensTab",
@@ -120,7 +115,8 @@ export default {
   },
   components: {
     EmptyState,
-    VueJsonPretty
+    VueJsonPretty,
+    TokenImage
   },
   data: () => ({
     hasTokens: false,
@@ -135,6 +131,10 @@ export default {
   created() {
     this.ubisoft = new DipDupTokenMetadataApi('https://quartz.dipdup.net');
     this.domains = new DipDupTokenMetadataApi('https://domains.dipdup.net/');
+    if (this.$route.query.search) {      
+      this.search = this.$route.query.search;
+      this.hasTokens = true;
+    }
   },
   computed: {
     metadataApi() {
@@ -154,27 +154,12 @@ export default {
       }
       return `${token.token_id}`;
     },
-    getIPFS(url) {
-      if (!url) {
-        return '';
-      }
-
-      let result = `${this.config.IPFS_NODE}/ipfs/${url.replace('ipfs://', '')}`;
-      try {
-        return new URL(result).toString();
-      } catch (_) {
-        return '';
-      }
-    },
     getHeaderClass(metadata) {
       if (metadata === null) return 'item-header-failed';
       if (metadata.status === 1) return 'item-header-mempool';
       if (metadata.status === 2) return 'item-header-failed';
       if (metadata.status === 3) return 'item-header-applied';
       return 'item-header-applied';
-    },
-    loadedImage(token) {
-      token.loaded = true;
     },
     async onDownloadPage(_entries, _observer, isIntersecting) {
       if (isIntersecting) {

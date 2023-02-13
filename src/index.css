@@ -84,3 +84,7 @@
 .bcd-table tbody tr:hover {
     background: var(--v-sidebar-base) !important;
 }
+
+.chip {
+    opacity: 1;
+}

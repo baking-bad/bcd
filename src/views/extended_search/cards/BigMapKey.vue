@@ -1,8 +1,8 @@
 <template>
-    <v-card class="mx-auto" outlined :loading="loading">
+    <v-card class="mx-auto sticky-card" outlined :loading="loading">
         <v-card-text>
             <v-list>
-                <v-list-item two-line class="pl-3">
+                <v-list-item two-line class="px-3">
                     <v-list-item-avatar size="50">
                          <v-icon size="50">mdi-database</v-icon>
                     </v-list-item-avatar>
@@ -14,6 +14,9 @@
                             <span class="secondary--text overline">{{ item.body.Network }}</span>
                         </v-list-item-subtitle>
                     </v-list-item-content>
+                    <v-list-item-action>
+                        <v-btn color="primary" target="_blank" :to="link" text small>View</v-btn>
+                    </v-list-item-action>
                 </v-list-item>
 
                 <v-list-item two-line>
@@ -51,7 +54,7 @@
             </v-list>
         </v-card-text>
         <v-card-actions class="pl-8 mb-4">
-            <v-btn color="primary" outlined small :to="`/${item.body.Network}/big_map/${item.body.BigMapID}/${item.body.KeyHash}`">
+            <v-btn color="primary" target="_blank" outlined small :to="link">
                 Key page
             </v-btn>
         </v-card-actions>
@@ -66,6 +69,11 @@ export default {
     },
     data: () => ({
         loading: false
-    })
+    }),
+    computed: {
+        link() {
+            return `/${this.item.body.Network}/big_map/${this.item.body.BigMapID}/${this.item.body.KeyHash}`;
+        }
+    }
 }
 </script>

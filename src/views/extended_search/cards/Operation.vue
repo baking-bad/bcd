@@ -1,8 +1,8 @@
 <template>
-    <v-card class="mx-auto" outlined :loading="loading">
+    <v-card class="mx-auto sticky-card" outlined :loading="loading">
         <v-card-text>
             <v-list>
-                <v-list-item two-line class="pl-3">
+                <v-list-item two-line class="px-3">
                     <v-list-item-avatar size="50">
                          <v-icon size="50">mdi-swap-horizontal</v-icon>
                     </v-list-item-avatar>
@@ -15,6 +15,9 @@
                             <span class="overline" v-if="info"> | {{ status }}</span>
                         </v-list-item-subtitle>
                     </v-list-item-content>
+                    <v-list-item-action>
+                        <v-btn color="primary" target="_blank" :to="link" text small>Operation group page</v-btn>
+                    </v-list-item-action>
                 </v-list-item>
 
                 <v-list-item two-line v-if="info">
@@ -40,8 +43,8 @@
                 </v-list-item>
             </v-list>
         </v-card-text>
-        <v-card-actions class="pl-8 mb-4">
-            <v-btn color="primary" outlined small :to="`/${item.body.Network}/opg/${item.body.Hash}`">
+        <v-card-actions class="pl-8 mb-4" v-if="item.body.Hash">
+            <v-btn color="primary" target="_blank" outlined small :to="link">
                 Operation group page
             </v-btn>
         </v-card-actions>
@@ -67,6 +70,9 @@ export default {
                 return 'mempool';
             }
             return 'failed';
+        },
+        link() {
+            return `/${this.item.body.Network}/opg/${this.item.body.Hash}`;
         }
     },
     methods: {

@@ -88,9 +88,3 @@ export default {
     }
 }
 </script>
-
-<style scoped>
-.chip {
-  opacity: 1;
-}
-</style>

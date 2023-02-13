@@ -33,7 +33,8 @@ export function makeVuetify(dark) {
                     gitlab: '#F26D25',
                     instagram: '#e30181',
                     chart: '#B8E194',
-                    chartLine: '#5b942a'
+                    chartLine: '#5b942a',
+                    tag: '#dcdcdc'
                 },
                 dark: {
                     primary: '#75A34F',
@@ -57,7 +58,8 @@ export function makeVuetify(dark) {
                     gitlab: '#F26D25',
                     instagram: '#e30181',
                     chart: '#20350F',
-                    chartLine: '#5b942a'
+                    chartLine: '#5b942a',
+                    tag: '#515151'
                 }
             },
         },
