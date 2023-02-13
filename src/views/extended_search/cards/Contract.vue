@@ -21,7 +21,7 @@
                                     icon 
                                     small                        
                                     class="text--secondary"
-                                    :href="item.body.Homepage"
+                                    :href="$sanitize(item.body.Homepage)"
                                     target="_blank"
                                     rel="nofollow noopener"
                                 >

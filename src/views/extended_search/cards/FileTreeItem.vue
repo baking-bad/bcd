@@ -1,5 +1,5 @@
 <template>
-    <v-list-item :href="link" target="_blank" rel="nofollow noopener" two-line class="ma-0">
+    <v-list-item :href="$sanitize(link)" target="_blank" rel="nofollow noopener" two-line class="ma-0">
         <v-list-item-avatar>
             <v-icon>{{ icon }}</v-icon>
         </v-list-item-avatar>
@@ -163,7 +163,7 @@ export default {
                 if (this.file.uri.startsWith('ipfs://')) {
                     link = `${this.config.IPFS_NODE}/ipfs/${this.file.uri.replace('ipfs://', '')}`;
                 } else if (this.file.uri.startsWith('https://')) {
-                    link = this.$sanitize(this.file.uri);
+                    link = this.file.uri;
                 } else {
                     return '';
                 }
