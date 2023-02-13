@@ -64,7 +64,7 @@
         <keep-alive>
           <v-row v-show="isFiltersOpen" no-gutters>
             <v-col>
-              <TokenFilters v-model="filters" v-if="tab == 4" @applied="fetch"/>
+              <TokenFilters v-model="filters" :search="searchText" v-if="tab == 4" @applied="fetch"/>
               <v-divider/>
             </v-col>
           </v-row>
@@ -126,7 +126,7 @@ import OperationCard from "./cards/Operation.vue";
 import TokenCard from "./cards/Token.vue";
 import TokenFilters from './filters/TokenFilters.vue';
 
-const MIN_SEARCH_LENGTH = 3;
+const MIN_SEARCH_LENGTH = 1;
 
 export default {
   name: "ExtendedSearch",
@@ -196,6 +196,9 @@ export default {
     },
     networks() {
       return this.filters.network;
+    },
+    isSearchIsEmpty() {
+      return !this.searchText || this.searchText.length == 0
     }
   },
   mounted() {
@@ -208,6 +211,7 @@ export default {
   methods: {
     ...mapActions(["showError"]),
     getSearchWords() {
+      if (this.isSearchIsEmpty) return [];
       return this.searchText.split(" ");
     },
     onDownloadPage(entries) {
@@ -216,7 +220,7 @@ export default {
       }
     },
     fetchSearchDebounced(text, seqno, push = false) {
-      if (!text || text.length < MIN_SEARCH_LENGTH) return;
+      if (!this.isTokensFilters && (!text || text.length < MIN_SEARCH_LENGTH)) return;
 
       this.loading = true;
       this.completed = false;
@@ -292,6 +296,7 @@ export default {
       this.filters.tags = [];
       this.filters.creators = [];
       this.filters.minters = [];
+      this.filters.mime_types = [];
       this.isFiltersOpen = false;
     }
   },
@@ -335,6 +340,7 @@ export default {
         this.resetFilters();
       }
 
+      this.clearTotal();
       this.fetch();
     }
   },

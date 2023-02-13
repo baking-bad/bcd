@@ -211,9 +211,9 @@ api.getConfig().then(response => {
       path: '*',
       beforeEnter: async function (to, from, next) {
         if (isOldBigMapRoute(to.fullPath)) {
-          const splitted = to.fullPath.split('/');
+          const splitted = to.fullPath.split('/')
           return await api.getContractBigMap(splitted[1], splitted[3])
-                                  .then(res => next(`/${res.network}/${res.address}/storage/big_map/${res.ptr}/${splitted[5] || ''}`))
+                                  .then(res => next(`/${res.network}/${res.address}/storage/big_map/${res.ptr}/${splitted[4] || ''}`))
                                   .catch(() => next(`/not_found`));
         }
         const text = urlExtractBase58(to.path) || to.path.split('/').join(' ');

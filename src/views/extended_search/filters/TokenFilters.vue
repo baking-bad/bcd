@@ -17,7 +17,7 @@
                 <v-col cols="8">
                     <div class="d-flex">
                         <v-spacer/>
-                        <v-btn text class="primary--text" @click="applyFilters">
+                        <v-btn text class="primary--text" @click="applyFilters" :disabled="isBtnDisabled">
                             Apply filters
                         </v-btn>
                     </div>
@@ -33,7 +33,8 @@ import TagsCombobox from './TagsCombobox.vue';
 export default {
     name: "TokenFilters",
     props: {
-        value: Object
+        value: Object,
+        search: String
     },
     components: {
         TagsCombobox
@@ -46,11 +47,18 @@ export default {
             set(value) {
                 this.$emit('input', value);
             }
+        },
+        isEmptyFilters() {
+            return this.filters.tags.length === 0 &&
+                this.filters.mime_types.length === 0 &&
+                this.filters.creators.length === 0 &&
+                this.filters.minters.length === 0
         }
     },
     data: () => {
         return {
-            mimeTypes: []
+            mimeTypes: [],
+            isBtnDisabled: true
         }
     },
     created() {
@@ -58,6 +66,7 @@ export default {
     },
     methods: {
         applyFilters() {
+            this.isBtnDisabled = true;
             this.$emit('applied')
         },
         removeTag(tag) {
@@ -71,6 +80,26 @@ export default {
                     });
                 })
                 .catch(err => console.log(err))
+        }
+    },
+    watch: {
+        filters: {
+            deep: true,
+            handler: function() {
+                if (this.isBtnDisabled) this.isBtnDisabled = false;
+                if (this.search === '' || !this.search) {
+                    if (this.isEmptyFilters) {
+                        this.isBtnDisabled = true;
+                    }
+                }
+            }
+        },
+        search(value) {
+            if (value === '' || !value) {
+                if (this.isEmptyFilters) {
+                    this.isBtnDisabled = true;
+                }
+            }
         }
     }
 }

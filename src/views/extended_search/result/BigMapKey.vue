@@ -5,7 +5,7 @@
                 <v-list-item-content>
                     <v-list-item-title>
                         <router-link class="serp-link" target="_blank"
-                            :to="`/${item.body.network}/big_map/${item.body.BigMapID}`">
+                            :to="`/${item.body.Network}/big_map/${item.body.BigMapID}`">
                             <span class="hash text--primary">Big_map {{ item.body.BigMapID }}</span>
                         </router-link>
                         <span class="text--secondary" style="font-size: 20px;"> → </span>
