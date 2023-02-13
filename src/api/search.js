@@ -84,7 +84,7 @@ export class SearchService {
 
     alias(network, address) {
         return this.api.get(`/v1/account/${network}/${address}`,)
-            .then(response => getAccountAlias(response))
+            .then(response => getAccountAlias(response.data))
     }
 
     mimeTypes() {
