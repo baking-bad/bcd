@@ -4,19 +4,14 @@
             <v-row>
                 <v-col cols="4" >
                     <TagsCombobox label="Tags" placeholder="Add some tags" v-model="filters.tags"/>
+                    <TagsCombobox label="Minters" placeholder="Add minters" v-model="filters.minters" class="mt-6"/>
                 </v-col>
                 <v-col cols="4">
                     <TagsCombobox label="Mime type" placeholder="Add mime type" v-model="filters.mime_types" :items="mimeTypes"/>
                 </v-col>
                 <v-col cols="4">
                     <TagsCombobox label="Creators" placeholder="Add creators" v-model="filters.creators"/>
-                </v-col>
-                <v-col cols="4">
-                    <TagsCombobox label="Minters" placeholder="Add minters" v-model="filters.minters"/>
-                </v-col>
-                <v-col cols="8">
-                    <div class="d-flex">
-                        <v-spacer/>
+                    <div class="d-flex justify-end mt-6">
                         <v-btn text class="primary--text" @click="applyFilters" :disabled="isBtnDisabled">
                             Apply filters
                         </v-btn>

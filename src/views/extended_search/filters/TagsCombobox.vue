@@ -32,7 +32,7 @@
                 active
                 @click:close="removeTag(item)"
                 >
-                <span class="caption" style="opacity: 0.7">{{ item }}</span>
+                <span class="caption text-truncate tag-text">{{ item }}</span>
             </v-chip>
         </template>
     </v-combobox>
@@ -69,6 +69,10 @@ export default {
 }
 </script>
 
-<style>
-
-</style>
+<style scoped>
+.tag-text {
+    opacity: 0.7; 
+    display: block;
+    max-width: 150px;
+}
+</style>>
