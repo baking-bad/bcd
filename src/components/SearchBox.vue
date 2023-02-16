@@ -54,7 +54,7 @@
           <template v-else-if="item.type === 'operation'">
             <span class="text--secondary hash">operation</span>
             <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
-            <template v-if="item.body.Destination.startsWith('KT')">
+            <template v-if="item.body.Destination && item.body.Destination.startsWith('KT')">
               <Shortcut class="text--secondary" :str="item.body.Hash"/>
               <span class="text--secondary" style="font-size: 20px">&nbsp;→&nbsp;</span>
             </template>
@@ -158,6 +158,8 @@ import {SEARCH_TABS} from "../constants/searchTabs";
 import waitUntil from "async-wait-until";
 import Shortcut from '@/components/Shortcut.vue';
 
+const MIN_SEARCH_STRING_LENGTH = 1;
+
 export default {
   components: {
     Shortcut
@@ -225,7 +227,7 @@ export default {
 
       if (isToken) {
         addHistoryItem(this.buildHistoryItem(this.model, this.model.body.Address));
-        this.pushTo(`/${network}/${this.model.body.Address}/tokens?token_id=${this.model.body.TokenID}`);
+        this.pushTo(`/${network}/${this.model.body.Address}/tokens?search=${this.model.body.TokenID}`);
       } else if (isBigMap) {   
         addHistoryItem(this.buildHistoryItem(this.model, this.model.body.KeyHash));     
         this.pushTo(`/${network}/big_map/${this.model.body.BigMapID}/${this.model.body.KeyHash}`);
@@ -328,7 +330,7 @@ export default {
       return result;
     },
     fetchSearchDebounced(text, seqno) {
-      if (!this.searchService.created() || !text || text.length < 3) return;
+      if (!this.searchService.created() || !text || text.length < MIN_SEARCH_STRING_LENGTH) return;
       if (text.length > 255) text = text.substring(0, 255)
 
       this.isSearchCalled = true;
@@ -360,7 +362,7 @@ export default {
             this.isSuggestionsLoading = false;
             this.isSearchCalled = false;
           });
-      }, 500);
+      }, 200);
     },
     onRemoveClick(text) {
       removeHistoryItem(text);
@@ -375,6 +377,8 @@ export default {
       if (val !== oldVal) {
         this.suggests = [];
       }
+
+      if (val === undefined) return;
 
       let value = val;
       if (typeof val === 'object' && val.body !== undefined) {

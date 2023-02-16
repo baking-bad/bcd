@@ -51,6 +51,8 @@
 import { mapActions } from "vuex";
 import Shortcut from '@/components/Shortcut.vue';
 
+const MIN_SEARCH_STRING_LEN = 1;
+
 export default {
     name: 'TokenSearchField',
     components: {
@@ -105,15 +107,20 @@ export default {
             }
         },
         fetchSearchDebounced(text, seqno) {
-            if (!this.searchService.created() || !text || text.length < 3) return;
+            if (!this.searchService.created() || !text || text.length < MIN_SEARCH_STRING_LEN) return;
             if (text.length > 255) text = text.substring(0, 255)
 
             clearTimeout(this._timerId);
 
             this._timerId = setTimeout(() => {
+                let filters = {
+                    index: ["tokens"], 
+                    network: [this.network]
+                }
+
                 this.isSuggestionsLoading = true;
                 this.searchService
-                    .search(text, {index: ["tokens"], network: [this.network]}, 5)
+                    .suggest(text, 5, filters)
                     .then(res => this.processSearchResult(res, seqno))
                     .catch((err) => {
                         console.log(err);
@@ -122,7 +129,7 @@ export default {
                     .finally(() => {
                         this.isSuggestionsLoading = false;
                     });
-            }, 500);
+            }, 200);
         },
         async getContractType(item) {
             if (!item || !item.body) return;

@@ -1,5 +1,5 @@
 <template>
-  <v-card flat class="data mt-3">
+  <v-card flat tile :ripple="false" :class="`hoverable-card mt-3 ${active ? 'active-search-result' : ''}`" @click="onClick">
     <v-card-text class="pa-0">
       <v-list-item two-line>
         <v-list-item-content>
@@ -23,7 +23,7 @@
         </v-list-item-content>
       </v-list-item>
 
-      <Highlight class="mt-4" :highlights="item.highlights" />
+      <Highlight class="mt-1" :highlights="item.highlights" />
     </v-card-text>
   </v-card>
 </template>
@@ -37,6 +37,7 @@ export default {
   props: {
     item: Object,
     words: Array,
+    active: Boolean
   },
   components: {
     Highlight,
@@ -48,5 +49,10 @@ export default {
         return undefined;
     }
   },
+  methods: {
+    onClick(event) {
+        this.$emit('click', event);
+    }
+  }
 };
 </script>

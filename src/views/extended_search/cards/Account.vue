@@ -1,8 +1,8 @@
 <template>
-    <v-card class="mx-auto" outlined :loading="loading">
+    <v-card class="mx-auto sticky-card" outlined :loading="loading">
         <v-card-text>
             <v-list>
-                <v-list-item two-line class="pl-3">
+                <v-list-item two-line class="px-3">
                     <v-list-item-avatar size="50">
                          <v-icon size="50">mdi-wallet-outline</v-icon>
                     </v-list-item-avatar>
@@ -14,6 +14,9 @@
                             <span class="secondary--text overline">{{ item.body.Network }}</span>
                         </v-list-item-subtitle>
                     </v-list-item-content>
+                    <v-list-item-action>
+                        <v-btn color="primary" target="_blank" :to="link" text small>View</v-btn>
+                    </v-list-item-action>
                 </v-list-item>
 
                 <v-list-item two-line v-if="alias">
@@ -62,7 +65,7 @@
             </v-list>
         </v-card-text>
         <v-card-actions class="pl-8 mb-4">
-            <v-btn color="primary" outlined small :to="`/${item.body.Network}/${info.address}`">
+            <v-btn color="primary" target="_blank" outlined small :to="link">
                 Account page
             </v-btn>
         </v-card-actions>
@@ -86,6 +89,9 @@ export default {
             let alias = getAccountAlias(this.item.body);
             if (alias) return this.$sanitize(alias);
             return this.$sanitize(this.info.alias);
+        },
+        link() {
+            return `/${this.item.body.Network}/${this.info.address}`;
         }
     },
     methods: {

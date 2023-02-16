@@ -1,11 +1,11 @@
 <template>
-    <v-card flat class="data mt-3">
+    <v-card flat tile :ripple="false" :class="`hoverable-card mt-3 ${active ? 'active-search-result' : ''}`" @click="onClick">
         <v-card-text class="pa-0 pt-1">
             <v-list-item two-line>
                 <v-list-item-content>
                     <v-list-item-title>
                         <router-link class="serp-link" target="_blank"
-                            :to="`/${item.body.network}/big_map/${item.body.BigMapID}`">
+                            :to="`/${item.body.Network}/big_map/${item.body.BigMapID}`">
                             <span class="hash text--primary">Big_map {{ item.body.BigMapID }}</span>
                         </router-link>
                         <span class="text--secondary" style="font-size: 20px;"> → </span>
@@ -21,7 +21,7 @@
                 </v-list-item-content>
             </v-list-item>
 
-            <Highlight class="mt-4" :highlights="item.highlights"/>
+            <Highlight class="mt-1" :highlights="item.highlights"/>
         </v-card-text>
     </v-card>
 </template>
@@ -34,10 +34,16 @@ export default {
     props: {
         item: Object,
         words: Array,
+        active: Boolean
     },
     components: {
         Highlight
     },
+    methods: {
+        onClick(event) {
+            this.$emit('click', event);
+        }
+    }
 }
 </script>
 
@@ -50,5 +56,16 @@ export default {
 }
 .serp-link:visited {
   color: var(--v-accent-base);
+}
+.hoverable-card {
+    background-color: var(--v-data-base) !important;
+}
+.hoverable-card:hover {
+    cursor: pointer;
+    background-color: var(--v-sidenav-base) !important;
+}
+.active-search-result {
+    border-right: 5px solid var(--v-primary-base) !important;
+    background-color: var(--v-sidenav-base) !important;
 }
 </style>

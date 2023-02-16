@@ -11,30 +11,26 @@ export class SearchService {
       return this.api !== null;
     }
 
-    suggest(text, size = 10, offset = 0) {
+    suggest(text, size = 10, filters = {}) {
+        let request = {
+            query: text,
+            size: size,
+            filters: filters
+        };
+        return this.api.post(
+            `/v1/suggest`, request
+        ).then(this.parseResponse)
+    }
+
+    search(text, filters, size = 10, offset = 0, disable_highlight = false) {
         let request = {
             query: text,
             size: size,
             offset: offset,
-            filters: {
-                search: {}
-            }
-        };
-        return this.api.post(
-            `/v1/search`, request
-        ).then(this.parseResponse)
-    }
-
-    search(text, filters, size = 10, offset = 0) {
-        let request = {
-            query: text,
-            size: size,
-            offset: offset
+            disable_highlight: disable_highlight
         };
         if (filters) {
-            request.filters = {
-                search: filters
-            };
+            request.filters = filters;
         }
         return this.api.post(
             `/v1/search`, request
@@ -77,8 +73,8 @@ export class SearchService {
                 offset: offset,
                 filters: {
                     tokens: {
-                        network: network,
-                        contract: contract
+                        network: [network],
+                        contract: [contract]
                     }
                 }
             }
@@ -87,26 +83,12 @@ export class SearchService {
     }
 
     alias(network, address) {
-        return this.api.post(
-            `/v1/search`,  {
-                query: address,
-                size: 1,
-                filters: {
-                    search: {
-                        index: ["accounts"],
-                        network: [network]
-                    },
-                }
-            }
+        return this.api.get(`/v1/account/${network}/${address}`,)
+            .then(response => getAccountAlias(response.data))
+    }
 
-        ).then(response => {
-            let data = this.parseResponse(response);
-            if (data.items && data.items.length > 0) {
-                let body = data.items[0].body;
-                return getAccountAlias(body);
-            }
-            return null;
-        })
+    mimeTypes() {
+        return this.api.get(`/v1/mime_types`).then(this.parseResponse);
     }
 
     parseResponse(response) {
