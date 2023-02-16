@@ -2,7 +2,8 @@ import {DAppClient, ColorMode, NetworkType} from "@airgap/beacon-sdk";
 import TZKTBlockExplorer from "@/utils/tzkt";
 
 const CORRECT_NETWORK_TYPES = {
-    "sandboxnet": NetworkType.CUSTOM
+    "sandboxnet": NetworkType.CUSTOM,
+    "rollupnet": NetworkType.CUSTOM,
 }
 
 export class Wallet {
