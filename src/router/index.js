@@ -11,7 +11,6 @@ import RecentlyCalledTab from '@/views/network/RecentlyCalledTab.vue'
 import ConstantsTab from '@/views/network/ConstantsTab.vue'
 import StatsTab from '@/views/network/StatsTab.vue'
 import Deploy from '@/views/deploy/Deploy.vue'
-import Docs from '@/views/docs/Docs.vue'
 
 import Contract from '@/views/contract/Contract.vue'
 import OperationsTab from '@/views/contract/OperationsTab.vue'
@@ -93,14 +92,6 @@ export function newRouter(networks) {
           default: Deploy,
         },
         name: 'deploy',
-        props: { default: true },
-      },
-      {
-        path: '/docs',
-        components: {
-          default: Docs
-        },
-        name: 'docs',
         props: { default: true },
       },
       {
