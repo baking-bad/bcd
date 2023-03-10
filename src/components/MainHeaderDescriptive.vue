@@ -16,15 +16,6 @@
        <v-btn text small :to="{ name: 'deploy' }" class="text--secondary" active-class="bg-before-transparent">
         Deploy
       </v-btn>
-      <v-btn
-        text
-        active-class="bg-before-transparent"
-        class="text--secondary"
-        to="/docs"
-        small
-      >
-        API
-      </v-btn>
     </div>
     <div class="searchbox-wrapper">
       <SearchBox v-if="!noSearch" :inplace="true"></SearchBox>
