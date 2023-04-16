@@ -7,7 +7,7 @@
                     <v-list-item :key="idx">
                         <v-list-item-content>
                             <v-list-item-title>
-                                <span class="accent--text" v-html="helpers.shortcut(update.address)"></span>&nbsp;
+                                <Shortcut :str="update.address"/>&nbsp;
                                 <span class="text--secondary">with amount</span>&nbsp;
                                 <span class="text--primary">{{ update.amount }}</span>
                             </v-list-item-title>
@@ -99,6 +99,7 @@
 import { mapActions } from "vuex";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
+import Shortcut from "@/components/Shortcut.vue";
 
 export default {
     name: "TicketTab",
@@ -108,7 +109,8 @@ export default {
     },
     components: {
         MiguelTreeView,
-        TypeDef
+        TypeDef,
+        Shortcut
     },
     computed: {
         item() {
