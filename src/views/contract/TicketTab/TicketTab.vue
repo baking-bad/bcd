@@ -21,15 +21,15 @@
         <v-col cols="9" class="pr-4">
             <v-card class="sticky-card" flat outlined width="95%" v-if="item">
                 <v-card-text class="data pa-0 pb-0">
-                    <v-list>
-                        <v-list-item two-line>
+                    <v-list class="py-0">
+                        <v-list-item two-line :to="`/${network}/${item.ticketer}`" exact>
+                            <v-list-item-avatar>
+                                <v-icon class="text--secondary">mdi-ticket-confirmation</v-icon>
+                            </v-list-item-avatar>
                             <v-list-item-content>
                                 <v-list-item-title>Ticketer</v-list-item-title>
-                                <v-list-item-subtitle class="hash">                                    
-                                    <router-link class="text--secondary hash" style="text-decoration: none;" exact :to="`/${network}/${item.ticketer}`">
-                                        {{ item.ticketer }}
-                                        <v-icon small>mdi-open-in-new</v-icon>
-                                    </router-link>
+                                <v-list-item-subtitle class="hash">
+                                    {{ item.ticketer }}
                                 </v-list-item-subtitle>
                             </v-list-item-content>
                             <v-list-item-action class="justify-end">
@@ -37,18 +37,21 @@
                                 <v-list-item-action-text class="caption">Block {{ item.level }}</v-list-item-action-text>
                             </v-list-item-action>
                         </v-list-item>
-                        <v-list-item two-line>
+                        <v-list-item two-line exact :to="`/${network}/${item.address}`">
+                            <v-list-item-avatar>
+                                <v-icon class="text--secondary">mdi-wallet-outline</v-icon>
+                            </v-list-item-avatar>
                             <v-list-item-content>
                                 <v-list-item-title>Account</v-list-item-title>
                                 <v-list-item-subtitle class="hash">
-                                    <router-link class="text--secondary hash" style="text-decoration: none;" exact :to="`/${network}/${item.address}`">
-                                        {{ item.address }}
-                                        <v-icon small>mdi-open-in-new</v-icon>
-                                    </router-link>
+                                    {{ item.address }}
                                 </v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
                         <v-list-item two-line>
+                            <v-list-item-avatar>
+                                <v-icon class="text--secondary">mdi-circle-multiple-outline</v-icon>
+                            </v-list-item-avatar>
                             <v-list-item-content>
                                 <v-list-item-title>Amount</v-list-item-title>
                                 <v-list-item-subtitle class="hash">
@@ -56,14 +59,14 @@
                                 </v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
-                        <v-list-item two-line>
+                        <v-list-item two-line exact :to="`/${network}/opg/${item.operation_hash}`">
+                            <v-list-item-avatar>
+                                <v-icon class="text--secondary">mdi-swap-horizontal</v-icon>
+                            </v-list-item-avatar>
                             <v-list-item-content>
-                                <v-list-item-title>Operation</v-list-item-title>
+                                <v-list-item-title>Operation Hash</v-list-item-title>
                                 <v-list-item-subtitle>
-                                    <router-link class="text--secondary hash" style="text-decoration: none;" exact :to="`/${network}/opg/${item.operation_hash}`">
-                                        {{ item.operation_hash }}
-                                        <v-icon small>mdi-open-in-new</v-icon>
-                                    </router-link>
+                                    {{ item.operation_hash }}
                                 </v-list-item-subtitle>
                             </v-list-item-content>
                         </v-list-item>
