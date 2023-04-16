@@ -13,6 +13,9 @@
       <v-tab :to="pushTo({ name: 'events' })" replace v-if="contract.events_count && contract.events_count > 0">
         <v-icon left small>mdi-bell-outline</v-icon>Events
       </v-tab>
+      <v-tab :to="pushTo({ name: 'ticket_updates' })" replace v-if="contract.has_ticket_updates">
+        <v-icon left small>mdi-ticket-outline</v-icon>Tickets
+      </v-tab>
       <v-tab :to="pushTo({ name: 'storage' })" replace v-if="isContract">
         <v-icon left small>mdi-database</v-icon>Storage
       </v-tab>

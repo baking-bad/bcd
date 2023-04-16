@@ -23,6 +23,7 @@ import TransfersTab from '@/views/contract/TransfersTab/TransfersTab.vue'
 import MetadataTab from '@/views/contract/MetadataTab/MetadataTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
 import EventsTab from '@/views/contract/EventsTab/EventsTab.vue'
+import TicketTab from '@/views/contract/TicketTab/TicketTab.vue'
 
 import OperationGroup from '@/views/opg/OperationGroup.vue'
 import OpgContents from '@/views/opg/ContentsTab.vue'
@@ -162,6 +163,12 @@ export function newRouter(networks) {
             path: 'events',
             name: 'events',
             component: EventsTab,
+            props: true
+          },
+          {
+            path: 'ticket_updates',
+            name: 'ticket_updates',
+            component: TicketTab,
             props: true
           },
           {
