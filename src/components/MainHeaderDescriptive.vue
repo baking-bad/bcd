@@ -55,7 +55,10 @@ export default {
       if (this.config.sandbox_mode) {
         return `/${this.$route.params.network || 'sandboxnet'}/`
       }
-      return `/${this.$route.params.network || 'mainnet'}/`
+      if ('mainnet' in this.config.networks) {
+        return `/${this.$route.params.network || 'mainnet'}/`
+      }
+      return `/${this.$route.params.network || this.config.networks[0]}/`
     }
   },
 }
