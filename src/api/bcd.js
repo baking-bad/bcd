@@ -738,4 +738,17 @@ export class BetterCallApi {
         return this.api.post(`/helpers/approve/data`, data)
             .then(this.returnResponseData);
     }
+
+    listTicketUpdates(network, address, offset, size=10) {
+        let params = {
+            size
+        }
+
+        if (offset > 0) {
+            params['offset'] = offset
+        }
+
+        return this.api.get(`/contract/${network}/${address}/ticket_updates`, {params})
+            .then(this.returnResponseData);
+    }
 }

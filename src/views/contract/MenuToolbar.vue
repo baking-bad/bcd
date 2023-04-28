@@ -36,6 +36,9 @@
       >
         <v-icon left small>mdi-transfer</v-icon>Transfers
       </v-tab>
+      <v-tab :to="pushTo({ name: 'ticket_updates' })" replace v-if="contract.has_ticket_updates">
+        <v-icon left small>mdi-ticket-outline</v-icon>Tickets
+      </v-tab>
       <v-tab
         :to="pushTo({ name: 'metadata' })"
         replace
