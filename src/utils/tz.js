@@ -125,6 +125,10 @@ export function isTzAddress(val) {
     return /^(tz)[1-9A-HJ-NP-Za-km-z]{34}$/.test(val);
 }
 
+export function isSrAddress(val) {
+    return /^(sr)[1-9A-HJ-NP-Za-km-z]{34}$/.test(val);
+}
+
 export function isOperationHash(val) {
     return /^o[1-9A-HJ-NP-Za-km-z]{50}$/.test(val);
 }
@@ -158,6 +162,6 @@ export let validationRules = {
     ],
     address: [
         v => (v && v.length == 36) || 'The length of the address is 36 characters',
-        v => isTzAddress(v) || isKT1Address(v) || 'In this field you should write the address'
+        v => isTzAddress(v) || isKT1Address(v) || isSrAddress(v) || 'In this field you should write the address'
     ]
 }

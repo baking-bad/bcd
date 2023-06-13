@@ -1,6 +1,6 @@
 {
   "name": "better-call-dev",
-  "version": "4.3.2",
+  "version": "4.5.2",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -52,9 +52,9 @@
   "devDependencies": {
     "@mdi/font": "^5.0.45",
     "@mdi/js": "^5.0.45",
-    "@vue/cli": "^4.5.13",
-    "@vue/cli-plugin-eslint": "^4.2.3",
-    "@vue/cli-service": "^4.2.3",
+    "@vue/cli": "^5.0.8",
+    "@vue/cli-plugin-eslint": "^5.0.8",
+    "@vue/cli-service": "^5.0.8",
     "babel-eslint": "^10.1.0",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.0.0",
