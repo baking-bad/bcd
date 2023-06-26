@@ -93,7 +93,7 @@
       ></v-progress-linear>
       <v-card-text class="data" style="max-height: calc(100% - 52px)">
         <vue-json-pretty
-          class="raw-json-viewer"
+          class="pa-5"
           v-if="loaded"
           :data="data"
           :highlightMouseoverNode="true"
@@ -108,6 +108,7 @@
 import { mapActions } from "vuex";
 import VueJsonPretty from "vue-json-pretty";
 import {keysToCamel} from "../../utils/object";
+import '@/styles/vue-json-pretty.css';
 
 const BIG_SIZE_JSON_SYMBOLS = 10000;
 
@@ -284,19 +285,7 @@ export default {
 </script>
 
 <style lang="scss">
-@import '../../styles/vue-json-pretty.css';
-
-.vjs-tree .vjs-value__string {
-  color: var(--v-tree-base) !important;
-}
-.vjs-tree .vjs-tree__content.has-line {
-  border-color: var(--v-border-base) !important;
-}
-.vjs-tree .is-mouseover {
-  background-color: #99999920 !important;
-}
 .raw-json-viewer {
-  background-color: transparent !important;
   padding: 20px;
 }
 .raw-json-dialog__warning {

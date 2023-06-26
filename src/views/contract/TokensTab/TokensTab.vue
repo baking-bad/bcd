@@ -75,7 +75,7 @@
               <v-row v-if="token.metadata">
                 <v-col :cols="token.metadata.thumbnailUri ? 10 : 12">
                   <vue-json-pretty                    
-                    class="raw-json-viewer py-3"
+                    class="py-3"
                     :data="token.metadata"
                     :highlightMouseoverNode="true"
                     :customValueFormatter="formatValue"
@@ -283,8 +283,4 @@ export default {
 .token-panel.v-expansion-panel--next-active {
   border-bottom: 1px solid var(--v-border-base);
 }
-</style>
-
-<style lang="scss">
-@import '../../../styles/vue-json-pretty.css';
 </style>
