@@ -55,7 +55,7 @@
     "@mdi/js": "^7.2.96",
     "@vue/cli": "^5.0.8",
     "@vue/cli-plugin-eslint": "^5.0.8",
-    "@vue/cli-service": "^4.2.3",
+    "@vue/cli-service": "^5.0.8",
     "eslint": "^8.43.0",
     "eslint-plugin-vue": "^9.15.1",
     "sass": "~1.32.6",
