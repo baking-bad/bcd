@@ -34,6 +34,7 @@
     "portal-vue": "^2.1.7",
     "redoc": "^2.0.0-rc.65",
     "sanitize-html": "^2.7.0",
+    "stream": "^0.0.2",
     "v-clipboard": "^2.2.2",
     "vue": "^2.6.10",
     "vue-codemirror": "^4.0.6",
@@ -80,7 +81,7 @@
       "eslint:recommended"
     ],
     "parserOptions": {
-      "parser": "babel-eslint"
+      "parser": "@babel/eslint-parser"
     }
   },
   "postcss": {

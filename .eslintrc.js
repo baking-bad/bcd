@@ -12,7 +12,6 @@ module.exports = {
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off',
     'vue/multi-word-component-names': 'off',
     'vue/no-reserved-keys': 'off',
-    'vue/no-reserved-component-names': 'off',
     'no-unused-vars': 'off'
   },
   parserOptions: {
