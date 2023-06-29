@@ -34,7 +34,8 @@ export function makeVuetify(dark) {
                     instagram: '#e30181',
                     chart: '#B8E194',
                     chartLine: '#5b942a',
-                    tag: '#dcdcdc'
+                    tag: '#dcdcdc',
+                    jsonHasLine: '#999'
                 },
                 dark: {
                     primary: '#75A34F',
@@ -59,7 +60,8 @@ export function makeVuetify(dark) {
                     instagram: '#e30181',
                     chart: '#20350F',
                     chartLine: '#5b942a',
-                    tag: '#515151'
+                    tag: '#515151',
+                    jsonHasLine: '#444'
                 }
             },
         },

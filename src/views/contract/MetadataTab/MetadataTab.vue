@@ -15,7 +15,6 @@
           </v-alert>
           <vue-json-pretty
             v-if="rawData"
-            class="raw-json-viewer"
             :data="rawData"
             :highlightMouseoverNode="true"
             :customValueFormatter="formatValue"
@@ -28,6 +27,7 @@
 <script>
 import { mapActions } from "vuex";
 import VueJsonPretty from "vue-json-pretty";
+import '@/styles/vue-json-pretty.css';
 
 export default {
   name: "Metadata",
@@ -84,7 +84,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-@import '../../../styles/vue-json-pretty.css';
-</style>
