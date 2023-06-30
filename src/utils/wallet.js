@@ -6,6 +6,10 @@ const CORRECT_NETWORK_TYPES = {
     "rollupnet": NetworkType.CUSTOM,
 }
 
+export function isCustom(network) {
+    return network === NetworkType.CUSTOM;
+}
+
 export class Wallet {
     static async getWallet(network, eventHandlers = null) {
         if (Wallet.wallet) return Wallet.wallet
@@ -94,7 +98,6 @@ export class Wallet {
             await Wallet.wallet.setActiveAccount(Wallet.getLastUsedAccount());
         }
 
-
         const activeAccount = await this.wallet.getActiveAccount();
 
         return new Promise((resolve, reject) => {
@@ -110,7 +113,7 @@ export class Wallet {
                 }
             })
             .then(() => {
-                Wallet.isPermissionGiven = true
+                Wallet.isPermissionGiven = true;
                 resolve();
             })
             .finally(() => reject())
