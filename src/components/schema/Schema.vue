@@ -84,7 +84,7 @@ import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
 import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
 import { TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@airgap/beacon-sdk'
-import {Wallet} from "@/utils/wallet";
+import {Wallet, isCustom} from "@/utils/wallet";
 import { approveData } from "@/utils/approve";
 import ConfirmDialog from "@/components/Dialogs/ConfirmDialog";
 
@@ -224,7 +224,6 @@ export default {
       this.model = val;
     },
     setSelectedNetwork(val) {
-
       this.selectedNetwork = val;
     },
     setSettings({key, val}) {
@@ -298,7 +297,10 @@ export default {
     async checkWalletNetwork() {
       const account = Wallet.getLastUsedAccount();
 
-      if(account && (this.selectedNetwork) !== account.network.type) {
+      const isNetwork = !isCustom(account.network.type) &&
+        account.network.type !== this.selectedNetwork
+
+      if(account && isNetwork) {
         this.showConfirmDialog = true;
         try {
           const confirm = await this.$refs.confirm.open();
@@ -389,7 +391,7 @@ export default {
         },
         OPERATION_REQUEST_SUCCESS: {
           handler: async (data) => {
-            const link = `/${data.account.network.type}/opg/${data.output.transactionHash}`;
+            const link = `/${this.selectedNetwork ? this.selectedNetwork : this.network}/opg/${data.output.transactionHash}`;
             const successMessage = `The transaction
                has successfully been <a href="${link}">broadcasted</a>
                 to the network.`;
