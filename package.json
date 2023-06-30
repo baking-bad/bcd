@@ -88,5 +88,8 @@
     "plugins": {
       "autoprefixer": {}
     }
+  },
+  "engines": {
+    "node": ">= 16"
   }
 }
