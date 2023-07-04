@@ -378,7 +378,7 @@ export default {
         this.suggests = [];
       }
 
-      if (val === undefined || val === null) return;
+      if (!val) return;
 
       let value = val;
       if (typeof val === 'object' && val.body !== undefined) {
