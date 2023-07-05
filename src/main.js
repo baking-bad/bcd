@@ -148,7 +148,6 @@ let stats = new StatsAPI({
   'mainnet': process.env.VUE_APP_MAINNET_STATS_API_URI,
   'nairobinet': process.env.VUE_APP_TESTNET_STATS_API_URI,
   'ghostnet': process.env.VUE_APP_GHOSTNET_STATS_API_URI,
-  'mumbainet': process.env.VUE_APP_MUMBAI_STATS_API_URI,
 });
 
 const darkLocalStorage = localStorage.getItem('dark');
