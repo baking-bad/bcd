@@ -4,7 +4,7 @@
     <v-row>
       <v-col cols="9">
         <v-row v-if="searchable">
-          <v-col cols="12" class="pt-0">
+          <v-col cols="12">
              <v-text-field
               v-model="search"
               color="primary"

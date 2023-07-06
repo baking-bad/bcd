@@ -6,7 +6,7 @@
         <v-icon size="26">mdi-wallet</v-icon>
       </v-btn>
       </template>
-      <v-list class="py-0" width="150">
+      <v-list class="py-0" width="auto">
         <v-subheader class="overline">Select network</v-subheader>
           <v-divider/>
         <v-list-item class="pr-8 pl-4 cursor-pointer" @click="auth(network)" v-for="network in config.networks" :key="network">
@@ -21,7 +21,7 @@
             <img alt="avatar" class="avatar" :src="`https://catava.dipdup.net/${account.address}`">
           </v-btn>
         </template>
-        <v-list max-width="250" class="py-0">
+        <v-list class="py-0" max-width="250">
           <v-list-item three-line>
             <v-list-item-content>
               <v-list-item-title>{{account.walletName}}</v-list-item-title>
