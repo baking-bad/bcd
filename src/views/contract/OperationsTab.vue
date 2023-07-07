@@ -1,10 +1,10 @@
 <template>
-  <v-container fluid class="px-8 py-4 canvas fill-canvas">
+  <v-container fluid class="pa-8 ma-0 canvas fill-canvas">
     <OperationFilters :contract="contract" v-model="openFilters" @filterChanged="filterChanged" :filters="filters" v-if="searchable"/>
     <v-row>
       <v-col cols="9">
         <v-row v-if="searchable">
-          <v-col cols="12" class="pt-0">
+          <v-col cols="12">
              <v-text-field
               v-model="search"
               color="primary"
