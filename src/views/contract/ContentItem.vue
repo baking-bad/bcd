@@ -118,6 +118,7 @@ import Shortcut from "@/components/Shortcut.vue";
 import { getContentItemHeaderClass } from '@/utils/styles';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
+import {plural} from '@/utils/tz.js';
 
 dayjs.extend(relativeTime);
 
@@ -139,7 +140,11 @@ export default {
     text() {
       if (this.value == null) return "";
       if (this.value.entrypoint) {
-        return this.value.entrypoint;
+        let all = this.value.entrypoint.split(',');
+        if (all.length == 1) {
+          return all[0];
+        }
+        return `${all[0]} and ${plural(all.length - 1, 'call')}`;
       }
       return this.value.kind;
     },
