@@ -74,7 +74,6 @@ export class Wallet {
             peers = [...peers, ...JSON.parse(postmessagePeersDapp)]
         }
 
-
         if(!accounts) return null
         const parsedAccounts = JSON.parse(accounts);
         const connectionTimes = parsedAccounts.map(item => item.connectedAt);
