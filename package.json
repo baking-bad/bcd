@@ -34,7 +34,7 @@
     "portal-vue": "^2.1.7",
     "redoc": "^2.0.0-rc.65",
     "sanitize-html": "^2.7.0",
-    "v-clipboard": "^2.2.2",
+    "v-clipboard": "3.0.0-next.1",
     "vue": "^2.6.10",
     "vue-codemirror": "^4.0.6",
     "vue-codemirror-lite": "^1.0.4",
