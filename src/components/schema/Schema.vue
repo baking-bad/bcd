@@ -297,7 +297,8 @@ export default {
     async checkWalletNetwork() {
       const account = Wallet.getLastUsedAccount();
 
-      const isNetwork = !isCustom(account.network.type) &&
+      const isNetwork =  account && 
+        !isCustom(account.network.type) &&
         account.network.type !== this.selectedNetwork
 
       if(account && isNetwork) {
