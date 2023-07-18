@@ -6,7 +6,7 @@
                     <v-list-item-title>
                         <span class="hash">Operation</span>
                         <span class="text--secondary" style="font-size: 20px;"> → </span>
-                        <template v-if="item.body.Destination.startsWith('KT')">
+                        <template v-if="isDestinationContract">
                             <router-link class="serp-link" target="_blank" :to="`/${item.body.Network}/${item.body.Destination}`">
                                 <Shortcut :str="item.body.Destination"/>
                             </router-link>
