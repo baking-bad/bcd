@@ -126,7 +126,14 @@ export default {
                     this.$emit('tokenAdded', {type: 2, value: this.fa2, typeName: 'FA2'})
                 }
             }
-            this.$refs.tokenSearchField.reset();
+
+            const interval = setInterval(() => {
+                if (this.$refs.tokenSearchField) {
+                    this.$refs.tokenSearchField.reset();
+                    clearInterval(interval)
+                }
+            }, 50)
+
         },
         onCancel() {
             this.show = false;
