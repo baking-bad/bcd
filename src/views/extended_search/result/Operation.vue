@@ -15,7 +15,7 @@
                         <router-link class="serp-link" target="_blank" :to="link">
                             <span v-if="item.body.Entrypoint" class="hash">{{ item.body.Entrypoint + '()' }}</span>
                             <span v-else-if="item.body.Type === 'origination'">origination</span>
-                            <Shortcut v-else-if="isDestinationContract" :str="item.body.Hash"/>
+                            <span v-else-if="isDestinationContract">default()</span>
                             <span v-else class="hash">{{ item.body.Hash }}</span>
                         </router-link>
                     </v-list-item-title>
