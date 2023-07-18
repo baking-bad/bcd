@@ -147,7 +147,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["showError", "hideError"]),
+    ...mapActions(["showError", "hideError", "showClipboardOK"]),
     title(token) {
       if (token.metadata !== null) {
         return token.metadata.name;
