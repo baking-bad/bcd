@@ -162,6 +162,7 @@ import ContentItem from "@/views/contract/ContentItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
 import AccountBox from "../../components/Dialogs/AccountBox";
+import { isKT1Address } from '@/utils/tz.js';
 
 export default {
   name: "OperationsTab",
@@ -198,8 +199,10 @@ export default {
   created() {
     this.fetchOperations();
 
-    this.getUsedBytes();
-    this.getPaidUsed();
+    if (isKT1Address(this.address)){
+      this.getUsedBytes();
+      this.getPaidUsed();
+    }
   },
   computed: {
     searchable() {
