@@ -18,7 +18,7 @@
           >{{ field.name }}</v-list-item-subtitle
           >
           <v-list-item-title class="body-2">
-            {{ state ? state[field.key] : '' }}
+            {{ state[field.key] }}
           </v-list-item-title>
         </v-list-item-content>
       </v-list-item>
