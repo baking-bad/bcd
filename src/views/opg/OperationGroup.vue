@@ -168,8 +168,13 @@ export default {
           to: "/",
         },
         {
+          to: {
+            name: "recently_called",
+            params: {
+              network: this.network
+            }
+          },
           text: toTitleCase(this.network),
-          to: `/${this.network}/#`,
         },
         {
           text: this.hash,

@@ -155,7 +155,12 @@ export default {
           to: '/',
         },
         {
-          to: `/${this.network}/#`,
+          to: {
+            name: "recently_called",
+            params: {
+              network: this.network
+            }
+          },
           text: toTitleCase(this.network),
         },
         {
