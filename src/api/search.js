@@ -1,6 +1,14 @@
 import {createAxios} from "@/api/general.js";
 
-export class RequestFailedError extends Error { }
+export class RequestFailedError extends Error { 
+    constructor(response) {
+        super(response);
+        this.code = response.status;
+        if (typeof response !== 'string') {
+            this.message = response.statusText;
+        }
+    }
+}
 
 export class SearchService {
     constructor(baseURL) {
@@ -87,7 +95,7 @@ export class SearchService {
             .then(response => {
                 if (response.status == 200){
                     return getAccountAlias(response.data)
-                } else if (response.status == 404){
+                } else if (response.status == 204){
                     return
                 } else {
                     throw new RequestFailedError(response);

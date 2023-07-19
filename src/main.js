@@ -193,7 +193,7 @@ api.getConfig().then(response => {
             this.aliases.add(`${network}_${address}`, result);
             return result;
           })
-          .catch(err => console.log(err));
+          .catch(err => console.error(err));
       }
     }
   });
