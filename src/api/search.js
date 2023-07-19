@@ -84,7 +84,15 @@ export class SearchService {
 
     alias(network, address) {
         return this.api.get(`/v1/account/${network}/${address}`,)
-            .then(response => getAccountAlias(response.data))
+            .then(response => {
+                if (response.status == 200){
+                    return getAccountAlias(response.data)
+                } else if (response.status == 404){
+                    return
+                } else {
+                    throw new RequestFailedError(response);
+                }
+            })
     }
 
     mimeTypes() {
