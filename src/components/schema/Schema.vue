@@ -719,8 +719,14 @@ export default {
           .then((res) => {
             if (!res) return;
             let model = res.default_model[this.name];
-            if (Array.isArray(model)) this.model = res.default_model;
-            else this.model = model;
+            if (Array.isArray(model) || 
+                typeof model === 'string' || 
+                typeof model === 'number') {
+              this.model = res.default_model;
+            }
+            else {
+              this.model = model;
+            }
             this.show = true;
           })
           .catch((err) => {
