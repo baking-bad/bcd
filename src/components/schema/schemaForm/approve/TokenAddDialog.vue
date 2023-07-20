@@ -36,11 +36,11 @@
                             <v-btn :value="typ.value" :key="typ.value" v-for="typ in tokenTypes" small>{{ typ.name }}</v-btn>
                         </v-btn-toggle>
                     </v-col>
-                    <v-col class="pb-0 mb-0" v-if="selectedTokenType == 1">
-                        <Fa1Approve v-model="fa1" :rules="rules"/>
-                    </v-col>
-                    <v-col class="pb-0 mb-0" v-else>
-                        <Fa2Approve v-model="fa2" :rules="rules"/>                    
+                    <v-col class="pb-0 mb-0" >
+                        <v-form lazy-validation ref="form">
+                            <Fa1Approve v-model="fa1" :rules="rules" v-if="selectedTokenType == 1"/>
+                            <Fa2Approve v-model="fa2" :rules="rules" v-else/>
+                        </v-form>
                     </v-col>
                 </v-row>
             </v-card-text>
@@ -118,6 +118,9 @@ export default {
     },
     methods: {
         addToken() {
+            if (!this.$refs.form.validate()) {
+                return
+            }
             this.show = false;
             if (!this.isEdit) {
                 if (this.selectedTokenType == 1) {
@@ -152,12 +155,14 @@ export default {
             this.selectedTokenType = 1;
             this.fa1 = {
                 tokenContract: '',
-                allowance: 0
+                allowance: 0,
+                valid: false
             }
             this.fa2 = {
                 tokenContract: '',
                 owner: '',
-                tokenId: 0
+                tokenId: 0,
+                valid: false
             }
             this.searchToken = null;
             let account = Wallet.getLastUsedAccount();

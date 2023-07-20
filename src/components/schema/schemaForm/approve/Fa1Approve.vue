@@ -11,6 +11,7 @@
             placeholder="Token contract"
             background-color="data"
             :rules="rules.address"
+            maxlength="36"
         >
         </v-text-field>
         <v-text-field
