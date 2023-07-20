@@ -50,7 +50,7 @@
                 v-if="rawStorage && raw"
                 @click="
               () => {
-                $clipboard(getStorageString());
+                $clipboard(rawStorage);
                 showClipboardOK();
               }
             "
