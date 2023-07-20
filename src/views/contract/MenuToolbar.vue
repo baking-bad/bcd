@@ -6,58 +6,14 @@
       background-color="transparent"
       slider-color="primary"
     >
-      <v-tab :to="pushTo({ name: 'operations' })" :title="contract.tx_count" replace style="width: 175px">
+      <v-tab :to="pushTo({ name: 'operations' })" :key="0" :title="contract.tx_count" replace style="width: 175px">
         <v-icon left small>mdi-swap-horizontal</v-icon>operations
         <span class="ml-1">({{ contract.tx_count || 0 | numberToCompactSIFormat }})</span>
       </v-tab> 
-      <v-tab :to="pushTo({ name: 'events' })" replace v-if="contract.events_count && contract.events_count > 0">
-        <v-icon left small>mdi-bell-outline</v-icon>Events
+      <v-tab v-for="(tab, idx) in tabs" :key="idx + 1" :to="tab.to">
+        <v-icon left small>{{ tab.icon }}</v-icon>{{ tab.text }}
       </v-tab>
-      <v-tab :to="pushTo({ name: 'storage' })" replace v-if="isContract">
-        <v-icon left small>mdi-database</v-icon>Storage
-      </v-tab>
-      <v-tab :to="pushTo({ name: 'code' })" replace v-if="isContract">
-        <v-icon left small>mdi-code-braces</v-icon>Code
-      </v-tab>
-      <v-tab :to="pushTo({ name: 'interact' })" replace v-if="isContract">
-        <v-icon left small>mdi-play-box-outline</v-icon>Interact
-      </v-tab>
-      <v-tab
-        :to="pushTo({ name: 'tokens' })"
-        replace
-        v-if="isContract && tokenMetadata.created()"
-      >
-        <v-icon left small>mdi-circle-multiple-outline</v-icon>Tokens
-      </v-tab>
-      <v-tab
-        :to="pushTo({ name: 'transfers' })"
-        replace
-        v-if="tokenBalancesTotal > 0"
-      >
-        <v-icon left small>mdi-transfer</v-icon>Transfers
-      </v-tab>
-      <v-tab :to="pushTo({ name: 'ticket_updates' })" replace v-if="contract.has_ticket_updates">
-        <v-icon left small>mdi-ticket-outline</v-icon>Tickets
-      </v-tab>
-      <v-tab
-        :to="pushTo({ name: 'metadata' })"
-        replace
-        v-if="metadata"
-      >
-        <v-icon left small>mdi-puzzle-outline</v-icon>Metadata
-      </v-tab>
-      <v-tab :to="pushTo({ name: 'fork' })" replace v-if="isContract">
-        <v-icon left small>mdi-source-fork</v-icon>Fork
-      </v-tab>
-      <v-tab v-if="hasOffChainViews || hasOnChainViews" :to="pushTo({name: 'views'})" replace>
-        <v-icon left small>mdi-adjust</v-icon>Views
-      </v-tab>
-      <v-tab v-if="isContract && hasStats" :to="pushTo({name: 'contract_stats'})" replace>
-        <v-icon left small>mdi-align-vertical-bottom</v-icon>Statistics
-      </v-tab>
-      <v-tab v-show="isContract" :to="pushTo({name: 'details'})" replace>
-        <v-icon left small>mdi-alert-circle-outline</v-icon>Details
-      </v-tab>
+     
       <v-tab v-if="isAnythingLoading">
         <v-skeleton-loader :loading="isAnythingLoading" type="button" transition="fade-transition">
         </v-skeleton-loader>
@@ -101,6 +57,88 @@ export default {
     },
     hasOnChainViews() {
       return this.onChainViews && this.onChainViews.length > 0;
+    },
+    tabs() {
+      let tabs = [];
+      if (this.isContract) {
+        tabs.push({
+          to: this.pushTo({ name: 'storage' }),
+          icon: 'mdi-database',
+          text: 'Storage',
+        },{
+          to: this.pushTo({ name: 'code' }),
+          icon: 'mdi-code-braces',
+          text: 'Code',
+        },{
+          to: this.pushTo({ name: 'interact' }),
+          icon: 'play-box-outline',
+          text: 'Interact',
+        })
+
+        if (this.tokenMetadata.created()) {
+          tabs.push({
+            to: this.pushTo({ name: 'tokens' }),
+            icon: 'mdi-circle-multiple-outline',
+            text: 'Tokens',
+          })
+        }
+
+        if (this.contract.has_ticket_updates) {
+          tabs.push({
+            to: this.pushTo({ name: 'ticket_updates' }),
+            icon: 'mdi-ticket-outline',
+            text: 'Tickets',
+          })
+        }
+      }
+
+      if (this.metadata) {
+        tabs.push({
+          to: this.pushTo({ name: 'metadata' }),
+          icon: 'mdi-puzzle-outline',
+          text: 'Metadata',
+        })
+      }
+
+      if (this.isContract) {
+        tabs.push({
+          to: this.pushTo({ name: 'fork' }),
+          icon: 'mdi-source-fork',
+          text: 'Fork',
+        })
+
+        if (this.hasOffChainViews || this.hasOffChainViews) {
+          tabs.push({
+            to: this.pushTo({ name: 'views' }),
+            icon: 'mdi-adjust',
+            text: 'Views',
+          })
+        }
+
+        if (this.contract.events_count && this.contract.events_count > 0) {
+          tabs.push({
+            to: this.pushTo({ name: 'events' }),
+            icon: 'mdi-bell-outline',
+            text: 'Events',
+          })
+        }
+
+        if (this.hasStats) {
+          tabs.push({
+            to: this.pushTo({ name: 'contract_stats' }),
+            icon: 'mdi-align-vertical-bottom',
+            text: 'Statistics',
+          })
+        }
+
+        tabs.push({
+          to: this.pushTo({ name: 'details' }),
+          icon: 'mdi-alert-circle-outline',
+          text: 'Details',
+        })
+      }
+
+      return tabs;
     }
   },
   methods: {
