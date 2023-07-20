@@ -142,9 +142,6 @@ export default {
         })
     }
   },
-  destroyed() {
-    this.$router.push({path: this.$route.path, query: { ...this.$route.query, entrypoint: undefined }})
-  },
   methods: {
     ...mapActions(["showError", "showClipboardOK"]),
     addValidatorsToSchema(schema) {
@@ -193,8 +190,8 @@ export default {
     selectedItem: function (newValue) {
       if (newValue === null) return;
       if (this.$route.params.entrypoint !== newValue.name) {
-        this.$router.push({
-          path: `/${this.network}/${this.address}/interact/${newValue.name}`,
+        this.$router.replace({
+          path: `/${this.network}/${this.address}/interact/${newValue.name}`
         });
       }
       this.model = Object.assign({}, newValue.default_model);

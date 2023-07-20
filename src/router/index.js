@@ -117,27 +117,24 @@ export function newRouter(networks) {
         components: {
           default: Network,
         },
-        props: { default: true },
+        props: { default: false },
         children: [
           {
             path: '',
             name: 'network',
-            redirect: 'recently_called'
+            redirect: 'recently_called',
           },{
             path: 'recently_called',
             name: 'recently_called',
             component: RecentlyCalledTab,
-            props: true,
           },{
             path: 'constants',
             name: 'network_constants',
             component: ConstantsTab,
-            props: true,
           },{
             path: 'stats',
             name: 'network_stats',
             component: StatsTab,
-            props: true,
           },
         ]
       },
