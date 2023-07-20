@@ -107,7 +107,7 @@ export default {
           text: 'Fork',
         })
 
-        if (this.hasOffChainViews || this.hasOffChainViews) {
+        if (this.hasOffChainViews || this.hasOnChainViews) {
           tabs.push({
             to: this.pushTo({ name: 'views' }),
             icon: 'mdi-adjust',
