@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-content class="v-content-class">
+    <v-main class="v-content-class">
       <MainHeaderDescriptive :no-search="isNoSearchInHeader" />
       <ErrorSnackbar v-if="!!$store.state.error" />
       <SuccessSnackbar v-if="!!$store.state.success" />
@@ -11,7 +11,7 @@
           <v-icon>mdi-chevron-up</v-icon>
         </v-btn>
       </v-fab-transition>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
