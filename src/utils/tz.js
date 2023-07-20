@@ -35,7 +35,7 @@ export function shortcut(value, tail = 4) {
     if (!value) return '';
 
     let head = 0;
-    if (value.startsWith('tz') || value.startsWith('KT')) {
+    if (value.startsWith('tz') || value.startsWith('KT') || value.startsWith('sr1')) {
         head = 3
     } else if (value.startsWith('o')) {
         head = 1;
@@ -54,7 +54,7 @@ export function shortcutOnly(value, tail = 4) {
     if (!value) return '';
 
     let head = 0;
-    if (value.startsWith('tz') || value.startsWith('KT')) {
+    if (value.startsWith('tz') || value.startsWith('KT') || value.startsWith('sr1')) {
         head = 7;
     } else if (value.startsWith('o')) {
         head = 1;
@@ -162,6 +162,18 @@ export let validationRules = {
     ],
     address: [
         v => (v && v.length == 36) || 'The length of the address is 36 characters',
-        v => isTzAddress(v) || isKT1Address(v) || isSrAddress(v) || 'In this field you should write the address'
+        v => isAddress(v) || 'In this field you should write the address'
     ]
+}
+
+export function matchAddress(text) {
+    let matches = text.match(/(tz|KT|sr)[1-9A-HJ-NP-Za-km-z]{34}/);
+    if (!matches) {
+        return '';
+    }
+    return matches[0];
+}
+
+export function isAddress(v) {
+    return isTzAddress(v) || isKT1Address(v) || isSrAddress(v);
 }
