@@ -149,7 +149,8 @@ export function validateNat(value) {
 
 export let validationRules = {
     contract:[
-        v => (v && v.length == 36) || 'The length of the contract address is 36 characters',
+        v => (!!v) || 'Required field',
+        v => (v.length == 36) || 'The length of the contract address is 36 characters',
         v => isKT1Address(v) || 'In this field you should write the address of the contract. It begins with KT.'
     ],
     nat: [
@@ -161,7 +162,8 @@ export let validationRules = {
         v => /^[0-9a-fA-F]*$/.test(v) || 'Only 0-9 and a-f are allowed',
     ],
     address: [
-        v => (v && v.length == 36) || 'The length of the address is 36 characters',
+        v => (!!v) || 'Required field',
+        v => (v.length == 36) || 'The length of the address is 36 characters',
         v => isAddress(v) || 'In this field you should write the address'
     ]
 }

@@ -12,6 +12,7 @@
             placeholder="Token contract"
             background-color="data"
             :rules="rules.address"
+            maxlength="36"
         >
         </v-text-field>
         <v-text-field
@@ -28,6 +29,7 @@
             :rules="rules.address"
             persistent-hint
             hint="If you attached a wallet, its address will be pasted automatically"
+            maxlength="36"
         >
         </v-text-field>
         <v-text-field
