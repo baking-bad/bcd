@@ -82,7 +82,7 @@
 <script>
 import Michelson from "@/components/Michelson.vue";
 import isIpfs from "is-ipfs";
-import { checkAddress } from "@/utils/tz.js";
+import { checkAddress, matchAddress, isSrAddress } from "@/utils/tz.js";
 import {mapActions} from "vuex";
 
 export default {
@@ -118,7 +118,7 @@ export default {
           checkAddress(this.value.slice("tezos-storage://".length));
     },
     isAddress() {
-      return this.prim === "address" || this.prim === "contract";
+      return (this.prim === "address" || this.prim === "contract") && !isSrAddress(this.value) ;
     },
   },
   methods: {
@@ -136,7 +136,7 @@ export default {
       }
     },
     handleAddress(span) {
-      const address = span.match(/(tz|KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
+      const address = matchAddress(span);
       const path = { path: `/${this.network}/${address}` };
       if (this.sameTab) {
         this.$router.push(path);
@@ -145,8 +145,11 @@ export default {
       }
     },
     handleStorage(value) {
-      const address = value.match(/(KT)[1-9A-HJ-NP-Za-km-z]{34}/)[0];
-      const path = { path: `/${this.network}/${address}/storage` };
+      const address = value.match(/(KT)[1-9A-HJ-NP-Za-km-z]{34}/);
+      if (!address) {
+        return
+      }
+      const path = { path: `/${this.network}/${address[0]}/storage` };
       if (this.sameTab) {
         this.$router.push(path);
       } else {
