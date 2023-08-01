@@ -48,12 +48,9 @@
               </v-tooltip>
               <v-btn
                 v-if="rawStorage && raw"
-                @click="
-              () => {
-                $clipboard(rawStorage);
-                showClipboardOK();
-              }
-            "
+                @click="() => {
+                  copy(rawStorage)
+                }"
                 class="ml-2"
                 small
                 text
@@ -137,6 +134,7 @@ import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
 import {shortcutOnly} from "../../utils/tz";
+import { copyToClipboard } from "../../utils/clipboard";
 
 export default {
   name: "StorageTab",
@@ -213,7 +211,10 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["showError", "showClipboardOK"]),
+    ...mapActions(["showError", "showClipboardOK", "showClipboardFail"]),
+    copy(text) {
+      copyToClipboard(text, this.showClipboardOK, this.showClipboardFail);
+    },
     getStorage(force = false) {
       if (this.storage) {
         this.raw = false;

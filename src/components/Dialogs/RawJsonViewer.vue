@@ -43,7 +43,9 @@
               v-bind="attrs"
               v-on="on"
               v-else
-              v-clipboard="handleCopyClick"
+              @click="() => {
+                copy(handleCopyClick())
+              }"
               class="mr-4 text--secondary"
             >
               <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
@@ -54,9 +56,9 @@
               class="px-4"
               v-for="(item, index) in ['parameter', 'storage', 'code', 'all']"
               :key="index"
-              @click="() => {}"
-              v-clipboard="() => getSection(item)"
-              v-clipboard:success="showClipboardOK"
+              @click="() => {
+                copy(getSection(item))
+              }"
             >
               <v-list-item-title class="text-capitalize">{{
                 item
@@ -67,8 +69,9 @@
         <v-btn
           v-else
           class="mr-4 text--secondary"
-          v-clipboard="() => JSON.stringify(data, null, '  ')"
-          v-clipboard:success="showClipboardOK"
+          @click="() => {
+            copy(JSON.stringify(data, null, '  '))
+          }"
           text
         >
           <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
@@ -108,6 +111,7 @@
 import { mapActions } from "vuex";
 import VueJsonPretty from "vue-json-pretty";
 import {keysToCamel} from "../../utils/object";
+import { copyToClipboard } from "../../utils/clipboard";
 import '@/styles/vue-json-pretty.css';
 
 const BIG_SIZE_JSON_SYMBOLS = 10000;
@@ -151,7 +155,7 @@ export default {
     renderingStep: 1,
   }),
   methods: {
-    ...mapActions(["showError", "showClipboardOK"]),
+    ...mapActions(["showError", "showClipboardOK", "showClipboardFail"]),
     close() {
       this.$emit("input", false);
     },
@@ -159,6 +163,9 @@ export default {
       if (!this.isCopiableOptions && this.raw) {
         return this.raw
       }
+    },
+    copy(text, successMessage, failMessage) {
+      copyToClipboard(text, this.showClipboardOK.bind(null, successMessage), this.showClipboardFail.bind(null, failMessage));
     },
     isTokenMetadata() {
       return this.type.toLowerCase() === 'token metadata';
@@ -170,11 +177,11 @@ export default {
       if (section && Array.isArray(this.data)) {
         for (var i = 0; i < this.data.length; i++) {
           if (this.data[i].prim === section) {
-            return this.data[i];
+            return JSON.stringify(this.data[i]);
           }
         }
       }
-      return this.data;
+      return JSON.stringify(this.data);
     },
     parseData(data) {
       return this.isTokenMetadata() ? keysToCamel(data) : data;
@@ -213,9 +220,9 @@ export default {
     }
   },
   updated() {
-      if (this.show) {
-          this.$refs.rawJsonDialog.show();
-      }
+    if (this.show) {
+        this.$refs.rawJsonDialog.show();
+    }
   },
   watch: {
     show(newValue) {
