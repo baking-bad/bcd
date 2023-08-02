@@ -212,8 +212,8 @@ export default {
   },
   methods: {
     ...mapActions(["showError", "showClipboardOK", "showClipboardFail"]),
-    copy(text) {
-      copyToClipboard(text, this.showClipboardOK, this.showClipboardFail);
+    copy(text, successMessage, failMessage) {
+      copyToClipboard(text, this.showClipboardOK.bind(null, successMessage), this.showClipboardFail.bind(null, failMessage));
     },
     getStorage(force = false) {
       if (this.storage) {
