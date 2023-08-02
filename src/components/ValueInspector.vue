@@ -10,7 +10,9 @@
       readonly
       :label="label"
       :value="value"
-      @click="copyText(value)"
+      @click="() => {
+        copy(value)
+      }"
     ></v-textarea>
     <v-text-field
       v-else
@@ -19,14 +21,18 @@
       readonly
       filled
       :label="label"
-      @click="copyText(value)"
+      @click="() => {
+        copy(value)
+      }"
     ></v-text-field>
 
     <v-btn
         text
         small
         link
-        @click.prevent.stop="copyText(value)"
+        @click.prevent.stop="() => {
+          copy(value)
+        }"
         :class="isPreFormatted ? 'pl-0 mt-4' : ''"
     >
       <v-icon small class="mr-1">mdi-content-copy</v-icon>
@@ -80,10 +86,11 @@
 </template>
 
 <script>
-import Michelson from "@/components/Michelson.vue";
-import isIpfs from "is-ipfs";
-import { checkAddress, matchAddress, isSrAddress } from "@/utils/tz.js";
 import {mapActions} from "vuex";
+import isIpfs from "is-ipfs";
+import Michelson from "@/components/Michelson.vue";
+import { copyToClipboard } from "@/utils/clipboard";
+import { checkAddress, matchAddress, isSrAddress } from "@/utils/tz.js";
 
 export default {
   name: "ValueInspector",
@@ -122,18 +129,9 @@ export default {
     },
   },
   methods: {
-    ...mapActions(["showClipboardOK"]),
-    copyText(text) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(() => this.showClipboardOK());
-      } else {
-        try {
-          window.clipboardData.setData("Text", text);
-          this.showClipboardOK();
-        } catch (e) {
-          //
-        }
-      }
+    ...mapActions(["showClipboardOK", "showClipboardFail"]),
+    copy(text, successMessage, failMessage) {
+      copyToClipboard(text, this.showClipboardOK.bind(null, successMessage), this.showClipboardFail.bind(null, failMessage));
     },
     handleAddress(span) {
       const address = matchAddress(span);
