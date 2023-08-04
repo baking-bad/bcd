@@ -62,6 +62,8 @@ export class Wallet {
 
     static getLastUsedAccount() {
         const accounts = localStorage.getItem('beacon:accounts');
+        if(!accounts) return null
+
         const communicationPeersDapp = localStorage.getItem('beacon:communication-peers-dapp');
         const postmessagePeersDapp =  localStorage.getItem('beacon:postmessage-peers-dapp');
         let peers = [];
@@ -74,7 +76,6 @@ export class Wallet {
             peers = [...peers, ...JSON.parse(postmessagePeersDapp)]
         }
 
-        if(!accounts) return null
         const parsedAccounts = JSON.parse(accounts);
         const connectionTimes = parsedAccounts.map(item => item.connectedAt);
         const recentConnectionTime = Math.max(...connectionTimes);
@@ -114,6 +115,13 @@ export class Wallet {
             .then(() => {
                 Wallet.isPermissionGiven = true;
                 resolve();
+            })
+            .catch(e => {
+                if (e.title.toUpperCase() === 'ABORTED') {
+                    resolve();
+                } else {
+                    reject();
+                }
             })
             .finally(() => reject())
         })
