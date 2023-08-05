@@ -117,13 +117,12 @@ export class Wallet {
                 resolve();
             })
             .catch(e => {
-                if (e.title.toUpperCase() === 'ABORTED') {
+                if (e.title && e.title.toUpperCase() === 'ABORTED') {
                     resolve();
                 } else {
                     reject();
                 }
             })
-            .finally(() => reject())
         })
     }
 
