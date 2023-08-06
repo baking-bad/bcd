@@ -32,14 +32,23 @@ export default new Vuex.Store({
     showWarning({ commit }, value) {
       commit('setWarning', value);
     },
-    showClipboardWarning({ commit }) {
-      commit('setWarning', 'Copied! Text might be truncated due to its size');
+    showClipboardWarning({ commit }, text) {
+      if (!text) {
+        text = 'Copied! Text might be truncated due to its size!'
+      }
+      commit('setWarning', text);
     },
-    showClipboardOK({ commit }) {
-      commit('setSuccess', 'Copied to the clipboard')
+    showClipboardOK({ commit }, text) {
+      if (!text) {
+        text = 'Copied to the clipboard!'
+      }
+      commit('setSuccess', text)
     },
-    showClipboardFail({ dispatch}) {
-      dispatch('showError', 'Failed to save to the clipboard')
+    showClipboardFail({ dispatch}, text) {
+      if (!text) {
+        text = 'Failed to save to the clipboard!'
+      }
+      dispatch('showError', text)
     },
     showSuccess({ commit }, value) {
       commit('setSuccess', value)

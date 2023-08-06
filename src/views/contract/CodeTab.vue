@@ -30,8 +30,9 @@
 
             <v-btn
                 class="mr-1 text--secondary"
-                v-clipboard="getValueToCopy"
-                v-clipboard:success="showSuccessCopy"
+                @click="() => {
+                  copy(getValueToCopy())
+                }"
                 small
                 text
             >
@@ -73,6 +74,7 @@ import ErrorState from "@/components/ErrorState.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import {downloadFileFormContent} from "@/utils/download";
 import UsingConstantsDialog from "@/components/UsingConstantsDialog";
+import { copyToClipboard } from "@/utils/clipboard";
 
 export default {
   props: {
@@ -130,10 +132,13 @@ export default {
     clearInterval(this.renderingInterval);
   },
   methods: {
-    ...mapActions(["showError", "showClipboardOK", "showClipboardWarning"]),
-    showSuccessCopy() {
+    ...mapActions(["showError", "showClipboardOK", "showClipboardWarning", "showClipboardFail"]),
+    copy(text, successMessage, failMessage) {
+      copyToClipboard(text, this.showSuccessCopy.bind(null, successMessage), this.showClipboardFail.bind(null, failMessage));
+    },
+    showSuccessCopy(successMessage) {
       if (this.selectedCode.length <= this.freezingAmount) {
-        this.showClipboardOK();
+        this.showClipboardOK(successMessage);
       }
     },
     getValueToCopy() {

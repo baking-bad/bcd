@@ -6,8 +6,9 @@
         <v-spacer></v-spacer>
         <v-btn
             class="mr-4 text--secondary"
-            v-clipboard="() => cmdLine"
-            v-clipboard:success="showClipboardOk"
+            @click="() => {
+              copy(cmdLine)
+            }"
             text
         >
           <v-icon small class="mr-1">mdi-content-copy</v-icon>Copy
@@ -34,6 +35,9 @@
 </template>
 
 <script>
+import {mapActions} from "vuex";
+import { copyToClipboard } from "@/utils/clipboard";
+
 export default {
   name: "SchemaCmdLine",
   props: {
@@ -81,6 +85,10 @@ export default {
     }
   },
   methods: {
+    ...mapActions(["showClipboardOK", "showClipboardFail"]),
+    copy(text, successMessage, failMessage) {
+      copyToClipboard(text, this.showClipboardOK.bind(null, successMessage), this.showClipboardFail.bind(null, failMessage));
+    },
     isNumber(evt) {
       const charCode = (evt.which) ? evt.which : evt.keyCode;
       if ((charCode > 31 && (charCode < 48 || charCode > 57)) && charCode !== 46) {

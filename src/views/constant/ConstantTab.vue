@@ -9,8 +9,9 @@
           <v-spacer></v-spacer>
           <v-btn
               class="mr-1 text--secondary"
-              v-clipboard="getValueToCopy"
-              v-clipboard:success="showSuccessCopy"
+              @click="() => {
+                copy(getValueToCopy())
+              }"
               small
               text
           >
@@ -49,11 +50,12 @@
 <script>
 import {mapActions} from "vuex";
 import ConstantInfo from "./ConstantInfo";
-import ReferenceContract from "@/views/constant/ReferenceContract";
 import Michelson from "@/components/Michelson";
-import {toTitleCase} from "@/utils/string";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
+import { copyToClipboard } from "@/utils/clipboard";
 import {downloadFileFormContent} from "@/utils/download";
+import {toTitleCase} from "@/utils/string";
+import ReferenceContract from "@/views/constant/ReferenceContract";
 
 export default {
   name: "NetworkTab",
@@ -87,18 +89,21 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["showClipboardOK", "showClipboardWarning"]),
+    ...mapActions(["showClipboardOK", "showClipboardFail"]),
     async getConstantInfo() {
       this.loading = true;
       this.constantInfo = await this.api.getConstant(this.$route.params.network, this.$route.params.address);
       this.loading = false;
     },
+    copy(text, successMessage, failMessage) {
+      copyToClipboard(text, this.showSuccessCopy.bind(null, successMessage), this.showClipboardFail.bind(null, failMessage));
+    },
     getValueToCopy() {
       return this.constantInfo.code;
     },
-    showSuccessCopy() {
+    showSuccessCopy(successMessage) {
       if (this.constantInfo.code.length) {
-        this.showClipboardOK();
+        this.showClipboardOK(successMessage);
       }
     },
     downloadFile() {
