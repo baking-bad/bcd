@@ -1,5 +1,10 @@
 <template>
-  <codemirror ref="editor" v-model="value" :options="cmOptions"></codemirror>
+  <codemirror
+    ref="editor"
+    v-model="value"
+    :options="cmOptions"
+    :key="codeMirrorTheme"
+  ></codemirror>
 </template>
 
 <script>
@@ -27,6 +32,9 @@ export default {
     editor() {
       return this.$refs.editor.editor;
     },
+    codeMirrorTheme() {
+      return this.$vuetify.theme.dark ? "darcula" : "neo";
+    },
   },
   data: () => ({
     value: "",
@@ -41,11 +49,10 @@ export default {
     },
   }),
   created() {
-    if (this.firstLineNumber)
-      this.cmOptions.firstLineNumber = this.firstLineNumber;
-    if (this.$vuetify.theme.dark) this.cmOptions.theme = "darcula";
+    if (this.firstLineNumber) this.cmOptions.firstLineNumber = this.firstLineNumber;
     if (this.code !== null) this.value = this.code;
     if (this.mutable) this.cmOptions.readOnly = false;
+    this.cmOptions.theme = this.codeMirrorTheme;
 
     create();
   },
@@ -68,6 +75,9 @@ export default {
       } else {
         this.value = newValue;
       }
+    },
+    codeMirrorTheme(theme) {
+      this.cmOptions.theme = theme;
     },
   },
 };
