@@ -216,7 +216,7 @@
         >
           <v-col :cols="expanded ? 12 : 6">
               <span class="overline ml-3">Payload</span>
-              <MiguelTreeView :miguel="data.event" :network="data.network" openAll />
+              <MiguelTreeView :miguel="data.payload" :network="data.network" openAll />
           </v-col>
         </v-row>
       </div>
@@ -360,8 +360,8 @@ export default {
       return (
         this.data != null &&
         this.data !== undefined &&
-        this.data.event != null &&
-        this.data.event !== undefined
+        this.data.payload != null &&
+        this.data.payload !== undefined
       );
     },
     showDetails() {
