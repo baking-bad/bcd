@@ -71,85 +71,94 @@
         </v-row>
       </v-col>
       <v-col cols="3">
-        <v-list class="contract-list">
-          <v-list-item style="height: 74px">
-            <v-list-item-content two-line>
-              <v-list-item-title class="headline">
-                <v-tooltip bottom :disabled="alias && alias.length < 25">
-                  <template v-slot:activator="{ on, attrs }">
-                    <span v-bind="attrs" v-on="on" style="cursor: inherit;">{{ alias ? alias : address }}</span>
-                  </template>
-                  <span>{{ alias ? alias : address }}</span>
-                </v-tooltip>                
-              </v-list-item-title>
-              <v-list-item-subtitle>
-              <span
-                class="overline"
-                :class="network === 'mainnet' ? 'secondary--text' : ''"
-              >{{ network }}</span
-              >
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-subtitle class="overline"
-              >Was active</v-list-item-subtitle
-              >
-              <v-list-item-title class="body-2" v-if="isContract">
-                {{ helpers.formatDatetime(contract.timestamp) }}
-                <span v-if="contract.last_action > contract.timestamp">—
-                      {{ helpers.formatDatetime(contract.last_action) }}</span
+        <template v-if="!isSmartRollup">
+          <v-list class="contract-list">
+            <v-list-item style="height: 74px">
+              <v-list-item-content two-line>
+                <v-list-item-title class="headline">
+                  <v-tooltip bottom :disabled="alias && alias.length < 25">
+                    <template v-slot:activator="{ on, attrs }">
+                      <span v-bind="attrs" v-on="on" style="cursor: inherit;">{{ alias ? alias : address }}</span>
+                    </template>
+                    <span>{{ alias ? alias : address }}</span>
+                  </v-tooltip>                
+                </v-list-item-title>
+                <v-list-item-subtitle>
+                <span
+                  class="overline"
+                  :class="network === 'mainnet' ? 'secondary--text' : ''"
+                >{{ network }}</span
                 >
-              </v-list-item-title>
-              <v-list-item-title class="body-2" v-else>
-                {{ helpers.formatDatetime(contract.last_action) }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="balance">
-            <v-list-item-content>
-              <v-list-item-subtitle class="overline"
-              >Balance</v-list-item-subtitle
-              >
-              <v-list-item-title class="body-2">
-                <span>{{ balance | uxtz }}</span>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <AccountBox
-            v-if="contract.manager"
-            title="Deployed by"
-            :address="contract.manager"
-            :network="contract.network"
-            gutters
+                </v-list-item-subtitle>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item>
+              <v-list-item-content>
+                <v-list-item-subtitle class="overline"
+                >Was active</v-list-item-subtitle
+                >
+                <v-list-item-title class="body-2" v-if="isContract">
+                  {{ helpers.formatDatetime(contract.timestamp) }}
+                  <span v-if="contract.last_action > contract.timestamp">—
+                        {{ helpers.formatDatetime(contract.last_action) }}</span
+                  >
+                </v-list-item-title>
+                <v-list-item-title class="body-2" v-else>
+                  {{ helpers.formatDatetime(contract.last_action) }}
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item v-if="balance">
+              <v-list-item-content>
+                <v-list-item-subtitle class="overline"
+                >Balance</v-list-item-subtitle
+                >
+                <v-list-item-title class="body-2">
+                  <span>{{ balance | uxtz }}</span>
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <AccountBox
+              v-if="contract.manager"
+              title="Deployed by"
+              :address="contract.manager"
+              :network="contract.network"
+              gutters
+            />
+            <AccountBox
+              v-if="contract.delegate"
+              title="Delegated to"
+              :address="contract.delegate"
+              :network="contract.network"
+              gutters
+            />
+            <v-list-item v-if="usedBytes">
+              <v-list-item-content>
+                <v-list-item-subtitle class="overline">Storage used</v-list-item-subtitle>
+                <v-list-item-title class="body-2">
+                  <span>{{ parseInt(usedBytes).toLocaleString('en-US') }} bytes</span>
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item v-if="paidUsed">
+              <v-list-item-content>
+                <v-list-item-subtitle class="overline"
+                >Storage paid</v-list-item-subtitle
+                >
+                <v-list-item-title class="body-2">
+                  <span>{{ parseInt(paidUsed).toLocaleString('en-US') }} bytes</span>
+                </v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </template>
+        <template v-else>
+          <SmartRollupInfo
+            :address="address"
+            :network="network"
+            :alias="alias"
           />
-          <AccountBox
-            v-if="contract.delegate"
-            title="Delegated to"
-            :address="contract.delegate"
-            :network="contract.network"
-            gutters
-          />
-          <v-list-item v-if="usedBytes">
-            <v-list-item-content>
-              <v-list-item-subtitle class="overline">Storage used</v-list-item-subtitle>
-              <v-list-item-title class="body-2">
-                <span>{{ parseInt(usedBytes).toLocaleString('en-US') }} bytes</span>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-           <v-list-item v-if="paidUsed">
-            <v-list-item-content>
-              <v-list-item-subtitle class="overline"
-              >Storage paid</v-list-item-subtitle
-              >
-              <v-list-item-title class="body-2">
-                <span>{{ parseInt(paidUsed).toLocaleString('en-US') }} bytes</span>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+        </template>
       </v-col>
     </v-row>
   </v-container>
@@ -161,12 +170,13 @@ import OperationFilters from "@/views/contract/OperationFilters.vue";
 import ContentItem from "@/views/contract/ContentItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
-import AccountBox from "../../components/Dialogs/AccountBox";
-import { isKT1Address } from '@/utils/tz.js';
+import AccountBox from "../../components/Dialogs/AccountBox.vue";
+import SmartRollupInfo from "./SmartRollupInfo.vue";
 
 export default {
   name: "OperationsTab",
   props: {
+    accountType: String,
     address: String,
     network: String,
     alias: String,
@@ -177,7 +187,8 @@ export default {
     AccountBox,
     ContentItem,
     EmptyState,
-    OperationFilters
+    OperationFilters,
+    SmartRollupInfo,
   },
   data: () => ({
     openFilters: false,
@@ -198,11 +209,6 @@ export default {
   }),
   created() {
     this.fetchOperations();
-
-    if (isKT1Address(this.address)){
-      this.getUsedBytes();
-      this.getPaidUsed();
-    }
   },
   computed: {
     searchable() {
@@ -227,7 +233,10 @@ export default {
       return operations;
     },
     isContract() {
-      return this.address.startsWith("KT");
+      return this.accountType === 'contract';
+    },
+    isSmartRollup() {
+      return this.accountType === 'smart_rollup';
     },
     isEmptyFilters() {
       return this.filters.dates.length == 0 &&
@@ -448,6 +457,12 @@ export default {
      }
   },
   watch: {
+    accountType() {
+      if (this.isContract) {
+        this.getUsedBytes();
+        this.getPaidUsed();
+      }
+    },
     address: "fetchOperations",
     search() {
       this.applyFilter(true);

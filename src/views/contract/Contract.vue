@@ -68,6 +68,7 @@
 
     <VContainer fluid class="pt-0">
       <router-view
+        :accountType="accountType"
         :address="address"
         :network="network"
         :alias="alias"
@@ -109,6 +110,7 @@ export default {
     address: String,
   },
   data: () => ({
+    accountType: '',
     contractLoading: true,
     contract: {},
     balance: 0,
@@ -146,7 +148,7 @@ export default {
       return this.isOnChainsLoading;
     },
     isContract() {
-      return this.address.startsWith("KT");
+      return this.accountType === 'contract';
     },
     breadcrumbsItems() {
       return [
@@ -212,18 +214,17 @@ export default {
       this.isComboBoxExpanded = false;
     },
     async init() {
+      this.getInfo();
       this.tokensTotal = 0;
       this.metadata = null;
-      this.contract = {};
 
       this.alias = await this.getAlias(this.network, this.address);
       if (this.isContract) {
+        this.contract = {};
         this.bookmarks.registerObserver(this.onBookmarkStateChanged);
         this.detectBookmark();
         this.getContract();
         this.loadOnChainViews();
-      } else {
-        this.getInfo();
       }
       this.getMetadata();
     },
@@ -258,9 +259,8 @@ export default {
         .getAccountInfo(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          if (!this.isContract) {
-            this.contract = res;
-          }
+          this.contract = res;
+          this.accountType = res.account_type;
           if (res.balance !== undefined) {
             this.balance = res.balance || 0;
             return;

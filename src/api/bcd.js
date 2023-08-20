@@ -73,7 +73,6 @@ export class BetterCallApi {
             })
     }
 
-
     getSameContracts(network, address, offset = 0) {
         let params = {}
         if (offset > 0) params.offset = offset;
@@ -482,6 +481,19 @@ export class BetterCallApi {
     getContractBigMapHistory(network, ptr, keyhash, offset = 0) {
         return getCancellable(this.api, `/bigmap/${network}/${ptr}/keys/${keyhash}?offset=${offset}`, {})
             .then((res) => {
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
+
+    getSmartRollupInfo(network, address) {
+        return getCancellable(this.api, `/smart_rollups/${network}/${address}`, {})
+            .then((res) => {
+                if (!res) {
+                    return res;
+                }
                 if (res.status != 200) {
                     throw new RequestFailedError(res);
                 }
