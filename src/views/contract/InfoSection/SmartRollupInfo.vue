@@ -131,6 +131,16 @@
                     </v-card-text>
                 </v-card>
             </v-dialog>
+            <v-list-item>
+                <v-list-item-content>
+                    <v-list-item-subtitle class="overline"
+                    >Type</v-list-item-subtitle
+                    >
+                    <v-list-item-title class="body-2">
+                        <TypeDef :typedef="smartRollup.type" class="body-2"/>
+                    </v-list-item-title>
+                </v-list-item-content>
+            </v-list-item>
         </v-skeleton-loader>
     </v-list>
 </template>
@@ -138,6 +148,8 @@
 <script>
 
 import ValueInspector from "@/components/ValueInspector.vue"
+import TypeDef from "@/views/contract/TypeDef.vue";
+
 
 export default {
   name: "SmartRollupInfo",
@@ -148,6 +160,7 @@ export default {
   },
   components: {
     ValueInspector,
+    TypeDef,
   },
   data: () => ({
     infoLoading: true,
