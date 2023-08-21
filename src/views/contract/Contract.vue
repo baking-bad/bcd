@@ -113,6 +113,7 @@ export default {
     accountType: '',
     contractLoading: true,
     contract: {},
+    contractInfo: {},
     balance: 0,
     metadata: null,
     tokensTotal: 0,
@@ -173,6 +174,9 @@ export default {
       ];
     },
   },
+  created() {
+    this.getInfo();
+  },
   destroyed() {
     this.hideError();
   },
@@ -214,17 +218,17 @@ export default {
       this.isComboBoxExpanded = false;
     },
     async init() {
-      this.getInfo();
       this.tokensTotal = 0;
       this.metadata = null;
 
       this.alias = await this.getAlias(this.network, this.address);
       if (this.isContract) {
-        this.contract = {};
         this.bookmarks.registerObserver(this.onBookmarkStateChanged);
         this.detectBookmark();
         this.getContract();
         this.loadOnChainViews();
+      } else {
+        this.contract = this.contractInfo;
       }
       this.getMetadata();
     },
@@ -259,7 +263,7 @@ export default {
         .getAccountInfo(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          this.contract = res;
+          this.contractInfo = res;
           this.accountType = res.account_type;
           if (res.balance !== undefined) {
             this.balance = res.balance || 0;
@@ -327,6 +331,12 @@ export default {
     },
   },
   watch: {
+    accountType: {
+      immediate: true,
+      handler() {
+        this.init();
+      }
+    },
     address: {
       immediate: true,
       handler() {
