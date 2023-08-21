@@ -87,8 +87,7 @@
         <span v-if="data.tag" class="hash accent--text">event {{ data.tag }}</span>
         <span v-else>
           <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
-          <span v-if="data.entrypoint" class="hash secondary--text">{{ data.entrypoint }}</span>
-          <span v-else class="hash accent--text">{{ data.kind }}</span>
+          <span class="hash accent--text">{{ displayEntrypoint }}</span>
         </span>
         <v-chip class="ml-3 overline" :color="statusColor" small outlined label>{{ data.status }}</v-chip>
       </v-col>
@@ -400,6 +399,13 @@ export default {
         this.data.destination && 
         this.data.entrypoint && 
         this.data.status === 'applied';
+    },
+    displayEntrypoint() {
+      if (!this.data.entrypoint || this.data.kind === 'transfer_ticket') {
+        return this.data.kind;
+      } else {
+        return this.data.entrypoint;
+      }
     }
   },
   methods: {
