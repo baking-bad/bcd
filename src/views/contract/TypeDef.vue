@@ -1,8 +1,7 @@
 <template>
   <div class="d-flex flex-column parameters">
     <div v-for="(def, i) in typedef" :key="i" class="mb-0">
-      <span v-if="i === 0 && (!first)" class="font-weight-light"></span>
-      <span v-else-if="i === 0" class="font-weight-light">{{ first }}&nbsp;</span>
+      <span v-if="i === 0" class="font-weight-light">{{ first ? first + '&nbsp;' : '' }}</span>
       <span v-else-if="def.name" class="font-weight-light">{{ def.name }}&nbsp;</span>
       <span class="tree--text" v-html="highlightType(def.type)"></span>
       <div v-for="(arg, j) in def.args" :key="i + j" class="pl-4">
