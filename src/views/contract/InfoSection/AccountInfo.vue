@@ -21,7 +21,7 @@
                 >Was active</v-list-item-subtitle
                 >
                 <v-list-item-title class="body-2">
-                    {{ helpers.formatDatetime(contrat.last_action) }}
+                    {{ helpers.formatDatetime(contract.last_action) }}
                 </v-list-item-title>
             </v-list-item-content>
         </v-list-item>
@@ -46,7 +46,7 @@ export default {
     address: String,
     network: String,
     alias: String,
-    contrat: Object,
+    contract: Object,
     balance: Number,
   },
   components: {
