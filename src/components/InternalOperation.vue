@@ -83,13 +83,29 @@
       </v-col>
     </v-row>
     <v-row no-gutters class="px-4 pt-4" style="font-size: 16px;">
-      <v-col cols="11">
+      <v-col cols="10">
         <span v-if="data.tag" class="hash accent--text">event {{ data.tag }}</span>
         <span v-else>
           <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
           <span class="hash accent--text">{{ displayEntrypoint }}</span>
         </span>
         <v-chip class="ml-3 overline" :color="statusColor" small outlined label>{{ data.status }}</v-chip>
+      </v-col>
+      <v-col cols="1" class="text-right">
+        <v-btn
+          text
+          class="mr-7 text--secondary"
+          small
+          v-if="data.ticket_updates_count > 0"
+        >
+          <v-badge
+            color="primary"
+            :content="data.ticket_updates_count"
+            overlap
+          >
+            <v-icon>mdi-ticket-confirmation</v-icon>
+          </v-badge>
+        </v-btn>        
       </v-col>
       <v-col
         cols="1"

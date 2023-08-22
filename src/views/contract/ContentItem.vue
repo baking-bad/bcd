@@ -139,7 +139,7 @@ export default {
   computed: {
     text() {
       if (this.value == null) return "";
-      if (this.value.entrypoint) {
+      if (this.value.entrypoint && this.data.kind !== 'transfer_ticket') {
         let all = this.value.entrypoint.split(',');
         if (all.length == 1) {
           return all[0];
