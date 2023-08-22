@@ -90,7 +90,7 @@ import {mapActions} from "vuex";
 import isIpfs from "is-ipfs";
 import Michelson from "@/components/Michelson.vue";
 import { copyToClipboard } from "@/utils/clipboard";
-import { checkAddress, matchAddress, isSrAddress } from "@/utils/tz.js";
+import { checkAddress, matchAddress } from "@/utils/tz.js";
 
 export default {
   name: "ValueInspector",
@@ -125,7 +125,7 @@ export default {
           checkAddress(this.value.slice("tezos-storage://".length));
     },
     isAddress() {
-      return (this.prim === "address" || this.prim === "contract") && !isSrAddress(this.value) ;
+      return (this.prim === "address" || this.prim === "contract");
     },
   },
   methods: {
