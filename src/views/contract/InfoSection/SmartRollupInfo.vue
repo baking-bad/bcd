@@ -57,8 +57,7 @@
                         <span class="body-1 font-weight-medium text-uppercase text--secondary mr-2"
                         >Smart Rollup:
                         </span>
-                        <span v-if="alias" class="ml-2 body-1">{{ alias }}</span>
-                        <span v-else class="ml-2 body-1" v-html="address"></span>
+                        <span class="ml-2 body-1 secondary--text">{{ alias ? alias : address }}</span>
                         <v-spacer></v-spacer>
                         <span
                             class="caption text-uppercase font-weight-medium"
@@ -108,8 +107,7 @@
                         <span class="body-1 font-weight-medium text-uppercase text--secondary mr-2"
                         >Smart Rollup:
                         </span>
-                        <span v-if="alias" class="ml-2 body-1">{{ alias }}</span>
-                        <span v-else class="ml-2 body-1" v-html="address"></span>
+                        <span class="ml-2 body-1 secondary--text">{{ alias ? alias : address }}</span>
                         <v-spacer></v-spacer>
                         <span
                             class="caption text-uppercase font-weight-medium"
