@@ -97,7 +97,7 @@
                   </div>
                 </v-col>
                 <v-divider vertical />
-                <v-col v-if="schema" cols="4">
+                <v-col v-if="schema" cols="4" class="pb-2">
                   <TypeDef
                     :typedef="schema.typedef"
                     first="storage"
