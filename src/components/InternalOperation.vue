@@ -96,6 +96,7 @@
           text
           class="mr-7 text--secondary"
           small
+          @click="openTicketCard"
           v-if="data.ticket_updates_count > 0"
         >
           <v-badge
@@ -106,6 +107,17 @@
             <v-icon>mdi-ticket-confirmation</v-icon>
           </v-badge>
         </v-btn>        
+        <v-dialog v-model="showTicketUpdates" width="auto" @keydown.esc="showTicketUpdates = false">
+          <v-card class="bcd-table">
+            <v-card-title class="py-3 px-7">Ticket updates</v-card-title>
+            <v-card-text class="pa-0">
+              <TicketTab
+                :network="data.network"
+                :operationId="data.id"
+              />
+            </v-card-text>
+          </v-card>
+        </v-dialog>
       </v-col>
       <v-col
         cols="1"
@@ -254,6 +266,7 @@ import OperationAlert from "@/components/OperationAlert.vue";
 import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
+import TicketTab from "../views/contract/TicketTab/TicketTab.vue";
 
 export default {
   props: {
@@ -268,10 +281,12 @@ export default {
     OperationAlert,
     AccountBox,
     MiguelTreeView,
+    TicketTab,
   },
   data: () => ({
     showRaw: false,
     showParams: false,
+    showTicketUpdates: false,
     expanded: false,
     loadingDiffs: false,
     diffs: null
@@ -446,7 +461,10 @@ export default {
         finally(() => {
           this.loadingDiffs = false;
         })
-    }
+    },
+    openTicketCard() {
+      this.showTicketUpdates = true;
+    },
   },
   watch: {
     showParams(newValue) {
