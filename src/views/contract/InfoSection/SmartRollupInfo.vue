@@ -41,8 +41,8 @@
             </v-list-item>
             <v-dialog v-model="showGenesisCommitment" width="800" @keydown.esc="showGenesisCommitment = false">
                 <template v-slot:activator="{ on }">
-                    <v-list-item>
-                        <v-list-item-content v-on="on">
+                    <v-list-item v-on="on">
+                        <v-list-item-content>
                             <v-list-item-subtitle class="overline"
                             >Genesis commitment</v-list-item-subtitle
                             >
@@ -91,8 +91,8 @@
             </v-list-item>
             <v-dialog v-model="showKernel" width="800" @keydown.esc="showKernel = false">
                 <template v-slot:activator="{ on }">
-                    <v-list-item>
-                        <v-list-item-content v-on="on">
+                    <v-list-item v-on="on">
+                        <v-list-item-content>
                             <v-list-item-subtitle class="overline"
                             >Kernel</v-list-item-subtitle
                             >
