@@ -1,5 +1,5 @@
 <template>
-    <v-list class="contract-list">
+    <v-list>
         <v-list-item style="height: 74px">
             <v-list-item-content two-line>
                 <v-list-item-title class="headline">

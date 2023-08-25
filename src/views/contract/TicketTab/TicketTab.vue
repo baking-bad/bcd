@@ -1,7 +1,7 @@
 <template>
     <v-container class="canvas fill-canvas pa-8 ma-0" fluid>
         <v-row>
-            <v-col :cols="cols[0]">
+            <v-col :cols="showAsCard ? 4 : 3">
                 <v-list-item-group v-model="selected" class="pt-0 pb-0 themed-border radius-1" mandatory>
                     <template v-for="(update, idx) in updates">
                         <v-list-item :key="idx">
@@ -18,7 +18,7 @@
                     </template>
                 </v-list-item-group>
             </v-col>
-            <v-col :cols="cols[1]">
+            <v-col :cols="showAsCard ? 8 : 9">
                 <v-card class="sticky-card" flat outlined width="95%" v-if="item">
                     <v-card-text class="data pa-0 pb-0">
                         <v-list class="py-0 bcd-table">
@@ -120,8 +120,7 @@ export default {
         loading: false,
         updates: [],
         selected: 0,
-        // Не знаю, делает ли кто-то так ебано, наверное есть способы получше..
-        cols: [3, 9],
+        showAsCard: false,
     }),
     computed: {
         item() {
@@ -171,7 +170,7 @@ export default {
         if (this.address) {
             this.listTicketUpdates(this.network, this.address);
         } else if (this.operationId) {
-            this.cols = [4, 8];
+            this.showAsCard = true;
             this.getTickectUpdatesByOperation(this.network, this.operationId);
         }
     },

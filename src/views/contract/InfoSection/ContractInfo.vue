@@ -1,5 +1,5 @@
 <template>
-    <v-list class="contract-list">
+    <v-list>
         <v-skeleton-loader
             :loading="isLoading"
             type="list-item-two-line, list-item-two-line"

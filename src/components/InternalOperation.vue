@@ -87,26 +87,26 @@
         <span v-if="data.tag" class="hash accent--text">event {{ data.tag }}</span>
         <span v-else>
           <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
-          <span class="hash accent--text">{{ displayEntrypoint }}</span>
+          <span v-if="!data.entrypoint || data.kind === 'transfer_ticket'" class="hash accent--text">{{ data.kind }}</span>
+          <span v-else class="hash secondary--text">{{ data.entrypoint }}</span>
         </span>
         <v-chip class="ml-3 overline" :color="statusColor" small outlined label>{{ data.status }}</v-chip>
       </v-col>
       <v-col cols="1" class="text-right">
-        <v-btn
-          text
-          class="mr-7 text--secondary"
-          small
-          @click="openTicketCard"
-          v-if="data.ticket_updates_count > 0"
-        >
-          <v-badge
-            color="primary"
-            :content="data.ticket_updates_count"
-            overlap
-          >
-            <v-icon>mdi-ticket-confirmation</v-icon>
-          </v-badge>
-        </v-btn>        
+        <v-tooltip top v-if="data.ticket_updates_count > 0">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              v-on="on"
+              icon
+              class="mr-7 text--secondary"
+              small
+              @click="openTicketCard"
+            >
+              <v-icon small>mdi-ticket-confirmation</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ helpers.plural(data.ticket_updates_count, "ticket update") }}</span>
+        </v-tooltip>
         <v-dialog v-model="showTicketUpdates" width="auto" @keydown.esc="showTicketUpdates = false">
           <v-card class="bcd-table">
             <v-card-title class="py-3 px-7">Ticket updates</v-card-title>
@@ -431,13 +431,6 @@ export default {
         this.data.entrypoint && 
         this.data.status === 'applied';
     },
-    displayEntrypoint() {
-      if (!this.data.entrypoint || this.data.kind === 'transfer_ticket') {
-        return this.data.kind;
-      } else {
-        return this.data.entrypoint;
-      }
-    }
   },
   methods: {
     ...mapActions(["showClipboardOK", "showError"]),
