@@ -83,8 +83,6 @@ export default {
   data: () => ({
     infoLoading: true,
     smartRollup: {},
-    showGenesisCommitment: false,
-    showKernel: false,
   }),
   mounted() {
     this.getInfo();
