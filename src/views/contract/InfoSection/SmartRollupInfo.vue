@@ -39,46 +39,7 @@
                     </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-dialog v-model="showGenesisCommitment" width="800" @keydown.esc="showGenesisCommitment = false">
-                <template v-slot:activator="{ on }">
-                    <v-list-item v-on="on">
-                        <v-list-item-content>
-                            <v-list-item-subtitle class="overline"
-                            >Genesis commitment</v-list-item-subtitle
-                            >
-                            <v-list-item-title class="body-2">
-                                {{ smartRollup.genesis_commitment_hash }}
-                            </v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                </template>
-                <v-card>
-                    <v-card-title class="py-3 px-6 align-center sidebar">
-                        <span class="body-1 font-weight-medium text-uppercase text--secondary mr-2"
-                        >Smart Rollup:
-                        </span>
-                        <span class="ml-2 body-1 secondary--text">{{ alias ? alias : address }}</span>
-                        <v-spacer></v-spacer>
-                        <span
-                            class="caption text-uppercase font-weight-medium"
-                            :class="network === 'mainnet' ? 'primary--text' : 'text--secondary'"
-                        >{{ network }}</span
-                        >
-                    </v-card-title>
-                    <v-card-text class="pt-7">
-                        <v-row no-gutters>
-                            <v-col cols="12">
-                                <ValueInspector
-                                    prim="string"
-                                    :value="smartRollup.genesis_commitment_hash"
-                                    :network="network"
-                                    label="Genesis commitment">
-                                </ValueInspector>
-                            </v-col>
-                        </v-row>
-                    </v-card-text>
-                </v-card>
-            </v-dialog>
+            <LongBox :network="network" title="Genesis commitment" :text="smartRollup.genesis_commitment_hash"/>
             <v-list-item>
                 <v-list-item-content>
                     <v-list-item-subtitle class="overline"
@@ -89,46 +50,7 @@
                     </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-dialog v-model="showKernel" width="800" @keydown.esc="showKernel = false">
-                <template v-slot:activator="{ on }">
-                    <v-list-item v-on="on">
-                        <v-list-item-content>
-                            <v-list-item-subtitle class="overline"
-                            >Kernel</v-list-item-subtitle
-                            >
-                            <v-list-item-title class="body-2">
-                                {{ smartRollup.kernel }}
-                            </v-list-item-title>
-                        </v-list-item-content>
-                    </v-list-item>
-                </template>
-                <v-card>
-                    <v-card-title class="py-3 px-6 align-center sidebar">
-                        <span class="body-1 font-weight-medium text-uppercase text--secondary mr-2"
-                        >Smart Rollup:
-                        </span>
-                        <span class="ml-2 body-1 secondary--text">{{ alias ? alias : address }}</span>
-                        <v-spacer></v-spacer>
-                        <span
-                            class="caption text-uppercase font-weight-medium"
-                            :class="network === 'mainnet' ? 'primary--text' : 'text--secondary'"
-                        >{{ network }}</span
-                        >
-                    </v-card-title>
-                    <v-card-text class="pt-7">
-                        <v-row no-gutters>
-                            <v-col cols="12">
-                                <ValueInspector
-                                    prim="string"
-                                    :value="smartRollup.kernel"
-                                    :network="network"
-                                    label="Kernel">
-                                </ValueInspector>
-                            </v-col>
-                        </v-row>
-                    </v-card-text>
-                </v-card>
-            </v-dialog>
+            <LongBox :network="network" title="Kernel" :text="smartRollup.kernel"/>
             <v-list-item>
                 <v-list-item-content>
                     <v-list-item-subtitle class="overline"
@@ -144,10 +66,8 @@
 </template>
 
 <script>
-
-import ValueInspector from "@/components/ValueInspector.vue"
+import LongBox from "@/components/Dialogs/LongBox.vue"
 import TypeDef from "@/views/contract/TypeDef.vue";
-
 
 export default {
   name: "SmartRollupInfo",
@@ -157,8 +77,8 @@ export default {
     alias: String,
   },
   components: {
-    ValueInspector,
     TypeDef,
+    LongBox,
   },
   data: () => ({
     infoLoading: true,
@@ -168,8 +88,6 @@ export default {
   }),
   mounted() {
     this.getInfo();
-  },
-  computed: {
   },
   methods: {
     getInfo() {
