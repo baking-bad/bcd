@@ -82,7 +82,6 @@ export default {
                     line.hex += `${(0 + view.getUint8(i + j).toString(16).toUpperCase()).slice(-2)} `
                 }
             }
-            // line.hex = line.hex.replace(/ /g, "&nbsp;");
             lines.push(line)
         }
   
