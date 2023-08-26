@@ -12,7 +12,8 @@
                     <template v-for="(line, idx) in hexdump">
                         <div :key="idx">
                             <span class="primary--text">{{ line.number }}</span>&nbsp;&nbsp;&nbsp;&nbsp;
-                            <span v-html="line.hex"></span>&nbsp;&nbsp;
+                            <span>{{ line.hex }}</span>
+                            <span>{{ '&nbsp;&nbsp;&nbsp;'.repeat(line.tail) }}</span>
                             <span>{{ line.raw }}</span>
                             <br/>
                         </div>
@@ -49,7 +50,7 @@ export default {
       }
     },
     mounted() {
-        this.buffer = new Uint8Array(this.value.match(/[\da-fA-F]{2}/gi).map(function (h) {
+        this.buffer = new Uint8Array(this.value.match(/[\dA-F]{2}/gi).map(function (h) {
             return parseInt(h, 16)
         })).buffer
     },
@@ -70,17 +71,18 @@ export default {
                 number: ('0000' + i.toString(16).toUpperCase()).slice(-4),
                 raw: String.fromCharCode.apply(null,
                     new Uint8Array(this.buffer.slice(i, i + 16))).replace(/[^\x20-\x7E]/g, '.'),
-                hex: ''
+                hex: '',
+                tail: 1
             }
 
             for (let j = 0; j < 16; j++) {
-                let ch = i + j > this.buffer.byteLength - 1 ?
-                '  ' :
-                (0 + view.getUint8(i + j).toString(16).toUpperCase()).slice(-2)
-    
-                line.hex += `${ch} `
+                if (i + j > this.buffer.byteLength - 1) {
+                    line.tail += 1
+                } else {
+                    line.hex += `${(0 + view.getUint8(i + j).toString(16).toUpperCase()).slice(-2)} `
+                }
             }
-            line.hex = line.hex.replace(/ /g, "&nbsp;");
+            // line.hex = line.hex.replace(/ /g, "&nbsp;");
             lines.push(line)
         }
   
