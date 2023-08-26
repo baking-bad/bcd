@@ -68,6 +68,7 @@
 
     <VContainer fluid class="pt-0">
       <router-view
+        :accountType="accountType"
         :address="address"
         :network="network"
         :alias="alias"
@@ -109,8 +110,10 @@ export default {
     address: String,
   },
   data: () => ({
+    accountType: '',
     contractLoading: true,
     contract: {},
+    contractInfo: {},
     balance: 0,
     metadata: null,
     tokensTotal: 0,
@@ -146,7 +149,7 @@ export default {
       return this.isOnChainsLoading;
     },
     isContract() {
-      return this.address.startsWith("KT");
+      return this.accountType === 'contract';
     },
     breadcrumbsItems() {
       return [
@@ -170,6 +173,9 @@ export default {
         },
       ];
     },
+  },
+  created() {
+    this.getInfo();
   },
   destroyed() {
     this.hideError();
@@ -214,7 +220,6 @@ export default {
     async init() {
       this.tokensTotal = 0;
       this.metadata = null;
-      this.contract = {};
 
       this.alias = await this.getAlias(this.network, this.address);
       if (this.isContract) {
@@ -223,7 +228,7 @@ export default {
         this.getContract();
         this.loadOnChainViews();
       } else {
-        this.getInfo();
+        this.contract = this.contractInfo;
       }
       this.getMetadata();
     },
@@ -258,9 +263,8 @@ export default {
         .getAccountInfo(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          if (!this.isContract) {
-            this.contract = res;
-          }
+          this.contractInfo = res;
+          this.accountType = res.account_type;
           if (res.balance !== undefined) {
             this.balance = res.balance || 0;
             return;
@@ -327,6 +331,12 @@ export default {
     },
   },
   watch: {
+    accountType: {
+      immediate: true,
+      handler() {
+        this.init();
+      }
+    },
     address: {
       immediate: true,
       handler() {

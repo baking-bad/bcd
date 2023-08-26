@@ -73,7 +73,6 @@ export class BetterCallApi {
             })
     }
 
-
     getSameContracts(network, address, offset = 0) {
         let params = {}
         if (offset > 0) params.offset = offset;
@@ -489,6 +488,19 @@ export class BetterCallApi {
             })
     }
 
+    getSmartRollupInfo(network, address) {
+        return getCancellable(this.api, `/smart_rollups/${network}/${address}`, {})
+            .then((res) => {
+                if (!res) {
+                    return res;
+                }
+                if (res.status != 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
+
     getDiff(query) {
         return this.api.post(`/diff`, query)
             .then((res) => {
@@ -750,5 +762,18 @@ export class BetterCallApi {
 
         return this.api.get(`/contract/${network}/${address}/ticket_updates`, {params})
             .then(this.returnResponseData);
+    }
+
+    getTickectUpdatesByOperation(network, operationId) {
+        return getCancellable(this.api, `/operation/${network}/${operationId}/ticket_updates`, {})
+            .then((res) => {
+                if (!res) {
+                    return null;
+                }
+                if (res.status !== 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
     }
 }

@@ -83,14 +83,41 @@
       </v-col>
     </v-row>
     <v-row no-gutters class="px-4 pt-4" style="font-size: 16px;">
-      <v-col cols="11">
+      <v-col cols="10">
         <span v-if="data.tag" class="hash accent--text">event {{ data.tag }}</span>
         <span v-else>
           <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
-          <span v-if="data.entrypoint" class="hash secondary--text">{{ data.entrypoint }}</span>
-          <span v-else class="hash accent--text">{{ data.kind }}</span>
+          <span v-if="!data.entrypoint || data.kind === 'transfer_ticket'" class="hash accent--text">{{ data.kind }}</span>
+          <span v-else class="hash secondary--text">{{ data.entrypoint }}</span>
         </span>
         <v-chip class="ml-3 overline" :color="statusColor" small outlined label>{{ data.status }}</v-chip>
+      </v-col>
+      <v-col cols="1" class="text-right">
+        <v-tooltip top v-if="data.ticket_updates_count > 0">
+          <template v-slot:activator="{ on }">
+            <v-btn
+              v-on="on"
+              icon
+              class="mr-7 text--secondary"
+              small
+              @click="openTicketCard"
+            >
+              <v-icon small>mdi-ticket-confirmation</v-icon>
+            </v-btn>
+          </template>
+          <span>{{ helpers.plural(data.ticket_updates_count, "ticket update") }}</span>
+        </v-tooltip>
+        <v-dialog v-model="showTicketUpdates" width="auto" @keydown.esc="showTicketUpdates = false">
+          <v-card class="bcd-table">
+            <v-card-title class="py-3 px-7">Ticket updates</v-card-title>
+            <v-card-text class="pa-0">
+              <TicketTab
+                :network="data.network"
+                :operationId="data.id"
+              />
+            </v-card-text>
+          </v-card>
+        </v-dialog>
       </v-col>
       <v-col
         cols="1"
@@ -216,7 +243,7 @@
         >
           <v-col :cols="expanded ? 12 : 6">
               <span class="overline ml-3">Payload</span>
-              <MiguelTreeView :miguel="data.event" :network="data.network" openAll />
+              <MiguelTreeView :miguel="data.payload" :network="data.network" openAll />
           </v-col>
         </v-row>
       </div>
@@ -239,6 +266,7 @@ import OperationAlert from "@/components/OperationAlert.vue";
 import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
+import TicketTab from "../views/contract/TicketTab/TicketTab.vue";
 
 export default {
   props: {
@@ -253,10 +281,12 @@ export default {
     OperationAlert,
     AccountBox,
     MiguelTreeView,
+    TicketTab,
   },
   data: () => ({
     showRaw: false,
     showParams: false,
+    showTicketUpdates: false,
     expanded: false,
     loadingDiffs: false,
     diffs: null
@@ -360,8 +390,8 @@ export default {
       return (
         this.data != null &&
         this.data !== undefined &&
-        this.data.event != null &&
-        this.data.event !== undefined
+        this.data.payload != null &&
+        this.data.payload !== undefined
       );
     },
     showDetails() {
@@ -400,7 +430,7 @@ export default {
         this.data.destination && 
         this.data.entrypoint && 
         this.data.status === 'applied';
-    }
+    },
   },
   methods: {
     ...mapActions(["showClipboardOK", "showError"]),
@@ -424,7 +454,10 @@ export default {
         finally(() => {
           this.loadingDiffs = false;
         })
-    }
+    },
+    openTicketCard() {
+      this.showTicketUpdates = true;
+    },
   },
   watch: {
     showParams(newValue) {

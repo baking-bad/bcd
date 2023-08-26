@@ -71,85 +71,31 @@
         </v-row>
       </v-col>
       <v-col cols="3">
-        <v-list class="contract-list">
-          <v-list-item style="height: 74px">
-            <v-list-item-content two-line>
-              <v-list-item-title class="headline">
-                <v-tooltip bottom :disabled="alias && alias.length < 25">
-                  <template v-slot:activator="{ on, attrs }">
-                    <span v-bind="attrs" v-on="on" style="cursor: inherit;">{{ alias ? alias : address }}</span>
-                  </template>
-                  <span>{{ alias ? alias : address }}</span>
-                </v-tooltip>                
-              </v-list-item-title>
-              <v-list-item-subtitle>
-              <span
-                class="overline"
-                :class="network === 'mainnet' ? 'secondary--text' : ''"
-              >{{ network }}</span
-              >
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item>
-            <v-list-item-content>
-              <v-list-item-subtitle class="overline"
-              >Was active</v-list-item-subtitle
-              >
-              <v-list-item-title class="body-2" v-if="isContract">
-                {{ helpers.formatDatetime(contract.timestamp) }}
-                <span v-if="contract.last_action > contract.timestamp">—
-                      {{ helpers.formatDatetime(contract.last_action) }}</span
-                >
-              </v-list-item-title>
-              <v-list-item-title class="body-2" v-else>
-                {{ helpers.formatDatetime(contract.last_action) }}
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item v-if="balance">
-            <v-list-item-content>
-              <v-list-item-subtitle class="overline"
-              >Balance</v-list-item-subtitle
-              >
-              <v-list-item-title class="body-2">
-                <span>{{ balance | uxtz }}</span>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <AccountBox
-            v-if="contract.manager"
-            title="Deployed by"
-            :address="contract.manager"
-            :network="contract.network"
-            gutters
-          />
-          <AccountBox
-            v-if="contract.delegate"
-            title="Delegated to"
-            :address="contract.delegate"
-            :network="contract.network"
-            gutters
-          />
-          <v-list-item v-if="usedBytes">
-            <v-list-item-content>
-              <v-list-item-subtitle class="overline">Storage used</v-list-item-subtitle>
-              <v-list-item-title class="body-2">
-                <span>{{ parseInt(usedBytes).toLocaleString('en-US') }} bytes</span>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-           <v-list-item v-if="paidUsed">
-            <v-list-item-content>
-              <v-list-item-subtitle class="overline"
-              >Storage paid</v-list-item-subtitle
-              >
-              <v-list-item-title class="body-2">
-                <span>{{ parseInt(paidUsed).toLocaleString('en-US') }} bytes</span>
-              </v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list>
+          <template v-if="isContract">
+            <ContractInfo
+              :address="address"
+              :network="network"
+              :alias="alias"
+              :contract="contract"
+              :balance="balance"
+            />
+          </template>
+          <template v-else-if="isSmartRollup">
+            <SmartRollupInfo
+              :address="address"
+              :network="network"
+              :alias="alias"
+            />
+          </template>
+          <template v-else-if="isAccount">
+            <AccountInfo
+              :address="address"
+              :network="network"
+              :alias="alias"
+              :contrat="contract"
+              :balance="balance"
+            />
+          </template>
       </v-col>
     </v-row>
   </v-container>
@@ -161,12 +107,14 @@ import OperationFilters from "@/views/contract/OperationFilters.vue";
 import ContentItem from "@/views/contract/ContentItem.vue";
 import EmptyState from "@/components/Cards/EmptyState.vue";
 import dayjs from "dayjs";
-import AccountBox from "../../components/Dialogs/AccountBox";
-import { isKT1Address } from '@/utils/tz.js';
+import AccountInfo from "./InfoSection/AccountInfo.vue";
+import ContractInfo from "./InfoSection/ContractInfo.vue";
+import SmartRollupInfo from "./InfoSection/SmartRollupInfo.vue";
 
 export default {
   name: "OperationsTab",
   props: {
+    accountType: String,
     address: String,
     network: String,
     alias: String,
@@ -174,10 +122,12 @@ export default {
     contract: Object,
   },
   components: {
-    AccountBox,
     ContentItem,
     EmptyState,
-    OperationFilters
+    OperationFilters,
+    AccountInfo,
+    ContractInfo,
+    SmartRollupInfo,
   },
   data: () => ({
     openFilters: false,
@@ -193,16 +143,9 @@ export default {
       dates: []
     },
     search: '',
-    usedBytes: null,
-    paidUsed: null
   }),
   created() {
     this.fetchOperations();
-
-    if (isKT1Address(this.address)){
-      this.getUsedBytes();
-      this.getPaidUsed();
-    }
   },
   computed: {
     searchable() {
@@ -227,7 +170,13 @@ export default {
       return operations;
     },
     isContract() {
-      return this.address.startsWith("KT");
+      return this.accountType === 'contract';
+    },
+    isAccount() {
+      return this.accountType === 'account';
+    },
+    isSmartRollup() {
+      return this.accountType === 'smart_rollup';
     },
     isEmptyFilters() {
       return this.filters.dates.length == 0 &&
@@ -268,21 +217,6 @@ export default {
         return -1;
       }
       return 0;
-    },
-
-    async getUsedBytes() {
-      this.usedBytes = await this.rpc.getStorageUsedBytesByContract(this.network, this.address)
-        .catch(err => {
-          console.log(err);
-          return null;
-        })
-    },
-    async getPaidUsed() {
-      this.paidUsed = await this.rpc.getStoragePaidUsedByContract(this.network, this.address)
-        .catch(err => {
-          console.log(err);
-          return null;
-        })
     },
 
     getTimestamps() {

@@ -134,12 +134,12 @@ export default {
     Shortcut,
   },
   created() {
-    this.value = Object.assign({}, this.data);
+    this.value = {...this.data};
   },
   computed: {
     text() {
       if (this.value == null) return "";
-      if (this.value.entrypoint) {
+      if (this.value.entrypoint && this.data.kind !== 'transfer_ticket') {
         let all = this.value.entrypoint.split(',');
         if (all.length == 1) {
           return all[0];
@@ -161,7 +161,7 @@ export default {
     ...mapActions(["showError"]),
     onPanelStateChange() {
       if (!this.value) return;
-      if (this.value.mempool) this.internal = [Object.assign({}, this.value)];
+      if (this.value.mempool) this.internal = [{...this.value}];
       if (this.internal.length > 0) return;
       if (this.loading) return;
 
