@@ -26,7 +26,9 @@
             <v-card-text class="pt-7">
                 <v-row no-gutters>
                     <v-col cols="12">
+                        <HexView v-if="hex" v-model="text"/>
                         <ValueInspector
+                            v-else
                             prim="string"
                             :value="text"
                             :network="network"
@@ -40,17 +42,20 @@
 </template>
 
 <script>
-import ValueInspector from "@/components/ValueInspector.vue"
+import ValueInspector from "@/components/ValueInspector.vue";
+import HexView from "@/components/HexView.vue";
 
 export default {
     name: "LongBox",
     props: {
         network: String,
         title: String,
-        text: String
+        text: String,
+        hex: Boolean
     },
     components: {
-        ValueInspector
+        ValueInspector,
+        HexView
     },
     data: () => ({
         show: false
