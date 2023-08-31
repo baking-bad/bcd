@@ -28,6 +28,15 @@ export default {
     },
     components: {
         CallStackItem
-    }
+    },
+    created() {
+        this.operations.sort((a, b) => {
+        // if (a.counter !== b.counter) {
+        //     return a.counter - b.counter;
+        // }
+
+        return a.id - b.id;
+        });
+    },
 }
 </script>
