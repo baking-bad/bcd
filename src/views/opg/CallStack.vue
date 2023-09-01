@@ -6,12 +6,18 @@
         </v-list-item-content>
         </v-list-item>
         <div class="d-flex flex-column px-4 call-stack-content-wrapper" style="font-size: 15px">
-            <CallStackItem
-                v-for="(op, idx) in operations"
-                :key="idx"
-                :network="network"
-                :operation="op"
-            />
+            <template v-for="op in operations">
+                <CallStackItem
+                    :key="op.id"
+                    :operation="op"
+                    :network="network"
+                />
+                <CallStackItem v-for="intOp in op.internal_operations"
+                    :key="intOp.id"
+                    :operation="intOp"
+                    :network="network"
+                />
+            </template>
         </div>
     </v-list>
 </template>
@@ -28,15 +34,6 @@ export default {
     },
     components: {
         CallStackItem
-    },
-    created() {
-        this.operations.sort((a, b) => {
-        // if (a.counter !== b.counter) {
-        //     return a.counter - b.counter;
-        // }
-
-        return a.id - b.id;
-        });
     },
 }
 </script>

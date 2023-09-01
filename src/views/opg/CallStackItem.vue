@@ -5,10 +5,7 @@
             <span class="text--secondary" v-if="alias">{{ alias }}</span>
             <Shortcut v-else class="text--secondary" :str="operation.destination"/>
             <span v-if="operation.destination" class="text--secondary" style="font-size: 20px"> → </span>
-            <span v-if="operation.tag" class="hash accent--text">event {{ operation.tag }}</span>
-            <span v-else-if="operation.kind === 'transfer_ticket'" class="hash accent--text">{{ operation.kind }}:{{ operation.entrypoint ? operation.entrypoint : '' }}()</span>
-            <span v-else-if="operation.entrypoint" class="hash secondary--text">{{ operation.entrypoint }}()</span>
-            <span v-else>{{ operation.amount ? operation.amount : 0 | uxtz }}</span>
+            <span :class="itemClass">{{ itemValue }}</span>
         </div>
     </div>
 </template>
@@ -27,16 +24,33 @@ export default {
     },
     data: () => {
         return {
-            alias: null
+            alias: null,
+            itemClass: '',
+            itemValue: '',
         }
     },
     async created() {
+        this.setClassAndValue();
         this.alias = await this.fetchAlias();
     },
     methods: {
         async fetchAlias() {
             return await this.getAlias(this.network, this.operation.destination)
-        }
+        },
+        setClassAndValue() {
+            if (this.operation.tag) {
+                this.itemClass = "'hash accent--text'";
+                this.itemValue = 'event ' + this.operation.tag;
+            } else if (this.operation.kind === 'transfer_ticket') {
+                this.itemClass = 'hash accent--text';
+                this.itemValue = this.operation.kind;
+            } else if (this.operation.entrypoint) {
+                this.itemClass = 'hash secondary--text';
+                this.itemValue = this.operation.entrypoint + '()';
+            } else {
+                this.itemValue = this.$options.filters.uxtz(this.operation.amount ? this.operation.amount : 0);
+            }
+        },
     }
 }
 </script>
