@@ -78,11 +78,7 @@ export default {
       return `/${this.$route.params.network || this.config.networks[0]}/`
     },
     bcdInMainMode() {
-      if (window.location.hostname.startsWith('teztnets')) {
-        return false;
-      } else {
-        return true;
-      }
+      return !window.location.hostname.startsWith('teztnets');
     },
   },
   methods: {
