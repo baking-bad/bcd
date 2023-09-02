@@ -50,7 +50,7 @@
                     </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <LongBox :network="network" title="Kernel" :text="smartRollup.kernel"/>
+            <LongBox :hex="true" :network="network" title="Kernel" :text="smartRollup.kernel"/>
             <v-list-item>
                 <v-list-item-content>
                     <v-list-item-subtitle class="overline"
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import LongBox from "@/components/Dialogs/LongBox.vue"
+import LongBox from "@/components/Dialogs/LongBox.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
 
 export default {
