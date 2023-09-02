@@ -7,7 +7,15 @@
       </RouterLink>
     </div>
     <div>
-      <v-btn text small :to="{ name: 'search' }" class="text--secondary" active-class="bg-before-transparent" v-if="searchService.created()">
+      <v-btn v-if="!isSandbox"
+        @click="bcdModeRedirect"
+        text
+        small
+        class="text--secondary"
+        active-class="bg-before-transparent"
+        > {{ bcdInMainMode ? 'Periodic BCD' : 'Main BCD' }}
+      </v-btn>
+      <v-btn v-if="searchService.created()" text small :to="{ name: 'search' }" class="text--secondary" active-class="bg-before-transparent">
         Search
       </v-btn>
       <v-btn text small :to="{ path: networksPath }" class="text--secondary" active-class="bg-before-transparent">
@@ -36,7 +44,13 @@ import ConnectWallet from "@/components/ConnectWallet";
 
 export default {
   name: "MainHeaderDescriptive",
-  components: {ConnectWallet, ThemeSwitcher, SearchBox, SocialsList, Bookmarks},
+  components: {
+    ConnectWallet,
+    ThemeSwitcher,
+    SearchBox,
+    SocialsList,
+    Bookmarks
+  },
   props: {
     noSearch: Boolean,
     network: String,
@@ -51,16 +65,31 @@ export default {
     isDarkTheme() {
       return this.$vuetify.theme.dark;
     },
+    isSandbox() {
+      return this.config.sandbox_mode;
+    },
     networksPath() {
-      if (this.config.sandbox_mode) {
+      if (this.isSandbox) {
         return `/${this.$route.params.network || 'sandboxnet'}/`
       }
       if ('mainnet' in this.config.networks) {
         return `/${this.$route.params.network || 'mainnet'}/`
       }
       return `/${this.$route.params.network || this.config.networks[0]}/`
-    }
+    },
+    bcdInMainMode() {
+      return !window.location.hostname.startsWith('teztnets');
+    },
   },
+  methods: {
+    bcdModeRedirect() {
+      if (this.bcdInMainMode) {
+        window.location.href = 'https://teztnets.better-call.dev/';
+      } else {
+        window.location.href = 'https://better-call.dev/';
+      }
+    },
+  }
 }
 </script>
 
