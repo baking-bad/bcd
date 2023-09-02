@@ -92,7 +92,7 @@
               :address="address"
               :network="network"
               :alias="alias"
-              :contrat="contract"
+              :contract="contract"
               :balance="balance"
             />
           </template>

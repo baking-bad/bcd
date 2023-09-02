@@ -73,6 +73,7 @@
         :network="network"
         :alias="alias"
         :contract="contract"
+        :balance="balance"
         :tokensTotal="tokensTotal"
         :metadata="metadata"
         :same-count="contract ? contract.same_count: 0"
