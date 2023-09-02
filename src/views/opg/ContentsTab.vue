@@ -1,15 +1,15 @@
 <template>
   <div>
     <v-skeleton-loader
-      v-if="loading && contents.length === 0"
+      v-if="loading && operations.length === 0"
       :loading="loading"
       type="list-item-two-line, list-item-two-line, list-item-two-line"
     />
-    <template v-else-if="!loading && contents.length > 0">
+    <template v-else-if="!loading && operations.length > 0">
       <v-card
         flat
         outlined
-        v-for="(op, idx) in contents"
+        v-for="(op, idx) in operations"
         :key="idx"
         class="mb-8"
       >
@@ -41,22 +41,6 @@ export default {
   props: {
     operations: Array,
     loading: Boolean,
-  },
-  computed: {
-    contents() {
-      let contents = [];
-      if (this.operations) {
-        this.operations.forEach((op) => {
-          if (op.internal) {
-            contents[contents.length - 1].internal_operations.push(op);
-          } else {
-            op.internal_operations = [];
-            contents.push(op);
-          }
-        });
-      }
-      return contents.sort((a, b) => a.counter - b.counter);
-    },
   },
 };
 </script>

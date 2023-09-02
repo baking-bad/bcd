@@ -53,7 +53,7 @@
     </v-row>
     <v-row class="px-7">
       <v-col cols="9" class="pr-7">
-        <OpgContents :loading="loading" :operations="operations"></OpgContents>
+        <OpgContents :loading="loading" :operations="contents"></OpgContents>
       </v-col>
       <v-col cols="3" class="pl-0">
         <v-list v-if="content">
@@ -102,7 +102,7 @@
           </v-list-item>
         </v-list>
 
-        <CallStack v-if="content" :network="network" :operations="operations"/>
+        <CallStack v-if="content" :network="network" :operations="contents"/>
       </v-col>
     </v-row>
 
@@ -146,20 +146,38 @@ export default {
     this.getOPG();
   },
   computed: {
-    contentsLength() {
-      return this.operations.filter((op) => !op.internal).length;
-    },
     content() {
-      if (this.operations.length > 0) {
-        return this.operations[0];
+      if (this.contents.length > 0) {
+        return this.contents[0];
       }
       return undefined;
     },
+    contents() {
+      let contents = [];
+      if (this.operations) {
+        this.operations.forEach((op) => {
+          if (op.internal) {
+            contents[contents.length - 1].internal_operations.push(op);
+          } else {
+            op.internal_operations = [];
+            contents.push(op);
+          }
+        });
+      }
+      return contents.sort((a, b) => a.counter - b.counter);
+    },
     totalCost() {
-      return this.operations.reduce(
-        (acc, c) => acc + (c.fee || 0) + (c.burned || 0),
-        0
-      );
+      return this.contents.reduce(function(acc, op) {
+        let sum = acc + (op.fee || 0) + (op.burned || 0);
+
+        if (op.internal_operations) {
+          sum += op.internal_operations.reduce(function(intAcc, intOp) {
+            return intAcc + (intOp.fee || 0) + (intOp.burned || 0);
+          }, 0);
+        }
+
+        return sum;
+      }, 0);
     },
     breadcrumbsItems() {
       return [
