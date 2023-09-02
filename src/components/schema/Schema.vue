@@ -721,6 +721,7 @@ export default {
             let model = res.default_model[this.name];
             if (Array.isArray(model) || 
                 typeof model === 'string' || 
+                typeof model === 'boolean' || 
                 typeof model === 'number') {
               this.model = res.default_model;
             }
