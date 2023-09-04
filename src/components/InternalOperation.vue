@@ -83,7 +83,7 @@
       </v-col>
     </v-row>
     <v-row no-gutters class="px-4 pt-4" style="font-size: 16px;">
-      <v-col cols="10">
+      <v-col cols="10" lg="10" xl="10" md="9">
         <span v-if="data.tag" class="hash accent--text">event {{ data.tag }}</span>
         <span v-else>
           <span v-if="data.internal" class="mr-2 hash font-weight-thin">internal</span>
@@ -92,13 +92,13 @@
         </span>
         <v-chip class="ml-3 overline" :color="statusColor" small outlined label>{{ data.status }}</v-chip>
       </v-col>
-      <v-col cols="1" class="text-right">
+      <v-col cols="1" class="d-flex justify-end">
         <v-tooltip top v-if="data.ticket_updates_count > 0">
           <template v-slot:activator="{ on }">
             <v-btn
               v-on="on"
               icon
-              class="mr-7 text--secondary"
+              class="mr-5 text--secondary"
               small
               @click="openTicketCard"
             >
@@ -120,11 +120,11 @@
         </v-dialog>
       </v-col>
       <v-col
-        cols="1"
+        cols="1" lg="1" xl="1" md="2"
         class="py-0 d-flex justify-end align-center"
-        v-if="showDetails"
       >
         <v-btn
+          v-if="showDetails"
           text
           small
           @click="showParams = !showParams"
