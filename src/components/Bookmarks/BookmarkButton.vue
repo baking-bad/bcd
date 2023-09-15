@@ -1,33 +1,23 @@
 <template>
   <div>
-    <v-btn v-if="mode === 'contract'"
-      class="mr-2 pl-2 pr-2 text--secondary"
-      outlined
-      small
-      @click="bookmarkState"
-    >
-      <v-icon class="text--secondary" small>{{ isBookmark ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
-      <span class="ml-1 text--secondary">{{ isBookmark ? 'Remove bookmark' : 'Add bookmark' }}</span>
-    </v-btn>
-
-    <v-btn v-else-if="mode === 'entrypoint'"
-      icon
-      small
-      class="mr-5 text--secondary"
-      @click="bookmarkState"
-    >
-      <v-icon>{{ isBookmark ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
-    </v-btn>
-    <v-btn v-else-if="mode === 'entrypoint-list'"
-      icon
-      small
-      class="mr-5 primary--text"
-      @click="bookmarkState"
-    >
-      <v-icon v-if="isBookmark">mdi-star</v-icon>
-    </v-btn>
-
-    <BookmarkDialog v-model="openBookMarkDialog" :alias="alias || ``" @added="onBookmarkAdded"/>
+    <v-tooltip top>
+      <template v-slot:activator="{ on }">
+        <v-btn v-if="isBookmark || showEmpty"
+          v-on="on"
+          small
+          :class="customClass"
+          :outlined="isTextButton"
+          :icon="!isTextButton"
+          @click="bookmarkState"
+        >
+          <v-icon v-if="showEmpty" :small="isTextButton">{{ isBookmark ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
+          <v-icon v-else small>mdi-star</v-icon>
+          <span v-if="isTextButton" class="ml-1 text--secondary">{{ isBookmark ? 'Remove bookmark' : 'Add bookmark' }}</span>
+        </v-btn>
+      </template>
+      <span v-if="!isTextButton">{{ isBookmark ? 'Remove bookmark' : 'Add bookmark' }}</span>
+    </v-tooltip>
+    <BookmarkDialog v-if="showEmpty" v-model="openBookMarkDialog" :alias="alias || ``" @added="onBookmarkAdded"/>
   </div>
 </template>
 
@@ -41,11 +31,14 @@ export default {
     BookmarkDialog,
   },
   props: {
-    mode: String,
-    bookmarkKey: String,
     address: String,
     network: String,
     alias: String,
+    entrypoint: String,
+    customClass: String,
+    size: String,
+    isTextButton: Boolean,
+    showEmpty: Boolean,
   },
   data: () => ({
     items: {},
@@ -60,6 +53,9 @@ export default {
   computed: {
     keysCount() {
         return Object.keys(this.items).length;
+    },
+    bookmarkKey() {
+      return `${this.network}_${this.address}${this.entrypoint ? '_' + this.entrypoint : ''}`
     }
   },
   methods: {
@@ -88,17 +84,17 @@ export default {
     },
     onBookmarkAdded(value) {
       let bookmark = {}
-      if (this.mode === 'contract') {
+      if (!this.entrypoint) {
         bookmark = {
           network: this.network,
           address: this.address,
           alias: value || this.alias,          
         }
-      } else if (this.mode === 'entrypoint') {
+      } else {
         bookmark = {
           network: this.network,
           address: this.address,
-          entrypoint: this.alias,
+          entrypoint: this.entrypoint,
           alias: value || this.alias,          
         }
       }

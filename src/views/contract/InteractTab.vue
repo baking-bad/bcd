@@ -21,12 +21,11 @@
                 </v-list-item-title>
               </v-list-item-content>
               <BookmarkButton
-                :key="network + '_' + address + '_' + item.name"
-                :mode="'entrypoint-list'"
-                :bookmarkKey="network + '_' + address + '_' + item.name"
+                :key="item.name"
+                :customClass="'primary--text'"
                 :network="network"
                 :address="address"
-                :alias="item.name"
+                :entrypoint="item.name"
               />
             </v-list-item>
           </v-list-item-group>

@@ -12,8 +12,9 @@
       <v-col cols="3" class="d-flex justify-end pr-7">
         <div class="d-flex align-center justify-start pa-2 px-4">
           <BookmarkButton
-            :mode="'contract'"
-            :bookmarkKey="network + '_' + address"
+            :customClass="'mr-2 pl-2 pr-2 text--secondary'"
+            :isTextButton=true
+            :showEmpty=true
             :network="network"
             :address="address"
             :alias="alias"

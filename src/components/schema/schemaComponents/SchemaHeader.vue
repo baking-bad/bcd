@@ -5,12 +5,13 @@
       <span class="accent--text">{{ isForkPage ? (alias || shortcutOnly(address)) : storageName }}</span>
     </div>
     <BookmarkButton v-if="isInteractPage"
-      :key="network + '_' + address + '_' + storageName"
-      :mode="'entrypoint'"
-      :bookmarkKey="network + '_' + address + '_' + storageName"
+      :customClass="'text--secondary'"
+      :showEmpty=true
+      :key="storageName"
       :network="network"
       :address="address"
-      :alias="storageName"
+      :entrypoint="storageName"
+      :alias="`${storageName} ${alias}`"
     />
   </h2>
 </template>

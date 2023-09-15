@@ -7,7 +7,7 @@
         </v-btn>
       </template>
       <v-list v-if="keysCount > 0" class="pa-0">
-        <v-list-item v-for="(item, index) in items" :key="index" :to="`/${item.network}/${item.address}` + (item.entrypoint ? `/interact/${item.entrypoint}` : '')">
+        <v-list-item v-for="(item, index) in items" :key="index" :to="getItemLink(item)">
             <v-list-item-content>
                 <v-list-item-title>{{ item.alias || item.address }}</v-list-item-title>
                 <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
@@ -55,7 +55,10 @@ export default {
     },
     onStatusChanged() {
         this.updateBookmarks();
-    }
+    },
+    getItemLink(item) {
+        return `/${item.network}/${item.address}${item.entrypoint ? '/interact/' + item.entrypoint : ''}`;
+    },
   }
 }
 </script>
