@@ -1,13 +1,13 @@
 <template>
     <v-menu offset-y max-height="500" max-width="400">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn class="btn-class text--secondary" icon v-bind="attrs" v-on="on">
+        <v-btn class="btn-class text--secondary" icon v-bind="attrs" v-on="on" @click="updateBookmarks">
             <v-icon v-if="keysCount > 0">mdi-star</v-icon>
             <v-icon v-else>mdi-star-outline</v-icon>
         </v-btn>
       </template>
       <v-list v-if="keysCount > 0" class="pa-0">
-        <v-list-item v-for="(item, index) in items" :key="index" :to="`/${item.network}/${item.address}/operations`">
+        <v-list-item v-for="(item, index) in items" :key="index" :to="`/${item.network}/${item.address}` + (item.entrypoint ? `/interact/${item.entrypoint}` : '')">
             <v-list-item-content>
                 <v-list-item-title>{{ item.alias || item.address }}</v-list-item-title>
                 <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>

@@ -18,6 +18,8 @@
                 <v-list-item-title>
                   <span v-if="item.name">{{ item.name }}</span>
                   <span v-else class="text--disabled">NO NAME</span>
+                  <!-- <v-icon class="text--secondary" small>mdi-star-outline</v-icon> Это список -->
+                  <!-- <v-icon class="text--secondary" small>{{ isBookmark ? 'mdi-star' : 'mdi-star-outline' }}</v-icon> -->
                 </v-list-item-title>
               </v-list-item-content>
             </v-list-item>

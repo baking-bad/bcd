@@ -39,7 +39,7 @@
 import SocialsList from "./SocialsList";
 import SearchBox from "./SearchBox";
 import ThemeSwitcher from "./ThemeSwitcher";
-import Bookmarks from "./Bookmarks";
+import Bookmarks from "./Bookmarks/Bookmarks";
 import ConnectWallet from "@/components/ConnectWallet";
 
 export default {

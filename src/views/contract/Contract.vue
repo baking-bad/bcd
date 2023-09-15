@@ -11,15 +11,13 @@
       </v-col>
       <v-col cols="3" class="d-flex justify-end pr-7">
         <div class="d-flex align-center justify-start pa-2 px-4">
-          <v-btn
-            class="mr-2 pl-2 pr-2 text--secondary"
-            outlined
-            small
-            @click="bookmarkState"
-          >
-            <v-icon class="text--secondary" small>{{ isBookmark ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
-            <span class="ml-1 text--secondary">{{ isBookmark ? 'Remove bookmark' : 'Add bookmark' }}</span>
-          </v-btn>
+          <BookmarkButton
+            :mode="'contract'"
+            :bookmarkKey="network + '_' + address"
+            :network="network"
+            :address="address"
+            :alias="alias"
+          />
           <v-btn
             class="mr-2 pl-2 pr-2 text--secondary"
             outlined
@@ -80,7 +78,6 @@
         :on-chain-views="onChainViews"
       ></router-view>
 
-      <BookmarkDialog v-model="openBookMarkDialog" :alias="alias || ``" @added="onBookmarkAdded"/>
     </VContainer>
   </div>
 </template>
@@ -92,7 +89,7 @@ import {toTitleCase} from "../../utils/string";
 import {shortcutOnly} from "../../utils/tz";
 import MenuToolbar from "./MenuToolbar";
 import Tags from "../../components/Tags";
-import BookmarkDialog from "@/components/BookmarkDialog.vue";
+import BookmarkButton from "../../components/Bookmarks/BookmarkButton.vue";
 import {openTzktContract} from "../../utils/tzkt";
 import {DATA_LOADING_STATUSES} from "../../utils/network";
 import {applyStyles} from "../../utils/styles";
@@ -104,7 +101,7 @@ export default {
   components: {
     Tags,
     MenuToolbar,
-    BookmarkDialog
+    BookmarkButton,
   },
   props: {
     network: String,
@@ -123,8 +120,6 @@ export default {
     isComboBoxExpanded: false,
     onChainViews: [],
     onChainViewsLoadingStatus: DATA_LOADING_STATUSES.NOTHING,
-    isBookmark: false,
-    openBookMarkDialog: false,
     alias: undefined
   }),
   computed: {
@@ -175,9 +170,6 @@ export default {
       ];
     },
   },
-  created() {
-    this.getInfo();
-  },
   destroyed() {
     this.hideError();
   },
@@ -219,13 +211,12 @@ export default {
       this.isComboBoxExpanded = false;
     },
     async init() {
+      await this.getInfo();
       this.tokensTotal = 0;
       this.metadata = null;
 
       this.alias = await this.getAlias(this.network, this.address);
       if (this.isContract) {
-        this.bookmarks.registerObserver(this.onBookmarkStateChanged);
-        this.detectBookmark();
         this.getContract();
         this.loadOnChainViews();
       } else {
@@ -295,49 +286,8 @@ export default {
           this.showError(err);
         });
     },
-    bookmarkState() {
-      let key = `${this.network}_${this.address}`;
-      if (this.isBookmark) {
-        this.bookmarks.remove(key);
-      } else {
-        this.openBookMarkDialog = !this.openBookMarkDialog;
-        this.name = this.alias || "";
-        
-      }
-    },
-    detectBookmark() {
-      let key = `${this.network}_${this.address}`;
-      let bookmarks = this.bookmarks.getAll();
-      this.isBookmark = bookmarks[key] !== undefined;
-    },
-    onBookmarkStateChanged(event, key) {
-      let currentKey = `${this.network}_${this.address}`;
-      if (currentKey !== key) {
-        return;
-      }
-      if (event === 'remove') {
-        this.isBookmark = false;
-      } else {
-        this.isBookmark = true;
-      }
-    },
-    onBookmarkAdded(value) {
-      let key = `${this.network}_${this.address}`;
-      this.bookmarks.add(key, {
-        network: this.network,
-        address: this.address,
-        alias: value || this.alias,          
-      })
-      this.openBookMarkDialog = false;
-    },
   },
   watch: {
-    accountType: {
-      immediate: true,
-      handler() {
-        this.init();
-      }
-    },
     address: {
       immediate: true,
       handler() {

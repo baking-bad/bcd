@@ -4,15 +4,27 @@
       <span class="hash">{{ header }}</span>
       <span class="accent--text">{{ isForkPage ? (alias || shortcutOnly(address)) : storageName }}</span>
     </div>
+    <!-- Убрать в деплое и форке -->
+    <BookmarkButton
+      :mode="'entrypoint'"
+      :bookmarkKey="network + '_' + address + '_' + storageName"
+      :network="network"
+      :address="address"
+      :alias="storageName"
+    />
   </h2>
 </template>
 
 <script>
 import { shortcutOnly } from "../../../utils/tz";
 import {mapActions} from "vuex";
+import BookmarkButton from "../../Bookmarks/BookmarkButton.vue";
 
 export default {
   name: "SchemaHeader",
+  components: {
+    BookmarkButton,
+  },
   props: {
     isStorage: Boolean,
     storageHtml: String,
