@@ -17,7 +17,14 @@
       @click="bookmarkState"
     >
       <v-icon>{{ isBookmark ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
-      <!-- <v-icon>mdi-star-outline</v-icon> -->
+    </v-btn>
+    <v-btn v-else-if="mode === 'entrypoint-list'"
+      icon
+      small
+      class="mr-5 primary--text"
+      @click="bookmarkState"
+    >
+      <v-icon v-if="isBookmark">mdi-star</v-icon>
     </v-btn>
 
     <BookmarkDialog v-model="openBookMarkDialog" :alias="alias || ``" @added="onBookmarkAdded"/>

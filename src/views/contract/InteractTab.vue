@@ -18,10 +18,16 @@
                 <v-list-item-title>
                   <span v-if="item.name">{{ item.name }}</span>
                   <span v-else class="text--disabled">NO NAME</span>
-                  <!-- <v-icon class="text--secondary" small>mdi-star-outline</v-icon> Это список -->
-                  <!-- <v-icon class="text--secondary" small>{{ isBookmark ? 'mdi-star' : 'mdi-star-outline' }}</v-icon> -->
                 </v-list-item-title>
               </v-list-item-content>
+              <BookmarkButton
+                :key="network + '_' + address + '_' + item.name"
+                :mode="'entrypoint-list'"
+                :bookmarkKey="network + '_' + address + '_' + item.name"
+                :network="network"
+                :address="address"
+                :alias="item.name"
+              />
             </v-list-item>
           </v-list-item-group>
         </v-skeleton-loader>
@@ -75,6 +81,7 @@ import { applyStyles } from '@/utils/styles.js';
 import { isOperationHash } from '@/utils/tz.js';
 import Schema from "@/components/schema/Schema.vue";
 import TypeDef from "@/views/contract/TypeDef";
+import BookmarkButton from "../../components/Bookmarks/BookmarkButton.vue";
 
 export default {
   name: "InteractTab",
@@ -86,7 +93,8 @@ export default {
   },
   components: {
     Schema,
-    TypeDef
+    TypeDef,
+    BookmarkButton,
   },
   data: () => ({
     loading: true,

@@ -21,7 +21,7 @@
       </v-list>
       <v-list v-else>
         <v-list-item>
-            <v-list-item-subtitle>You don't have favorite accounts yet. Add them by clicking on ⭐️ on the account page.</v-list-item-subtitle>
+            <span class="text--secondary">You don't have favorite accounts yet. Add them by clicking on ⭐️ on the account page or on the Interact tab.</span>
         </v-list-item>
       </v-list>
     </v-menu>

@@ -4,8 +4,8 @@
       <span class="hash">{{ header }}</span>
       <span class="accent--text">{{ isForkPage ? (alias || shortcutOnly(address)) : storageName }}</span>
     </div>
-    <!-- Убрать в деплое и форке -->
-    <BookmarkButton
+    <BookmarkButton v-if="isInteractPage"
+      :key="network + '_' + address + '_' + storageName"
       :mode="'entrypoint'"
       :bookmarkKey="network + '_' + address + '_' + storageName"
       :network="network"
@@ -34,23 +34,47 @@ export default {
     alias: String,
     network: String,
   },
-  methods: {
-    ...mapActions(["showClipboardOK"]),
-    shortcutOnly,
+  data: () => ({
+    page: '',
+  }),
+  created() {
+    this.setPage();
   },
   computed: {
     isForkPage() {
-      return this.$route.name === 'fork';
+      return this.page === 'fork';
+    },
+    isInteractPage() {
+      return this.page === 'interact';
     },
     header() {
-      if (this.$route.name === 'fork') {
+      if (this.page === 'fork') {
         return 'Fork: ';
       }
-      if (this.$route.name === 'deploy') {
+      if (this.page === 'deploy') {
         return 'Deploy';
       }
       return 'Interact: '
     }
+  },
+  methods: {
+    ...mapActions(["showClipboardOK"]),
+    shortcutOnly,
+
+    setPage() {
+      if (this.$route.name === 'fork') {
+        this.page = 'fork';
+      } else if (this.$route.name === 'deploy') {
+        this.page = 'deploy';
+      } else {
+        this.page = 'interact';
+      }
+    },
+  },
+  watch: {
+    $route() {
+      this.setPage()
+    },
   },
 }
 </script>
