@@ -1,5 +1,5 @@
 <template>
-    <v-dialog v-model="show" max-width="500" @keydown.esc="show = false" @keydown.enter="saveOnEnter" persistent>
+    <v-dialog v-model="show" max-width="550" @keydown.esc="show = false" @keydown.enter="saveOnEnter" persistent>
       <v-card flat outlined>
         <v-card-title class="sidebar d-flex justify-center py-2">
           <span class="body-1 font-weight-medium text-uppercase text--secondary">Your contract name</span>
@@ -18,8 +18,17 @@
               >
           </v-text-field>
         </v-card-text>
-        <v-card-actions class="justify-end px-5">
-          <v-btn color="primary" text @click="add">Add bookmark</v-btn>
+        <v-card-actions class="px-2 justify-end">
+          <v-list-item v-if="name">
+            <v-list-item-content class="py-0">
+              <v-row class="pl-3 pt-3">
+                <span class="title-span">{{ name }}</span>
+                <v-icon class="px-1 pd-2" color="primary" small>mdi-star</v-icon>
+              </v-row>
+              <v-list-item-subtitle>View in bookmarks</v-list-item-subtitle>
+            </v-list-item-content>
+          </v-list-item>
+          <v-btn class="px-2" color="primary" text @click="add">Add bookmark</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -63,3 +72,15 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+  .title{
+    max-width: 350px;
+  }
+  .title-span {
+    max-width: 310px !important;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>

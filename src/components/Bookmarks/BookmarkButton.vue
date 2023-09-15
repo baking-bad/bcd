@@ -1,8 +1,8 @@
 <template>
   <div>
-    <v-tooltip top>
+    <v-tooltip top v-if="isBookmark || showEmpty">
       <template v-slot:activator="{ on }">
-        <v-btn v-if="isBookmark || showEmpty"
+        <v-btn
           v-on="on"
           small
           :class="customClass"
