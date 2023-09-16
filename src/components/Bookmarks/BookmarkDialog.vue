@@ -8,7 +8,7 @@
             <v-icon>mdi-close</v-icon>
           </v-btn>
         </v-card-title>
-        <v-card-text class="pt-6 pb-0">
+        <v-card-text class="pt-3 pb-0">
           <v-text-field
               v-model="name"
               hide-details
@@ -18,17 +18,17 @@
               >
           </v-text-field>
         </v-card-text>
-        <v-card-actions class="px-2 pt-0 pd-2 justify-end">
-          <v-list-item v-if="name">
-            <v-list-item-content>
-              <v-list-item-subtitle>In bookmarks, will look like:</v-list-item-subtitle>
-              <v-row class="pt-4 pl-3">
+        <v-card-actions class="pb-3 px-6 d-flex justify-end align-end">
+          <v-list-item v-if="name" class="pa-0">
+            <v-list-item-content class="py-1">
+              <v-list-item-subtitle class="text--disabled">In bookmarks, will look like:</v-list-item-subtitle>
+              <v-row class="ma-0">
                 <span class="title-span text--secondary">{{ name }}</span>
-                <v-icon class="px-1 pd-2" color="primary" small>mdi-star</v-icon>
+                <v-icon class="px-2" color="primary" small>mdi-star</v-icon>
               </v-row>
             </v-list-item-content>
           </v-list-item>
-          <v-btn class="px-2 pt-9" color="primary" text @click="add">Add bookmark</v-btn>
+          <v-btn class="px-2" color="primary" text @click="add">Add bookmark</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -74,11 +74,8 @@ export default {
 </script>
 
 <style scoped>
-  .title{
-    max-width: 350px;
-  }
   .title-span {
-    max-width: 310px !important;
+    max-width: 315px !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
