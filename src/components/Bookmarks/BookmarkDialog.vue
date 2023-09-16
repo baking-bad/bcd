@@ -18,17 +18,21 @@
               >
           </v-text-field>
         </v-card-text>
-        <v-card-actions class="pb-3 px-6 d-flex justify-end align-end">
-          <v-list-item v-if="name" class="pa-0">
-            <v-list-item-content class="py-1">
-              <v-list-item-subtitle class="text--disabled">In bookmarks, will look like:</v-list-item-subtitle>
-              <v-row class="ma-0">
-                <span class="title-span text--secondary">{{ name }}</span>
-                <v-icon class="px-2" color="primary" small>mdi-star</v-icon>
-              </v-row>
-            </v-list-item-content>
-          </v-list-item>
-          <v-btn class="px-2" color="primary" text @click="add">Add bookmark</v-btn>
+        <v-card-actions class="pb-3 px-6 d-flex justify-space-between justify-end align-end">
+          <div>
+            <span class="text--disabled">In bookmarks, will look like:</span>
+            <v-list-item v-if="name" class="item py-0 mt-1 px-3">
+              <v-list-item-content class="pa-0">
+                
+                <v-list-item-title>{{ name }}</v-list-item-title>
+                <v-list-item-subtitle class="overline">{{ network }}</v-list-item-subtitle>
+              </v-list-item-content>
+              <v-list-item-action>
+                <v-icon color="primary">mdi-star</v-icon>
+              </v-list-item-action>
+            </v-list-item>
+          </div>
+          <v-btn class="d-flex justify-center" color="primary" text @click="add">Add</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -39,7 +43,8 @@ export default {
     name: "BookmarkDialog",
     props: {
         value: Boolean,
-        alias: String
+        alias: String,
+        network: String,
     },
     data: () => ({
         name: ""
@@ -74,10 +79,14 @@ export default {
 </script>
 
 <style scoped>
-  .title-span {
+  .item-text {
     max-width: 315px !important;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .item {
+    max-width: 380px !important;
+    background-color: var(--v-data-base) !important;
   }
 </style>

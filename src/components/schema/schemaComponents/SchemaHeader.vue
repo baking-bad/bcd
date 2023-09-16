@@ -6,7 +6,7 @@
     </div>
     <BookmarkButton v-if="isInteractPage"
       :customClass="'text--secondary'"
-      :showEmpty=true
+      showEmpty
       :key="storageName"
       :network="network"
       :address="address"

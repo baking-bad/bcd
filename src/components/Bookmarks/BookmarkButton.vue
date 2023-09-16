@@ -8,7 +8,7 @@
           :class="customClass"
           :outlined="isTextButton"
           :icon="!isTextButton"
-          @click="bookmarkState"
+          @click.prevent.stop="bookmarkState"
         >
           <v-icon v-if="showEmpty" :small="isTextButton">{{ isBookmark ? 'mdi-star' : 'mdi-star-outline' }}</v-icon>
           <v-icon v-else small>mdi-star</v-icon>
@@ -20,6 +20,7 @@
     <BookmarkDialog v-if="showEmpty"
       v-model="openBookMarkDialog"
       :alias="alias || ``"
+      :network="network"
       @added="onBookmarkAdded"
     />
   </div>
