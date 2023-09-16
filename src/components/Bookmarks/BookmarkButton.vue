@@ -17,7 +17,11 @@
       </template>
       <span v-if="!isTextButton">{{ isBookmark ? 'Remove bookmark' : 'Add bookmark' }}</span>
     </v-tooltip>
-    <BookmarkDialog v-if="showEmpty" v-model="openBookMarkDialog" :alias="alias || ``" @added="onBookmarkAdded"/>
+    <BookmarkDialog v-if="showEmpty"
+      v-model="openBookMarkDialog"
+      :alias="alias || ``"
+      @added="onBookmarkAdded"
+    />
   </div>
 </template>
 
