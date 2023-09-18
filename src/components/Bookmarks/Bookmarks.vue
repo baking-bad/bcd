@@ -1,13 +1,13 @@
 <template>
     <v-menu offset-y max-height="500" max-width="400">
       <template v-slot:activator="{ on, attrs }">
-        <v-btn class="btn-class text--secondary" icon v-bind="attrs" v-on="on">
+        <v-btn class="btn-class text--secondary" icon v-bind="attrs" v-on="on" @click="updateBookmarks">
             <v-icon v-if="keysCount > 0">mdi-star</v-icon>
             <v-icon v-else>mdi-star-outline</v-icon>
         </v-btn>
       </template>
       <v-list v-if="keysCount > 0" class="pa-0">
-        <v-list-item v-for="(item, index) in items" :key="index" :to="`/${item.network}/${item.address}/operations`">
+        <v-list-item v-for="(item, index) in items" :key="index" :to="getItemLink(item)">
             <v-list-item-content>
                 <v-list-item-title>{{ item.alias || item.address }}</v-list-item-title>
                 <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
@@ -21,7 +21,7 @@
       </v-list>
       <v-list v-else>
         <v-list-item>
-            <v-list-item-subtitle>You don't have favorite accounts yet. Add them by clicking on ⭐️ on the account page.</v-list-item-subtitle>
+            <span class="text--secondary">You don't have favorite accounts yet. Add them by clicking on ⭐️ on the account page or on the Interact tab.</span>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -55,7 +55,10 @@ export default {
     },
     onStatusChanged() {
         this.updateBookmarks();
-    }
+    },
+    getItemLink(item) {
+        return `/${item.network}/${item.address}${item.entrypoint ? '/interact/' + item.entrypoint : ''}`;
+    },
   }
 }
 </script>

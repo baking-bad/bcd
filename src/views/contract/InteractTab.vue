@@ -20,6 +20,13 @@
                   <span v-else class="text--disabled">NO NAME</span>
                 </v-list-item-title>
               </v-list-item-content>
+              <BookmarkButton
+                :key="item.name"
+                :customClass="'primary--text'"
+                :network="network"
+                :address="address"
+                :entrypoint="item.name"
+              />
             </v-list-item>
           </v-list-item-group>
         </v-skeleton-loader>
@@ -73,6 +80,7 @@ import { applyStyles } from '@/utils/styles.js';
 import { isOperationHash } from '@/utils/tz.js';
 import Schema from "@/components/schema/Schema.vue";
 import TypeDef from "@/views/contract/TypeDef";
+import BookmarkButton from "../../components/Bookmarks/BookmarkButton.vue";
 
 export default {
   name: "InteractTab",
@@ -84,7 +92,8 @@ export default {
   },
   components: {
     Schema,
-    TypeDef
+    TypeDef,
+    BookmarkButton,
   },
   data: () => ({
     loading: true,

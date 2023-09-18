@@ -71,7 +71,7 @@ export default {
           text: 'Code',
         },{
           to: this.pushTo({ name: 'interact' }),
-          icon: 'play-box-outline',
+          icon: 'mdi-play-box-outline',
           text: 'Interact',
         })
 

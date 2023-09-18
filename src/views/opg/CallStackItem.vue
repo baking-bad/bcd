@@ -39,7 +39,7 @@ export default {
         },
         setClassAndValue() {
             if (this.operation.tag) {
-                this.itemClass = "'hash accent--text'";
+                this.itemClass = 'hash accent--text';
                 this.itemValue = 'event ' + this.operation.tag;
             } else if (this.operation.kind === 'transfer_ticket') {
                 this.itemClass = 'hash accent--text';
