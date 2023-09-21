@@ -110,7 +110,6 @@ export default {
   },
   data: () => ({
     accountType: '',
-    contractLoading: true,
     contract: {},
     contractInfo: {},
     balance: 0,
@@ -181,7 +180,6 @@ export default {
       showClipboardOK: "showClipboardOK",
     }),
     loadOnChainViews() {
-      this.onChainViews = [];
       if (!this.network || !this.address) {
         return
       }
@@ -211,19 +209,24 @@ export default {
     handleSearchBoxBlur() {
       this.isComboBoxExpanded = false;
     },
-    async init() {
-      await this.getInfo();
-      this.tokensTotal = 0;
-      this.metadata = null;
+    init() {
+      this
+        .getInfo()
+        .then((res) => {
+          this.handleInfo(res);
 
-      this.alias = await this.getAlias(this.network, this.address);
-      if (this.isContract) {
-        this.getContract();
-        this.loadOnChainViews();
-      } else {
-        this.contract = this.contractInfo;
-      }
-      this.getMetadata();
+          return this.getAlias(this.network, this.address);
+        })
+        .then((alias) => {
+          this.alias = alias;
+          return;
+        })
+        .then(() => {
+          this.fetchContractData();
+        })
+        .catch((err) => {
+          this.showError(err);
+        })
     },
     getContract() {
       if (
@@ -232,7 +235,6 @@ export default {
       ) {
         return;
       }
-      this.contractLoading = true;
       this.api
         .getContract(this.network, this.address)
         .then((res) => {
@@ -248,31 +250,26 @@ export default {
             this.showError(err);
           }
         })
-        .finally(() => (this.contractLoading = false));
+    },
+    fetchContractData() {
+      if (this.isContract) {
+        this.getContract();
+        this.loadOnChainViews();
+      } else {
+        this.contract = this.contractInfo;
+      }
+      this.getMetadata();
     },
     getInfo() {
-      this.contractLoading = true;
-      this.api
-        .getAccountInfo(this.network, this.address)
-        .then((res) => {
-          if (!res) return;
-          this.contractInfo = res;
-          this.accountType = res.account_type;
-          if (res.balance !== undefined) {
-            this.balance = res.balance || 0;
-            return;
-          }
-
-          return this.rpc.getTezosBalance(this.network, 'head', this.address);
-        })
-        .then((res) => {
-          if (!res) return;
-          this.balance = res.balance || 0;
-        })
-        .catch((err) => {
-          this.showError(err);
-        })
-        .finally(() => (this.contractLoading = false));
+      return this.api.getAccountInfo(this.network, this.address)
+    },
+    handleInfo(info) {
+      if (!info) return;
+      this.contractInfo = info;
+      this.accountType = info.account_type;
+      if (info.balance !== undefined) {
+        this.balance = info.balance || 0;
+      }
     },
     getMetadata() {
       if (!this.metadataService.created()) return;
