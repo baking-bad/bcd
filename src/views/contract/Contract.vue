@@ -219,9 +219,6 @@ export default {
         })
         .then((alias) => {
           this.alias = alias;
-          return;
-        })
-        .then(() => {
           this.fetchContractData();
         })
         .catch((err) => {
