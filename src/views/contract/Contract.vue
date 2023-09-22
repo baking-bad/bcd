@@ -258,6 +258,10 @@ export default {
       this.getMetadata();
     },
     getInfo() {
+      this.onChainViews = [];
+      this.tokensTotal = 0;
+      this.metadata = null;
+
       return this.api.getAccountInfo(this.network, this.address)
     },
     handleInfo(info) {
