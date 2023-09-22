@@ -174,7 +174,6 @@ export default {
             this.getTickectUpdatesByOperation(this.network, this.operationId);
         }
     },
-    // Не понял секцию ниже..
     watch: {
         'address': function(newAddress){
             this.updates = [];
