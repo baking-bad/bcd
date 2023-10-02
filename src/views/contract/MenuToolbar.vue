@@ -47,7 +47,7 @@ export default {
   },
   computed: {
     isContract() {
-      return this.address.startsWith("KT");
+      return this.contract.account_type === 'contract';
     },
     hasOffChainViews() {
       return this.metadata && this.metadata.metadata && this.metadata.metadata.views && this.metadata.metadata.views.length > 0;
@@ -83,24 +83,14 @@ export default {
           })
         }
 
-        if (this.contract.ticket_updates_count && this.contract.ticket_updates_count > 0) {
+        if (this.contract.ticket_updates_count > 0) {
           tabs.push({
             to: this.pushTo({ name: 'ticket_updates' }),
             icon: 'mdi-ticket-outline',
             text: 'Tickets',
           })
         }
-      }
 
-      if (this.metadata) {
-        tabs.push({
-          to: this.pushTo({ name: 'metadata' }),
-          icon: 'mdi-puzzle-outline',
-          text: 'Metadata',
-        })
-      }
-
-      if (this.isContract) {
         tabs.push({
           to: this.pushTo({ name: 'fork' }),
           icon: 'mdi-source-fork',
@@ -115,7 +105,7 @@ export default {
           })
         }
 
-        if (this.contract.events_count && this.contract.events_count > 0) {
+        if (this.contract.events_count > 0) {
           tabs.push({
             to: this.pushTo({ name: 'events' }),
             icon: 'mdi-bell-outline',
@@ -135,6 +125,15 @@ export default {
           to: this.pushTo({ name: 'details' }),
           icon: 'mdi-alert-circle-outline',
           text: 'Details',
+        })
+      }
+
+
+      if (this.metadata) {
+        tabs.push({
+          to: this.pushTo({ name: 'metadata' }),
+          icon: 'mdi-puzzle-outline',
+          text: 'Metadata',
         })
       }
 
