@@ -8,9 +8,12 @@
           hide-default-footer
           :page.sync="page"
           :options="{itemsPerPage}"
+          no-data-text="No global constants found"
+          no-results-text="No global constants found"
+          :server-items-length="constantsNumber"
           :footer-props="{
             itemsPerPageOptions: []
-        }"
+          }"
       >
         <template v-slot:item="{item}">
           <tr class="table-row" :key="item.address">
@@ -36,10 +39,11 @@
         </template>
         <template v-slot:footer>
           <div class="footer-pagination">
-            <v-btn icon @click="changePage(page - 1)" :disabled="page === 0">
+            <span class="caption grey--text mr-2">{{ (page - 1) * itemsPerPage + 1 }} - {{ nextPageCount }} of {{ constantsNumber }}</span>
+            <v-btn icon @click="changePage(page - 1)" :disabled="page === 1">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
-            <v-btn icon @click="changePage(page + 1)" :disabled="isLastPage">
+            <v-btn icon @click="changePage(page + 1)" :disabled="(constantsNumber / itemsPerPage) < page">
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
           </div>
@@ -56,6 +60,7 @@ export default {
   name: "GlobalConstantsRegistry",
   props: {
     network: String,
+    constantsNumber: Number,
     hidePaginationCount: {
       type: Boolean,
       default: false,
@@ -71,22 +76,29 @@ export default {
   },
   methods: {
     init() {
-      this.page = 0
-      this.globalConstantsItems = [];
+      if (!this.network)
+        return;
+
+      this.recentlyCalledContracts = [];
+      this.page = 1;
       this.fetchConstants();
     },
-    changePage(newPageNum) {
-      this.page = newPageNum;
-      this.fetchConstants();
+    // previousPage(newPage) {
+    //   const offset = (newPage - 1) * this.itemsPerPage;
+    //   this.changePage(newPage, offset)
+    // },
+    // nextPage(newPage) {
+    //   this.changePage(newPage, offset)
+    // },
+    changePage(newPage) {
+      const offset = (newPage - 1) * this.itemsPerPage;
+      this.page = newPage;
+      this.fetchConstants(offset);
     },
-    async fetchConstants() {
+    async fetchConstants(offset = 0) {
       this.loadingGlobalConstantsStatus = DATA_LOADING_STATUSES.PROGRESS;
 
-      const offset = this.page * this.itemsPerPage;
-      const constants = await this.api.getGlobalConstants(this.network, offset, this.itemsPerPage);
-      this.globalConstantsItems = [...constants];
-
-      this.isLastPage = this.globalConstantsItems.length < this.itemsPerPage;
+      this.globalConstantsItems = await this.api.getGlobalConstants(this.network, offset, this.itemsPerPage);
 
       this.loadingGlobalConstantsStatus = DATA_LOADING_STATUSES.SUCCESS;
 
@@ -95,6 +107,10 @@ export default {
   computed: {
     isGlobalConstantsLoading() {
       return this.loadingRecentlyCalledContractsStatus === DATA_LOADING_STATUSES.PROGRESS;
+    },
+    nextPageCount() {
+      const count = this.page * this.itemsPerPage;
+      return this.constantsNumber > 0 && count < this.constantsNumber ? count : this.constantsNumber;
     },
   },
   watch: {
@@ -108,8 +124,7 @@ export default {
   data() {
     return {
       aliasMaxLength: 24,
-      page: 0,
-      isLastPage: true,
+      page: 1,
       loadingGlobalConstantsStatus: DATA_LOADING_STATUSES.NOTHING,
       globalConstantsTableHeaders: [
         {

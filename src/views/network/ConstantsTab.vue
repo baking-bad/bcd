@@ -3,6 +3,7 @@
         class="mt-4"
         hide-pagination-count
         :network="network"
+        :constantsNumber="constantsNumber"
         :items-per-page="10"
         :updateable="false"
         pageable
@@ -14,11 +15,17 @@ import GlobalConstantsRegistry from '../../components/Tables/GlobalConstantsRegi
 
 export default {
     name: "ConstantsTab",
-    props: {
-        network: String
-    },
     components: {
         GlobalConstantsRegistry
-    }
+    },
+    props: {
+        network: String,
+        state: Object,
+    },
+    computed: {
+        constantsNumber() {
+            return this.state.stats ? this.state.stats.global_constants_count : 0;
+        },
+    },
 }
 </script>

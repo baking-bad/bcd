@@ -11,7 +11,7 @@
         loading-text="Loading recently called contracts... Please wait"
         no-data-text="No called contracts found"
         no-results-text="No called contracts found"
-        :server-items-length="totalItems"
+        :server-items-length="contractsNumber"
         :footer-props="{
             itemsPerPageOptions: []
         }"
@@ -29,17 +29,17 @@
                       item.alias.length > aliasMaxLength
                         ? item.alias.slice(0, aliasMaxLength).trim()
                         : item.alias
-                    }}<em
-                    v-if="item.alias.length > aliasMaxLength"
-                    class="v-icon notranslate mdi mdi-dots-horizontal"
-                    style="font-size: 16px;"
-                  />
+                    }}
+                    <em v-if="item.alias.length > aliasMaxLength"
+                      class="v-icon notranslate mdi mdi-dots-horizontal"
+                      style="font-size: 16px;"
+                    />
                   </span>
                 <Shortcut v-else :str="item.address"/>
               </v-btn>
             </td>
             <td>
-              <span class="text--secondary">{{ item.tx_count }}</span>
+              <span class="text--secondary">{{ item.operations_count }}</span>
             </td>
             <td>
               <span class="text--secondary">{{ helpers.formatDatetime(item.last_action)  }}</span>
@@ -48,11 +48,11 @@
         </template>
         <template v-slot:footer v-if="pageable">
           <div class="footer-pagination">
-            <span class="caption grey--text mr-2">{{ (page - 1) * itemsPerPage+1 }} - {{ nextPageCount }} of {{ totalItems }}</span>
-            <v-btn icon @click="changePage(page-1)" :disabled="page === 1">
+            <span class="caption grey--text mr-2">{{ (page - 1) * itemsPerPage + 1 }} - {{ nextPageCount }} of {{ contractsNumber }}</span>
+            <v-btn icon @click="changePage(page - 1)" :disabled="page === 1">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
-            <v-btn icon @click="changePage(page+1)" :disabled="(totalItems  / itemsPerPage) < page">
+            <v-btn icon @click="changePage(page + 1)" :disabled="(contractsNumber / itemsPerPage) < page">
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
           </div>
@@ -67,10 +67,7 @@ export default {
     name: "RecentlyCalledContracts",
     props: {
         network: String,
-        updateable: {
-            type: Boolean,
-            default: true,
-        },
+        contractsNumber: Number,
         hidePaginationCount: {
             type: Boolean,
             default: false,
@@ -90,16 +87,16 @@ export default {
         },
         nextPageCount() {
             const count = this.page * this.itemsPerPage;
-            return this.totalItems > 0 && count < this.totalItems ? count : this.totalItems;
+            return this.contractsNumber > 0 && count < this.contractsNumber ? count : this.contractsNumber;
         }
     },
     mounted() {
         this.init();
     },
     methods: {
-        changePage(page) {
-            const offset = this.page * this.itemsPerPage;
-            this.page = page;
+        changePage(newPage) {
+            const offset = (newPage - 1) * this.itemsPerPage;
+            this.page = newPage;
             this.requestRecentlyCalledContracts(offset);
         },
         async init() {
@@ -107,9 +104,6 @@ export default {
                 return;
 
             this.requestRecentlyCalledContracts();
-            if (!this.updateable) {
-                this.totalItems = Number((await this.api.getContractsCount(this.network)));
-            }
         },
         requestRecentlyCalledContracts(offset = 0) {
             if (this.loading)
@@ -142,7 +136,6 @@ export default {
         return {
             aliasMaxLength: 24,
             page: 1,
-            totalItems: -1,
             loading: false,
             recentlyCalledTableHeaders: [
                 {

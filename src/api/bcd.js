@@ -90,39 +90,6 @@ export class BetterCallApi {
             })
     }
 
-    getContractOperations(network, address, last_id = "", from = 0, to = 0, statuses = [], entrypoints = [], with_storage_diff = true) {
-        let params = {}
-        if (last_id != "") {
-            params.last_id = last_id
-        }
-        if (from !== 0) {
-            params.from = from
-        }
-        if (to !== 0) {
-            params.to = to
-        }
-        if (statuses.length > 0 && statuses.length < 4) {
-            params.status = statuses.join(',')
-        }
-        if (entrypoints.length > 0) {
-            params.entrypoints = entrypoints.join(',')
-        }
-        params.with_storage_diff = with_storage_diff
-
-        return getCancellable(this.api, `/contract/${network}/${address}/operations`, {
-            params: params,
-        })
-            .then((res) => {
-                if (!res) {
-                    return res;
-                }
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            })
-    }
-
   getAccountOperationGroups(network, address, last_id = 0, size = 10) {
     let params = {}
     if (last_id > 0) {
@@ -397,19 +364,6 @@ export class BetterCallApi {
 
     getRecentlyCalledContracts(network, size, offset) {
         return getCancellable(this.api, `/stats/${network}/recently_called_contracts?size=${size}&offset=${offset}`, {})
-            .then((res) => {
-                if (!res) {
-                    return res;
-                }
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            });
-    }
-
-    getContractsCount(network) {
-        return getCancellable(this.api, `/stats/${network}/contracts_count`, {})
             .then((res) => {
                 if (!res) {
                     return res;
