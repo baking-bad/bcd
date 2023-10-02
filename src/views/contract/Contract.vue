@@ -236,7 +236,7 @@ export default {
         .getContract(this.network, this.address)
         .then((res) => {
           if (!res) return;
-          this.contract = res;
+          this.contract = {...this.contractInfo, ...res};
         })
         .catch((err) => {
           if (err.code === 204) {

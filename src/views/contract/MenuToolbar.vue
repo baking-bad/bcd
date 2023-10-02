@@ -6,9 +6,9 @@
       background-color="transparent"
       slider-color="primary"
     >
-      <v-tab :to="pushTo({ name: 'operations' })" :key="0" :title="contract.tx_count" replace style="width: 175px">
+      <v-tab :to="pushTo({ name: 'operations' })" :key="0" :title="contract.operations_count" replace style="width: 175px">
         <v-icon left small>mdi-swap-horizontal</v-icon>operations
-        <span class="ml-1">({{ contract.tx_count || 0 | numberToCompactSIFormat }})</span>
+        <span class="ml-1">({{ contract.operations_count || 0 | numberToCompactSIFormat }})</span>
       </v-tab> 
       <v-tab v-for="(tab, idx) in tabs" :key="idx + 1" :to="tab.to">
         <v-icon left small>{{ tab.icon }}</v-icon>{{ tab.text }}
@@ -41,7 +41,7 @@ export default {
     }
   },
   watch: {
-    'contract.tx_count'() {
+    'contract.operations_count'() {
       this.componentKey += 1;
     }
   },
@@ -83,7 +83,7 @@ export default {
           })
         }
 
-        if (this.contract.has_ticket_updates) {
+        if (this.contract.ticket_updates_count && this.contract.ticket_updates_count > 0) {
           tabs.push({
             to: this.pushTo({ name: 'ticket_updates' }),
             icon: 'mdi-ticket-outline',
