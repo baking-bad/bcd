@@ -43,7 +43,7 @@
             <v-btn icon @click="changePage(page - 1)" :disabled="page === 1">
               <v-icon>mdi-chevron-left</v-icon>
             </v-btn>
-            <v-btn icon @click="changePage(page + 1)" :disabled="(constantsNumber / itemsPerPage) < page">
+            <v-btn icon @click="changePage(page + 1)" :disabled="constantsNumber <= itemsPerPage * page">
               <v-icon>mdi-chevron-right</v-icon>
             </v-btn>
           </div>

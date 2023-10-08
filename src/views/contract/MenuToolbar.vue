@@ -1,7 +1,6 @@
 <template>
   <v-toolbar flat class color="toolbar" height="48">
     <v-tabs
-      :key="componentKey"
       center-active
       background-color="transparent"
       slider-color="primary"
@@ -34,16 +33,6 @@ export default {
     isAnythingLoading: Boolean,
     network: String,
     onChainViews: Array
-  },
-  data() {
-    return {
-      componentKey: 1
-    }
-  },
-  watch: {
-    'contract.operations_count'() {
-      this.componentKey += 1;
-    }
   },
   computed: {
     isContract() {
