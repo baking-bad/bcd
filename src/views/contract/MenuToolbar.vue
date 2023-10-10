@@ -72,14 +72,6 @@ export default {
           })
         }
 
-        if (this.contract.ticket_updates_count > 0) {
-          tabs.push({
-            to: this.pushTo({ name: 'ticket_updates' }),
-            icon: 'mdi-ticket-outline',
-            text: 'Tickets',
-          })
-        }
-
         tabs.push({
           to: this.pushTo({ name: 'fork' }),
           icon: 'mdi-source-fork',
@@ -125,6 +117,14 @@ export default {
           text: 'Metadata',
         })
       }
+
+      const ticketTab = {
+        to: this.pushTo({ name: 'ticket_updates' }),
+        icon: 'mdi-ticket-outline',
+        text: 'Tickets',
+      };
+      const indexTokenTab = tabs.findIndex(tab => tab.text === 'Tokens');
+      tabs.splice(indexTokenTab + 1, 0, ticketTab)
 
       return tabs;
     }
