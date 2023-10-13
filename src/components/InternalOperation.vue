@@ -111,7 +111,7 @@
           <v-card class="bcd-table">
             <v-card-title class="py-3 px-7">Ticket updates</v-card-title>
             <v-card-text class="pa-0">
-              <TicketTab
+              <TicketUpdates
                 :network="data.network"
                 :operationId="data.id"
               />
@@ -266,7 +266,7 @@ import OperationAlert from "@/components/OperationAlert.vue";
 import AccountBox from "@/components/Dialogs/AccountBox.vue";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import MiguelTreeView from "@/components/MiguelTreeView.vue";
-import TicketTab from "../views/contract/TicketTab/TicketTab.vue";
+import TicketUpdates from "../views/contract/TicketTab/TicketUpdates.vue";
 
 export default {
   props: {
@@ -281,7 +281,7 @@ export default {
     OperationAlert,
     AccountBox,
     MiguelTreeView,
-    TicketTab,
+    TicketUpdates,
   },
   data: () => ({
     showRaw: false,

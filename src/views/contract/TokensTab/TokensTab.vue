@@ -1,8 +1,15 @@
 <template>
   <v-container class="canvas fill-canvas pa-8 ma-0" fluid>   
-    <v-row>
-      <v-col cols="12" v-if="hasTokens">
+    <v-row v-if="!loading">
+      <v-col cols="12" v-if="tokens.length === 0">
+        <EmptyState
+          icon="mdi-code-brackets"
+          title="Nothing found"
+        />
+      </v-col>
+      <v-col cols="12" v-else>
         <v-text-field
+          class="pb-6"
           v-model="search"
           color="primary"
           placeholder="Start typing token name"
@@ -13,14 +20,7 @@
           hide-details
             >
         </v-text-field>
-      </v-col>
-      <v-col cols="12">
-        <EmptyState
-          v-if="tokens.length === 0 && !loading"
-          icon="mdi-code-brackets"
-          title="Nothing found"
-        />
-        <v-expansion-panels v-show="tokens.length > 0" multiple hover flat class="bb-1">
+        <v-expansion-panels multiple hover flat class="bb-1">
           <v-expansion-panel v-for="(token) in tokens"
                       :key="token.token_id"
                       class="bl-1 br-1 bt-1 token-panel" 

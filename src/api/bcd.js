@@ -170,21 +170,6 @@ export class BetterCallApi {
             })
     }
 
-    getContractTokens(network, address, offset = 0, size = maxSize) {
-        return getCancellable(this.api, `/contract/${network}/${address}/tokens`, {
-            params: {offset, size}
-        })
-            .then((res) => {
-                if (!res) {
-                    return res;
-                }
-                if (res.status != 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            })
-    }
-
     getContractEntrypoints(network, address) {
         return getCancellable(this.api, `/contract/${network}/${address}/entrypoints`, {})
             .then((res) => {
@@ -698,7 +683,28 @@ export class BetterCallApi {
             .then(this.returnResponseData);
     }
 
-    listTicketUpdates(network, address, offset, size=10) {
+    getTickectBalances(network, address, offset, size = maxSize) {
+        let params = {
+            size
+        }
+
+        if (offset > 0) {
+            params['offset'] = offset
+        }
+
+        return getCancellable(this.api, `/account/${network}/${address}/ticket_balances`, {params})
+            .then((res) => {
+                if (!res) {
+                    return null;
+                }
+                if (res.status !== 200) {
+                    throw new RequestFailedError(res);
+                }
+                return res.data
+            })
+    }
+
+    listTicketUpdates(network, address, offset, size = 10) {
         let params = {
             size
         }
