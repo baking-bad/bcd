@@ -36,7 +36,7 @@
                     </v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-item v-if="balance">
+            <v-list-item>
                 <v-list-item-content>
                     <v-list-item-subtitle class="overline"
                     >Balance</v-list-item-subtitle
@@ -49,6 +49,7 @@
             <AccountBox
                 v-if="contract.manager"
                 title="Deployed by"
+                :key="contract.address"
                 :address="contract.manager"
                 :network="contract.network"
                 gutters
@@ -56,6 +57,7 @@
             <AccountBox
                 v-if="contract.delegate"
                 title="Delegated to"
+                :key="contract.address"
                 :address="contract.delegate"
                 :network="contract.network"
                 gutters
@@ -104,9 +106,6 @@ export default {
     isPaidUsedLoading: true,
     paidUsed: null,
   }),
-  mounted() {
-    this.getInfo();
-  },
   computed: {
     isLoading() {
         return this.isUsedBytesLoading || this.isPaidUsedLoading
@@ -132,6 +131,14 @@ export default {
           return null;
         })
         .finally(() => (this.isPaidUsedLoading = false))
+    },
+  },
+  watch: {
+    address: {
+      immediate: true,
+      handler() {
+        this.getInfo();
+      },
     },
   },
 };
