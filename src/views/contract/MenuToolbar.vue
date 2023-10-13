@@ -79,6 +79,14 @@ export default {
             text: 'Tickets',
           })
         }
+        
+        if (this.metadata) {
+          tabs.push({
+            to: this.pushTo({ name: 'metadata' }),
+            icon: 'mdi-puzzle-outline',
+            text: 'Metadata',
+          })
+        }
 
         tabs.push({
           to: this.pushTo({ name: 'fork' }),
@@ -114,15 +122,6 @@ export default {
           to: this.pushTo({ name: 'details' }),
           icon: 'mdi-alert-circle-outline',
           text: 'Details',
-        })
-      }
-
-
-      if (this.metadata) {
-        tabs.push({
-          to: this.pushTo({ name: 'metadata' }),
-          icon: 'mdi-puzzle-outline',
-          text: 'Metadata',
         })
       }
 
