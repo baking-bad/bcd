@@ -72,6 +72,22 @@ export default {
           })
         }
 
+        if (this.contract.ticket_updates_count > 0) {
+          tabs.push({
+            to: this.pushTo({ name: 'ticket_updates' }),
+            icon: 'mdi-ticket-outline',
+            text: 'Tickets',
+          })
+        }
+        
+        if (this.metadata) {
+          tabs.push({
+            to: this.pushTo({ name: 'metadata' }),
+            icon: 'mdi-puzzle-outline',
+            text: 'Metadata',
+          })
+        }
+
         tabs.push({
           to: this.pushTo({ name: 'fork' }),
           icon: 'mdi-source-fork',
