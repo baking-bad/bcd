@@ -47,7 +47,7 @@
                             <span class="overline">Operations count</span>
                         </v-list-item-title>
                         <v-list-item-subtitle>
-                            <span class="hash">{{ info.tx_count }}</span>
+                            <span class="hash">{{ info.operations_count }}</span>
                         </v-list-item-subtitle>
                     </v-list-item-content>
                 </v-list-item>

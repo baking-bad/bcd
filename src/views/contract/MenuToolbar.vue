@@ -1,14 +1,13 @@
 <template>
   <v-toolbar flat class color="toolbar" height="48">
     <v-tabs
-      :key="componentKey"
       center-active
       background-color="transparent"
       slider-color="primary"
     >
-      <v-tab :to="pushTo({ name: 'operations' })" :key="0" :title="contract.tx_count" replace style="width: 175px">
+      <v-tab :to="pushTo({ name: 'operations' })" :key="0" :title="contract.operations_count" replace style="width: 175px">
         <v-icon left small>mdi-swap-horizontal</v-icon>operations
-        <span class="ml-1">({{ contract.tx_count || 0 | numberToCompactSIFormat }})</span>
+        <span class="ml-1">({{ contract.operations_count || 0 | numberToCompactSIFormat }})</span>
       </v-tab> 
       <v-tab v-for="(tab, idx) in tabs" :key="idx + 1" :to="tab.to">
         <v-icon left small>{{ tab.icon }}</v-icon>{{ tab.text }}
@@ -35,19 +34,9 @@ export default {
     network: String,
     onChainViews: Array
   },
-  data() {
-    return {
-      componentKey: 1
-    }
-  },
-  watch: {
-    'contract.tx_count'() {
-      this.componentKey += 1;
-    }
-  },
   computed: {
     isContract() {
-      return this.address.startsWith("KT");
+      return this.contract.account_type === 'contract';
     },
     hasOffChainViews() {
       return this.metadata && this.metadata.metadata && this.metadata.metadata.views && this.metadata.metadata.views.length > 0;
@@ -83,24 +72,22 @@ export default {
           })
         }
 
-        if (this.contract.has_ticket_updates) {
+        if (this.contract.ticket_updates_count > 0) {
           tabs.push({
             to: this.pushTo({ name: 'ticket_updates' }),
             icon: 'mdi-ticket-outline',
             text: 'Tickets',
           })
         }
-      }
+        
+        if (this.metadata) {
+          tabs.push({
+            to: this.pushTo({ name: 'metadata' }),
+            icon: 'mdi-puzzle-outline',
+            text: 'Metadata',
+          })
+        }
 
-      if (this.metadata) {
-        tabs.push({
-          to: this.pushTo({ name: 'metadata' }),
-          icon: 'mdi-puzzle-outline',
-          text: 'Metadata',
-        })
-      }
-
-      if (this.isContract) {
         tabs.push({
           to: this.pushTo({ name: 'fork' }),
           icon: 'mdi-source-fork',
@@ -115,7 +102,7 @@ export default {
           })
         }
 
-        if (this.contract.events_count && this.contract.events_count > 0) {
+        if (this.contract.events_count > 0) {
           tabs.push({
             to: this.pushTo({ name: 'events' }),
             icon: 'mdi-bell-outline',

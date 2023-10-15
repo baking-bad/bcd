@@ -80,7 +80,7 @@ export default {
             if (this.loading) return;
             this.loading = true;
 
-            this.api.getOPG(item.body.Hash)
+            this.api.getOPG(item.body.Hash, true, false, item.body.Network)
                 .then(opg => {
                     if (opg.length > 0){
                         this.info = opg[0];

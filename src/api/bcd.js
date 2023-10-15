@@ -90,39 +90,6 @@ export class BetterCallApi {
             })
     }
 
-    getContractOperations(network, address, last_id = "", from = 0, to = 0, statuses = [], entrypoints = [], with_storage_diff = true) {
-        let params = {}
-        if (last_id != "") {
-            params.last_id = last_id
-        }
-        if (from !== 0) {
-            params.from = from
-        }
-        if (to !== 0) {
-            params.to = to
-        }
-        if (statuses.length > 0 && statuses.length < 4) {
-            params.status = statuses.join(',')
-        }
-        if (entrypoints.length > 0) {
-            params.entrypoints = entrypoints.join(',')
-        }
-        params.with_storage_diff = with_storage_diff
-
-        return getCancellable(this.api, `/contract/${network}/${address}/operations`, {
-            params: params,
-        })
-            .then((res) => {
-                if (!res) {
-                    return res;
-                }
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            })
-    }
-
   getAccountOperationGroups(network, address, last_id = 0, size = 10) {
     let params = {}
     if (last_id > 0) {
@@ -408,19 +375,6 @@ export class BetterCallApi {
             });
     }
 
-    getContractsCount(network) {
-        return getCancellable(this.api, `/stats/${network}/contracts_count`, {})
-            .then((res) => {
-                if (!res) {
-                    return res;
-                }
-                if (res.status !== 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            });
-    }
-
     getContractBigMapDiffsCount(network, ptr) {
         return getCancellable(this.api, `/bigmap/${network}/${ptr}/count`, {})
         .then((res) => {
@@ -519,10 +473,7 @@ export class BetterCallApi {
         if (with_storage_diff) {
         params.with_storage_diff = with_storage_diff;
         }
-        if (network) {
-        params.network = network
-        }
-        return getCancellable(this.api, `/opg/${hash}`, {
+        return getCancellable(this.api, `/opg/${network}/${hash}`, {
         params: params,
         })
         .then((res) => {
@@ -554,11 +505,7 @@ export class BetterCallApi {
     }
 
     getOperationsByHashAndCounter(hash, counter, network=null) {
-        let params = {};
-        if (network) {
-        params['network'] = network;
-        }
-        return getCancellable(this.api, `/opg/${hash}/${counter}`, params)
+        return getCancellable(this.api, `/opg/${network}/${hash}/${counter}`, {})
         .then((res) => {
             if (res.status != 200) {
             throw new RequestFailedError(res);
