@@ -787,7 +787,7 @@ export default {
 
 .codemirror-label {
   font-size: 12px;
-  z-index: 100;
+  z-index: 7;
   position: absolute;
   transform: translateY(-12px) translateX(12px);
   overflow: hidden;
