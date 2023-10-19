@@ -435,6 +435,7 @@ export default {
   methods: {
     ...mapActions(["showClipboardOK", "showError"]),
     getDiff() {
+      if (!this.data.id) return;
       if (this.data.status !== "applied") return;
       if (this.diffs !== null) return;
       if (this.data.storage_diff) {
