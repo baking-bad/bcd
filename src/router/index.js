@@ -140,6 +140,7 @@ export function newRouter(networks) {
       },
       {
         path: '/:network/:address([0-9A-z]{36})',
+        beforeEnter: validateNetwork(networks),
         components: {
           default: Contract,
         },
