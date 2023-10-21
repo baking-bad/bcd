@@ -34,7 +34,7 @@ function formatValue(val, typ) {
 }
 
 function formatInt(x) {
-    return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        return x ? x.replace(/\B(?=(\d{3})+(?!\d))/g, ",") : '0';
 }
 
 function getValue(x) {
@@ -48,7 +48,7 @@ function valueDiff(x) {
     if (!x.type) return '';
 
     if (x.type === 'nat' || x.type === 'int') {
-        let value = parseInt(x.value, 10) - parseInt(x.from, 10);
+        let value = parseInt(x.value, 10) - parseInt(x.from ? x.from : 0, 10);
         return ` (${value > 0 ? '+' : ''}${value.toLocaleString(undefined)})`
     } else if (x.type === 'timestamp') {
         let from = parseTimestamp(x.from);
