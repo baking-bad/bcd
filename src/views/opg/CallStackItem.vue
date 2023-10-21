@@ -4,6 +4,7 @@
         <div>
             <span class="text--secondary" v-if="alias">{{ alias }}</span>
             <Shortcut v-else class="text--secondary" :str="operation.destination"/>
+            <span class="hash accent--text" v-if="additionalAliasInfo">{{ additionalAliasInfo }}</span>
             <span v-if="operation.destination" class="text--secondary" style="font-size: 20px"> → </span>
             <span :class="itemClass">{{ itemValue }}</span>
         </div>
@@ -32,6 +33,15 @@ export default {
     async created() {
         this.setClassAndValue();
         this.alias = await this.fetchAlias();
+    },
+    computed: {
+        additionalAliasInfo() {
+            if (this.operation.kind === 'origination') {
+                return ' was originated';
+            } else {
+                return null;
+            }
+        },
     },
     methods: {
         async fetchAlias() {
