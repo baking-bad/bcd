@@ -101,32 +101,34 @@ export default {
   }),
   created() {
     this.getBigMap();
-    this.getBigMapActions();
-    this.getTotalBytes();
   },
   methods: {
     ...mapActions(["showError"]),
     shortcutOnly,
     getBigMap() {
-      this.api
-        .getContractBigMap(this.network, this.ptr)
-        .then(res => {
-          if (!res) return;
-          this.bigmap = res;
-        })
-        .catch(err => {
-          console.log(err);
-          this.showError(err);
-        });
-    },
-    getBigMapActions() {
+      if (this.loading) return;
       this.loading = true;
-      this.api
-        .getContractBigMapActions(this.network, this.ptr)
+
+      return this.api
+        .getContractBigMap(this.network, this.ptr)
+        .then(bigMap => {
+          if (!bigMap) return;
+          this.bigmap = bigMap;
+          return this.api
+            .getContractBigMapActions(this.network, this.ptr)
+        })
+        .then((actions) => {
+          if (!actions) return;
+          if (!actions.items) return;
+          this.actions = actions.items;
+
+          if (this.bigmap.total_keys)
+            return this.rpc
+              .getBigMapTotalBytes(this.network, "head", this.ptr)
+        })
         .then((res) => {
           if (!res) return;
-          if (!res.items) return;
-          this.actions = res.items;
+          this.totalBytes = parseInt(res.data, 10);
         })
         .catch((err) => {
           console.log(err);
@@ -136,18 +138,6 @@ export default {
         })
         .finally(() => {
           this.loading = false;
-        });
-    },
-    getTotalBytes() {
-      this.rpc
-        .getBigMapTotalBytes(this.network, "head", this.ptr)
-        .then((res) => {
-          if (!res) return;
-          this.totalBytes = parseInt(res.data, 10);
-        })
-        .catch((err) => {
-          console.log(err);
-          this.showError(err);
         });
     },
   },
