@@ -19,7 +19,6 @@ import InteractTab from '@/views/contract/InteractTab.vue'
 import ViewsTab from '@/views/contract/ViewsTab/ViewsTab.vue'
 import StorageTab from '@/views/contract/StorageTab.vue'
 import ContractTokensTab from '@/views/contract/TokensTab/TokensTab.vue'
-import TransfersTab from '@/views/contract/TransfersTab/TransfersTab.vue'
 import MetadataTab from '@/views/contract/MetadataTab/MetadataTab.vue'
 import ForkTab from '@/views/contract/ForkTab.vue'
 import EventsTab from '@/views/contract/EventsTab/EventsTab.vue'
@@ -38,6 +37,8 @@ import ConstantTab from "@/views/constant/ConstantTab";
 import Constant from "@/views/constant/Constant";
 import ContractStatsTab from "@/views/contract/StatsTab.vue";
 
+import {checkAddress, isKT1Address} from '@/utils/tz.js'
+
 Vue.use(VueRouter)
 
 function validateNetwork(networks) {
@@ -46,6 +47,27 @@ function validateNetwork(networks) {
       next('/not_found');
     else
       next()
+  }
+}
+
+
+function validateAddress(networks) {
+  return function(to, _from, next) {
+    if (networks.indexOf(to.params.network) == -1 || !checkAddress(to.params.address)) {
+      next('/not_found');
+    } else {
+      next();
+    }
+  }
+}
+
+function validateContractAddress() {
+  return function(to, _from, next) {
+    if (!isKT1Address(to.params.address)) {
+      next('/not_found');
+    } else {
+      next();
+    }
   }
 }
 
@@ -139,8 +161,8 @@ export function newRouter(networks) {
         ]
       },
       {
-        path: '/:network/:address([0-9A-z]{36})',
-        beforeEnter: validateNetwork(networks),
+        path: '/:network/:address',
+        beforeEnter: validateAddress(networks),
         components: {
           default: Contract,
         },
@@ -173,19 +195,22 @@ export function newRouter(networks) {
             path: 'interact/:entrypoint?',
             name: 'interact',
             component: InteractTab,
-            props: true
+            props: true,
+            beforeEnter: validateContractAddress(),
           },
           {
             path: 'views/:view?',
             name: 'views',
             component: ViewsTab,
-            props: true
+            props: true,
+            beforeEnter: validateContractAddress(),
           },
           {
             path: 'storage',
             name: 'storage',
             component: StorageTab,
             props: true,
+            beforeEnter: validateContractAddress(),
             children: [
               {
                 path: 'big_map/:ptr(\\d+)',
@@ -219,13 +244,15 @@ export function newRouter(networks) {
             path: 'code',
             name: 'code',
             component: CodeTab,
-            props: true
+            props: true,
+            beforeEnter: validateContractAddress(),
           },
           {
             path: 'metadata',
             name: 'metadata',
             component: MetadataTab,
-            props: true
+            props: true,
+            beforeEnter: validateContractAddress(),
           },
           {
             path: 'fork',
@@ -234,30 +261,28 @@ export function newRouter(networks) {
               default: ForkTab,
             },
             props: true,
+            beforeEnter: validateContractAddress(),
           },
           {
             path: 'tokens',
             name: 'tokens',
             component: ContractTokensTab,
-            props: true
+            props: true,
+            beforeEnter: validateContractAddress(),
           },
           {
             path: 'stats',
             name: 'contract_stats',
             component: ContractStatsTab,
-            props: true
+            props: true,
+            beforeEnter: validateContractAddress(),
           },
           {
             path: 'details',
             name: 'details',
             component: DetailsTab,
-            props: true
-          },
-          {
-            path: 'transfers',
-            name: 'transfers',
-            component: TransfersTab,
-            props: true
+            props: true,
+            beforeEnter: validateContractAddress(),
           },
         ]
       },
