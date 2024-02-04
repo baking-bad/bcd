@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import Router from 'vue-router'
 import VueRouter from 'vue-router'
 
 import Home from '@/views/home/Home.vue'
@@ -72,7 +71,7 @@ function validateContractAddress() {
 }
 
 export function newRouter(networks) {
-  return new Router({
+  return new VueRouter({
     linkActiveClass: '',
     linkExactActiveClass: '',
     mode: 'history',
@@ -287,8 +286,8 @@ export function newRouter(networks) {
         ]
       },
       {
-        path: '/:network(mainnet|ghostnet|nairobinet|sandboxnet|mondaynet|dailynet|rollupnet)/opg/:hash(o[0-9A-z]{50})',
-        alias: '/:network(mainnet|ghostnet|nairobinet|sandboxnet|mondaynet|dailynet|rollupnet)/:hash(o[0-9A-z]{50})',
+        path: '/:network(mainnet|ghostnet|nairobinet|oxfordnet|sandboxnet|mondaynet|dailynet|rollupnet)/opg/:hash(o[0-9A-z]{50})',
+        alias: '/:network(mainnet|ghostnet|nairobinet|oxfordnet|sandboxnet|mondaynet|dailynet|rollupnet)/:hash(o[0-9A-z]{50})',
         components: {
           default: OperationGroup
         },
