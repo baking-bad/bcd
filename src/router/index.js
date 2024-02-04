@@ -1,5 +1,4 @@
 import Vue from 'vue'
-import Router from 'vue-router'
 import VueRouter from 'vue-router'
 
 import Home from '@/views/home/Home.vue'
@@ -72,7 +71,7 @@ function validateContractAddress() {
 }
 
 export function newRouter(networks) {
-  return new Router({
+  return new VueRouter({
     linkActiveClass: '',
     linkExactActiveClass: '',
     mode: 'history',
