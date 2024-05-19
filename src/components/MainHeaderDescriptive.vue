@@ -7,14 +7,6 @@
       </RouterLink>
     </div>
     <div>
-      <v-btn v-if="!isSandbox"
-        @click="bcdModeRedirect"
-        text
-        small
-        class="text--secondary"
-        active-class="bg-before-transparent"
-        > {{ bcdInMainMode ? 'Periodic BCD' : 'Main BCD' }}
-      </v-btn>
       <v-btn v-if="searchService.created()" text small :to="{ name: 'search' }" class="text--secondary" active-class="bg-before-transparent">
         Search
       </v-btn>
@@ -77,19 +69,7 @@ export default {
       }
       return `/${this.$route.params.network || this.config.networks[0]}/`
     },
-    bcdInMainMode() {
-      return !window.location.hostname.startsWith('teztnets');
-    },
   },
-  methods: {
-    bcdModeRedirect() {
-      if (this.bcdInMainMode) {
-        window.location.href = 'https://teztnets.better-call.dev/';
-      } else {
-        window.location.href = 'https://better-call.dev/';
-      }
-    },
-  }
 }
 </script>
 
