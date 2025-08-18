@@ -2,6 +2,9 @@ import Vue from 'vue'
 import Clipboard from 'v-clipboard'
 import App from './App.vue'
 
+import { Buffer } from 'buffer';
+window.Buffer = Buffer;
+
 import './styles';
 
 import store from '@/store'

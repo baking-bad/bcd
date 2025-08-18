@@ -17,6 +17,7 @@ export class Wallet {
         Wallet.wallet = new DAppClient({
             name: "Better Call Dev",
             eventHandlers,
+            enableMetrics: true,
             preferredNetwork: network in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[network] : network,
             blockExplorer: new TZKTBlockExplorer(),
         });
