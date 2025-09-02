@@ -53,7 +53,6 @@
               v-on="props.on"
               dense
               outlined
-              numeric
               :value="props.value"
               :rules="rules.nat"
               :placeholder="props.label">

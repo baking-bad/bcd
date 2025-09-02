@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@airgap/beacon-sdk": "4.5.0",
-    "@baking-bad/vjsf": "^1.21.2",
+    "@baking-bad/vjsf": "^1.21.3",
     "@braintree/sanitize-url": "^6.0.0",
     "@sentry/tracing": "^6.19.2",
     "@sentry/vue": "^6.19.2",
