@@ -66,11 +66,11 @@ export default {
         .getContractStorageSchema(
           this.$route.params.network,
           this.$route.params.address,
-          "current"
         )
         .then((res) => {
           if (!res) return;
           this.storage = res;
+          this.storage.default_model = {};
           applyStyles(this.storage.schema);
         })
         .catch((err) => {
