@@ -1,4 +1,4 @@
-import {DAppClient, ColorMode, NetworkType} from "@airgap/beacon-sdk";
+import { DAppClient, ColorMode, NetworkType, PermissionScope } from "@airgap/beacon-sdk";
 import TZKTBlockExplorer from "@/utils/tzkt";
 
 const CORRECT_NETWORK_TYPES = {
@@ -91,8 +91,6 @@ export class Wallet {
     }
 
     static async getNewPermissions(network, isLast) {
-        const rpcUrl = window.config.rpc_endpoints[network];
-        const type = CORRECT_NETWORK_TYPES[network] || network;
         if (!isLast) {
             await Wallet.wallet.clearActiveAccount();
         } else {
@@ -107,12 +105,11 @@ export class Wallet {
                 return resolve();
             }
 
-            this.wallet.requestPermissions({
-                network: {
-                    type: type in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[type] : type,
-                    rpcUrl
-                }
-            })
+            const scopes = [
+                PermissionScope.OPERATION_REQUEST,
+                PermissionScope.SIGN,
+            ];
+            this.wallet.requestPermissions({ scopes })
             .then(() => {
                 Wallet.isPermissionGiven = true;
                 resolve();
