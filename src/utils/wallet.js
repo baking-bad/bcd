@@ -81,7 +81,7 @@ export class Wallet {
         const connectionTimes = parsedAccounts.map(item => item.connectedAt);
         const recentConnectionTime = Math.max(...connectionTimes);
         const lastAccount = parsedAccounts.find(item => item.connectedAt === recentConnectionTime);
-        const extension = peers.find(item => item.extensionId === lastAccount.origin.id || item.publicKey  === lastAccount.origin.id);
+        const extension = peers.find(item => item.extensionId === lastAccount?.origin?.id || item.publicKey  === lastAccount?.origin?.id);
 
         if(extension) {
             lastAccount.walletName = extension.name

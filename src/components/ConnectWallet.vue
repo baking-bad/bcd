@@ -105,10 +105,14 @@ export default {
       if(Wallet.wallet) {
         await Wallet.wallet.clearActiveAccount();
       }
+
       localStorage.removeItem('beacon:accounts')
-      localStorage.setItem('beacon:active-peer', '');
-      localStorage.setItem('beacon:active-account', '');
-      Wallet.wallet = null
+      localStorage.removeItem('beacon:active-peer');
+      localStorage.removeItem('beacon:active-account');
+      localStorage.removeItem('beacon:communication-peers-dapp');
+      localStorage.removeItem('beacon:postmessage-peers-dapp');
+
+      // Wallet.wallet = null
       Wallet.isPermissionGiven = false
       this.account = null
     }
