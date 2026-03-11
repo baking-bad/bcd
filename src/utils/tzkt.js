@@ -1,7 +1,4 @@
-import {
-  BlockExplorer,
-  NetworkType,
-} from "@airgap/beacon-sdk";
+import { BlockExplorer, NetworkType } from "@tezos-x/octez.connect-sdk";
 
 export function openTzktContract(network, contract) {
   window.open(`https://${network === 'mainnet' ? '' : `${network}.`}tzkt.io/${contract.address}`, '_blank');

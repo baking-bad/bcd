@@ -1,5 +1,5 @@
 import {checkAddress} from './tz.js';
-import { TezosOperationType } from '@airgap/beacon-sdk'
+import { TezosOperationType } from "@tezos-x/octez.connect-sdk";
 
 
 const approveEntrypoint = 'approve';

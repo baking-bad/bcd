@@ -83,7 +83,7 @@ import SchemaMichelson from "./schemaDialog/SchemaMichelson";
 import SchemaAlertOpHashSuccess from "./schemaAlert/SchemaAlertOpHashSuccess";
 import SchemaHeader from "./schemaComponents/SchemaHeader";
 import SchemaAlertCustomSuccess from "./schemaAlert/SchemaAlertCustomSuccess";
-import { TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@airgap/beacon-sdk'
+import { TezosOperationType, AbortedBeaconError, BroadcastBeaconError, defaultEventCallbacks } from '@tezos-x/octez.connect-sdk';
 import {Wallet, isCustom} from "@/utils/wallet";
 import { approveData } from "@/utils/approve";
 import ConfirmDialog from "@/components/Dialogs/ConfirmDialog";

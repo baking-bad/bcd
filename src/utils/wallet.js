@@ -1,4 +1,4 @@
-import { DAppClient, ColorMode, NetworkType, PermissionScope } from "@airgap/beacon-sdk";
+import { DAppClient, ColorMode, NetworkType, PermissionScope } from "@tezos-x/octez.connect-sdk";
 import TZKTBlockExplorer from "@/utils/tzkt";
 
 const CORRECT_NETWORK_TYPES = {
