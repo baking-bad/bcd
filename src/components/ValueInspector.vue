@@ -155,11 +155,11 @@ export default {
       }
     },
     handleIpfsHash(hash) {
-      window.open(`https://cloudflare-ipfs.com/ipfs/${hash}`, "_blank");
+      window.open(`https://ipfs.io/ipfs/${hash}`, "_blank");
     },
     handleIpfsURI(uri) {
       window.open(
-        `https://cloudflare-ipfs.com/ipfs/${uri.slice("ipfs://".length)}`,
+        `https://ipfs.io/ipfs/${uri.slice("ipfs://".length)}`,
         "_blank"
       );
     },
