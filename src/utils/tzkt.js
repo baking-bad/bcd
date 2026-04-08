@@ -22,6 +22,7 @@ export default class TZKTBlockExplorer extends BlockExplorer {
       [NetworkType.ITHACANET]: "https://ithacanet.tzkt.io",
       [NetworkType.JAKARTANET]: "https://jakartanet.tzkt.io",
       [NetworkType.GHOSTNET]: "https://ghostnet.tzkt.io",
+      [NetworkType.TALLINNNET]: "https://tallinnnet.tzkt.io",
       [NetworkType.SHADOWNET]: "https://shadownet.tzkt.io",
       [NetworkType.CUSTOM]: "https://tzkt.io",
     };
