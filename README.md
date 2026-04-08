@@ -20,8 +20,9 @@ BCD uses the same `X.Y.Z` scheme as BCDHub (see https://github.com/baking-bad/bc
 * `VUE_APP_TOKEN_METADATA_API` link to metadata service which contains indexed token metadata
 * `VUE_APP_METADATA_API_URI` link to metadata service which contains indexed contract metadata
 * `VUE_APP_MAINNET_STATS_API_URI` link to mainnet statistics service
-* `VUE_APP_TESTNET_STATS_API_URI` link to current testnet statistics service
 * `VUE_APP_GHOSTNET_STATS_API_URI` link to ghostnet statistics service
+* `VUE_APP_SHADOWNET_STATS_API_URI` link to shadownet statistics service
+* `VUE_APP_TESTNET_STATS_API_URI` link to current testnet statistics service
 
 ## Run locally
 ```

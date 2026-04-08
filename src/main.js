@@ -150,8 +150,8 @@ let metadataService = new MetadataAPI(process.env.VUE_APP_METADATA_API_URI);
 let stats = new StatsAPI({
   'mainnet': process.env.VUE_APP_MAINNET_STATS_API_URI,
   'ghostnet': process.env.VUE_APP_GHOSTNET_STATS_API_URI,
-  'nairobinet': process.env.VUE_APP_TESTNET_STATS_API_URI,
-  'oxfordnet': process.env.VUE_APP_OXFORDNET_STATS_API_URI,
+  'shadownet': process.env.VUE_APP_SHADOWNET_STATS_API_URI,
+  'talinnet': process.env.VUE_APP_TESTNET_STATS_API_URI,
 });
 
 const darkLocalStorage = localStorage.getItem('dark');
