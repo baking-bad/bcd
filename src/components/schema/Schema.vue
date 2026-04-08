@@ -167,7 +167,7 @@ export default {
     this.networks = Object.keys(this.config.rpc_endpoints);
     this.setSelectedNetwork(this.network);
 
-    this.resetBeaconActiveAccount();
+    // this.resetBeaconActiveAccount();
   },
   computed: {
     storageLimit() {
