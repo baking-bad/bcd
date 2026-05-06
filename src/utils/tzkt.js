@@ -24,6 +24,7 @@ export default class TZKTBlockExplorer extends BlockExplorer {
       [NetworkType.GHOSTNET]: "https://ghostnet.tzkt.io",
       [NetworkType.TALLINNNET]: "https://tallinnnet.tzkt.io",
       [NetworkType.SHADOWNET]: "https://shadownet.tzkt.io",
+      [NetworkType.TEZOSX]: "https://previewnet.tezosx.tzkt.io",
       [NetworkType.CUSTOM]: "https://tzkt.io",
     };
     super(rpcUrls);
