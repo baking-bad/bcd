@@ -171,7 +171,7 @@ export default {
         ]
       },
       isContract() {
-        if (this.contract.address) return isKT1Address(this.contract.address);
+        if (this.contract.address && this.contract.account_type !== 'ghost') return isKT1Address(this.contract.address);
         return false;
       },
       dateRangeText() {

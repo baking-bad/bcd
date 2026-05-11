@@ -7,6 +7,22 @@
           divider="/"
           :items="breadcrumbsItems"
         />
+
+        <v-tooltip bottom v-if="accountType === 'ghost'">
+          <template #activator="{ on, attrs }">
+            <v-icon
+              v-bind="attrs"
+              v-on="on"
+              small
+              color="blue-grey"
+            >
+              mdi-ghost
+            </v-icon>
+          </template>
+
+          <span>WooOOoo... it's a ghost contract — it means token holders reference the contract, but it was never actually originated.</span>
+        </v-tooltip>
+
         <Tags :tags="contract.tags"/>
       </v-col>
       <v-col cols="3" class="d-flex justify-end pr-7">

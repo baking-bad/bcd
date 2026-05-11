@@ -173,7 +173,7 @@ export default {
       return this.accountType === 'contract';
     },
     isAccount() {
-      return this.accountType === 'account';
+      return this.accountType === 'account' || this.accountType === 'ghost';
     },
     isSmartRollup() {
       return this.accountType === 'smart_rollup';
