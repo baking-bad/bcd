@@ -14,7 +14,7 @@
     "@sentry/vue": "^6.19.2",
     "@taquito/beacon-wallet": "21.0.4",
     "@taquito/taquito": "21.0.4",
-    "@tezos-x/octez.connect-sdk": "^4.8.2",
+    "@tezos-x/octez.connect-sdk": "^4.8.3",
     "async-wait-until": "^2.0.12",
     "axios": "^0.21.4",
     "bignumber.js": "^9.2.1",
