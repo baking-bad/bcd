@@ -170,7 +170,6 @@ export const vuetify = makeVuetify(isDark);
 
 api.getConfig().then(response => {
   Object.assign(config, response);
-
   config.rpc_endpoints = Object.fromEntries(
     Object.entries(config.rpc_endpoints)
       .map(([k, v]) => [k, v.replace('sandbox', '127.0.0.1')])

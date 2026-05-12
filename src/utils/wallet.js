@@ -1,9 +1,15 @@
-import { DAppClient, ColorMode, NetworkType, PermissionScope } from "@tezos-x/octez.connect-sdk";
+import { BeaconEvent, ColorMode, DAppClient, NetworkType, PermissionScope } from "@tezos-x/octez.connect-sdk";
 import TZKTBlockExplorer from "@/utils/tzkt";
 
 const CORRECT_NETWORK_TYPES = {
     "sandboxnet": NetworkType.CUSTOM,
     "rollupnet": NetworkType.CUSTOM,
+    "ushuaianet": NetworkType.CUSTOM,
+    "tezosx": NetworkType.CUSTOM,
+}
+
+function getNetworkType(network) {
+    return network in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[network] : NetworkType[network.toUpperCase()]
 }
 
 export function isCustom(network) {
@@ -13,12 +19,22 @@ export function isCustom(network) {
 export class Wallet {
     static async getWallet(network, eventHandlers = null) {
         if (Wallet.wallet) return Wallet.wallet
-
+        
+        const networkType = getNetworkType(network);
+        
         Wallet.wallet = new DAppClient({
             name: "Better Call Dev",
             eventHandlers,
             enableMetrics: true,
-            preferredNetwork: network in CORRECT_NETWORK_TYPES ? CORRECT_NETWORK_TYPES[network] : network,
+            network: isCustom(networkType)
+            ? {
+                type: networkType,
+                name: network,
+                rpcUrl: window.config?.rpc_endpoints?.[network]
+            }
+            : {
+                type: networkType
+            },
             blockExplorer: new TZKTBlockExplorer(),
         });
 
@@ -40,20 +56,22 @@ export class Wallet {
     static async getClient(network, eventHandlers, isLast) {
         let client;
 
+        const networkType = getNetworkType(network);
         if (Wallet.wallet) {
-            client = Wallet.wallet;
-            await Wallet.setTheme();
-        } else {
+            if (Wallet.wallet.network?.type !== networkType || (isCustom(networkType) && Wallet.wallet.network?.name !== network)) {
+                await this.disconnect();
+            } else {
+                client = Wallet.wallet;
+                await Wallet.setTheme();
+            }
+        }
+        
+        if (!client) {
             client = await Wallet.getWallet(network, eventHandlers)
         }
 
-        if (!isLast) {
-            Wallet.isPermissionGiven = false            
-            await this.getNewPermissions(network, isLast);            
-        } else {
-            if (!Wallet.isPermissionGiven) {
-                await this.getNewPermissions(network, isLast);
-            }
+        if (!Wallet.isPermissionGiven && client) {
+            await this.getNewPermissions();
         }
 
         Wallet.changer[0] = 'connect' + Wallet.wallet.requestCounter[0]
@@ -90,38 +108,44 @@ export class Wallet {
         return lastAccount;
     }
 
-    static async getNewPermissions(network, isLast) {
-        if (!isLast) {
-            await Wallet.wallet.clearActiveAccount();
-        } else {
-            await Wallet.wallet.setActiveAccount(Wallet.getLastUsedAccount());
+    static async getNewPermissions() {
+        const activeAccount = await this.wallet.getActiveAccount();
+        if(activeAccount) {
+            Wallet.isPermissionGiven = true;
+            return;
         }
 
-        const activeAccount = await this.wallet.getActiveAccount();
-
-        return new Promise((resolve, reject) => {
-            if(activeAccount) {
-                Wallet.isPermissionGiven = true;
-                return resolve();
+        const scopes = [
+            PermissionScope.OPERATION_REQUEST,
+            PermissionScope.SIGN,
+        ];
+        try {
+            await this.wallet.requestPermissions({ scopes });
+            Wallet.isPermissionGiven = true;
+        } catch (err) {
+            if (err.title && err.title.toUpperCase() === 'ABORTED') {
+                console.log('Permission request aborted by the user');
+            } else {
+                console.error('Error requesting permissions', err);
             }
 
-            const scopes = [
-                PermissionScope.OPERATION_REQUEST,
-                PermissionScope.SIGN,
-            ];
-            this.wallet.requestPermissions({ scopes })
-            .then(() => {
-                Wallet.isPermissionGiven = true;
-                resolve();
-            })
-            .catch(e => {
-                if (e.title && e.title.toUpperCase() === 'ABORTED') {
-                    resolve();
-                } else {
-                    reject();
-                }
-            })
-        })
+            Wallet.isPermissionGiven = false;
+        }
+    }
+
+    static async disconnect() {
+        if (Wallet.wallet) {
+            try {
+                await Wallet.wallet.disconnect();
+            } catch (error) {
+                await Wallet.wallet.clearActiveAccount();                
+            } finally {
+                await new Promise(resolve => setTimeout(resolve, 100));
+
+                Wallet.wallet = null;
+                Wallet.isPermissionGiven = false;
+            }
+        }
     }
 
     static async setTheme() {
