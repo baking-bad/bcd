@@ -1,12 +1,23 @@
 import { BlockExplorer, NetworkType } from "@tezos-x/octez.connect-sdk";
 
+function getTzktLink(network, hash) {
+  const subdomainMap = {
+    mainnet: '',
+    tezosx: 'previewnet.tezosx',
+  };
+
+  const subdomain = subdomainMap[network] ?? network;
+
+  return `https://${subdomain && `${subdomain}.`}tzkt.io/${hash}`;
+}
+
 export function openTzktContract(network, contract) {
-  window.open(`https://${network === 'mainnet' ? '' : `${network}.`}tzkt.io/${contract.address}`, '_blank');
+  window.open(getTzktLink(network, contract.address), '_blank');
 }
 
 
 export function openTzktOPG(network, hash) {
-  window.open(`https://${network}.tzkt.io/${hash}`, '_blank');
+  window.open(getTzktLink(network, hash), '_blank');
 }
 
 
