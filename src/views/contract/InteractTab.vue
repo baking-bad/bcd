@@ -76,7 +76,7 @@
 
 <script>
 import { mapActions } from "vuex";
-import { applyStyles } from '@/utils/styles.js';
+import { applyStyles, buildTypeMap } from '@/utils/styles.js';
 import { isOperationHash } from '@/utils/tz.js';
 import Schema from "@/components/schema/Schema.vue";
 import TypeDef from "@/views/contract/TypeDef";
@@ -179,7 +179,10 @@ export default {
           this.entrypoints = res.sort(function (a, b) {
             return a.name.localeCompare(b.name);
           });
-          this.entrypoints.forEach((e) => applyStyles(e.schema));
+          this.entrypoints.forEach((e) => {
+            const typeMap = buildTypeMap(e.typedef);
+            applyStyles(e.schema, typeMap);
+          });
           const idx = this.entrypoints.findIndex(
             (element) => element.name === selectedName
           );
