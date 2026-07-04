@@ -1,4 +1,32 @@
-export function applyStyles(node) {
+export function buildTypeMap(typedef) {
+    if (!typedef) return {};
+    const typeIndex = {};
+    for (const t of typedef) {
+        typeIndex[t.name] = t;
+    }
+
+    const map = {};
+
+    function processTypeDef(t) {
+        if (!t.args) return;
+        for (const arg of t.args) {
+            if (arg.value.startsWith("$")) {
+                const refName = arg.value.slice(1);
+                if (typeIndex[refName]) {
+                    processTypeDef(typeIndex[refName]);
+                }
+            } else {
+                map[arg.key] = arg.value;
+            }
+        }
+    }
+
+    processTypeDef(typedef[0]);
+
+    return map;
+}
+
+export function applyStyles(node, typeMap = {}) {
     if (!node) return;
     if (node.type) {
         const defaultTitle = {
@@ -14,7 +42,11 @@ export function applyStyles(node) {
             node["x-display"] = "custom-codemirror";
         }
         if (node.prim === "contract") {
-            node["x-display"] = "custom-contract";
+            if (typeMap[node.title] === "contract(unit)") {
+                node["x-display"] = "custom-address";
+            } else {
+                node["x-display"] = "custom-contract";
+            }
         }
         if (node.prim === "nat" || node.prim === "mutez") {
             node["x-display"] = "custom-nat"
@@ -28,16 +60,16 @@ export function applyStyles(node) {
     }
     if (node.properties) {
         for (var prop in node.properties) {
-            applyStyles(node.properties[prop]);
+            applyStyles(node.properties[prop], typeMap);
         }
     }
     if (node.oneOf) {
         for (var option in node.oneOf) {
-            applyStyles(node.oneOf[option]);
+            applyStyles(node.oneOf[option], typeMap);
         }
     }
     if (node.items) {
-        applyStyles(node.items);
+        applyStyles(node.items, typeMap);
     }
 }
 
