@@ -45,7 +45,7 @@ export default {
     },
     methods: {
         async fetchAlias() {
-            return await this.getAlias(this.network, this.operation.destination)
+            return this.operation.destination ? await this.getAlias(this.network, this.operation.destination) : null;
         },
         setClassAndValue() {
             if (this.operation.tag) {
