@@ -102,9 +102,8 @@ export default {
     },
     async logOut() {
       this.isOpened = false;
-      if(Wallet.wallet) {
-        await Wallet.wallet.disconnect();
-      }
+
+      await Wallet.disconnect();
 
       this.account = null
     }

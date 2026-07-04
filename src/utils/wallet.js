@@ -21,7 +21,7 @@ export class Wallet {
         if (Wallet.wallet) return Wallet.wallet
         
         const networkType = getNetworkType(network);
-        
+
         Wallet.wallet = new DAppClient({
             name: "Better Call Dev",
             eventHandlers,
@@ -134,11 +134,17 @@ export class Wallet {
     }
 
     static async disconnect() {
+        localStorage.removeItem('beacon:accounts');
+        localStorage.removeItem('beacon:active-peer');
+        localStorage.removeItem('beacon:active-account');
+        localStorage.removeItem('beacon:communication-peers-dapp');
+        localStorage.removeItem('beacon:postmessage-peers-dapp');
+
         if (Wallet.wallet) {
             try {
                 await Wallet.wallet.disconnect();
             } catch (error) {
-                await Wallet.wallet.clearActiveAccount();                
+                await Wallet.wallet.clearActiveAccount();
             } finally {
                 await new Promise(resolve => setTimeout(resolve, 100));
 
