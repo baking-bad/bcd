@@ -113,7 +113,6 @@
       :network="network"
       :level="content.level"
       :hash="hash"
-      :raw="content.rawMempool"
     />
   </v-container>
 </template>
@@ -209,7 +208,7 @@ export default {
     }),
     getOPG() {
       this.api
-        .getOPG(this.hash, true, false, this.network)
+        .getOPG(this.hash, false, this.network)
         .then((res) => {
           if (!res) return;
           this.operations = res;

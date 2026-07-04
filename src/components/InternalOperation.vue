@@ -254,7 +254,6 @@
       :network="data.network"
       :level="data.level"
       :hash="data.hash"
-      :raw="data.rawMempool"
     />
   </div>
 </template>
@@ -415,7 +414,6 @@ export default {
       let val = this.data.burned || 0;
       if (
         !this.data.internal &&
-        !this.data.mempool &&
         this.data.internal_operations
       ) {
         for (let i = 0; i < this.data.internal_operations.length; i++) {
@@ -425,8 +423,7 @@ export default {
       return val;
     },
     isReplayable() {
-      return !this.data.mempool && 
-        this.data.hash && 
+      return this.data.hash && 
         this.data.destination && 
         this.data.entrypoint && 
         this.data.status === 'applied';
