@@ -24,8 +24,7 @@
                 <v-list-item-subtitle
                   class="font-weight-light hash text--secondary"
                 >
-                  <span v-if="value.mempool">mempool</span>
-                  <span v-else>level {{ value.level }}</span>
+                  <span>level {{ value.level }}</span>
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
@@ -45,7 +44,7 @@
                 </v-list-item-title>
                 <v-list-item-subtitle
                   class="font-weight-light hash text--secondary"
-                  v-if="value && !value.mempool && !isNaN(value.internals) && value.internals > 0">{{value.internals}} internal</v-list-item-subtitle
+                  v-if="value && !isNaN(value.internals) && value.internals > 0">{{value.internals}} internal</v-list-item-subtitle
                 >
               </v-list-item-content>
             </v-list-item>
@@ -53,7 +52,7 @@
           <v-col cols="2">
             <v-list-item
               class="fill-height pl-1"
-              v-if="!open && !value.mempool && !isNaN(value.flow) && value.flow !== 0"
+              v-if="!open && !isNaN(value.flow) && value.flow !== 0"
             >
               <v-list-item-content>
                 <v-list-item-title class="hash">{{
@@ -69,7 +68,7 @@
             </v-list-item>
           </v-col>
           <v-col cols="2">
-            <v-list-item class="fill-height pl-2" v-if="value && !value.mempool && !isNaN(value.total_cost) ">
+            <v-list-item class="fill-height pl-2" v-if="value && !isNaN(value.total_cost) ">
               <v-list-item-content>
                 <v-list-item-title class="hash">{{
                   value.total_cost | uxtz
@@ -161,7 +160,6 @@ export default {
     ...mapActions(["showError"]),
     onPanelStateChange() {
       if (!this.value) return;
-      if (this.value.mempool) this.internal = [{...this.value}];
       if (this.internal.length > 0) return;
       if (this.loading) return;
 

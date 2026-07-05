@@ -57,8 +57,8 @@
                 />
               </v-expansion-panels>
               <v-skeleton-loader
-                v-show="operationsLoading || mempoolLoading"
-                :loading="operationsLoading || mempoolLoading"
+                v-show="operationsLoading"
+                :loading="operationsLoading"
                 type="list-item-two-line, list-item-two-line, list-item-two-line"
               >
               </v-skeleton-loader>
@@ -132,10 +132,8 @@ export default {
   data: () => ({
     openFilters: false,
     operations: [],
-    mempool: [],
     downloaded: false,
     operationsLoading: false,
-    mempoolLoading: false,
     last_id: 0,
     filters: {
       entrypoints: [],
@@ -152,22 +150,14 @@ export default {
       return this.searchService.created()
     },
     loading() {
-      return this.items.length === 0 && (this.operationsLoading || this.mempoolLoading);
+      return this.items.length === 0 && (this.operationsLoading);
     },
     items() {
       if (this.operations.length === 0) {
         return [];
       }
-      let operations = this.operations;
-      if (this.config.mempool_enabled) {
-        let mempoolOperations = this.getDisplayedMempool();
-        if (mempoolOperations.length > 0) {
-          operations = operations
-              .concat(mempoolOperations)
-              .sort(this.compareOperations);
-        }
-      }
-      return operations;
+      
+      return this.operations;
     },
     isContract() {
       return this.accountType === 'contract';
@@ -278,28 +268,6 @@ export default {
           this.operationsLoading = false;
         });
     },
-    getMempool() {
-      if (this.mempoolLoading) return;
-      this.mempoolLoading = true;
-
-      this.api
-        .getContractMempool(this.network, this.address)
-        .then((res) => {
-          this.mempool = res;
-        })
-        .catch((err) => {
-          console.error(err);
-        })
-        .finally(() => (this.mempoolLoading = false));
-    },
-    getDisplayedMempool() {
-      if (this.search) return [];
-      if (!this.mempool || this.mempool.length === 0) return [];
-      if (!this.isEmptyFilters) {
-        return [];
-      }
-      return this.mempool;
-    },
     pushOperationsFromSearch(data) {
       data.forEach((element) => {
         this.operations.push({
@@ -321,9 +289,6 @@ export default {
     },
     async fetchOperations() {
       await this.getOperations(true);
-      if (this.config.mempool_enabled) {
-        this.getMempool();
-      }
     },
     searchOperations(clearData = false) {
       if (this.operationsLoading || (this.downloaded && !clearData)) return;

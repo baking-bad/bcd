@@ -336,19 +336,6 @@ export class BetterCallApi {
             })
     }
 
-    getContractMempool(network, address) {
-        return getCancellable(this.api, `/contract/${network}/${address}/mempool`, {})
-            .then((res) => {
-                if (!res) {
-                    return res;
-                }
-                if (res.status != 200) {
-                    throw new RequestFailedError(res);
-                }
-                return res.data
-            })
-    }
-
     getContractBigMap(network, ptr) {
         return getCancellable(this.api, `/bigmap/${network}/${ptr}`, {})
             .then((res) => {
@@ -465,16 +452,15 @@ export class BetterCallApi {
             })
     }
 
-    getOPG(hash, with_mempool=true, with_storage_diff=false, network=undefined) {
+    getOPG(hash, with_storage_diff=false, network=undefined) {
         let params = {}
-        if (with_mempool) {
-        params.with_mempool = with_mempool;
-        }
+
         if (with_storage_diff) {
-        params.with_storage_diff = with_storage_diff;
+            params.with_storage_diff = with_storage_diff;
         }
+
         return getCancellable(this.api, `/opg/${network}/${hash}`, {
-        params: params,
+            params: params,
         })
         .then((res) => {
             if (res.status != 200) {

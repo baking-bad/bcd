@@ -66,9 +66,6 @@ export default {
             if (this.info.status === 'applied') {
                 return 'applied';
             }
-            if (this.info.mempool) {
-                return 'mempool';
-            }
             return 'failed';
         },
         link() {
@@ -80,7 +77,7 @@ export default {
             if (this.loading) return;
             this.loading = true;
 
-            this.api.getOPG(item.body.Hash, true, false, item.body.Network)
+            this.api.getOPG(item.body.Hash, false, item.body.Network)
                 .then(opg => {
                     if (opg.length > 0){
                         this.info = opg[0];
