@@ -9,10 +9,13 @@ export function formatNetworkName(network) {
     return network ? network.replace(/_/g, ' ') : '';
 }
 
-export function getApiUri(config) {
-    const uri = config && config.tezosx_stack
-        ? process.env.VUE_APP_API_TEZOSX_URI
-        : process.env.VUE_APP_API_URI;
+export function isTezosxStackHost() {
+    const stackUri = process.env.VUE_APP_TEZOSX_STACK_URI;
+    if (!stackUri) return false;
 
-    return uri || `${window.location.protocol}//${window.location.host}/v1`;
+    try {
+        return new URL(stackUri).host === window.location.host;
+    } catch (e) {
+        return false;
+    }
 }

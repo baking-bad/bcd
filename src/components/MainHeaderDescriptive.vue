@@ -44,6 +44,7 @@ import SearchBox from "./SearchBox";
 import ThemeSwitcher from "./ThemeSwitcher";
 import Bookmarks from "./Bookmarks/Bookmarks";
 import ConnectWallet from "@/components/ConnectWallet";
+import { isTezosxStackHost } from "@/utils/network";
 
 export default {
   name: "MainHeaderDescriptive",
@@ -72,7 +73,7 @@ export default {
       return this.config.sandbox_mode;
     },
     isTezosxStack() {
-      return this.config.tezosx_stack;
+      return isTezosxStackHost();
     },
     tezosxStackUri() {
       return process.env.VUE_APP_TEZOSX_STACK_URI;
