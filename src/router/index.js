@@ -286,8 +286,8 @@ export function newRouter(networks) {
         ]
       },
       {
-        path: '/:network(mainnet|ghostnet|tallinnnet|sandboxnet|mondaynet|dailynet|rollupnet|shadownet|tezosx)/opg/:hash(o[0-9A-z]{50})',
-        alias: '/:network(mainnet|ghostnet|tallinnnet|sandboxnet|mondaynet|dailynet|rollupnet|shadownet|tezosx)/:hash(o[0-9A-z]{50})',
+        path: '/:network(mainnet|ghostnet|tallinnnet|sandboxnet|mondaynet|dailynet|rollupnet|shadownet|etherlink_mainnet|etherlink_shadownet|tezosx_previewnet)/opg/:hash(o[0-9A-z]{50})',
+        alias: '/:network(mainnet|ghostnet|tallinnnet|sandboxnet|mondaynet|dailynet|rollupnet|shadownet|etherlink_mainnet|etherlink_shadownet|tezosx_previewnet)/:hash(o[0-9A-z]{50})',
         components: {
           default: OperationGroup
         },

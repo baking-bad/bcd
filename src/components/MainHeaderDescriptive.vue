@@ -13,6 +13,17 @@
       <v-btn text small :to="{ path: networksPath }" class="text--secondary" active-class="bg-before-transparent">
         Networks
       </v-btn>
+      <v-btn
+        v-if="!isTezosxStack"
+        text
+        small
+        :href="tezosxStackUri"
+        target="_blank"
+        rel="noopener"
+        class="text--secondary"
+      >
+        TezosX
+      </v-btn>
        <v-btn text small :to="{ name: 'deploy' }" class="text--secondary" active-class="bg-before-transparent">
         Deploy
       </v-btn>
@@ -59,6 +70,12 @@ export default {
     },
     isSandbox() {
       return this.config.sandbox_mode;
+    },
+    isTezosxStack() {
+      return this.config.tezosx_stack;
+    },
+    tezosxStackUri() {
+      return process.env.VUE_APP_TEZOSX_STACK_URI;
     },
     networksPath() {
       if (this.isSandbox) {

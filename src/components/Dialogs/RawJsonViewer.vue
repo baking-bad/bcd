@@ -15,7 +15,7 @@
           <span class="text--primary">{{ type }}</span>
         </span>
          <span class="body-1 font-weight-medium text-uppercase text--secondary" v-else>
-          {{ network }}:
+          {{ formatNetworkName(network) }}:
           <span class="text--primary">{{ type }}</span>
         </span>
         <span
@@ -112,6 +112,7 @@ import { mapActions } from "vuex";
 import VueJsonPretty from "vue-json-pretty";
 import {keysToCamel} from "../../utils/object";
 import { copyToClipboard } from "../../utils/clipboard";
+import { formatNetworkName } from "../../utils/network";
 import '@/styles/vue-json-pretty.css';
 
 const BIG_SIZE_JSON_SYMBOLS = 10000;
@@ -156,6 +157,7 @@ export default {
   }),
   methods: {
     ...mapActions(["showError", "showClipboardOK", "showClipboardFail"]),
+    formatNetworkName,
     close() {
       this.$emit("input", false);
     },

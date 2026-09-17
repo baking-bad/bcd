@@ -10,7 +10,7 @@
         <v-subheader class="overline">Select network</v-subheader>
           <v-divider/>
         <v-list-item class="pr-8 pl-4 cursor-pointer" @click="auth(network)" v-for="network in config.networks" :key="network">
-          <v-list-item-title class="text-capitalize">{{network}}</v-list-item-title>
+          <v-list-item-title class="text-capitalize">{{ formatNetworkName(network) }}</v-list-item-title>
         </v-list-item>
       </v-list>
     </v-menu>
@@ -52,7 +52,7 @@
             </v-list-item>
           </template>
           <v-list-item v-else class="pr-8 pl-4 cursor-pointer" @click="auth(network, false)" v-for="network in config.networks" :key="network">
-            <v-list-item-title class="text-capitalize">{{network}}</v-list-item-title>
+            <v-list-item-title class="text-capitalize">{{ formatNetworkName(network) }}</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -63,6 +63,7 @@
 <script>
 import { Wallet } from "@/utils/wallet";
 import { mapActions } from "vuex";
+import { formatNetworkName } from "@/utils/network";
 
 export default {
   name: "ConnectWallet",
@@ -90,6 +91,7 @@ export default {
   },
   methods: {
     ...mapActions(["showClipboardOK"]),
+    formatNetworkName,
     async auth(network = 'mainnet', isLast = true) {
       this.isOpened = false;
       try {

@@ -67,7 +67,7 @@
                   class="overline"
                   :class="network === 'mainnet' ? 'secondary--text' : ''"
                 >
-                  {{ network }}</span
+                  {{ formatNetworkName(network) }}</span
                 >
               </v-list-item-subtitle>
             </v-list-item-content>
@@ -121,6 +121,7 @@
 import { mapActions } from "vuex";
 import { toTitleCase } from "../../utils/string";
 import { openTzktOPG } from "../../utils/tzkt";
+import { formatNetworkName } from "../../utils/network";
 import RawJsonViewer from "@/components/Dialogs/RawJsonViewer.vue";
 import OpgContents from "@/views/opg/ContentsTab.vue";
 import CallStack from "@/views/opg/CallStack.vue";
@@ -191,7 +192,7 @@ export default {
               network: this.network
             }
           },
-          text: toTitleCase(this.network),
+          text: toTitleCase(formatNetworkName(this.network)),
         },
         {
           text: this.hash,
@@ -202,6 +203,7 @@ export default {
     },
   },
   methods: {
+    formatNetworkName,
     ...mapActions({
       showError: "showError",
       showClipboardOK: "showClipboardOK",

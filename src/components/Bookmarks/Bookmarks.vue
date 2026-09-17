@@ -10,7 +10,7 @@
         <v-list-item v-for="(item, index) in items" :key="index" :to="getItemLink(item)">
             <v-list-item-content>
                 <v-list-item-title>{{ item.alias || item.address }}</v-list-item-title>
-                <v-list-item-subtitle class="overline">{{ item.network }}</v-list-item-subtitle>
+                <v-list-item-subtitle class="overline">{{ formatNetworkName(item.network) }}</v-list-item-subtitle>
             </v-list-item-content>
             <v-list-item-action>
                 <v-btn icon @click.prevent="removeBookmark(index)">
@@ -29,6 +29,8 @@
 
 
 <script>
+import { formatNetworkName } from "@/utils/network";
+
 export default {
   name: "Bookmarks",
   data: () => ({
@@ -45,6 +47,7 @@ export default {
     this.updateBookmarks();
   },
   methods: {
+    formatNetworkName,
     removeBookmark(key) {
         this.bookmarks.remove(key);
         delete this.items[key];

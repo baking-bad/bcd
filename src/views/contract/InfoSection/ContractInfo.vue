@@ -18,7 +18,7 @@
                     <span
                     class="overline"
                     :class="network === 'mainnet' ? 'secondary--text' : ''"
-                    >{{ network }}</span
+                    >{{ formatNetworkName(network) }}</span
                     >
                     </v-list-item-subtitle>
                 </v-list-item-content>
@@ -87,6 +87,7 @@
 <script>
 
 import AccountBox from "../../../components/Dialogs/AccountBox.vue";
+import { formatNetworkName } from "../../../utils/network";
 
 export default {
   name: "ContractInfo",
@@ -112,6 +113,7 @@ export default {
     }
   },
   methods: {
+    formatNetworkName,
     getInfo() {
       this.getUsedBytes()
       this.getPaidUsed()

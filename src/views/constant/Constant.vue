@@ -17,6 +17,7 @@
 import { mapActions } from "vuex";
 import {toTitleCase} from "@/utils/string";
 import {shortcutOnly} from "@/utils/tz";
+import {formatNetworkName} from "@/utils/network";
 
 export default {
   name: "Constatnt",
@@ -43,7 +44,7 @@ export default {
               network: this.network
             }
           },
-          text: toTitleCase(this.network),
+          text: toTitleCase(formatNetworkName(this.network)),
         },
         {
           text: this.alias ? this.alias : shortcutOnly(this.address),
