@@ -25,7 +25,7 @@
               <v-list-item-content class="pa-0">
                 
                 <v-list-item-title>{{ name }}</v-list-item-title>
-                <v-list-item-subtitle class="overline">{{ network }}</v-list-item-subtitle>
+                <v-list-item-subtitle class="overline">{{ formatNetworkName(network) }}</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
                 <v-icon color="primary">mdi-star</v-icon>
@@ -39,6 +39,8 @@
 </template>
 
 <script>
+import { formatNetworkName } from "@/utils/network";
+
 export default {
     name: "BookmarkDialog",
     props: {
@@ -60,6 +62,7 @@ export default {
       }
     },
     methods: {
+        formatNetworkName,
         add() {
             this.$emit('added', this.name)
         },

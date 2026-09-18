@@ -15,7 +15,7 @@
                         </v-tooltip>                
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                        <span class="overline" :class="network === 'mainnet' ? 'secondary--text' : ''">{{ network }}</span>
+                        <span class="overline" :class="network === 'mainnet' ? 'secondary--text' : ''">{{ formatNetworkName(network) }}</span>
                     </v-list-item-subtitle>
                 </v-list-item-content>
             </v-list-item>
@@ -68,6 +68,7 @@
 <script>
 import LongBox from "@/components/Dialogs/LongBox.vue";
 import TypeDef from "@/views/contract/TypeDef.vue";
+import { formatNetworkName } from "@/utils/network";
 
 export default {
   name: "SmartRollupInfo",
@@ -88,6 +89,7 @@ export default {
     this.getInfo();
   },
   methods: {
+    formatNetworkName,
     getInfo() {
       this.infoLoading = true;
       this.api

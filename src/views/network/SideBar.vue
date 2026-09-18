@@ -10,7 +10,7 @@
             <v-divider :key="'divider' + idx" v-if="idx > 0"></v-divider>
             <v-list-item :key="idx" @click="navigate(state)">
               <v-list-item-content>
-                <v-list-item-title class="sidebar-title text--primary">{{ state.network }}</v-list-item-title>
+                <v-list-item-title class="sidebar-title text--primary">{{ formatNetworkName(state.network) }}</v-list-item-title>
                 <v-list-item-subtitle class="sidebar-subtitle">{{ state.protocol.slice(0, 8) }}</v-list-item-subtitle>
               </v-list-item-content>
               <v-list-item-action>
@@ -27,6 +27,8 @@
 </template>
 
 <script>
+import { formatNetworkName } from "../../utils/network";
+
 export default {
   name: "SideBar",
   props: {
@@ -46,6 +48,7 @@ export default {
     item: 0,
   }),
   methods: {
+    formatNetworkName,
     navigate(state) {
       this.$router.push(`/${state.network}`);
     },

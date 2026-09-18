@@ -3,7 +3,9 @@ import { BlockExplorer, NetworkType } from "@tezos-x/octez.connect-sdk";
 function getTzktLink(network, hash) {
   const subdomainMap = {
     mainnet: '',
-    tezosx: 'previewnet.tezosx',
+    tezosx_previewnet: 'previewnet.tezosx',
+    etherlink_mainnet: 'etherlink',
+    etherlink_shadownet: 'shadownet.etherlink',
   };
 
   const subdomain = subdomainMap[network] ?? network;

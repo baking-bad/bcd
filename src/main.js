@@ -45,6 +45,7 @@ import draggable from 'vuedraggable';
 import {roundDownSignificantDigits, SIFormatter} from "./utils/number";
 import {isKT1Address, isOperationHash, isTzAddress} from "./utils/tz";
 import {isOldBigMapRoute} from "./utils/url";
+import {isTezosxStackHost} from "./utils/network";
 
 Vue.component('draggable', draggable);
 Vue.component('VJsf', VJsf)
@@ -136,7 +137,8 @@ Vue.directive('pastHtml', {
 })
 
 let config = {
-  API_URI: process.env.VUE_APP_API_URI || `${window.location.protocol}//${window.location.host}/v1`,
+  API_URI: (isTezosxStackHost() ? process.env.VUE_APP_API_TEZOSX_URI : process.env.VUE_APP_API_URI)
+    || `${window.location.protocol}//${window.location.host}/v1`,
   HOME_PAGE: 'home',
   IPFS_NODE: process.env.VUE_APP_IPFS_NODE || "https://ipfs.io",
 }

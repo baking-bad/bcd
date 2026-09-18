@@ -11,7 +11,7 @@
                     </v-tooltip>                
                 </v-list-item-title>
                 <v-list-item-subtitle>
-                    <span class="overline" :class="network === 'mainnet' ? 'secondary--text' : ''">{{ network }}</span>
+                    <span class="overline" :class="network === 'mainnet' ? 'secondary--text' : ''">{{ formatNetworkName(network) }}</span>
                 </v-list-item-subtitle>
             </v-list-item-content>
         </v-list-item>
@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import { formatNetworkName } from "../../../utils/network";
 
 export default {
   name: "AccountInfo",
@@ -56,6 +57,7 @@ export default {
   computed: {
   },
   methods: {
+    formatNetworkName,
   },
 };
 </script>

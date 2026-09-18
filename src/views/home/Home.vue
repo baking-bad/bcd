@@ -34,7 +34,7 @@
                 v-for="data in networks"
                 :key="data"
               >
-                {{ data }}
+                {{ formatNetworkName(data) }}
                 <div
                   v-if="networksStats.length > 0"
                   :class="getSyncClass(data)"
@@ -69,7 +69,7 @@
 <script>
 import { mapActions } from "vuex";
 import SearchBox from "@/components/SearchBox.vue";
-import {DATA_LOADING_STATUSES} from "../../utils/network";
+import {DATA_LOADING_STATUSES, formatNetworkName} from "../../utils/network";
 import RecentlyCalledContracts from "../../components/Tables/RecentlyCalledContracts";
 
 export default {
@@ -104,6 +104,7 @@ export default {
   },
   methods: {
     ...mapActions(["showError"]),
+    formatNetworkName,
     getSyncClass(value) {
       return this.networksStats !== null && this.networksStats.find((item) => item.network === value).synced ? 'synced' : 'unsynced';
     },

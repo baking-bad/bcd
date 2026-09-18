@@ -27,7 +27,7 @@
         <span
           class="caption text-uppercase font-weight-medium"
           :class="network === 'mainnet' ? 'primary--text' : 'text--secondary'"
-        >{{ network }}</span>
+        >{{ formatNetworkName(network) }}</span>
       </v-card-title>
       <v-card-text class="pt-7">
         <v-row no-gutters>
@@ -46,6 +46,7 @@
 
 <script>
 import ValueInspector from "@/components/ValueInspector.vue"
+import { formatNetworkName } from "@/utils/network";
 
 export default {
   name: "AccountBox",
@@ -64,6 +65,9 @@ export default {
     show: false,
     alias: null
   }),
+  methods: {
+    formatNetworkName,
+  },
   async mounted() {
     this.alias = await this.getAlias(this.network, this.address);
   },

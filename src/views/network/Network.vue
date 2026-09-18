@@ -19,8 +19,9 @@
 <script>
 import { mapActions } from "vuex";
 import SideBar from "./SideBar.vue";
-import capitalize from 'lodash.capitalize';
 import NetworkTab from "./NetworkTab.vue";
+import { formatNetworkName } from "../../utils/network";
+import { toTitleCase } from "../../utils/string";
 
 export default {
   name: "Network",
@@ -42,7 +43,7 @@ export default {
         text: 'Home',
         to: '/',
       }, {
-        text: capitalize(this.currentNetwork),
+        text: toTitleCase(formatNetworkName(this.currentNetwork)),
         to: `/${this.currentNetwork}`
       }]
     }

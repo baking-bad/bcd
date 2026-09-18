@@ -108,7 +108,7 @@ import MenuToolbar from "./MenuToolbar";
 import Tags from "../../components/Tags";
 import BookmarkButton from "../../components/Bookmarks/BookmarkButton.vue";
 import {openTzktContract} from "../../utils/tzkt";
-import {DATA_LOADING_STATUSES} from "../../utils/network";
+import {DATA_LOADING_STATUSES, formatNetworkName} from "../../utils/network";
 import {applyStyles} from "../../utils/styles";
 
 const MIN_SEARCHBOX_WIDTH = 240;
@@ -176,7 +176,7 @@ export default {
               network: this.network
             }
           },
-          text: toTitleCase(this.network),
+          text: toTitleCase(formatNetworkName(this.network)),
         },
         {
           text: this.alias ? this.alias : shortcutOnly(this.address),

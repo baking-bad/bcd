@@ -21,7 +21,7 @@
               </v-btn>
             </td>
             <td>
-              <span class="text--secondary">{{ item.network }}</span>
+              <span class="text--secondary">{{ formatNetworkName(item.network) }}</span>
             </td>
             <td>
               <span class="text--secondary">{{ item.last_action | fromNow }}</span>
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-import {DATA_LOADING_STATUSES} from "../../../utils/network";
+import {DATA_LOADING_STATUSES, formatNetworkName} from "../../../utils/network";
 import {mapActions} from "vuex";
 import Shortcut from "../../../components/Shortcut.vue";
 
@@ -112,6 +112,7 @@ export default {
     },
     methods: {
         ...mapActions(["showError"]),
+        formatNetworkName,
         left() {
             if (this.page > 0)
                 this.page--;
